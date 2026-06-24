@@ -23,10 +23,33 @@ func _ready() -> void:
 	add_child(lbl_anim)
 
 func update_physics(player: CharacterBody2D) -> void:
+	# Safely grab the active FSM Node name
+	var active_fsm_node = "NULL"
+	if player.state_machine and player.state_machine.current_state:
+		active_fsm_node = player.state_machine.current_state.name
+
+	# --- NEW: PULL CURRENT ANIMATION STATES ---
+	var current_upper_anim = "Unknown"
+	var current_lower_anim = "Unknown"
+	
+	if player.animator and player.animator.tree:
+		# Access the built-in playback object for your state machines
+		var upper_playback = player.animator.tree.get("parameters/UpperState/playback")
+		var lower_playback = player.animator.tree.get("parameters/LowerState/playback")
+		
+		# get_current_node() returns the name of the active animation node
+		if upper_playback: 
+			current_upper_anim = upper_playback.get_current_node()
+		if lower_playback: 
+			current_lower_anim = lower_playback.get_current_node()
+
 	var text := "--- CORE ---\n"
-	text += "State: " + player.MoveState.keys()[player.state] + "\n"
+	text += "FSM Node: " + active_fsm_node + "\n" 
+	text += "Enum State: " + player.MoveState.keys()[player.state] + "\n"
 	text += "Velocity: " + str(player.velocity.round()) + "\n"
-	text += "Facing: " + str(player.facing) + "\n\n"
+	text += "Facing: " + str(player.facing) + "\n"
+	text += "Upper Anim: " + str(current_upper_anim) + "\n" # <-- ADDED
+	text += "Lower Anim: " + str(current_lower_anim) + "\n\n" # <-- ADDED
 	
 	text += "--- ENGINE PHYSICS ---\n"
 	text += "On Floor: " + str(player.is_on_floor()) + "\n"
@@ -46,7 +69,7 @@ func update_physics(player: CharacterBody2D) -> void:
 	text += "Invincible: " + str(player.is_invincible) + "\n"
 	
 	lbl_physics.text = text
-
+	
 func update_anim_state(state_name: String, value: bool) -> void:
 	anim_cache[state_name] = value
 	

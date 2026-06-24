@@ -1,11 +1,12 @@
 class_name PlayerState
 extends Node
 
-var player: CharacterBody2D
+var player: Player # (Assuming you named your main script class_name Player)
+var state_machine: PlayerStateMachine # We will create this next!
 
-# Called by the StateMachine setup
-func init(p_player: CharacterBody2D) -> void:
+func init(p_player: Player, p_state_machine: PlayerStateMachine) -> void:
 	player = p_player
+	state_machine = p_state_machine
 
 # Virtual methods to override in actual implementations
 func enter() -> void:
