@@ -1,6 +1,10 @@
 extends PlayerState
 
 func enter() -> void:
+	# Disable the ragdoll instantly so the arms snap firmly to the wall climb pose
+	if player.ragdoll and player.ragdoll.has_method("disable_arms"):
+		player.ragdoll.disable_arms()
+
 	# Snap instantly to the wall frame (0.0 blend time) so it doesn't 
 	# get frozen in a crossfade by the speed_scale drop!
 	player.animator.play("wall_climb", 0.0)

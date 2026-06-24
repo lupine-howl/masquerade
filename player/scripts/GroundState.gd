@@ -3,18 +3,29 @@ extends PlayerState
 func enter() -> void:
 	# Default to idle with a quick 0.1s blend when we land
 	player.animator.play("idle", 0.1)
+	
+	# Safe initial check: If standing still on entry, enable ragdoll arms
+	if Input.get_axis("ui_left", "ui_right") == 0 and Input.get_axis("ui_up", "ui_down") <= 0:
+		if player.ragdoll and player.ragdoll.has_method("enable_arms"):
+			player.ragdoll.enable_arms()
 
 func physics_update(delta: float) -> void:
 	var direction := Input.get_axis("ui_left", "ui_right")
 	var y_dir := Input.get_axis("ui_up", "ui_down")
 
-	# --- ANIMATION LOGIC (The New Source of Truth) ---
+	# --- ANIMATION & RAGDOLL LOGIC (The New Source of Truth) ---
 	if direction != 0:
 		player.animator.play("run", 0.1)
+		if player.ragdoll and player.ragdoll.has_method("disable_arms"):
+			player.ragdoll.disable_arms()
 	elif y_dir > 0:
 		player.animator.play("crouch", 0.1)
+		if player.ragdoll and player.ragdoll.has_method("disable_arms"):
+			player.ragdoll.disable_arms()
 	else:
 		player.animator.play("idle", 0.1)
+		if player.ragdoll and player.ragdoll.has_method("enable_arms"):
+			player.ragdoll.enable_arms()
 
 	# 1. Handle Facing Direction
 	if direction != 0:

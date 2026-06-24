@@ -25,6 +25,8 @@ extends CharacterBody2D
 @export_category("Debug")
 @export var show_debug_ui := true
 
+@export var ragdoll : Node2D
+
 # ---------------------------------------------------------
 # VARIABLES
 # ---------------------------------------------------------
@@ -82,6 +84,11 @@ func _physics_process(delta: float) -> void:
 	
 	var current_node := get_state_name()
 	
+	if current_node == "ledgeclimb":
+		state_machine.physics_update(delta)
+		_move()
+		return
+	
 	# If dead, only run the FSM and move, skip ALL inputs and overrides!
 	if current_node == "dead":
 		state_machine.physics_update(delta)
@@ -98,16 +105,16 @@ func _physics_process(delta: float) -> void:
 	var over_ledge: bool = ledge_detector and not ledge_detector.is_colliding()
 	
 	var valid_climb_window: bool = velocity.y >= -500.0 
+	var is_climbing := current_node in ["ledgeclimb", "wallclimb", "ladderclimb"]
+	var can_wall_climb: bool = touching_wall and not is_on_floor() and wall_jump_lock <= 0.0
 	
 	# --- Global State Overrides ---
-	if current_node != "ledgeclimb" and touching_wall and over_ledge and not is_on_floor() and valid_climb_window:
+	# Only allow these overrides if we aren't already locked into a climb
+	if touching_wall and over_ledge and not is_on_floor() and valid_climb_window:
 		state_machine.transition_to("ledgeclimb")
-			
-	var can_wall_climb: bool = touching_wall and not is_on_floor() and wall_jump_lock <= 0.0
-	if can_wall_climb and current_node not in ["wallclimb", "ledgeclimb"] and pressing_into_wall:
+	elif can_wall_climb and pressing_into_wall:
 		state_machine.transition_to("wallclimb")
-
-	if is_on_ladder and current_node != "ladderclimb" and y_dir != 0:
+	elif is_on_ladder and y_dir != 0:
 		state_machine.transition_to("ladderclimb")
 
 	# Update Shared Timers

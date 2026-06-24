@@ -31,6 +31,7 @@
 [ext_resource type="Texture2D" uid="uid://b2iycdpu87a6n" path="res://player/assets/player_wall_land.png" id="26_7pqkx"]
 [ext_resource type="Script" uid="uid://b8j54hiva7jef" path="res://player/DebugHUD.gd" id="28_rptt4"]
 [ext_resource type="Texture2D" uid="uid://cmvjnsywbvyar" path="res://player/assets/character.png" id="30_b8hi5"]
+[ext_resource type="Script" uid="uid://bo3h510q3ok2g" path="res://player/scripts/Ragdoll.gd" id="30_fjxoa"]
 [ext_resource type="Script" uid="uid://vd62fxarftgp" path="res://player/PlayerAnimator.gd" id="31_1s1yo"]
 [ext_resource type="Script" uid="uid://cu4xh4ryvnh24" path="res://player/scripts/PlayerStateMachine.gd" id="33_jd2rm"]
 [ext_resource type="Script" uid="uid://bc7ucmt1gfah4" path="res://player/scripts/GroundState.gd" id="34_q28gw"]
@@ -2318,7 +2319,7 @@ transitions = ["upper_katana_attack_start", "upper_katana_attack_end", SubResour
 graph_offset = Vector2(-1014.4207, 230.45813)
 
 [sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_dx5ib"]
-graph_offset = Vector2(-739.06854, 455.59726)
+graph_offset = Vector2(-739.06854, 408)
 nodes/output/position = Vector2(656, 192)
 nodes/UpperState/node = SubResource("AnimationNodeStateMachine_55jnj")
 nodes/UpperState/position = Vector2(-620, 240)
@@ -3870,7 +3871,7 @@ tracks/24/keys = {
 tracks/25/type = "value"
 tracks/25/imported = false
 tracks/25/enabled = true
-tracks/25/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/LeftShoulder:visible")
+tracks/25/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D:modification_stack:modifications/2:flip_bend_direction")
 tracks/25/interp = 1
 tracks/25/loop_wrap = true
 tracks/25/keys = {
@@ -3882,134 +3883,14 @@ tracks/25/keys = {
 tracks/26/type = "value"
 tracks/26/imported = false
 tracks/26/enabled = true
-tracks/26/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/RightShoulder:visible")
+tracks/26/path = NodePath("PlayerBody/SpritePivot/Armature:position")
 tracks/26/interp = 1
 tracks/26/loop_wrap = true
 tracks/26/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [true]
-}
-tracks/27/type = "value"
-tracks/27/imported = false
-tracks/27/enabled = true
-tracks/27/path = NodePath("PlayerBody/SpritePivot/Armature/Ragdoll/DeadLeftArm:visible")
-tracks/27/interp = 1
-tracks/27/loop_wrap = true
-tracks/27/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [false]
-}
-tracks/28/type = "value"
-tracks/28/imported = false
-tracks/28/enabled = true
-tracks/28/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D:modification_stack:modifications/2:flip_bend_direction")
-tracks/28/interp = 1
-tracks/28/loop_wrap = true
-tracks/28/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [true]
-}
-tracks/29/type = "value"
-tracks/29/imported = false
-tracks/29/enabled = true
-tracks/29/path = NodePath("PlayerBody/SpritePivot/Armature/Ragdoll/DeadRightArm:visible")
-tracks/29/interp = 1
-tracks/29/loop_wrap = true
-tracks/29/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [true]
-}
-tracks/30/type = "value"
-tracks/30/imported = false
-tracks/30/enabled = true
-tracks/30/path = NodePath("PlayerBody/SpritePivot/Armature:position")
-tracks/30/interp = 1
-tracks/30/loop_wrap = true
-tracks/30/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
 "update": 0,
 "values": [Vector2(0, 0)]
-}
-tracks/31/type = "value"
-tracks/31/imported = false
-tracks/31/enabled = true
-tracks/31/path = NodePath("PlayerBody/SpritePivot/Armature/Ragdoll/DeadLeftArm/LeftUpperArm_Physics:freeze")
-tracks/31/interp = 1
-tracks/31/loop_wrap = true
-tracks/31/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [true]
-}
-tracks/32/type = "value"
-tracks/32/imported = false
-tracks/32/enabled = true
-tracks/32/path = NodePath("PlayerBody/SpritePivot/Armature/Ragdoll/DeadLeftArm/LeftLowerArm_Physics:freeze")
-tracks/32/interp = 1
-tracks/32/loop_wrap = true
-tracks/32/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [true]
-}
-tracks/33/type = "value"
-tracks/33/imported = false
-tracks/33/enabled = true
-tracks/33/path = NodePath("PlayerBody/SpritePivot/Armature/Ragdoll/DeadLeftArm/LeftHand_Physics:freeze")
-tracks/33/interp = 1
-tracks/33/loop_wrap = true
-tracks/33/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [true]
-}
-tracks/34/type = "value"
-tracks/34/imported = false
-tracks/34/enabled = true
-tracks/34/path = NodePath("PlayerBody/SpritePivot/Armature/Ragdoll/DeadRightArm/RightUpperArm_Physics:freeze")
-tracks/34/interp = 1
-tracks/34/loop_wrap = true
-tracks/34/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [true]
-}
-tracks/35/type = "value"
-tracks/35/imported = false
-tracks/35/enabled = true
-tracks/35/path = NodePath("PlayerBody/SpritePivot/Armature/Ragdoll/DeadRightArm/RightLowerArm_Physics:freeze")
-tracks/35/interp = 1
-tracks/35/loop_wrap = true
-tracks/35/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [true]
-}
-tracks/36/type = "value"
-tracks/36/imported = false
-tracks/36/enabled = true
-tracks/36/path = NodePath("PlayerBody/SpritePivot/Armature/Ragdoll/DeadRightArm/RightHand_Physics:freeze")
-tracks/36/interp = 1
-tracks/36/loop_wrap = true
-tracks/36/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [true]
 }
 
 [sub_resource type="Animation" id="Animation_jd2rm"]
@@ -4306,58 +4187,10 @@ tracks/23/keys = {
 tracks/24/type = "value"
 tracks/24/imported = false
 tracks/24/enabled = true
-tracks/24/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/LeftShoulder:visible")
+tracks/24/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D:modification_stack:modifications/2:flip_bend_direction")
 tracks/24/interp = 1
 tracks/24/loop_wrap = true
 tracks/24/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [true]
-}
-tracks/25/type = "value"
-tracks/25/imported = false
-tracks/25/enabled = true
-tracks/25/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/RightShoulder:visible")
-tracks/25/interp = 1
-tracks/25/loop_wrap = true
-tracks/25/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [true]
-}
-tracks/26/type = "value"
-tracks/26/imported = false
-tracks/26/enabled = true
-tracks/26/path = NodePath("PlayerBody/SpritePivot/Armature/Ragdoll/DeadLeftArm:visible")
-tracks/26/interp = 1
-tracks/26/loop_wrap = true
-tracks/26/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [false]
-}
-tracks/27/type = "value"
-tracks/27/imported = false
-tracks/27/enabled = true
-tracks/27/path = NodePath("Sprite2D:frame")
-tracks/27/interp = 1
-tracks/27/loop_wrap = true
-tracks/27/keys = {
-"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
-"update": 1,
-"values": [0, 1, 2, 3, 4, 5]
-}
-tracks/28/type = "value"
-tracks/28/imported = false
-tracks/28/enabled = true
-tracks/28/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D:modification_stack:modifications/2:flip_bend_direction")
-tracks/28/interp = 1
-tracks/28/loop_wrap = true
-tracks/28/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 1,
@@ -4479,82 +4312,34 @@ tracks/8/keys = {
 tracks/9/type = "value"
 tracks/9/imported = false
 tracks/9/enabled = true
-tracks/9/path = NodePath("PlayerBody/SpritePivot/Armature/Ragdoll/DeadLeftArm:visible")
+tracks/9/path = NodePath("PlayerBody/SpritePivot/Armature/Target_BackFoot_Rotation:position")
 tracks/9/interp = 1
 tracks/9/loop_wrap = true
 tracks/9/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [true]
+"update": 0,
+"values": [Vector2(-53.986267, 112.082)]
 }
 tracks/10/type = "value"
 tracks/10/imported = false
 tracks/10/enabled = true
-tracks/10/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/LeftShoulder:visible")
+tracks/10/path = NodePath("PlayerBody/SpritePivot/Armature/Target_FrontFoot_Rotation:position")
 tracks/10/interp = 1
 tracks/10/loop_wrap = true
 tracks/10/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [false]
+"update": 0,
+"values": [Vector2(-19.98626, -51.917984)]
 }
 tracks/11/type = "value"
 tracks/11/imported = false
 tracks/11/enabled = true
-tracks/11/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/RightShoulder:visible")
+tracks/11/path = NodePath("PlayerBody/SpritePivot/Armature:position")
 tracks/11/interp = 1
 tracks/11/loop_wrap = true
 tracks/11/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [false]
-}
-tracks/12/type = "value"
-tracks/12/imported = false
-tracks/12/enabled = true
-tracks/12/path = NodePath("PlayerBody/SpritePivot/Armature/Ragdoll/DeadRightArm:visible")
-tracks/12/interp = 1
-tracks/12/loop_wrap = true
-tracks/12/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [true]
-}
-tracks/13/type = "value"
-tracks/13/imported = false
-tracks/13/enabled = true
-tracks/13/path = NodePath("PlayerBody/SpritePivot/Armature/Target_BackFoot_Rotation:position")
-tracks/13/interp = 1
-tracks/13/loop_wrap = true
-tracks/13/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector2(-53.986267, 112.082)]
-}
-tracks/14/type = "value"
-tracks/14/imported = false
-tracks/14/enabled = true
-tracks/14/path = NodePath("PlayerBody/SpritePivot/Armature/Target_FrontFoot_Rotation:position")
-tracks/14/interp = 1
-tracks/14/loop_wrap = true
-tracks/14/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector2(-19.98626, -51.917984)]
-}
-tracks/15/type = "value"
-tracks/15/imported = false
-tracks/15/enabled = true
-tracks/15/path = NodePath("PlayerBody/SpritePivot/Armature:position")
-tracks/15/interp = 1
-tracks/15/loop_wrap = true
-tracks/15/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
@@ -4856,146 +4641,26 @@ tracks/23/keys = {
 tracks/24/type = "value"
 tracks/24/imported = false
 tracks/24/enabled = true
-tracks/24/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/LeftShoulder:visible")
+tracks/24/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D:modification_stack:modifications/2:flip_bend_direction")
 tracks/24/interp = 1
 tracks/24/loop_wrap = true
 tracks/24/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 1,
-"values": [false]
+"values": [true]
 }
 tracks/25/type = "value"
 tracks/25/imported = false
 tracks/25/enabled = true
-tracks/25/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/RightShoulder:visible")
+tracks/25/path = NodePath("PlayerBody/SpritePivot/Armature:position")
 tracks/25/interp = 1
 tracks/25/loop_wrap = true
 tracks/25/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [false]
-}
-tracks/26/type = "value"
-tracks/26/imported = false
-tracks/26/enabled = true
-tracks/26/path = NodePath("PlayerBody/SpritePivot/Armature/Ragdoll/DeadLeftArm:visible")
-tracks/26/interp = 1
-tracks/26/loop_wrap = true
-tracks/26/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [true]
-}
-tracks/27/type = "value"
-tracks/27/imported = false
-tracks/27/enabled = true
-tracks/27/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D:modification_stack:modifications/2:flip_bend_direction")
-tracks/27/interp = 1
-tracks/27/loop_wrap = true
-tracks/27/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [true]
-}
-tracks/28/type = "value"
-tracks/28/imported = false
-tracks/28/enabled = true
-tracks/28/path = NodePath("PlayerBody/SpritePivot/Armature:position")
-tracks/28/interp = 1
-tracks/28/loop_wrap = true
-tracks/28/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
 "update": 0,
 "values": [Vector2(0, 0)]
-}
-tracks/29/type = "value"
-tracks/29/imported = false
-tracks/29/enabled = true
-tracks/29/path = NodePath("PlayerBody/SpritePivot/Armature/Ragdoll/DeadRightArm:visible")
-tracks/29/interp = 1
-tracks/29/loop_wrap = true
-tracks/29/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [true]
-}
-tracks/30/type = "value"
-tracks/30/imported = false
-tracks/30/enabled = true
-tracks/30/path = NodePath("PlayerBody/SpritePivot/Armature/Ragdoll/DeadLeftArm/LeftUpperArm_Physics:freeze")
-tracks/30/interp = 1
-tracks/30/loop_wrap = true
-tracks/30/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [false]
-}
-tracks/31/type = "value"
-tracks/31/imported = false
-tracks/31/enabled = true
-tracks/31/path = NodePath("PlayerBody/SpritePivot/Armature/Ragdoll/DeadLeftArm/LeftLowerArm_Physics:freeze")
-tracks/31/interp = 1
-tracks/31/loop_wrap = true
-tracks/31/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [false]
-}
-tracks/32/type = "value"
-tracks/32/imported = false
-tracks/32/enabled = true
-tracks/32/path = NodePath("PlayerBody/SpritePivot/Armature/Ragdoll/DeadLeftArm/LeftHand_Physics:freeze")
-tracks/32/interp = 1
-tracks/32/loop_wrap = true
-tracks/32/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [false]
-}
-tracks/33/type = "value"
-tracks/33/imported = false
-tracks/33/enabled = true
-tracks/33/path = NodePath("PlayerBody/SpritePivot/Armature/Ragdoll/DeadRightArm/RightUpperArm_Physics:freeze")
-tracks/33/interp = 1
-tracks/33/loop_wrap = true
-tracks/33/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [false]
-}
-tracks/34/type = "value"
-tracks/34/imported = false
-tracks/34/enabled = true
-tracks/34/path = NodePath("PlayerBody/SpritePivot/Armature/Ragdoll/DeadRightArm/RightLowerArm_Physics:freeze")
-tracks/34/interp = 1
-tracks/34/loop_wrap = true
-tracks/34/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [false]
-}
-tracks/35/type = "value"
-tracks/35/imported = false
-tracks/35/enabled = true
-tracks/35/path = NodePath("PlayerBody/SpritePivot/Armature/Ragdoll/DeadRightArm/RightHand_Physics:freeze")
-tracks/35/interp = 1
-tracks/35/loop_wrap = true
-tracks/35/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [false]
 }
 
 [sub_resource type="Animation" id="Animation_jfgyi"]
@@ -5610,58 +5275,10 @@ tracks/19/keys = {
 tracks/20/type = "value"
 tracks/20/imported = false
 tracks/20/enabled = true
-tracks/20/path = NodePath("PlayerBody/SpritePivot/Armature/Ragdoll/DeadLeftArm:visible")
+tracks/20/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D:modification_stack:modifications/2:flip_bend_direction")
 tracks/20/interp = 1
 tracks/20/loop_wrap = true
 tracks/20/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [true]
-}
-tracks/21/type = "value"
-tracks/21/imported = false
-tracks/21/enabled = true
-tracks/21/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/LeftShoulder:visible")
-tracks/21/interp = 1
-tracks/21/loop_wrap = true
-tracks/21/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [false]
-}
-tracks/22/type = "value"
-tracks/22/imported = false
-tracks/22/enabled = true
-tracks/22/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/RightShoulder:visible")
-tracks/22/interp = 1
-tracks/22/loop_wrap = true
-tracks/22/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [false]
-}
-tracks/23/type = "value"
-tracks/23/imported = false
-tracks/23/enabled = true
-tracks/23/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D:modification_stack:modifications/2:flip_bend_direction")
-tracks/23/interp = 1
-tracks/23/loop_wrap = true
-tracks/23/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [true]
-}
-tracks/24/type = "value"
-tracks/24/imported = false
-tracks/24/enabled = true
-tracks/24/path = NodePath("PlayerBody/SpritePivot/Armature/Ragdoll/DeadRightArm:visible")
-tracks/24/interp = 1
-tracks/24/loop_wrap = true
-tracks/24/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 1,
@@ -5962,7 +5579,7 @@ tracks/23/keys = {
 tracks/24/type = "value"
 tracks/24/imported = false
 tracks/24/enabled = true
-tracks/24/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/LeftShoulder:visible")
+tracks/24/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D:modification_stack:modifications/2:flip_bend_direction")
 tracks/24/interp = 1
 tracks/24/loop_wrap = true
 tracks/24/keys = {
@@ -5974,58 +5591,10 @@ tracks/24/keys = {
 tracks/25/type = "value"
 tracks/25/imported = false
 tracks/25/enabled = true
-tracks/25/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/RightShoulder:visible")
+tracks/25/path = NodePath("PlayerBody/SpritePivot/Armature:position")
 tracks/25/interp = 1
 tracks/25/loop_wrap = true
 tracks/25/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [true]
-}
-tracks/26/type = "value"
-tracks/26/imported = false
-tracks/26/enabled = true
-tracks/26/path = NodePath("PlayerBody/SpritePivot/Armature/Ragdoll/DeadLeftArm:visible")
-tracks/26/interp = 1
-tracks/26/loop_wrap = true
-tracks/26/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [false]
-}
-tracks/27/type = "value"
-tracks/27/imported = false
-tracks/27/enabled = true
-tracks/27/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D:modification_stack:modifications/2:flip_bend_direction")
-tracks/27/interp = 1
-tracks/27/loop_wrap = true
-tracks/27/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [true]
-}
-tracks/28/type = "value"
-tracks/28/imported = false
-tracks/28/enabled = true
-tracks/28/path = NodePath("PlayerBody/SpritePivot/Armature/Ragdoll/DeadRightArm:visible")
-tracks/28/interp = 1
-tracks/28/loop_wrap = true
-tracks/28/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [false]
-}
-tracks/29/type = "value"
-tracks/29/imported = false
-tracks/29/enabled = true
-tracks/29/path = NodePath("PlayerBody/SpritePivot/Armature:position")
-tracks/29/interp = 1
-tracks/29/loop_wrap = true
-tracks/29/keys = {
 "times": PackedFloat32Array(0, 0.10000001, 0.20000002, 0.3, 0.40000004, 0.5),
 "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
 "update": 0,
@@ -6634,74 +6203,26 @@ tracks/19/keys = {
 tracks/20/type = "value"
 tracks/20/imported = false
 tracks/20/enabled = true
-tracks/20/path = NodePath("PlayerBody/SpritePivot/Armature/Ragdoll/DeadLeftArm:visible")
+tracks/20/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D:modification_stack:modifications/2:flip_bend_direction")
 tracks/20/interp = 1
 tracks/20/loop_wrap = true
 tracks/20/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 1,
-"values": [false]
+"values": [true]
 }
 tracks/21/type = "value"
 tracks/21/imported = false
 tracks/21/enabled = true
-tracks/21/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/LeftShoulder:visible")
+tracks/21/path = NodePath("PlayerBody/SpritePivot/Armature:position")
 tracks/21/interp = 1
 tracks/21/loop_wrap = true
 tracks/21/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [true]
-}
-tracks/22/type = "value"
-tracks/22/imported = false
-tracks/22/enabled = true
-tracks/22/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/RightShoulder:visible")
-tracks/22/interp = 1
-tracks/22/loop_wrap = true
-tracks/22/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [true]
-}
-tracks/23/type = "value"
-tracks/23/imported = false
-tracks/23/enabled = true
-tracks/23/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D:modification_stack:modifications/2:flip_bend_direction")
-tracks/23/interp = 1
-tracks/23/loop_wrap = true
-tracks/23/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [true]
-}
-tracks/24/type = "value"
-tracks/24/imported = false
-tracks/24/enabled = true
-tracks/24/path = NodePath("PlayerBody/SpritePivot/Armature:position")
-tracks/24/interp = 1
-tracks/24/loop_wrap = true
-tracks/24/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
 "update": 0,
 "values": [Vector2(0, 0)]
-}
-tracks/25/type = "value"
-tracks/25/imported = false
-tracks/25/enabled = true
-tracks/25/path = NodePath("PlayerBody/SpritePivot/Armature/Ragdoll/DeadRightArm:visible")
-tracks/25/interp = 1
-tracks/25/loop_wrap = true
-tracks/25/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [false]
 }
 
 [sub_resource type="Animation" id="Animation_55jnj"]
@@ -7011,7 +6532,7 @@ tracks/24/keys = {
 tracks/25/type = "value"
 tracks/25/imported = false
 tracks/25/enabled = true
-tracks/25/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/LeftShoulder:visible")
+tracks/25/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D:modification_stack:modifications/2:flip_bend_direction")
 tracks/25/interp = 1
 tracks/25/loop_wrap = true
 tracks/25/keys = {
@@ -7023,58 +6544,10 @@ tracks/25/keys = {
 tracks/26/type = "value"
 tracks/26/imported = false
 tracks/26/enabled = true
-tracks/26/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/RightShoulder:visible")
+tracks/26/path = NodePath("PlayerBody/SpritePivot/Armature:position")
 tracks/26/interp = 1
 tracks/26/loop_wrap = true
 tracks/26/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [true]
-}
-tracks/27/type = "value"
-tracks/27/imported = false
-tracks/27/enabled = true
-tracks/27/path = NodePath("PlayerBody/SpritePivot/Armature/Ragdoll/DeadLeftArm:visible")
-tracks/27/interp = 1
-tracks/27/loop_wrap = true
-tracks/27/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [false]
-}
-tracks/28/type = "value"
-tracks/28/imported = false
-tracks/28/enabled = true
-tracks/28/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D:modification_stack:modifications/2:flip_bend_direction")
-tracks/28/interp = 1
-tracks/28/loop_wrap = true
-tracks/28/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [true]
-}
-tracks/29/type = "value"
-tracks/29/imported = false
-tracks/29/enabled = true
-tracks/29/path = NodePath("PlayerBody/SpritePivot/Armature/Ragdoll/DeadRightArm:visible")
-tracks/29/interp = 1
-tracks/29/loop_wrap = true
-tracks/29/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [false]
-}
-tracks/30/type = "value"
-tracks/30/imported = false
-tracks/30/enabled = true
-tracks/30/path = NodePath("PlayerBody/SpritePivot/Armature:position")
-tracks/30/interp = 1
-tracks/30/loop_wrap = true
-tracks/30/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
@@ -7469,7 +6942,7 @@ rainbow_speed = 0.01
 saturation = 1.0
 brightness = 0.5
 
-[node name="PlayerBody" type="CharacterBody2D" parent="." unique_id=411922790 groups=["player"]]
+[node name="PlayerBody" type="CharacterBody2D" parent="." unique_id=411922790 node_paths=PackedStringArray("ragdoll") groups=["player"]]
 position = Vector2(0, 1)
 collision_layer = 7
 collision_mask = 3
@@ -7480,6 +6953,7 @@ LADDER_CLIMB_SPEED = 400.0
 WALL_CLIMB_SPEED = 400.0
 JUMP_VELOCITY = -1000.0
 DOUBLE_JUMP_VELOCITY = -1000.0
+ragdoll = NodePath("SpritePivot/Armature/Ragdoll")
 metadata/_edit_group_ = true
 
 [node name="Camera2D" type="Camera2D" parent="PlayerBody" unique_id=158208042]
@@ -7541,11 +7015,13 @@ shape = SubResource("RectangleShape2D_s7qer")
 [node name="Armature" type="Node2D" parent="PlayerBody/SpritePivot" unique_id=1602337061]
 scale = Vector2(0.5, 0.5)
 
-[node name="Ragdoll" type="Node2D" parent="PlayerBody/SpritePivot/Armature" unique_id=35418647]
+[node name="Ragdoll" type="Node2D" parent="PlayerBody/SpritePivot/Armature" unique_id=35418647 node_paths=PackedStringArray("armature_shoulder_bones")]
 scale = Vector2(2, 2)
+script = ExtResource("30_fjxoa")
+armature_shoulder_bones = [NodePath("../Skeleton2D/Pelvis/Spine/LeftShoulder"), NodePath("../Skeleton2D/Pelvis/Spine/RightShoulder")]
 
 [node name="DeadLeftArm" type="StaticBody2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll" unique_id=1621673022]
-visible = false
+position = Vector2(8.649978, -109.14813)
 collision_layer = 256
 collision_mask = 256
 
@@ -7553,10 +7029,8 @@ collision_mask = 256
 shape = SubResource("CircleShape2D_5ejfk")
 
 [node name="LeftUpperArm_Physics" type="RigidBody2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/DeadLeftArm" unique_id=648442576]
-position = Vector2(-6, -117.00001)
 collision_layer = 256
 collision_mask = 256
-freeze = true
 linear_damp = 10.0
 angular_damp = 10.0
 
@@ -7573,10 +7047,9 @@ region_enabled = true
 region_rect = Rect2(250, 205, 88, 180)
 
 [node name="LeftLowerArm_Physics" type="RigidBody2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/DeadLeftArm" unique_id=2018253390]
-position = Vector2(-6, -86.00001)
+position = Vector2(0, 31)
 collision_layer = 256
 collision_mask = 256
-freeze = true
 linear_damp = 10.0
 angular_damp = 10.0
 
@@ -7593,10 +7066,9 @@ region_enabled = true
 region_rect = Rect2(250, 491, 86, 170)
 
 [node name="LeftHand_Physics" type="RigidBody2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/DeadLeftArm" unique_id=765726449]
-position = Vector2(-6, -57.000008)
+position = Vector2(0, 62)
 collision_layer = 256
 collision_mask = 256
-freeze = true
 linear_damp = 10.0
 angular_damp = 10.0
 
@@ -7614,28 +7086,23 @@ region_enabled = true
 region_rect = Rect2(231, 780, 109, 134)
 
 [node name="LeftShoulder_Hinge" type="PinJoint2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/DeadLeftArm" unique_id=2009116223]
-position = Vector2(-1.9831436, -110.935524)
-rotation = 2.7524042
-scale = Vector2(0.4998757, 0.4998757)
 node_a = NodePath("..")
 node_b = NodePath("../LeftUpperArm_Physics")
 bias = 0.9
 
 [node name="LeftElbow_Hinge" type="PinJoint2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/DeadLeftArm" unique_id=1275799075]
-position = Vector2(5, -84)
-scale = Vector2(0.5, 0.5)
+position = Vector2(0, 31)
 node_a = NodePath("../LeftUpperArm_Physics")
 node_b = NodePath("../LeftLowerArm_Physics")
 
 [node name="LeftHand_Hinge" type="PinJoint2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/DeadLeftArm" unique_id=1677548675]
-position = Vector2(-6, -57.000008)
-scale = Vector2(0.5, 0.5)
+position = Vector2(0, 60)
 node_a = NodePath("../LeftLowerArm_Physics")
 node_b = NodePath("../LeftHand_Physics")
 
 [node name="DeadRightArm" type="StaticBody2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll" unique_id=1185153846]
 z_index = 10
-position = Vector2(0.32300347, -108.227516)
+position = Vector2(-6.692116, -115.64783)
 collision_layer = 512
 collision_mask = 512
 
@@ -7646,7 +7113,6 @@ shape = SubResource("CircleShape2D_1s1yo")
 position = Vector2(-7.6293945e-06, -0.9999924)
 collision_layer = 512
 collision_mask = 512
-freeze = true
 linear_damp = 10.0
 angular_damp = 10.0
 
@@ -7666,7 +7132,6 @@ region_rect = Rect2(54, 205, 89, 180)
 position = Vector2(0, 30)
 collision_layer = 512
 collision_mask = 512
-freeze = true
 linear_damp = 10.0
 angular_damp = 10.0
 
@@ -7686,7 +7151,6 @@ region_rect = Rect2(56, 491, 87, 170)
 position = Vector2(0, 56)
 collision_layer = 512
 collision_mask = 512
-freeze = true
 linear_damp = 10.0
 angular_damp = 10.0
 
@@ -7704,7 +7168,6 @@ region_enabled = true
 region_rect = Rect2(53, 780, 108, 134)
 
 [node name="RightShoulder_Hinge" type="PinJoint2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/DeadRightArm" unique_id=808895389]
-rotation = 1.5552127
 scale = Vector2(0.99999994, 0.99999994)
 node_a = NodePath("..")
 node_b = NodePath("../RightUpperArm_Physics")
@@ -7716,7 +7179,7 @@ node_a = NodePath("../RightUpperArm_Physics")
 node_b = NodePath("../RightLowerArm_Physics")
 
 [node name="RightHand_Hinge" type="PinJoint2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/DeadRightArm" unique_id=1708239370]
-position = Vector2(0, 62.99999)
+position = Vector2(0, 54.99999)
 node_a = NodePath("../RightLowerArm_Physics")
 node_b = NodePath("../RightHand_Physics")
 
@@ -7792,13 +7255,15 @@ region_rect = Rect2(404, 42.000004, 227.19995, 208.79999)
 
 [node name="LeftShoulder" type="Bone2D" parent="PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine" unique_id=732858989]
 position = Vector2(-6.5663757, 0.07548523)
-rotation = -0.88642746
+rotation = -1.7284806
 scale = Vector2(0.99983954, 0.99983954)
 rest = Transform2D(-0.40414256, -0.9146696, 0.9146696, -0.40414256, -15.097828, -7.0690055)
 metadata/_local_pose_override_enabled_ = true
 
 [node name="RemoteTransform2D" type="RemoteTransform2D" parent="PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/LeftShoulder" unique_id=572814809]
-remote_path = NodePath("../../../../../Ragdoll/DeadLeftArm/LeftShoulder_Hinge")
+remote_path = NodePath("../../../../../Ragdoll/DeadLeftArm")
+update_rotation = false
+update_scale = false
 
 [node name="LeftUpperArm" type="Sprite2D" parent="PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/LeftShoulder" unique_id=766854331]
 position = Vector2(-21.756226, -3.9180145)
@@ -7837,8 +7302,8 @@ region_rect = Rect2(231, 780, 109, 134)
 
 [node name="RightShoulder" type="Bone2D" parent="PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine" unique_id=908919963]
 position = Vector2(-1.1036072, 4.633301)
-rotation = 1.0421298
-scale = Vector2(0.9998469, 0.9998469)
+rotation = -0.57380843
+scale = Vector2(0.99984795, 0.99984795)
 rest = Transform2D(0.18983588, 0.9817922, -0.9817922, 0.18983588, 12, 0)
 metadata/_local_pose_override_enabled_ = true
 
@@ -7886,8 +7351,8 @@ region_rect = Rect2(53, 780, 108, 134)
 
 [node name="LeftHip" type="Bone2D" parent="PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis" unique_id=1901562911]
 position = Vector2(-12.174713, 6.8692093)
-rotation = 1.0227181
-scale = Vector2(0.99984604, 0.99984604)
+rotation = 1.6701471
+scale = Vector2(0.9998473, 0.9998473)
 rest = Transform2D(0.3662702, 0.93047357, -0.93047357, 0.3662702, 10.495453, -10.16515)
 metadata/_local_pose_override_enabled_ = true
 
@@ -7916,7 +7381,7 @@ region_rect = Rect2(874, 536, 116, 228)
 
 [node name="LeftFoot" type="Bone2D" parent="PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/LeftHip/LeftKnee" unique_id=1233006473]
 position = Vector2(80, 0)
-scale = Vector2(0.999854, 0.999854)
+scale = Vector2(0.9998538, 0.9998538)
 rest = Transform2D(0.9894251, -0.14498658, 0.14498658, 0.9894251, 80, 0)
 metadata/_local_pose_override_enabled_ = true
 
@@ -7930,8 +7395,8 @@ region_rect = Rect2(856, 862, 151, 77)
 
 [node name="RightHip" type="Bone2D" parent="PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis" unique_id=1096470667]
 position = Vector2(-9.1992035, -1.658081)
-rotation = -1.5808727
-scale = Vector2(0.9998506, 0.9998506)
+rotation = -1.8961927
+scale = Vector2(0.99984944, 0.99984944)
 rest = Transform2D(-0.3575367, -0.9338695, 0.9338695, -0.3575367, -5.495452, -5.030177)
 metadata/_local_pose_override_enabled_ = true
 
@@ -7962,7 +7427,7 @@ region_rect = Rect2(668, 536, 134, 228)
 
 [node name="RightFoot" type="Bone2D" parent="PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/RightHip/RightKnee" unique_id=1432731254]
 position = Vector2(-81.38, 4.2539825)
-scale = Vector2(0.9998304, 0.9998304)
+scale = Vector2(0.99983126, 0.99983126)
 rest = Transform2D(0.83783185, -0.5459122, 0.5459122, 0.83783185, -81.38, 4.2539825)
 metadata/_local_pose_override_enabled_ = true
 

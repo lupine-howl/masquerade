@@ -1,6 +1,10 @@
 extends PlayerState
 
 func enter() -> void:
+	# Keep those arms floppy while airborne!
+	if player.ragdoll and player.ragdoll.has_method("enable_arms"):
+		player.ragdoll.enable_arms()
+
 	# Decide what animation to start with based on our vertical momentum
 	if player.velocity.y < 0:
 		player.animator.play("jump", 0.1)
@@ -30,9 +34,6 @@ func physics_update(delta: float) -> void:
 		player.velocity.x = move_toward(player.velocity.x, horiz_gravity * 0.5, current_target_speed * 8 * delta)
 
 	# --- ANIMATION LOGIC ---
-	# Switch to the fall animation once we hit the apex of the jump.
-	# (Don't worry about calling this every frame; Godot's AnimationPlayer 
-	# is smart enough to just keep playing it without restarting it).
 	if player.velocity.y >= 0:
 		player.animator.play("fall", 0.1)
 
@@ -41,14 +42,19 @@ func physics_update(delta: float) -> void:
 		if player.is_submerged:
 			player.jump_buffer_timer = 0
 			player.velocity.y = player.water_swim_velocity
-			player.animator.play("jump", 0.1) # Re-trigger jump visually underwater
+			player.animator.play("jump", 0.1) 
 		elif player.can_double_jump:
 			player.jump_buffer_timer = 0
 			player.can_double_jump = false
 			player.velocity.y = player.DOUBLE_JUMP_VELOCITY
 			
-			# Snap instantly (0.0 blend) to the double jump for snappy game feel!
+			# Snap instantly to the double jump animation
 			player.animator.play("double_jump", 0.0) 
+			
+			# Re-verify arm ragdolling in case the double_jump animation track 
+			# has any stray keyframes trying to reset visibility
+			if player.ragdoll and player.ragdoll.has_method("enable_arms"):
+				player.ragdoll.enable_arms()
 
 	# Dash Transition
 	if Input.is_action_just_pressed("ui_dash") and not player.is_submerged:
