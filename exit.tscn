@@ -1,0 +1,78 @@
+[gd_scene format=3 uid="uid://sae4qp6v0k0l"]
+
+[ext_resource type="Script" uid="uid://0hdw7so6k7wx" path="res://exit.gd" id="1_24kvk"]
+[ext_resource type="Texture2D" uid="uid://drmfgf0k7q0av" path="res://Assets/Items/Doors/door.png" id="2_24kvk"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mlcv5"]
+atlas = ExtResource("2_24kvk")
+region = Rect2(0, 0, 102, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pinn1"]
+atlas = ExtResource("2_24kvk")
+region = Rect2(102, 0, 102, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_d0uvg"]
+atlas = ExtResource("2_24kvk")
+region = Rect2(204, 0, 102, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_286a5"]
+atlas = ExtResource("2_24kvk")
+region = Rect2(306, 0, 102, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_a414d"]
+atlas = ExtResource("2_24kvk")
+region = Rect2(408, 0, 102, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kk3o8"]
+atlas = ExtResource("2_24kvk")
+region = Rect2(510, 0, 102, 128)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_jcq7d"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mlcv5")
+}],
+"loop": true,
+"name": &"default",
+"speed": 20.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mlcv5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pinn1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_d0uvg")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_286a5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_a414d")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kk3o8")
+}],
+"loop": false,
+"name": &"open",
+"speed": 10.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_yuntp"]
+radius = 20.0
+
+[node name="Exit" type="Area2D" unique_id=783523946]
+script = ExtResource("1_24kvk")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=145816453]
+scale = Vector2(0.5, 0.5)
+sprite_frames = SubResource("SpriteFrames_jcq7d")
+autoplay = "default"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=2005410690]
+shape = SubResource("CircleShape2D_yuntp")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
