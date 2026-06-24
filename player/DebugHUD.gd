@@ -1,26 +1,18 @@
 extends CanvasLayer
 
 var lbl_physics: Label
-var lbl_anim: Label
-var anim_cache: Dictionary = {}
+
+# Tracking state history so you can spot 1-frame transition bugs!
+var prev_state_name := "None"
+var current_state_name := "None"
 
 func _ready() -> void:
-	# Setup Physics Label (Left)
+	# Setup Physics Label
 	lbl_physics = Label.new()
 	lbl_physics.position = Vector2(16, 16)
 	lbl_physics.add_theme_color_override("font_outline_color", Color.BLACK)
 	lbl_physics.add_theme_constant_override("outline_size", 4)
 	add_child(lbl_physics)
-	
-	# Setup Anim Label (Right)
-	lbl_anim = Label.new()
-	lbl_anim.add_theme_color_override("font_outline_color", Color.BLACK)
-	lbl_anim.add_theme_constant_override("outline_size", 4)
-	lbl_anim.set_anchors_preset(Control.PRESET_TOP_RIGHT)
-	lbl_anim.grow_horizontal = Control.GROW_DIRECTION_BEGIN
-	lbl_anim.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	lbl_anim.position = Vector2(-16, 16)
-	add_child(lbl_anim)
 
 func update_physics(player: CharacterBody2D) -> void:
 	# Safely grab the active FSM Node name
@@ -28,28 +20,35 @@ func update_physics(player: CharacterBody2D) -> void:
 	if player.state_machine and player.state_machine.current_state:
 		active_fsm_node = player.state_machine.current_state.name
 
-	# --- NEW: PULL CURRENT ANIMATION STATES ---
-	var current_upper_anim = "Unknown"
-	var current_lower_anim = "Unknown"
-	
-	if player.animator and player.animator.tree:
-		# Access the built-in playback object for your state machines
-		var upper_playback = player.animator.tree.get("parameters/UpperState/playback")
-		var lower_playback = player.animator.tree.get("parameters/LowerState/playback")
-		
-		# get_current_node() returns the name of the active animation node
-		if upper_playback: 
-			current_upper_anim = upper_playback.get_current_node()
-		if lower_playback: 
-			current_lower_anim = lower_playback.get_current_node()
+	# Update State History
+	if active_fsm_node != current_state_name:
+		prev_state_name = current_state_name
+		current_state_name = active_fsm_node
 
-	var text := "--- CORE ---\n"
-	text += "FSM Node: " + active_fsm_node + "\n" 
-	text += "Enum State: " + player.MoveState.keys()[player.state] + "\n"
+	# --- PULL CURRENT ANIMATION DIRECTLY FROM THE PLAYER ---
+	var current_anim = "Unknown"
+	if player.animator and player.animator.anim_player:
+		current_anim = player.animator.anim_player.current_animation
+		if current_anim == "": 
+			current_anim = "[Stopped]"
+
+	# Grab raw inputs for debugging controller deadzones
+	var input_x := Input.get_axis("ui_left", "ui_right")
+	var input_y := Input.get_axis("ui_up", "ui_down")
+
+	var text := "--- VITALS ---\n"
+	text += "FPS: " + str(Engine.get_frames_per_second()) + "\n"
+	text += "Position: " + str(player.global_position.round()) + "\n\n"
+
+	text += "--- CORE FSM ---\n"
+	text += "Current Node: " + current_state_name + "\n" 
+	text += "Previous Node: " + prev_state_name + "\n" 
+	text += "Playing Anim: " + current_anim + "\n\n" 
+	
+	text += "--- MOVEMENT & INPUT ---\n"
 	text += "Velocity: " + str(player.velocity.round()) + "\n"
-	text += "Facing: " + str(player.facing) + "\n"
-	text += "Upper Anim: " + str(current_upper_anim) + "\n" # <-- ADDED
-	text += "Lower Anim: " + str(current_lower_anim) + "\n\n" # <-- ADDED
+	text += "Raw Input: (" + str(snapped(input_x, 0.01)) + ", " + str(snapped(input_y, 0.01)) + ")\n"
+	text += "Facing: " + str(player.facing) + "\n\n"
 	
 	text += "--- ENGINE PHYSICS ---\n"
 	text += "On Floor: " + str(player.is_on_floor()) + "\n"
@@ -69,16 +68,3 @@ func update_physics(player: CharacterBody2D) -> void:
 	text += "Invincible: " + str(player.is_invincible) + "\n"
 	
 	lbl_physics.text = text
-	
-func update_anim_state(state_name: String, value: bool) -> void:
-	anim_cache[state_name] = value
-	
-	var anim_text := "--- ANIMATION STATES ---\n"
-	var keys = anim_cache.keys()
-	keys.sort()
-	
-	for key in keys:
-		var val_str = "TRUE" if anim_cache[key] else "false"
-		anim_text += str(key) + ": " + val_str + "\n"
-		
-	lbl_anim.text = anim_text

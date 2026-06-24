@@ -1,5 +1,12 @@
 extends PlayerState
 
+func enter() -> void:
+	# Decide what animation to start with based on our vertical momentum
+	if player.velocity.y < 0:
+		player.animator.play("jump", 0.1)
+	else:
+		player.animator.play("fall", 0.1)
+
 func physics_update(delta: float) -> void:
 	var direction := Input.get_axis("ui_left", "ui_right")
 	
@@ -22,24 +29,26 @@ func physics_update(delta: float) -> void:
 	else: 
 		player.velocity.x = move_toward(player.velocity.x, horiz_gravity * 0.5, current_target_speed * 8 * delta)
 
-	# Animation Handling (Jumping vs Falling)
-	if player.velocity.y < 0:
-		player.animator.set_condition("jumping", true)
-		player.animator.set_condition("falling", false)
-	else:
-		player.animator.set_condition("jumping", false)
-		player.animator.set_condition("falling", true)
+	# --- ANIMATION LOGIC ---
+	# Switch to the fall animation once we hit the apex of the jump.
+	# (Don't worry about calling this every frame; Godot's AnimationPlayer 
+	# is smart enough to just keep playing it without restarting it).
+	if player.velocity.y >= 0:
+		player.animator.play("fall", 0.1)
 
 	# Jump Buffering & Double Jump
 	if player.jump_buffer_timer > 0:
 		if player.is_submerged:
 			player.jump_buffer_timer = 0
 			player.velocity.y = player.water_swim_velocity
+			player.animator.play("jump", 0.1) # Re-trigger jump visually underwater
 		elif player.can_double_jump:
 			player.jump_buffer_timer = 0
 			player.can_double_jump = false
 			player.velocity.y = player.DOUBLE_JUMP_VELOCITY
-			player.animator.set_condition("double_jumping", true) # Active animation burst
+			
+			# Snap instantly (0.0 blend) to the double jump for snappy game feel!
+			player.animator.play("double_jump", 0.0) 
 
 	# Dash Transition
 	if Input.is_action_just_pressed("ui_dash") and not player.is_submerged:

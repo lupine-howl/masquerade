@@ -1,8 +1,20 @@
 extends PlayerState
 
+func enter() -> void:
+	# Default to idle with a quick 0.1s blend when we land
+	player.animator.play("idle", 0.1)
+
 func physics_update(delta: float) -> void:
 	var direction := Input.get_axis("ui_left", "ui_right")
 	var y_dir := Input.get_axis("ui_up", "ui_down")
+
+	# --- ANIMATION LOGIC (The New Source of Truth) ---
+	if direction != 0:
+		player.animator.play("run", 0.1)
+	elif y_dir > 0:
+		player.animator.play("crouch", 0.1)
+	else:
+		player.animator.play("idle", 0.1)
 
 	# 1. Handle Facing Direction
 	if direction != 0:

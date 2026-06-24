@@ -26,29 +26,12 @@ extends CharacterBody2D
 @export var show_debug_ui := true
 
 # ---------------------------------------------------------
-# STATES
+# VARIABLES
 # ---------------------------------------------------------
-enum MoveState {
-	GROUNDED, JUMPING, FALLING, DOUBLE_JUMPING, ROLLING, DASHING, KNOCKBACK, LADDER_CLIMBING, WALL_CLIMBING, LEDGE_CLIMBING
-}
-
-var state_to_anim_map: Dictionary = {
-	MoveState.GROUNDED: "on_ground",
-	MoveState.JUMPING: "jumping",
-	MoveState.FALLING: "falling",
-	MoveState.DOUBLE_JUMPING: "double_jumping",
-	MoveState.ROLLING: "rolling",
-	MoveState.DASHING: "dashing",
-	MoveState.WALL_CLIMBING: "wall_climbing",
-	MoveState.LEDGE_CLIMBING: "on_ledge"
-}
-
-var state: MoveState = MoveState.GROUNDED
-var is_dead := false
 var is_invincible := false 
 var facing := 1 
 
-# (We will move these specific timers into their own states in the next phase!)
+# Shared Timers
 var attack_buffer := 0.15
 var attack_timer := 0.0
 var can_double_jump := true
@@ -64,11 +47,11 @@ const JUMP_BUFFER_TIME := 0.12
 
 # --- MODULE REFERENCES ---
 @onready var debug_hud := $DebugHUD 
-@onready var state_machine := $StateMachine # <--- NEW STATE MACHINE
+@onready var state_machine := $StateMachine 
 
 @onready var sprite_pivot := $SpritePivot
 @onready var hazard_detector := $SpritePivot/HazardDetector
-@onready var animator := $ArmatureAnimationTree
+@onready var animator := $PlayerAnimator 
 @onready var sprite_upper := $SpritePivot/SpriteContainer/SpriteUpper
 @onready var sprite_lower := $SpritePivot/SpriteContainer/SpriteLower
 @onready var attack_area := $SpritePivot/AttackArea
@@ -76,14 +59,9 @@ const JUMP_BUFFER_TIME := 0.12
 @onready var ledge_detector := $SpritePivot/LedgeDetector
 @onready var armature := $SpritePivot/Armature
 
-func _on_ladder_state_changed(on_ladder: bool) -> void:
-	is_on_ladder = on_ladder
-	if not is_on_ladder and state == MoveState.LADDER_CLIMBING:
-		_change_state(MoveState.FALLING)
-
-func _on_water_state_changed(submerged: bool) -> void:
-	is_submerged = submerged
-
+# ---------------------------------------------------------
+# BUILT-IN ENGINE METHODS
+# ---------------------------------------------------------
 func _ready() -> void:
 	hazard_detector.hazard_touched.connect(die)
 	hazard_detector.ladder_state_changed.connect(_on_ladder_state_changed)
@@ -96,36 +74,19 @@ func _ready() -> void:
 		debug_hud.queue_free()
 		debug_hud = null
 		
-	animator.reset_all_conditions()
-	
-	# Initialize the Node-based FSM
 	state_machine.init(self)
-	_change_state(MoveState.GROUNDED)
-
-
-# --- THE BRIDGE FUNCTION ---
-func _change_state(new_state: MoveState) -> void:
-	state = new_state
-	
-	# Map the enum to the node name in the StateMachine
-	var node_name := ""
-	match new_state:
-		MoveState.GROUNDED: node_name = "ground"
-		MoveState.JUMPING, MoveState.FALLING, MoveState.DOUBLE_JUMPING: node_name = "air"
-		MoveState.DASHING: node_name = "dash"
-		MoveState.ROLLING: node_name = "roll"
-		MoveState.KNOCKBACK: node_name = "knockback"
-		MoveState.WALL_CLIMBING: node_name = "wallclimb"
-		MoveState.LADDER_CLIMBING: node_name = "ladderclimb"
-		MoveState.LEDGE_CLIMBING: node_name = "ledgeclimb"		
-
-	if node_name != "":
-		state_machine.transition_to(node_name)
+	state_machine.transition_to("ground")
 
 func _physics_process(delta: float) -> void:
 	if velocity.y > 10000: die()
-	if is_dead:
-		_apply_gravity(delta); velocity.x *= 0.9; _move(); return
+	
+	var current_node := get_state_name()
+	
+	# If dead, only run the FSM and move, skip ALL inputs and overrides!
+	if current_node == "dead":
+		state_machine.physics_update(delta)
+		_move()
+		return
 
 	if wall_jump_lock > 0: wall_jump_lock -= delta
 
@@ -138,20 +99,21 @@ func _physics_process(delta: float) -> void:
 	
 	var valid_climb_window: bool = velocity.y >= -500.0 
 	
-	# Global State Overrides (Ledges, Walls, Ladders)
-	if state != MoveState.LEDGE_CLIMBING and touching_wall and over_ledge and not is_on_floor() and valid_climb_window:
-		_change_state(MoveState.LEDGE_CLIMBING)
+	# --- Global State Overrides ---
+	if current_node != "ledgeclimb" and touching_wall and over_ledge and not is_on_floor() and valid_climb_window:
+		state_machine.transition_to("ledgeclimb")
 			
 	var can_wall_climb: bool = touching_wall and not is_on_floor() and wall_jump_lock <= 0.0
-	if can_wall_climb and state != MoveState.WALL_CLIMBING and state != MoveState.LEDGE_CLIMBING and pressing_into_wall:
-		_change_state(MoveState.WALL_CLIMBING)
+	if can_wall_climb and current_node not in ["wallclimb", "ledgeclimb"] and pressing_into_wall:
+		state_machine.transition_to("wallclimb")
 
-	if is_on_ladder and state != MoveState.LADDER_CLIMBING and y_dir != 0:
-		_change_state(MoveState.LADDER_CLIMBING)
+	if is_on_ladder and current_node != "ladderclimb" and y_dir != 0:
+		state_machine.transition_to("ladderclimb")
 
-	# Update Shared Timers (To be moved out soon!)
+	# Update Shared Timers
 	if Input.is_action_just_pressed("ui_jump"): jump_buffer_timer = JUMP_BUFFER_TIME
 	if jump_buffer_timer > 0: jump_buffer_timer -= delta
+	
 	if Input.is_action_pressed("ui_attack"): attack_timer = attack_buffer
 	else: attack_timer = max(attack_timer - delta, 0.0)
 
@@ -161,7 +123,7 @@ func _physics_process(delta: float) -> void:
 	else: 
 		coyote_timer = max(coyote_timer - delta, 0.0)
 		
-	if state in [MoveState.WALL_CLIMBING, MoveState.LADDER_CLIMBING, MoveState.LEDGE_CLIMBING]:
+	if current_node in ["wallclimb", "ladderclimb", "ledgeclimb"]:
 		can_double_jump = true
 
 	# RUN THE STATE MACHINE
@@ -170,28 +132,21 @@ func _physics_process(delta: float) -> void:
 	_apply_gravity(delta)
 	_move()
 	
-	# PASSIVE ENVIRONMENTAL & INPUT ANIMATIONS
-	animator.set_condition("on_ground", is_on_floor())
-	animator.set_condition("on_wall", touching_wall)
-	animator.set_condition("on_ladder", is_on_ladder)
-	animator.set_condition("crouching", is_on_floor() and y_dir > 0)
-	animator.set_condition("running", is_on_floor() and direction != 0)
-	animator.set_condition("attacking", attack_timer > 0.0)
-	
 	if debug_hud: debug_hud.update_physics(self)
 
 # ---------------------------------------------------------
 # CORE UTILITIES & PIPELINE HELPERS
 # ---------------------------------------------------------
-func finalize_ledge_climb() -> void:
-	global_position += Vector2(50.0 * facing, -150.0)
-	armature.position = Vector2.ZERO;
-	$CollisionShape2D.disabled = false
-	_change_state(MoveState.GROUNDED)
-	animator.reset_all_conditions()
+# HELPER: Safely grabs the lowercase string of the current state
+func get_state_name() -> String:
+	if state_machine and state_machine.current_state:
+		return state_machine.current_state.name.to_lower()
+	return ""
 
 func _apply_gravity(delta: float) -> void:
-	if state in [MoveState.LADDER_CLIMBING, MoveState.WALL_CLIMBING, MoveState.LEDGE_CLIMBING]: return
+	if get_state_name() in ["ladderclimb", "wallclimb", "ledgeclimb", "dead"]: 
+		return
+		
 	var current_gravity := get_gravity()
 	if current_gravity.x != 0:
 		var applied_horiz_force = current_gravity.x * (grounded_horizontal_current_dampening if (is_on_floor() and Input.get_axis("ui_left", "ui_right") == 0) else 1.0)
@@ -204,36 +159,42 @@ func _apply_gravity(delta: float) -> void:
 			velocity.y += current_gravity.y * delta
 
 func take_damage(knockback_dir: Vector2, force: float):
-	if is_invincible: return
+	if is_invincible or get_state_name() == "dead": return
 	
 	velocity = knockback_dir * force
-	_change_state(MoveState.KNOCKBACK) # Routes to the FSM automatically!
+	state_machine.transition_to("knockback") 
 	
 	var tween = create_tween()
 	tween.tween_property(self, "modulate", Color(10, 10, 10), 0.1)
 	tween.tween_property(self, "modulate", Color.WHITE, 0.1)
+	
 	if not is_inside_tree(): return
 	await get_tree().create_timer(0.5).timeout
 	is_invincible = false
 	
 func die() -> void:
-	if is_dead: return
-	is_dead = true; is_submerged = false 
-	animator.reset_all_conditions()
-	animator.set_condition("dead", true) 
-	velocity = Vector2.ZERO
-	await get_tree().create_timer(1.2).timeout
-	is_dead = false
-	animator.reset_all_conditions()
-	_change_state(MoveState.GROUNDED)
-	GameManager.trigger_player_respawn()
+	if get_state_name() == "dead": return
+	
+	is_submerged = false 
+	state_machine.transition_to("dead")
 
 func _move() -> void: 
 	move_and_slide()
 	check_slide_hazards()
 
+# ---------------------------------------------------------
+# SIGNAL CALLBACKS
+# ---------------------------------------------------------
+func _on_ladder_state_changed(on_ladder: bool) -> void:
+	is_on_ladder = on_ladder
+	if not is_on_ladder and get_state_name() == "ladderclimb":
+		state_machine.transition_to("air")
+
+func _on_water_state_changed(submerged: bool) -> void:
+	is_submerged = submerged
+
 func _on_hp_changed(new_hp: float) -> void: 
-	if new_hp <= 0 and not is_dead: die()
+	if new_hp <= 0 and get_state_name() != "dead": die()
 
 func check_slide_hazards() -> void:
 	for i in get_slide_collision_count():

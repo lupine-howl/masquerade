@@ -3,7 +3,10 @@ extends PlayerState
 var timer: float = 0.0
 
 func enter() -> void:
-	timer = 0.20 # Set the local timer
+	# Snappy, instant animation trigger
+	player.animator.play("dash", 0.0)
+	
+	timer = 0.20 
 	player.velocity.x = player.facing * player.DASH_BOOST
 
 func physics_update(delta: float) -> void:
