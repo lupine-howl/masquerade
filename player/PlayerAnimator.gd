@@ -13,3 +13,7 @@ func stop() -> void:
 	if anim_player:
 		anim_player.stop()
 		anim_player.speed_scale = 1.0
+
+func clear() -> void:
+	if anim_player:
+		anim_player.clear_caches()

@@ -2,8 +2,7 @@ extends PlayerState
 
 func enter() -> void:
 	# Keep those arms floppy while airborne!
-	if player.ragdoll and player.ragdoll.has_method("enable_arms"):
-		player.ragdoll.enable_arms()
+	player.ragdoll.enable()
 
 	# Decide what animation to start with based on our vertical momentum
 	if player.velocity.y < 0:
@@ -53,8 +52,7 @@ func physics_update(delta: float) -> void:
 			
 			# Re-verify arm ragdolling in case the double_jump animation track 
 			# has any stray keyframes trying to reset visibility
-			if player.ragdoll and player.ragdoll.has_method("enable_arms"):
-				player.ragdoll.enable_arms()
+			player.ragdoll.enable()
 
 	# Dash Transition
 	if Input.is_action_just_pressed("ui_dash") and not player.is_submerged:
