@@ -16,8 +16,8 @@ func physics_update(delta: float) -> void:
 	# --- ANIMATION & RAGDOLL LOGIC (The New Source of Truth) ---
 	if direction != 0:
 		player.animator.play("run", 0.1)
-		if player.ragdoll and player.ragdoll.has_method("disable_arms"):
-			player.ragdoll.disable_arms()
+		#if player.ragdoll and player.ragdoll.has_method("disable_arms"):
+		#	player.ragdoll.disable_arms()
 	elif y_dir > 0:
 		player.animator.play("crouch", 0.1)
 		if player.ragdoll and player.ragdoll.has_method("disable_arms"):

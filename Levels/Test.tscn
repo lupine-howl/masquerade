@@ -370,7 +370,7 @@ collision_enabled = false
 position = Vector2(-192, 352)
 
 [node name="Hazards" type="TileMapLayer" parent="." unique_id=1348659226]
-tile_map_data = PackedByteArray("AAARAAgAAgALAAoAAAA=")
+tile_map_data = PackedByteArray("AAARAAgAAgALAAoAAAANABcAAgAAAAMAAAAVABcAAgAAAAMAAAA=")
 tile_set = ExtResource("5_myk7f")
 script = ExtResource("6_je7y7")
 

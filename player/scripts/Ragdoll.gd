@@ -2,19 +2,21 @@ extends Node2D
 
 # Export an array so you can drag both shoulder bones right into the inspector!
 @export var armature_shoulder_bones: Array[Bone2D] = []
+@export var front_arm: Node2D
+@export var back_arm: Node2D
 
 func _ready() -> void:
 	disable_arms()
 
 func enable_arms() -> void:
-	$DeadLeftArm.show()
-	$DeadRightArm.show()
+	back_arm.show()
+	front_arm.show()
 	_set_armature_arms_visible(false)
 	# Turn on your ragdoll physics simulation here if needed
 
 func disable_arms() -> void:
-	$DeadLeftArm.hide()
-	$DeadRightArm.hide()
+	back_arm.hide()
+	front_arm.hide()
 	_set_armature_arms_visible(true)
 	# Turn off your ragdoll physics simulation here if needed
 
