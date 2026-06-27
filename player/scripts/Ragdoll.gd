@@ -14,6 +14,7 @@ enum RagdollState {
 	FULL_BODY,         # Total skeletal collapse / Death
 	LIMBS,
 	HEAD,
+	UPPER_BODY,
 	HANGING            # Hands stay fixed, rest of body goes completely limp
 }
 
@@ -25,8 +26,10 @@ enum BoneGroup {
 	BACK_LEG  = 1 << 3,  # Bit 3 (Value 8)
 	TORSO     = 1 << 4,  # Bit 4 (Value 16)
 	HEAD      = 1 << 5,  # Bit 5 (Value 32)
-	HIP       = 1 << 6,
-	FOREARM   = 1 << 7
+	HIP       = 1 << 6,  # Bit 5 (Value 64)
+	FOREARM   = 1 << 7,  # Bit 5 (Value 128)
+	UPPER_BODY= 1 << 8,  # Bit 5 (Value 256)
+	LOWER_BODY= 1 << 9	  # Bit 5 (Value 512)
 }
 
 @export_category("Skeletal Systems")
@@ -67,8 +70,8 @@ func _gather_synced_bones(current_node: Node) -> void:
 
 ## Centralized execution timing step: Bones remain completely naive about frames
 func _physics_process(_delta: float) -> void:
-	if current_state == RagdollState.ANIMATED:
-		return
+	#if current_state == RagdollState.ANIMATED:
+	#	return
 		
 # Determine if the character is flipped by checking your parent node scale
 	var is_flipped: bool = pivot.scale.x < 0
@@ -113,6 +116,9 @@ func set_ragdoll_state(new_state: RagdollState) -> void:
 
 		RagdollState.HEAD:
 			_set_bitmask_physics_state(BoneGroup.HEAD, true)
+
+		RagdollState.UPPER_BODY:
+			_set_bitmask_physics_state(BoneGroup.UPPER_BODY, true)
 
 		RagdollState.LEG_RAGDOLL:
 			_set_bitmask_physics_state(BoneGroup.FRONT_LEG | BoneGroup.BACK_LEG, true)

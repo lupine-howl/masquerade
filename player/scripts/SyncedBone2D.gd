@@ -33,7 +33,9 @@ class_name SyncedBone2D
 	"Torso:16", 
 	"Head:32",
 	"Hip:64",
-	"Forearm:128"
+	"Forearm:128",
+	"Upper Body:256",
+	"Lower Body:512"
 ) var bone_groups: int = 0
 
 # Passive tracking variables managed explicitly by the RagdollManager

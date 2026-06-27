@@ -6,7 +6,7 @@ func enter() -> void:
 	
 	# Safe initial check: If standing still on entry, allow arms to swing loosely
 	# (We reference the RagdollState enum via the class name or its host manager)
-	player.ragdoll.set_ragdoll_state(player.ragdoll.RagdollState.ARM_RAGDOLL)
+	player.ragdoll.set_ragdoll_state(player.ragdoll.RagdollState.ANIMATED)
 
 func physics_update(delta: float) -> void:
 	var direction := Input.get_axis("ui_left", "ui_right")
@@ -16,7 +16,7 @@ func physics_update(delta: float) -> void:
 	if direction != 0:
 		player.animator.play("run", 0.1)
 		# Running uses full skeletal animation control
-		player.ragdoll.set_ragdoll_state(player.ragdoll.RagdollState.ANIMATED)
+		player.ragdoll.set_ragdoll_state(player.ragdoll.RagdollState.UPPER_BODY)
 	elif y_dir > 0:
 		player.animator.play("crouch", 0.1)
 		# Crouching keeps limbs controlled by keyframes
@@ -24,7 +24,7 @@ func physics_update(delta: float) -> void:
 	else:
 		player.animator.play("idle", 0.1)
 		# Standing idle frees the arm layers to react physically
-		player.ragdoll.set_ragdoll_state(player.ragdoll.RagdollState.ARM_RAGDOLL)
+		player.ragdoll.set_ragdoll_state(player.ragdoll.RagdollState.ANIMATED)
 
 	# 1. Handle Facing Direction
 	if direction != 0:
