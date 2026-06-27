@@ -358,7 +358,6 @@ neutral_y = 200.0
 deep_y = 3500.0
 
 [node name="UI" parent="." unique_id=1193584622 instance=ExtResource("2_jjge0")]
-visible = false
 
 [node name="TerrainBackground" type="TileMapLayer" parent="." unique_id=829629167]
 modulate = Color(0.4509804, 0.4509804, 0.4509804, 1)
@@ -370,7 +369,7 @@ collision_enabled = false
 position = Vector2(-192, 352)
 
 [node name="Hazards" type="TileMapLayer" parent="." unique_id=1348659226]
-tile_map_data = PackedByteArray("AAARAAgAAgALAAoAAAA=")
+tile_map_data = PackedByteArray("AAARAAgAAgALAAoAAAAMABcAAgAAAAMAAAAUABcAAgAAAAMAAAA=")
 tile_set = ExtResource("5_myk7f")
 script = ExtResource("6_je7y7")
 

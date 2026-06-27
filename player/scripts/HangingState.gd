@@ -2,7 +2,7 @@ extends PlayerState
 
 func enter() -> void:
 	# Enforce absolute animation authority so the limbs snap firmly to the wall climb pose
-	player.ragdoll.set_ragdoll_state(player.ragdoll.RagdollState.ANIMATED)
+	player.ragdoll.set_ragdoll_state(player.ragdoll.RagdollState.HANGING)
 
 	# Snap instantly to the wall frame (0.0 blend time) so it doesn't 
 	# get frozen in a crossfade by the speed_scale drop!
@@ -11,6 +11,16 @@ func enter() -> void:
 func physics_update(_delta: float) -> void:
 	var direction := Input.get_axis("ui_left", "ui_right")
 	var y_dir := Input.get_axis("ui_up", "ui_down")
+	
+	player.ragdoll.front_hand.global_position = player.global_position + Vector2(player.facing*40,-130)
+	player.ragdoll.back_hand.global_position = player.global_position + Vector2(player.facing*40,-130)
+	player.ragdoll.back_hand.rotation_degrees = 90
+	player.ragdoll.front_hand.rotation_degrees = 270
+	player.ragdoll.back_hand.freeze = true
+	player.ragdoll.front_hand.freeze = true
+	player.ragdoll.root.freeze = false
+	player.animator.stop()
+	player.ragdoll.set_ragdoll_state(player.ragdoll.RagdollState.HANGING)
 
 	# --- ANIMATION LOGIC ---
 	var is_moving := (y_dir != 0)
@@ -18,7 +28,7 @@ func physics_update(_delta: float) -> void:
 	
 	# Use 0.0 blend time here too, otherwise moving up/down might 
 	# continuously try to restart a crossfade every frame.
-	player.animator.play("wall_climb", 0.0, anim_speed)
+	#player.animator.play("wall_climb", 0.0, anim_speed)
 
 	# --- PHYSICS LOGIC ---
 	player.velocity.y = y_dir * player.WALL_CLIMB_SPEED

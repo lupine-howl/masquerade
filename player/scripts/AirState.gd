@@ -2,13 +2,15 @@ extends PlayerState
 
 func enter() -> void:
 	# Keep those arms floppy while airborne!
-	player.ragdoll.enable()
+	player.ragdoll.set_ragdoll_state(player.ragdoll.RagdollState.ARM_RAGDOLL)
 
 	# Decide what animation to start with based on our vertical momentum
 	if player.velocity.y < 0:
 		player.animator.play("jump", 0.1)
 	else:
 		player.animator.play("fall", 0.1)
+		# If we enter the state already falling, let the legs swing loose too!
+		player.ragdoll.set_ragdoll_state(player.ragdoll.RagdollState.LIMBS)
 
 func physics_update(delta: float) -> void:
 	var direction := Input.get_axis("ui_left", "ui_right")
@@ -32,9 +34,11 @@ func physics_update(delta: float) -> void:
 	else: 
 		player.velocity.x = move_toward(player.velocity.x, horiz_gravity * 0.5, current_target_speed * 8 * delta)
 
-	# --- ANIMATION LOGIC ---
+	# --- ANIMATION & RAGDOLL CONTEXT LOGIC ---
 	if player.velocity.y >= 0:
 		player.animator.play("fall", 0.1)
+		# Transition to leg ragdolled state during descent so they trail upwards behind the fall
+		player.ragdoll.set_ragdoll_state(player.ragdoll.RagdollState.LIMBS)
 
 	# Jump Buffering & Double Jump
 	if player.jump_buffer_timer > 0:
@@ -42,6 +46,7 @@ func physics_update(delta: float) -> void:
 			player.jump_buffer_timer = 0
 			player.velocity.y = player.water_swim_velocity
 			player.animator.play("jump", 0.1) 
+			player.ragdoll.set_ragdoll_state(player.ragdoll.RagdollState.ARM_RAGDOLL)
 		elif player.can_double_jump:
 			player.jump_buffer_timer = 0
 			player.can_double_jump = false
@@ -50,9 +55,10 @@ func physics_update(delta: float) -> void:
 			# Snap instantly to the double jump animation
 			player.animator.play("double_jump", 0.0) 
 			
-			# Re-verify arm ragdolling in case the double_jump animation track 
-			# has any stray keyframes trying to reset visibility
-			player.ragdoll.enable()
+			# Re-engage arm tracking for the explosive upward thrust, 
+			# catching them back to standard animation framework briefly if needed, 
+			# or keeping them completely floppy:
+			player.ragdoll.set_ragdoll_state(player.ragdoll.RagdollState.ARM_RAGDOLL)
 
 	# Dash Transition
 	if Input.is_action_just_pressed("ui_dash") and not player.is_submerged:

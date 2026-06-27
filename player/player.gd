@@ -59,6 +59,7 @@ const JUMP_BUFFER_TIME := 0.12
 @onready var attack_area := $SpritePivot/AttackArea
 @onready var wall_detector := $SpritePivot/WallDetector 
 @onready var ledge_detector := $SpritePivot/LedgeDetector
+@onready var hanging_detector := $SpritePivot/HangingDetector
 @onready var armature := $SpritePivot/Armature
 
 # ---------------------------------------------------------
@@ -103,6 +104,7 @@ func _physics_process(delta: float) -> void:
 	var pressing_into_wall: bool = (direction != 0 and sign(direction) == facing)
 	var touching_wall: bool = wall_detector and wall_detector.is_colliding()
 	var over_ledge: bool = ledge_detector and not ledge_detector.is_colliding()
+	var hanging: bool = touching_wall and hanging_detector and not hanging_detector.is_colliding()
 	
 	var valid_climb_window: bool = velocity.y >= -500.0 
 	var is_climbing := current_node in ["ledgeclimb", "wallclimb", "ladderclimb"]
@@ -112,6 +114,8 @@ func _physics_process(delta: float) -> void:
 	# Only allow these overrides if we aren't already locked into a climb
 	if touching_wall and over_ledge and not is_on_floor() and valid_climb_window:
 		state_machine.transition_to("ledgeclimb")
+	elif hanging:
+		state_machine.transition_to("hanging")
 	elif can_wall_climb and pressing_into_wall:
 		state_machine.transition_to("wallclimb")
 	elif is_on_ladder and y_dir != 0:
@@ -151,7 +155,7 @@ func get_state_name() -> String:
 	return ""
 
 func _apply_gravity(delta: float) -> void:
-	if get_state_name() in ["ladderclimb", "wallclimb", "ledgeclimb", "dead"]: 
+	if get_state_name() in ["ladderclimb", "wallclimb", "ledgeclimb", "dead", "hanging"]: 
 		return
 		
 	var current_gravity := get_gravity()

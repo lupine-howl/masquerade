@@ -33,6 +33,7 @@
 [ext_resource type="Texture2D" uid="uid://cmvjnsywbvyar" path="res://player/assets/character.png" id="30_b8hi5"]
 [ext_resource type="Script" uid="uid://bo3h510q3ok2g" path="res://player/scripts/Ragdoll.gd" id="30_fjxoa"]
 [ext_resource type="Script" uid="uid://vd62fxarftgp" path="res://player/PlayerAnimator.gd" id="31_1s1yo"]
+[ext_resource type="Script" uid="uid://cns3xkrq4cwa4" path="res://player/scripts/SyncedBone2D.gd" id="32_gswnw"]
 [ext_resource type="Script" uid="uid://cu4xh4ryvnh24" path="res://player/scripts/PlayerStateMachine.gd" id="33_jd2rm"]
 [ext_resource type="Script" uid="uid://bc7ucmt1gfah4" path="res://player/scripts/GroundState.gd" id="34_q28gw"]
 [ext_resource type="Script" uid="uid://bbr87tj0bptcu" path="res://player/scripts/AirState.gd" id="35_q28gw"]
@@ -43,6 +44,7 @@
 [ext_resource type="Script" uid="uid://wu5s6u3i25mj" path="res://player/scripts/WallClimb.gd" id="41_a2xo5"]
 [ext_resource type="Script" uid="uid://dc301x4lrovbu" path="res://player/scripts/LedgeClimbState.gd" id="42_art4l"]
 [ext_resource type="Script" uid="uid://b8784bru0cofh" path="res://player/scripts/DeadState.gd" id="42_fjxoa"]
+[ext_resource type="Script" uid="uid://7ett2ig3wkug" path="res://player/scripts/HangingState.gd" id="45_xcnuv"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_whnp6"]
 radius = 40.0
@@ -1502,12 +1504,13 @@ size = Vector2(69, 49)
 [sub_resource type="CircleShape2D" id="CircleShape2D_jd2rm"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_xcnuv"]
+radius = 5.0
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_1s1yo"]
-radius = 5.0
+radius = 8.0
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_5ejfk"]
-radius = 5.0
+radius = 7.0
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_2uvqg"]
 radius = 5.0
@@ -1516,70 +1519,77 @@ height = 10.0
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_gswnw"]
 load_path = "res://.godot/imported/character.png-61d4ad690a3c56af52dd59e6dbc95558.ctex"
 
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_fjxoa"]
-radius = 5.0
-height = 35.0
-
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_xcnuv"]
 load_path = "res://.godot/imported/character.png-61d4ad690a3c56af52dd59e6dbc95558.ctex"
 
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_gswnw"]
-radius = 5.0
-height = 34.0
-
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_j55il"]
-load_path = "res://.godot/imported/character.png-61d4ad690a3c56af52dd59e6dbc95558.ctex"
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_j55il"]
+radius = 13.0
+height = 45.0
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_hjies"]
 load_path = "res://.godot/imported/character.png-61d4ad690a3c56af52dd59e6dbc95558.ctex"
 
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_q28gw"]
-radius = 16.0
-height = 50.0
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_hjies"]
+height = 38.0
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_j55il"]
+load_path = "res://.godot/imported/character.png-61d4ad690a3c56af52dd59e6dbc95558.ctex"
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_gswnw"]
+radius = 15.0
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_2uvqg"]
 load_path = "res://.godot/imported/character.png-61d4ad690a3c56af52dd59e6dbc95558.ctex"
 
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_xcnuv"]
+radius = 20.0
+height = 50.0
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_fjxoa"]
+radius = 13.0
+height = 45.0
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_gswnw"]
+height = 38.0
+
 [sub_resource type="SkeletonModification2DTwoBoneIK" id="SkeletonModification2DTwoBoneIK_b8hi5"]
 target_nodepath = NodePath("../Target_BackFoot")
 joint_one_bone_idx = 9
-joint_one_bone2d_node = NodePath("Pelvis/LeftHip")
+joint_one_bone2d_node = NodePath("Pelvis/Thigh_Back")
 joint_two_bone_idx = 10
-joint_two_bone2d_node = NodePath("Pelvis/LeftHip/LeftKnee")
+joint_two_bone2d_node = NodePath("Pelvis/Thigh_Back/Calf_Back")
 
 [sub_resource type="SkeletonModification2DTwoBoneIK" id="SkeletonModification2DTwoBoneIK_2uvqg"]
 target_nodepath = NodePath("../Target_FrontFoot")
 joint_one_bone_idx = 12
-joint_one_bone2d_node = NodePath("Pelvis/RightHip")
+joint_one_bone2d_node = NodePath("Pelvis/Thigh_Front")
 joint_two_bone_idx = 13
-joint_two_bone2d_node = NodePath("Pelvis/RightHip/RightKnee")
+joint_two_bone2d_node = NodePath("Pelvis/Thigh_Front/Calf_Front")
 
 [sub_resource type="SkeletonModification2DTwoBoneIK" id="SkeletonModification2DTwoBoneIK_1s1yo"]
-enabled = false
 target_nodepath = NodePath("../Target_BackHand")
 flip_bend_direction = true
 joint_one_bone_idx = 3
-joint_one_bone2d_node = NodePath("Pelvis/Spine/LeftShoulder")
+joint_one_bone2d_node = NodePath("Pelvis/Spine/UpperArm_Back")
 joint_two_bone_idx = 4
-joint_two_bone2d_node = NodePath("Pelvis/Spine/LeftShoulder/LeftElbow")
+joint_two_bone2d_node = NodePath("Pelvis/Spine/UpperArm_Back/Forearm_Back")
 
 [sub_resource type="SkeletonModification2DTwoBoneIK" id="SkeletonModification2DTwoBoneIK_5ejfk"]
-enabled = false
 target_nodepath = NodePath("../Target_FrontHand")
 flip_bend_direction = true
 joint_one_bone_idx = 6
-joint_one_bone2d_node = NodePath("Pelvis/Spine/RightShoulder")
+joint_one_bone2d_node = NodePath("Pelvis/Spine/UpperArm_Front")
 joint_two_bone_idx = 7
-joint_two_bone2d_node = NodePath("Pelvis/Spine/RightShoulder/RightElbow")
+joint_two_bone2d_node = NodePath("Pelvis/Spine/UpperArm_Front/Forearm_Front")
 
 [sub_resource type="SkeletonModification2DLookAt" id="SkeletonModification2DLookAt_b8hi5"]
 bone_index = 11
-bone2d_node = NodePath("Pelvis/LeftHip/LeftKnee/LeftFoot")
+bone2d_node = NodePath("Pelvis/Thigh_Back/Calf_Back/Foot_Back")
 target_nodepath = NodePath("../Target_BackFoot_Rotation")
 
 [sub_resource type="SkeletonModification2DLookAt" id="SkeletonModification2DLookAt_2uvqg"]
 bone_index = 14
-bone2d_node = NodePath("Pelvis/RightHip/RightKnee/RightFoot")
+bone2d_node = NodePath("Pelvis/Thigh_Front/Calf_Front/Foot_Front")
 target_nodepath = NodePath("../Target_FrontFoot_Rotation")
 
 [sub_resource type="SkeletonModification2DPhysicalBones" id="SkeletonModification2DPhysicalBones_2uvqg"]
@@ -3671,7 +3681,7 @@ tracks/7/keys = {
 tracks/8/type = "value"
 tracks/8/imported = false
 tracks/8/enabled = true
-tracks/8/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/LeftShoulder:position")
+tracks/8/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/UpperArm_Back:position")
 tracks/8/interp = 1
 tracks/8/loop_wrap = true
 tracks/8/keys = {
@@ -3683,7 +3693,7 @@ tracks/8/keys = {
 tracks/9/type = "value"
 tracks/9/imported = false
 tracks/9/enabled = true
-tracks/9/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/RightShoulder:position")
+tracks/9/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/UpperArm_Front:position")
 tracks/9/interp = 1
 tracks/9/loop_wrap = true
 tracks/9/keys = {
@@ -3695,7 +3705,7 @@ tracks/9/keys = {
 tracks/10/type = "value"
 tracks/10/imported = false
 tracks/10/enabled = true
-tracks/10/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/LeftHip:position")
+tracks/10/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Thigh_Back:position")
 tracks/10/interp = 1
 tracks/10/loop_wrap = true
 tracks/10/keys = {
@@ -3707,7 +3717,7 @@ tracks/10/keys = {
 tracks/11/type = "value"
 tracks/11/imported = false
 tracks/11/enabled = true
-tracks/11/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/RightHip:position")
+tracks/11/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Thigh_Front:position")
 tracks/11/interp = 1
 tracks/11/loop_wrap = true
 tracks/11/keys = {
@@ -3719,7 +3729,7 @@ tracks/11/keys = {
 tracks/12/type = "value"
 tracks/12/imported = false
 tracks/12/enabled = true
-tracks/12/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/RightHip/RightKnee/RightFoot:rotation")
+tracks/12/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Thigh_Front/Calf_Front/Foot_Front:rotation")
 tracks/12/interp = 1
 tracks/12/loop_wrap = true
 tracks/12/keys = {
@@ -3731,7 +3741,7 @@ tracks/12/keys = {
 tracks/13/type = "value"
 tracks/13/imported = false
 tracks/13/enabled = true
-tracks/13/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/LeftHip/LeftKnee/LeftFoot:rotation")
+tracks/13/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Thigh_Back/Calf_Back/Foot_Back:rotation")
 tracks/13/interp = 1
 tracks/13/loop_wrap = true
 tracks/13/keys = {
@@ -3803,7 +3813,7 @@ tracks/18/keys = {
 tracks/19/type = "value"
 tracks/19/imported = false
 tracks/19/enabled = true
-tracks/19/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/LeftHip/LeftKnee/LeftFoot:position")
+tracks/19/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Thigh_Back/Calf_Back/Foot_Back:position")
 tracks/19/interp = 1
 tracks/19/loop_wrap = true
 tracks/19/keys = {
@@ -3815,7 +3825,7 @@ tracks/19/keys = {
 tracks/20/type = "value"
 tracks/20/imported = false
 tracks/20/enabled = true
-tracks/20/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/RightHip/RightKnee/RightFoot:position")
+tracks/20/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Thigh_Front/Calf_Front/Foot_Front:position")
 tracks/20/interp = 1
 tracks/20/loop_wrap = true
 tracks/20/keys = {
@@ -3927,7 +3937,7 @@ tracks/7/keys = {
 tracks/8/type = "value"
 tracks/8/imported = false
 tracks/8/enabled = true
-tracks/8/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/LeftShoulder:position")
+tracks/8/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/UpperArm_Back:position")
 tracks/8/interp = 1
 tracks/8/loop_wrap = true
 tracks/8/keys = {
@@ -3939,7 +3949,7 @@ tracks/8/keys = {
 tracks/9/type = "value"
 tracks/9/imported = false
 tracks/9/enabled = true
-tracks/9/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/RightShoulder:position")
+tracks/9/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/UpperArm_Front:position")
 tracks/9/interp = 1
 tracks/9/loop_wrap = true
 tracks/9/keys = {
@@ -3951,7 +3961,7 @@ tracks/9/keys = {
 tracks/10/type = "value"
 tracks/10/imported = false
 tracks/10/enabled = true
-tracks/10/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/LeftHip:position")
+tracks/10/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Thigh_Back:position")
 tracks/10/interp = 1
 tracks/10/loop_wrap = true
 tracks/10/keys = {
@@ -3963,7 +3973,7 @@ tracks/10/keys = {
 tracks/11/type = "value"
 tracks/11/imported = false
 tracks/11/enabled = true
-tracks/11/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/RightHip:position")
+tracks/11/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Thigh_Front:position")
 tracks/11/interp = 1
 tracks/11/loop_wrap = true
 tracks/11/keys = {
@@ -4023,7 +4033,7 @@ tracks/15/keys = {
 tracks/16/type = "value"
 tracks/16/imported = false
 tracks/16/enabled = true
-tracks/16/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/LeftHip/LeftKnee/LeftFoot:position")
+tracks/16/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Thigh_Back/Calf_Back/Foot_Back:position")
 tracks/16/interp = 1
 tracks/16/loop_wrap = true
 tracks/16/keys = {
@@ -4035,7 +4045,7 @@ tracks/16/keys = {
 tracks/17/type = "value"
 tracks/17/imported = false
 tracks/17/enabled = true
-tracks/17/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/LeftHip/LeftKnee/LeftFoot:rotation")
+tracks/17/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Thigh_Back/Calf_Back/Foot_Back:rotation")
 tracks/17/interp = 1
 tracks/17/loop_wrap = true
 tracks/17/keys = {
@@ -4047,7 +4057,7 @@ tracks/17/keys = {
 tracks/18/type = "value"
 tracks/18/imported = false
 tracks/18/enabled = true
-tracks/18/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/RightHip/RightKnee/RightFoot:position")
+tracks/18/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Thigh_Front/Calf_Front/Foot_Front:position")
 tracks/18/interp = 1
 tracks/18/loop_wrap = true
 tracks/18/keys = {
@@ -4059,7 +4069,7 @@ tracks/18/keys = {
 tracks/19/type = "value"
 tracks/19/imported = false
 tracks/19/enabled = true
-tracks/19/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/RightHip/RightKnee/RightFoot:rotation")
+tracks/19/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Thigh_Front/Calf_Front/Foot_Front:rotation")
 tracks/19/interp = 1
 tracks/19/loop_wrap = true
 tracks/19/keys = {
@@ -4100,7 +4110,7 @@ tracks/1/keys = {
 tracks/2/type = "value"
 tracks/2/imported = false
 tracks/2/enabled = true
-tracks/2/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/LeftShoulder:position")
+tracks/2/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/UpperArm_Back:position")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
@@ -4112,7 +4122,7 @@ tracks/2/keys = {
 tracks/3/type = "value"
 tracks/3/imported = false
 tracks/3/enabled = true
-tracks/3/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/RightShoulder:position")
+tracks/3/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/UpperArm_Front:position")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
 tracks/3/keys = {
@@ -4261,7 +4271,7 @@ tracks/7/keys = {
 tracks/8/type = "value"
 tracks/8/imported = false
 tracks/8/enabled = true
-tracks/8/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/LeftShoulder:position")
+tracks/8/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/UpperArm_Back:position")
 tracks/8/interp = 1
 tracks/8/loop_wrap = true
 tracks/8/keys = {
@@ -4273,7 +4283,7 @@ tracks/8/keys = {
 tracks/9/type = "value"
 tracks/9/imported = false
 tracks/9/enabled = true
-tracks/9/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/RightShoulder:position")
+tracks/9/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/UpperArm_Front:position")
 tracks/9/interp = 1
 tracks/9/loop_wrap = true
 tracks/9/keys = {
@@ -4285,7 +4295,7 @@ tracks/9/keys = {
 tracks/10/type = "value"
 tracks/10/imported = false
 tracks/10/enabled = true
-tracks/10/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/LeftHip:position")
+tracks/10/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Thigh_Back:position")
 tracks/10/interp = 1
 tracks/10/loop_wrap = true
 tracks/10/keys = {
@@ -4297,7 +4307,7 @@ tracks/10/keys = {
 tracks/11/type = "value"
 tracks/11/imported = false
 tracks/11/enabled = true
-tracks/11/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/RightHip:position")
+tracks/11/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Thigh_Front:position")
 tracks/11/interp = 1
 tracks/11/loop_wrap = true
 tracks/11/keys = {
@@ -4357,7 +4367,7 @@ tracks/15/keys = {
 tracks/16/type = "value"
 tracks/16/imported = false
 tracks/16/enabled = true
-tracks/16/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/LeftHip/LeftKnee/LeftFoot:position")
+tracks/16/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Thigh_Back/Calf_Back/Foot_Back:position")
 tracks/16/interp = 1
 tracks/16/loop_wrap = true
 tracks/16/keys = {
@@ -4369,7 +4379,7 @@ tracks/16/keys = {
 tracks/17/type = "value"
 tracks/17/imported = false
 tracks/17/enabled = true
-tracks/17/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/LeftHip/LeftKnee/LeftFoot:rotation")
+tracks/17/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Thigh_Back/Calf_Back/Foot_Back:rotation")
 tracks/17/interp = 1
 tracks/17/loop_wrap = true
 tracks/17/keys = {
@@ -4381,7 +4391,7 @@ tracks/17/keys = {
 tracks/18/type = "value"
 tracks/18/imported = false
 tracks/18/enabled = true
-tracks/18/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/RightHip/RightKnee/RightFoot:position")
+tracks/18/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Thigh_Front/Calf_Front/Foot_Front:position")
 tracks/18/interp = 1
 tracks/18/loop_wrap = true
 tracks/18/keys = {
@@ -4393,7 +4403,7 @@ tracks/18/keys = {
 tracks/19/type = "value"
 tracks/19/imported = false
 tracks/19/enabled = true
-tracks/19/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/RightHip/RightKnee/RightFoot:rotation")
+tracks/19/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Thigh_Front/Calf_Front/Foot_Front:rotation")
 tracks/19/interp = 1
 tracks/19/loop_wrap = true
 tracks/19/keys = {
@@ -4506,7 +4516,7 @@ tracks/7/keys = {
 tracks/8/type = "value"
 tracks/8/imported = false
 tracks/8/enabled = true
-tracks/8/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/LeftShoulder:position")
+tracks/8/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/UpperArm_Back:position")
 tracks/8/interp = 1
 tracks/8/loop_wrap = true
 tracks/8/keys = {
@@ -4518,7 +4528,7 @@ tracks/8/keys = {
 tracks/9/type = "value"
 tracks/9/imported = false
 tracks/9/enabled = true
-tracks/9/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/RightShoulder:position")
+tracks/9/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/UpperArm_Front:position")
 tracks/9/interp = 1
 tracks/9/loop_wrap = true
 tracks/9/keys = {
@@ -4530,7 +4540,7 @@ tracks/9/keys = {
 tracks/10/type = "value"
 tracks/10/imported = false
 tracks/10/enabled = true
-tracks/10/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/LeftHip:position")
+tracks/10/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Thigh_Back:position")
 tracks/10/interp = 1
 tracks/10/loop_wrap = true
 tracks/10/keys = {
@@ -4542,7 +4552,7 @@ tracks/10/keys = {
 tracks/11/type = "value"
 tracks/11/imported = false
 tracks/11/enabled = true
-tracks/11/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/RightHip:position")
+tracks/11/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Thigh_Front:position")
 tracks/11/interp = 1
 tracks/11/loop_wrap = true
 tracks/11/keys = {
@@ -4602,7 +4612,7 @@ tracks/15/keys = {
 tracks/16/type = "value"
 tracks/16/imported = false
 tracks/16/enabled = true
-tracks/16/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/LeftHip/LeftKnee/LeftFoot:position")
+tracks/16/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Thigh_Back/Calf_Back/Foot_Back:position")
 tracks/16/interp = 1
 tracks/16/loop_wrap = true
 tracks/16/keys = {
@@ -4614,7 +4624,7 @@ tracks/16/keys = {
 tracks/17/type = "value"
 tracks/17/imported = false
 tracks/17/enabled = true
-tracks/17/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/LeftHip/LeftKnee/LeftFoot:rotation")
+tracks/17/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Thigh_Back/Calf_Back/Foot_Back:rotation")
 tracks/17/interp = 1
 tracks/17/loop_wrap = true
 tracks/17/keys = {
@@ -4626,7 +4636,7 @@ tracks/17/keys = {
 tracks/18/type = "value"
 tracks/18/imported = false
 tracks/18/enabled = true
-tracks/18/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/RightHip/RightKnee/RightFoot:position")
+tracks/18/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Thigh_Front/Calf_Front/Foot_Front:position")
 tracks/18/interp = 1
 tracks/18/loop_wrap = true
 tracks/18/keys = {
@@ -4638,7 +4648,7 @@ tracks/18/keys = {
 tracks/19/type = "value"
 tracks/19/imported = false
 tracks/19/enabled = true
-tracks/19/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/RightHip/RightKnee/RightFoot:rotation")
+tracks/19/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Thigh_Front/Calf_Front/Foot_Front:rotation")
 tracks/19/interp = 1
 tracks/19/loop_wrap = true
 tracks/19/keys = {
@@ -4650,7 +4660,7 @@ tracks/19/keys = {
 tracks/20/type = "value"
 tracks/20/imported = false
 tracks/20/enabled = true
-tracks/20/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/LeftShoulder:visible")
+tracks/20/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/UpperArm_Back:visible")
 tracks/20/interp = 1
 tracks/20/loop_wrap = true
 tracks/20/keys = {
@@ -4662,7 +4672,7 @@ tracks/20/keys = {
 tracks/21/type = "value"
 tracks/21/imported = false
 tracks/21/enabled = true
-tracks/21/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/RightShoulder:visible")
+tracks/21/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/UpperArm_Front:visible")
 tracks/21/interp = 1
 tracks/21/loop_wrap = true
 tracks/21/keys = {
@@ -4799,7 +4809,7 @@ tracks/6/keys = {
 tracks/7/type = "value"
 tracks/7/imported = false
 tracks/7/enabled = true
-tracks/7/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/LeftShoulder:position")
+tracks/7/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/UpperArm_Back:position")
 tracks/7/interp = 1
 tracks/7/loop_wrap = true
 tracks/7/keys = {
@@ -4811,7 +4821,7 @@ tracks/7/keys = {
 tracks/8/type = "value"
 tracks/8/imported = false
 tracks/8/enabled = true
-tracks/8/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/RightShoulder:position")
+tracks/8/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/UpperArm_Front:position")
 tracks/8/interp = 1
 tracks/8/loop_wrap = true
 tracks/8/keys = {
@@ -4823,7 +4833,7 @@ tracks/8/keys = {
 tracks/9/type = "value"
 tracks/9/imported = false
 tracks/9/enabled = true
-tracks/9/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/LeftHip:position")
+tracks/9/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Thigh_Back:position")
 tracks/9/interp = 1
 tracks/9/loop_wrap = true
 tracks/9/keys = {
@@ -4835,7 +4845,7 @@ tracks/9/keys = {
 tracks/10/type = "value"
 tracks/10/imported = false
 tracks/10/enabled = true
-tracks/10/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/RightHip:position")
+tracks/10/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Thigh_Front:position")
 tracks/10/interp = 1
 tracks/10/loop_wrap = true
 tracks/10/keys = {
@@ -4847,7 +4857,7 @@ tracks/10/keys = {
 tracks/11/type = "value"
 tracks/11/imported = false
 tracks/11/enabled = true
-tracks/11/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/RightHip/RightKnee/RightFoot:rotation")
+tracks/11/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Thigh_Front/Calf_Front/Foot_Front:rotation")
 tracks/11/interp = 1
 tracks/11/loop_wrap = true
 tracks/11/keys = {
@@ -4859,7 +4869,7 @@ tracks/11/keys = {
 tracks/12/type = "value"
 tracks/12/imported = false
 tracks/12/enabled = true
-tracks/12/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/LeftHip/LeftKnee/LeftFoot:rotation")
+tracks/12/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Thigh_Back/Calf_Back/Foot_Back:rotation")
 tracks/12/interp = 1
 tracks/12/loop_wrap = true
 tracks/12/keys = {
@@ -4995,7 +5005,7 @@ tracks/6/keys = {
 tracks/7/type = "value"
 tracks/7/imported = false
 tracks/7/enabled = true
-tracks/7/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/LeftShoulder:position")
+tracks/7/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/UpperArm_Back:position")
 tracks/7/interp = 1
 tracks/7/loop_wrap = true
 tracks/7/keys = {
@@ -5007,7 +5017,7 @@ tracks/7/keys = {
 tracks/8/type = "value"
 tracks/8/imported = false
 tracks/8/enabled = true
-tracks/8/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/RightShoulder:position")
+tracks/8/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/UpperArm_Front:position")
 tracks/8/interp = 1
 tracks/8/loop_wrap = true
 tracks/8/keys = {
@@ -5019,7 +5029,7 @@ tracks/8/keys = {
 tracks/9/type = "value"
 tracks/9/imported = false
 tracks/9/enabled = true
-tracks/9/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/LeftHip:position")
+tracks/9/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Thigh_Back:position")
 tracks/9/interp = 1
 tracks/9/loop_wrap = true
 tracks/9/keys = {
@@ -5031,7 +5041,7 @@ tracks/9/keys = {
 tracks/10/type = "value"
 tracks/10/imported = false
 tracks/10/enabled = true
-tracks/10/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/RightHip:position")
+tracks/10/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Thigh_Front:position")
 tracks/10/interp = 1
 tracks/10/loop_wrap = true
 tracks/10/keys = {
@@ -5043,7 +5053,7 @@ tracks/10/keys = {
 tracks/11/type = "value"
 tracks/11/imported = false
 tracks/11/enabled = true
-tracks/11/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/RightHip/RightKnee/RightFoot:rotation")
+tracks/11/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Thigh_Front/Calf_Front/Foot_Front:rotation")
 tracks/11/interp = 1
 tracks/11/loop_wrap = true
 tracks/11/keys = {
@@ -5055,7 +5065,7 @@ tracks/11/keys = {
 tracks/12/type = "value"
 tracks/12/imported = false
 tracks/12/enabled = true
-tracks/12/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/LeftHip/LeftKnee/LeftFoot:rotation")
+tracks/12/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Thigh_Back/Calf_Back/Foot_Back:rotation")
 tracks/12/interp = 1
 tracks/12/loop_wrap = true
 tracks/12/keys = {
@@ -5127,7 +5137,7 @@ tracks/17/keys = {
 tracks/18/type = "value"
 tracks/18/imported = false
 tracks/18/enabled = true
-tracks/18/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/LeftHip/LeftKnee/LeftFoot:position")
+tracks/18/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Thigh_Back/Calf_Back/Foot_Back:position")
 tracks/18/interp = 1
 tracks/18/loop_wrap = true
 tracks/18/keys = {
@@ -5139,7 +5149,7 @@ tracks/18/keys = {
 tracks/19/type = "value"
 tracks/19/imported = false
 tracks/19/enabled = true
-tracks/19/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/RightHip/RightKnee/RightFoot:position")
+tracks/19/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Thigh_Front/Calf_Front/Foot_Front:position")
 tracks/19/interp = 1
 tracks/19/loop_wrap = true
 tracks/19/keys = {
@@ -5265,7 +5275,7 @@ tracks/7/keys = {
 tracks/8/type = "value"
 tracks/8/imported = false
 tracks/8/enabled = true
-tracks/8/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/LeftShoulder:position")
+tracks/8/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/UpperArm_Back:position")
 tracks/8/interp = 1
 tracks/8/loop_wrap = true
 tracks/8/keys = {
@@ -5277,7 +5287,7 @@ tracks/8/keys = {
 tracks/9/type = "value"
 tracks/9/imported = false
 tracks/9/enabled = true
-tracks/9/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/RightShoulder:position")
+tracks/9/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/UpperArm_Front:position")
 tracks/9/interp = 1
 tracks/9/loop_wrap = true
 tracks/9/keys = {
@@ -5289,7 +5299,7 @@ tracks/9/keys = {
 tracks/10/type = "value"
 tracks/10/imported = false
 tracks/10/enabled = true
-tracks/10/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/LeftHip:position")
+tracks/10/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Thigh_Back:position")
 tracks/10/interp = 1
 tracks/10/loop_wrap = true
 tracks/10/keys = {
@@ -5301,7 +5311,7 @@ tracks/10/keys = {
 tracks/11/type = "value"
 tracks/11/imported = false
 tracks/11/enabled = true
-tracks/11/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/RightHip:position")
+tracks/11/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Thigh_Front:position")
 tracks/11/interp = 1
 tracks/11/loop_wrap = true
 tracks/11/keys = {
@@ -5409,7 +5419,7 @@ tracks/19/keys = {
 tracks/20/type = "value"
 tracks/20/imported = false
 tracks/20/enabled = true
-tracks/20/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/LeftHip/LeftKnee/LeftFoot:position")
+tracks/20/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Thigh_Back/Calf_Back/Foot_Back:position")
 tracks/20/interp = 1
 tracks/20/loop_wrap = true
 tracks/20/keys = {
@@ -5421,7 +5431,7 @@ tracks/20/keys = {
 tracks/21/type = "value"
 tracks/21/imported = false
 tracks/21/enabled = true
-tracks/21/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/LeftHip/LeftKnee/LeftFoot:rotation")
+tracks/21/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Thigh_Back/Calf_Back/Foot_Back:rotation")
 tracks/21/interp = 1
 tracks/21/loop_wrap = true
 tracks/21/keys = {
@@ -5433,7 +5443,7 @@ tracks/21/keys = {
 tracks/22/type = "value"
 tracks/22/imported = false
 tracks/22/enabled = true
-tracks/22/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/RightHip/RightKnee/RightFoot:position")
+tracks/22/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Thigh_Front/Calf_Front/Foot_Front:position")
 tracks/22/interp = 1
 tracks/22/loop_wrap = true
 tracks/22/keys = {
@@ -5445,7 +5455,7 @@ tracks/22/keys = {
 tracks/23/type = "value"
 tracks/23/imported = false
 tracks/23/enabled = true
-tracks/23/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/RightHip/RightKnee/RightFoot:rotation")
+tracks/23/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Thigh_Front/Calf_Front/Foot_Front:rotation")
 tracks/23/interp = 1
 tracks/23/loop_wrap = true
 tracks/23/keys = {
@@ -5457,7 +5467,7 @@ tracks/23/keys = {
 tracks/24/type = "value"
 tracks/24/imported = false
 tracks/24/enabled = true
-tracks/24/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/LeftShoulder:visible")
+tracks/24/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/UpperArm_Back:visible")
 tracks/24/interp = 1
 tracks/24/loop_wrap = true
 tracks/24/keys = {
@@ -5469,7 +5479,7 @@ tracks/24/keys = {
 tracks/25/type = "value"
 tracks/25/imported = false
 tracks/25/enabled = true
-tracks/25/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/RightShoulder:visible")
+tracks/25/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/UpperArm_Front:visible")
 tracks/25/interp = 1
 tracks/25/loop_wrap = true
 tracks/25/keys = {
@@ -5607,7 +5617,7 @@ tracks/6/keys = {
 tracks/7/type = "value"
 tracks/7/imported = false
 tracks/7/enabled = true
-tracks/7/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/LeftShoulder:position")
+tracks/7/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/UpperArm_Back:position")
 tracks/7/interp = 1
 tracks/7/loop_wrap = true
 tracks/7/keys = {
@@ -5619,7 +5629,7 @@ tracks/7/keys = {
 tracks/8/type = "value"
 tracks/8/imported = false
 tracks/8/enabled = true
-tracks/8/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/RightShoulder:position")
+tracks/8/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/UpperArm_Front:position")
 tracks/8/interp = 1
 tracks/8/loop_wrap = true
 tracks/8/keys = {
@@ -5631,7 +5641,7 @@ tracks/8/keys = {
 tracks/9/type = "value"
 tracks/9/imported = false
 tracks/9/enabled = true
-tracks/9/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/LeftHip:position")
+tracks/9/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Thigh_Back:position")
 tracks/9/interp = 1
 tracks/9/loop_wrap = true
 tracks/9/keys = {
@@ -5643,7 +5653,7 @@ tracks/9/keys = {
 tracks/10/type = "value"
 tracks/10/imported = false
 tracks/10/enabled = true
-tracks/10/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/RightHip:position")
+tracks/10/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Thigh_Front:position")
 tracks/10/interp = 1
 tracks/10/loop_wrap = true
 tracks/10/keys = {
@@ -5655,7 +5665,7 @@ tracks/10/keys = {
 tracks/11/type = "value"
 tracks/11/imported = false
 tracks/11/enabled = true
-tracks/11/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/RightHip/RightKnee/RightFoot:rotation")
+tracks/11/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Thigh_Front/Calf_Front/Foot_Front:rotation")
 tracks/11/interp = 1
 tracks/11/loop_wrap = true
 tracks/11/keys = {
@@ -5667,7 +5677,7 @@ tracks/11/keys = {
 tracks/12/type = "value"
 tracks/12/imported = false
 tracks/12/enabled = true
-tracks/12/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/LeftHip/LeftKnee/LeftFoot:rotation")
+tracks/12/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Thigh_Back/Calf_Back/Foot_Back:rotation")
 tracks/12/interp = 1
 tracks/12/loop_wrap = true
 tracks/12/keys = {
@@ -5816,7 +5826,7 @@ tracks/7/keys = {
 tracks/8/type = "value"
 tracks/8/imported = false
 tracks/8/enabled = true
-tracks/8/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/LeftShoulder:position")
+tracks/8/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/UpperArm_Back:position")
 tracks/8/interp = 1
 tracks/8/loop_wrap = true
 tracks/8/keys = {
@@ -5828,7 +5838,7 @@ tracks/8/keys = {
 tracks/9/type = "value"
 tracks/9/imported = false
 tracks/9/enabled = true
-tracks/9/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/RightShoulder:position")
+tracks/9/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/UpperArm_Front:position")
 tracks/9/interp = 1
 tracks/9/loop_wrap = true
 tracks/9/keys = {
@@ -5840,7 +5850,7 @@ tracks/9/keys = {
 tracks/10/type = "value"
 tracks/10/imported = false
 tracks/10/enabled = true
-tracks/10/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/LeftHip:position")
+tracks/10/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Thigh_Back:position")
 tracks/10/interp = 1
 tracks/10/loop_wrap = true
 tracks/10/keys = {
@@ -5852,7 +5862,7 @@ tracks/10/keys = {
 tracks/11/type = "value"
 tracks/11/imported = false
 tracks/11/enabled = true
-tracks/11/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/RightHip:position")
+tracks/11/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Thigh_Front:position")
 tracks/11/interp = 1
 tracks/11/loop_wrap = true
 tracks/11/keys = {
@@ -5864,7 +5874,7 @@ tracks/11/keys = {
 tracks/12/type = "value"
 tracks/12/imported = false
 tracks/12/enabled = true
-tracks/12/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/RightHip/RightKnee/RightFoot:rotation")
+tracks/12/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Thigh_Front/Calf_Front/Foot_Front:rotation")
 tracks/12/interp = 1
 tracks/12/loop_wrap = true
 tracks/12/keys = {
@@ -5876,7 +5886,7 @@ tracks/12/keys = {
 tracks/13/type = "value"
 tracks/13/imported = false
 tracks/13/enabled = true
-tracks/13/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/LeftHip/LeftKnee/LeftFoot:rotation")
+tracks/13/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Thigh_Back/Calf_Back/Foot_Back:rotation")
 tracks/13/interp = 1
 tracks/13/loop_wrap = true
 tracks/13/keys = {
@@ -5948,7 +5958,7 @@ tracks/18/keys = {
 tracks/19/type = "value"
 tracks/19/imported = false
 tracks/19/enabled = true
-tracks/19/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/LeftHip/LeftKnee/LeftFoot:position")
+tracks/19/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Thigh_Back/Calf_Back/Foot_Back:position")
 tracks/19/interp = 1
 tracks/19/loop_wrap = true
 tracks/19/keys = {
@@ -5960,7 +5970,7 @@ tracks/19/keys = {
 tracks/20/type = "value"
 tracks/20/imported = false
 tracks/20/enabled = true
-tracks/20/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/RightHip/RightKnee/RightFoot:position")
+tracks/20/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Thigh_Front/Calf_Front/Foot_Front:position")
 tracks/20/interp = 1
 tracks/20/loop_wrap = true
 tracks/20/keys = {
@@ -6073,7 +6083,7 @@ tracks/7/keys = {
 tracks/8/type = "value"
 tracks/8/imported = false
 tracks/8/enabled = true
-tracks/8/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/LeftShoulder:position")
+tracks/8/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/UpperArm_Back:position")
 tracks/8/interp = 1
 tracks/8/loop_wrap = true
 tracks/8/keys = {
@@ -6085,7 +6095,7 @@ tracks/8/keys = {
 tracks/9/type = "value"
 tracks/9/imported = false
 tracks/9/enabled = true
-tracks/9/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/RightShoulder:position")
+tracks/9/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/UpperArm_Front:position")
 tracks/9/interp = 1
 tracks/9/loop_wrap = true
 tracks/9/keys = {
@@ -6097,7 +6107,7 @@ tracks/9/keys = {
 tracks/10/type = "value"
 tracks/10/imported = false
 tracks/10/enabled = true
-tracks/10/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/LeftHip:position")
+tracks/10/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Thigh_Back:position")
 tracks/10/interp = 1
 tracks/10/loop_wrap = true
 tracks/10/keys = {
@@ -6109,7 +6119,7 @@ tracks/10/keys = {
 tracks/11/type = "value"
 tracks/11/imported = false
 tracks/11/enabled = true
-tracks/11/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/RightHip:position")
+tracks/11/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Thigh_Front:position")
 tracks/11/interp = 1
 tracks/11/loop_wrap = true
 tracks/11/keys = {
@@ -6121,7 +6131,7 @@ tracks/11/keys = {
 tracks/12/type = "value"
 tracks/12/imported = false
 tracks/12/enabled = true
-tracks/12/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/RightHip/RightKnee/RightFoot:rotation")
+tracks/12/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Thigh_Front/Calf_Front/Foot_Front:rotation")
 tracks/12/interp = 1
 tracks/12/loop_wrap = true
 tracks/12/keys = {
@@ -6133,7 +6143,7 @@ tracks/12/keys = {
 tracks/13/type = "value"
 tracks/13/imported = false
 tracks/13/enabled = true
-tracks/13/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/LeftHip/LeftKnee/LeftFoot:rotation")
+tracks/13/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Thigh_Back/Calf_Back/Foot_Back:rotation")
 tracks/13/interp = 1
 tracks/13/loop_wrap = true
 tracks/13/keys = {
@@ -6205,7 +6215,7 @@ tracks/18/keys = {
 tracks/19/type = "value"
 tracks/19/imported = false
 tracks/19/enabled = true
-tracks/19/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/LeftHip/LeftKnee/LeftFoot:position")
+tracks/19/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Thigh_Back/Calf_Back/Foot_Back:position")
 tracks/19/interp = 1
 tracks/19/loop_wrap = true
 tracks/19/keys = {
@@ -6217,7 +6227,7 @@ tracks/19/keys = {
 tracks/20/type = "value"
 tracks/20/imported = false
 tracks/20/enabled = true
-tracks/20/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/RightHip/RightKnee/RightFoot:position")
+tracks/20/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Thigh_Front/Calf_Front/Foot_Front:position")
 tracks/20/interp = 1
 tracks/20/loop_wrap = true
 tracks/20/keys = {
@@ -6229,7 +6239,7 @@ tracks/20/keys = {
 tracks/21/type = "value"
 tracks/21/imported = false
 tracks/21/enabled = true
-tracks/21/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/LeftShoulder:visible")
+tracks/21/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/UpperArm_Back:visible")
 tracks/21/interp = 1
 tracks/21/loop_wrap = true
 tracks/21/keys = {
@@ -6241,7 +6251,7 @@ tracks/21/keys = {
 tracks/22/type = "value"
 tracks/22/imported = false
 tracks/22/enabled = true
-tracks/22/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/RightShoulder:visible")
+tracks/22/path = NodePath("PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/UpperArm_Front:visible")
 tracks/22/interp = 1
 tracks/22/loop_wrap = true
 tracks/22/keys = {
@@ -6333,11 +6343,15 @@ position = Vector2(0, 4)
 shape = SubResource("CapsuleShape2D_whnp6")
 
 [node name="WallDetector" type="RayCast2D" parent="PlayerBody/SpritePivot" unique_id=1727189102]
-position = Vector2(0, -159)
+position = Vector2(0, -155)
+target_position = Vector2(50, 0)
+
+[node name="HangingDetector" type="RayCast2D" parent="PlayerBody/SpritePivot" unique_id=1289769247]
+position = Vector2(0, -91)
 target_position = Vector2(50, 0)
 
 [node name="LedgeDetector" type="RayCast2D" parent="PlayerBody/SpritePivot" unique_id=1512534956]
-position = Vector2(0, -166)
+position = Vector2(0, -162)
 target_position = Vector2(60, 0)
 
 [node name="Lantern" type="PointLight2D" parent="PlayerBody/SpritePivot" unique_id=1230084726]
@@ -6371,131 +6385,127 @@ shape = SubResource("RectangleShape2D_s7qer")
 [node name="Armature" type="Node2D" parent="PlayerBody/SpritePivot" unique_id=1602337061]
 scale = Vector2(0.5, 0.5)
 
-[node name="Ragdoll" type="Node2D" parent="PlayerBody/SpritePivot/Armature" unique_id=35418647 node_paths=PackedStringArray("ragdoll_bodies", "skeleton_bones", "skeleton_node", "animator")]
+[node name="Ragdoll" type="Node2D" parent="PlayerBody/SpritePivot/Armature" unique_id=35418647 node_paths=PackedStringArray("skeleton_node", "animator", "pivot")]
 visible = false
 scale = Vector2(2, 2)
 script = ExtResource("30_fjxoa")
-ragdoll_bodies = [NodePath("Arm_Front/UpperArm_Physics"), NodePath("Arm_Front/LowerArm_Physics"), NodePath("Arm_Back/UpperArm_Physics"), NodePath("Arm_Back/LowerArm_Physics"), NodePath("Arm_Front/Hand_Physics"), NodePath("Arm_Back/Hand_Physics"), NodePath("Leg_Back/Thigh_Physics"), NodePath("Leg_Back/Calf_Physics"), NodePath("Leg_Back/Foot_Physics")]
-skeleton_bones = [NodePath("../Skeleton2D/Pelvis/Spine/RightShoulder"), NodePath("../Skeleton2D/Pelvis/Spine/RightShoulder/RightElbow"), NodePath("../Skeleton2D/Pelvis/Spine/LeftShoulder"), NodePath("../Skeleton2D/Pelvis/Spine/LeftShoulder/LeftElbow"), NodePath("../Skeleton2D/Pelvis/Spine/RightShoulder/RightElbow/RightHand"), NodePath("../Skeleton2D/Pelvis/Spine/LeftShoulder/LeftElbow/LeftHand"), NodePath("../Skeleton2D/Pelvis/LeftHip"), NodePath("../Skeleton2D/Pelvis/LeftHip/LeftKnee"), NodePath("../Skeleton2D/Pelvis/LeftHip/LeftKnee/LeftFoot")]
 skeleton_node = NodePath("../Skeleton2D")
 animator = NodePath("../../../PlayerAnimator")
+pivot = NodePath("../..")
 
 [node name="Root" type="RigidBody2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll" unique_id=1009429225]
-position = Vector2(0, -162)
+position = Vector2(0, -179)
 collision_layer = 0
 collision_mask = 256
-freeze = true
+can_sleep = false
+freeze_mode = 1
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Root" unique_id=861282684]
 shape = SubResource("CircleShape2D_jd2rm")
 
 [node name="Root_Head_Pin" type="PinJoint2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Root" unique_id=246760580]
-node_a = NodePath("../../Head")
+node_a = NodePath("../../Head/Head_Physics")
 node_b = NodePath("..")
 
 [node name="Arm_Back" type="Node2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll" unique_id=1528559718]
-position = Vector2(-1.9999999, -112)
+position = Vector2(-7, -135)
 
-[node name="Shoulder_Physics" type="RigidBody2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Arm_Back" unique_id=1782097172]
+[node name="Shoulder_Back_Physics" type="RigidBody2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Arm_Back" unique_id=1782097172]
+position = Vector2(2, 16)
 collision_layer = 0
 collision_mask = 256
-freeze = true
 freeze_mode = 1
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Arm_Back/Shoulder_Physics" unique_id=1034800554]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Arm_Back/Shoulder_Back_Physics" unique_id=1034800554]
 shape = SubResource("CircleShape2D_xcnuv")
 
-[node name="Torso_Shoulder_Pin" type="PinJoint2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Arm_Back/Shoulder_Physics" unique_id=949538224]
+[node name="Torso_Shoulder_Pin" type="PinJoint2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Arm_Back/Shoulder_Back_Physics" unique_id=949538224]
 node_a = NodePath("../../../Torso/Torso_Physics")
 node_b = NodePath("..")
 
-[node name="UpperArm_Physics" type="RigidBody2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Arm_Back" unique_id=648442576]
+[node name="UpperArm_Back_Physics" type="RigidBody2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Arm_Back" unique_id=648442576]
+position = Vector2(2, 16)
 collision_layer = 0
 collision_mask = 256
 
-[node name="Shoulder_UpperArm_Pin" type="PinJoint2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Arm_Back/UpperArm_Physics" unique_id=2009116223]
-node_a = NodePath("../../Shoulder_Physics")
+[node name="Shoulder_UpperArm_Pin" type="PinJoint2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Arm_Back/UpperArm_Back_Physics" unique_id=2009116223]
+node_a = NodePath("../../Shoulder_Back_Physics")
 node_b = NodePath("..")
 bias = 0.9
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Arm_Back/UpperArm_Physics" unique_id=1829052239]
-position = Vector2(-12, 1)
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Arm_Back/UpperArm_Back_Physics" unique_id=1829052239]
+position = Vector2(-10, 0)
 rotation = -1.5707964
 shape = SubResource("CapsuleShape2D_1s1yo")
 
-[node name="BackUpperArm" type="Sprite2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Arm_Back/UpperArm_Physics" unique_id=340150467 groups=["flip_on_facing_change"]]
-position = Vector2(0, 1)
+[node name="BackUpperArm" type="Sprite2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Arm_Back/UpperArm_Back_Physics" unique_id=340150467 groups=["flip_on_facing_change"]]
+position = Vector2(-0.050354004, 0.14826965)
 rotation = 1.5707964
 scale = Vector2(0.2, 0.2)
 texture = ExtResource("30_b8hi5")
-offset = Vector2(0, 60)
+offset = Vector2(-0.5369568, 58.955994)
 region_enabled = true
 region_rect = Rect2(250, 205, 88, 180)
 
-[node name="LowerArm_Physics" type="RigidBody2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Arm_Back" unique_id=2018253390]
-position = Vector2(-24, 1)
+[node name="Forearm_Back_Physics" type="RigidBody2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Arm_Back" unique_id=2018253390]
+position = Vector2(-23, 16)
 collision_layer = 0
 collision_mask = 256
 
-[node name="UpperArm_LowerArm_Pin" type="PinJoint2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Arm_Back/LowerArm_Physics" unique_id=1275799075]
-node_a = NodePath("../../UpperArm_Physics")
+[node name="UpperArm_LowerArm_Pin" type="PinJoint2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Arm_Back/Forearm_Back_Physics" unique_id=1275799075]
+node_a = NodePath("../../UpperArm_Back_Physics")
 node_b = NodePath("..")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Arm_Back/LowerArm_Physics" unique_id=657228048]
-position = Vector2(-16, 1)
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Arm_Back/Forearm_Back_Physics" unique_id=657228048]
+position = Vector2(-15, 0)
 rotation = 1.5707964
 shape = SubResource("CapsuleShape2D_5ejfk")
 
-[node name="LeftLowerArm" type="Sprite2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Arm_Back/LowerArm_Physics" unique_id=1371698990]
-position = Vector2(-3, 1)
+[node name="LeftLowerArm" type="Sprite2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Arm_Back/Forearm_Back_Physics" unique_id=1371698990]
 rotation = 1.5707964
 scale = Vector2(0.2, 0.2)
 texture = ExtResource("30_b8hi5")
-offset = Vector2(0, 54)
+offset = Vector2(5.2044067, 68.88765)
 region_enabled = true
 region_rect = Rect2(250, 491, 86, 170)
 
-[node name="Hand_Physics" type="RigidBody2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Arm_Back" unique_id=765726449]
-position = Vector2(-53.50002, 3.5003967)
+[node name="Hand_Back_Physics" type="RigidBody2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Arm_Back" unique_id=765726449]
+position = Vector2(-53.5, 16)
 collision_layer = 0
 collision_mask = 256
 
-[node name="LowerArm_Hand_Pin" type="PinJoint2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Arm_Back/Hand_Physics" unique_id=1677548675]
-node_a = NodePath("../../LowerArm_Physics")
+[node name="LowerArm_Hand_Pin" type="PinJoint2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Arm_Back/Hand_Back_Physics" unique_id=1677548675]
+node_a = NodePath("../../Forearm_Back_Physics")
 node_b = NodePath("..")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Arm_Back/Hand_Physics" unique_id=773970957]
-position = Vector2(-6.999996, -2)
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Arm_Back/Hand_Back_Physics" unique_id=773970957]
+position = Vector2(-5.000004, 0)
 rotation = 1.5707964
 shape = SubResource("CapsuleShape2D_2uvqg")
 
-[node name="LeftHand" type="Sprite2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Arm_Back/Hand_Physics" unique_id=517803568]
-position = Vector2(0, -1)
+[node name="LeftHand" type="Sprite2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Arm_Back/Hand_Back_Physics" unique_id=517803568]
 rotation = -1.5707964
 scale = Vector2(0.2, 0.2)
 texture = SubResource("CompressedTexture2D_gswnw")
-offset = Vector2(-3, -51)
+offset = Vector2(-11.312195, -56.90622)
 region_enabled = true
 region_rect = Rect2(231, 780, 109, 134)
 
 [node name="Leg_Back" type="Node2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll" unique_id=627364165]
-z_index = 10
-position = Vector2(6.2587953, -61.838593)
+position = Vector2(2, -63)
 
 [node name="Hip_Physics" type="RigidBody2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Leg_Back" unique_id=605096192]
-position = Vector2(-1.2587953, -14.161407)
 collision_layer = 0
 collision_mask = 256
 
-[node name="Torso_Hip_Pin" type="PinJoint2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Leg_Back/Hip_Physics" unique_id=978361203]
-node_a = NodePath("../../../Torso/Torso_Physics")
+[node name="Pelvis_Hip_Pin" type="PinJoint2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Leg_Back/Hip_Physics" unique_id=978361203]
+node_a = NodePath("../../../Torso/Pelvis_Physics")
 node_b = NodePath("..")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Leg_Back/Hip_Physics" unique_id=1713980248]
 shape = SubResource("CircleShape2D_xcnuv")
 
 [node name="Thigh_Physics" type="RigidBody2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Leg_Back" unique_id=1285350441]
-position = Vector2(2.9999995, -5)
 collision_layer = 0
 collision_mask = 256
 
@@ -6503,45 +6513,21 @@ collision_mask = 256
 node_a = NodePath("../../Hip_Physics")
 node_b = NodePath("..")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Leg_Back/Thigh_Physics" unique_id=195657611]
-position = Vector2(19, 0)
-rotation = 1.5707964
-shape = SubResource("CapsuleShape2D_fjxoa")
-
 [node name="BackThigh" type="Sprite2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Leg_Back/Thigh_Physics" unique_id=1078741688 groups=["flip_on_facing_change"]]
-position = Vector2(0, 1)
 rotation = -1.5707964
 scale = Vector2(0.2, 0.2)
 texture = SubResource("CompressedTexture2D_xcnuv")
-offset = Vector2(0, 60)
+offset = Vector2(-4.977742, 93.16385)
 region_enabled = true
 region_rect = Rect2(860, 205, 130, 244)
 
-[node name="Calf_Physics" type="RigidBody2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Leg_Back" unique_id=225061493]
-position = Vector2(39, -4)
-collision_layer = 0
-collision_mask = 256
-
-[node name="Thigh_Calf_Pin" type="PinJoint2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Leg_Back/Calf_Physics" unique_id=1049873233]
-node_a = NodePath("../../Thigh_Physics")
-node_b = NodePath("..")
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Leg_Back/Calf_Physics" unique_id=567825112]
-position = Vector2(20, -1)
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Leg_Back/Thigh_Physics" unique_id=195657611]
+position = Vector2(18, 0)
 rotation = 1.5707964
-shape = SubResource("CapsuleShape2D_gswnw")
-
-[node name="BackCalf" type="Sprite2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Leg_Back/Calf_Physics" unique_id=1739937505 groups=["flip_on_facing_change"]]
-position = Vector2(4, -2)
-rotation = -1.5707964
-scale = Vector2(0.2, 0.2)
-texture = SubResource("CompressedTexture2D_j55il")
-offset = Vector2(0, 54)
-region_enabled = true
-region_rect = Rect2(874, 536, 116, 228)
+shape = SubResource("CapsuleShape2D_j55il")
 
 [node name="Foot_Physics" type="RigidBody2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Leg_Back" unique_id=238229669]
-position = Vector2(80, -5)
+position = Vector2(79, 0)
 collision_layer = 0
 collision_mask = 256
 
@@ -6550,185 +6536,215 @@ node_a = NodePath("../../Calf_Physics")
 node_b = NodePath("..")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Leg_Back/Foot_Physics" unique_id=442086863]
+position = Vector2(5, 0)
 shape = SubResource("CapsuleShape2D_2uvqg")
 
 [node name="FrontFoot" type="Sprite2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Leg_Back/Foot_Physics" unique_id=2037340051 groups=["flip_on_facing_change"]]
-position = Vector2(1.7412109, 13.838593)
 rotation = -1.5707964
 scale = Vector2(0.2, 0.2)
 texture = SubResource("CompressedTexture2D_hjies")
-offset = Vector2(74.99998, 3.8146973e-06)
+offset = Vector2(4.295949, 24.058353)
 region_enabled = true
 region_rect = Rect2(797, 862, 220, 77)
 
-[node name="Head" type="RigidBody2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll" unique_id=199924245]
-position = Vector2(6, -146)
+[node name="Calf_Physics" type="RigidBody2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Leg_Back" unique_id=225061493]
+position = Vector2(41, 0)
 collision_layer = 0
 collision_mask = 256
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Head" unique_id=1248098710]
-position = Vector2(4, 13)
-shape = SubResource("CapsuleShape2D_q28gw")
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Leg_Back/Calf_Physics" unique_id=567825112]
+position = Vector2(19, 0)
+rotation = 1.5707964
+shape = SubResource("CapsuleShape2D_hjies")
 
-[node name="Head" type="Sprite2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Head" unique_id=1803876362 groups=["flip_on_facing_change"]]
-z_index = 1
-position = Vector2(3, -7)
-scale = Vector2(0.2, 0.2)
-texture = SubResource("CompressedTexture2D_2uvqg")
-offset = Vector2(11, 82)
-region_enabled = true
-region_rect = Rect2(418, 44, 198, 201)
-
-[node name="Torso" type="Node2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll" unique_id=420461720]
-
-[node name="Neck_Physics" type="RigidBody2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Torso" unique_id=484440157]
-position = Vector2(9, -122)
-collision_layer = 0
-collision_mask = 256
-freeze = true
-
-[node name="Head_Neck_Pin" type="PinJoint2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Torso/Neck_Physics" unique_id=384819367]
-node_a = NodePath("../../../Head")
-node_b = NodePath("..")
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Torso/Neck_Physics" unique_id=254026208]
-shape = SubResource("CircleShape2D_xcnuv")
-
-[node name="Torso_Physics" type="RigidBody2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Torso" unique_id=1455758360]
-position = Vector2(6, -108)
-collision_layer = 0
-collision_mask = 256
-freeze = true
-
-[node name="Neck_Torso_Pin" type="PinJoint2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Torso/Torso_Physics" unique_id=798772774]
-position = Vector2(2, -15)
-node_a = NodePath("..")
-node_b = NodePath("../../Neck_Physics")
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Torso/Torso_Physics" unique_id=1540046956]
-position = Vector2(4, 13)
-shape = SubResource("CapsuleShape2D_q28gw")
-
-[node name="Torso" type="Sprite2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Torso/Torso_Physics" unique_id=864524843 groups=["flip_on_facing_change"]]
-z_index = 1
-scale = Vector2(0.19998252, 0.19998252)
-texture = SubResource("CompressedTexture2D_2uvqg")
-offset = Vector2(11, 82)
-region_enabled = true
-region_rect = Rect2(395.2, 350.80002, 239.99994, 325.6)
-
-[node name="Leg_Front" type="Node2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll" unique_id=118287000]
-visible = false
-z_index = 10
-position = Vector2(1.2587953, -60.838593)
-
-[node name="Hip_Physics" type="RigidBody2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Leg_Front" unique_id=1908394161]
-position = Vector2(-1.2587953, -14.161407)
-collision_layer = 0
-collision_mask = 256
-
-[node name="Torso_Hip_Pin" type="PinJoint2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Leg_Front/Hip_Physics" unique_id=1898225424]
-node_a = NodePath("../../../Torso/Torso_Physics")
-node_b = NodePath("..")
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Leg_Front/Hip_Physics" unique_id=516159544]
-shape = SubResource("CircleShape2D_xcnuv")
-
-[node name="Thigh_Physics" type="RigidBody2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Leg_Front" unique_id=119566520]
-position = Vector2(-7.6293945e-06, -0.9999924)
-collision_layer = 0
-collision_mask = 256
-
-[node name="Hip_Thigh_Pin" type="PinJoint2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Leg_Front/Thigh_Physics" unique_id=1973784548]
-node_a = NodePath("../../Hip_Physics")
-node_b = NodePath("..")
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Leg_Front/Thigh_Physics" unique_id=633885757]
-position = Vector2(0, 11)
-shape = SubResource("CapsuleShape2D_fjxoa")
-
-[node name="FrontThigh" type="Sprite2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Leg_Front/Thigh_Physics" unique_id=2097456061 groups=["flip_on_facing_change"]]
-position = Vector2(0, 1)
-scale = Vector2(0.2, 0.2)
-texture = SubResource("CompressedTexture2D_xcnuv")
-offset = Vector2(0, 60)
-region_enabled = true
-region_rect = Rect2(671, 205, 131, 244)
-
-[node name="Calf_Physics" type="RigidBody2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Leg_Front" unique_id=1321632887]
-position = Vector2(0, 33)
-collision_layer = 0
-collision_mask = 256
-
-[node name="Thigh_Calf_Pin" type="PinJoint2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Leg_Front/Calf_Physics" unique_id=1656465838]
+[node name="Thigh_Calf_Pin" type="PinJoint2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Leg_Back/Calf_Physics" unique_id=1049873233]
 node_a = NodePath("../../Thigh_Physics")
 node_b = NodePath("..")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Leg_Front/Calf_Physics" unique_id=160928634]
-position = Vector2(0, 13)
-shape = SubResource("CapsuleShape2D_gswnw")
-
-[node name="FrontCalf" type="Sprite2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Leg_Front/Calf_Physics" unique_id=512641425 groups=["flip_on_facing_change"]]
-position = Vector2(0, -1)
+[node name="BackCalf" type="Sprite2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Leg_Back/Calf_Physics" unique_id=1739937505 groups=["flip_on_facing_change"]]
+rotation = -1.5707964
 scale = Vector2(0.2, 0.2)
 texture = SubResource("CompressedTexture2D_j55il")
-offset = Vector2(0, 54)
+offset = Vector2(5.2061825, 76.99896)
 region_enabled = true
-region_rect = Rect2(668, 536, 134, 228)
+region_rect = Rect2(874, 536, 116, 228)
 
-[node name="Foot_Physics" type="RigidBody2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Leg_Front" unique_id=1771615570]
-position = Vector2(0, 59)
+[node name="Head" type="Node2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll" unique_id=28840955]
+position = Vector2(0, -124)
+
+[node name="Head_Physics" type="RigidBody2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Head" unique_id=199924245]
+collision_layer = 512
+collision_mask = 768
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Head/Head_Physics" unique_id=1248098710]
+position = Vector2(0, -16)
+shape = SubResource("CircleShape2D_gswnw")
+
+[node name="Head" type="Sprite2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Head/Head_Physics" unique_id=1803876362 groups=["flip_on_facing_change"]]
+z_index = 1
+scale = Vector2(0.2, 0.2)
+texture = SubResource("CompressedTexture2D_2uvqg")
+offset = Vector2(0, -83)
+region_enabled = true
+region_rect = Rect2(418, 44, 198, 201)
+
+[node name="Neck_Physics" type="RigidBody2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Head" unique_id=484440157]
 collision_layer = 0
 collision_mask = 256
-freeze = true
+freeze_mode = 1
+
+[node name="Head_Neck_Pin" type="PinJoint2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Head/Neck_Physics" unique_id=384819367]
+node_a = NodePath("../../Head_Physics")
+node_b = NodePath("..")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Head/Neck_Physics" unique_id=254026208]
+shape = SubResource("CircleShape2D_xcnuv")
+
+[node name="Torso" type="Node2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll" unique_id=420461720]
+position = Vector2(0, -99)
+
+[node name="Torso_Physics" type="RigidBody2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Torso" unique_id=1455758360]
+position = Vector2(0, -1)
+collision_layer = 512
+collision_mask = 768
+
+[node name="Neck_Torso_Pin" type="PinJoint2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Torso/Torso_Physics" unique_id=798772774]
+position = Vector2(0, -25)
+node_a = NodePath("..")
+node_b = NodePath("../../../Head/Neck_Physics")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Torso/Torso_Physics" unique_id=1540046956]
+shape = SubResource("CapsuleShape2D_xcnuv")
+
+[node name="Torso" type="Sprite2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Torso/Torso_Physics" unique_id=864524843 groups=["flip_on_facing_change"]]
+z_index = 1
+position = Vector2(0, 5.722046e-06)
+scale = Vector2(0.19998252, 0.19998252)
+texture = SubResource("CompressedTexture2D_2uvqg")
+offset = Vector2(-14.002182, 16.994293)
+region_enabled = true
+region_rect = Rect2(395.2, 350.80002, 239.99994, 325.6)
+
+[node name="Pelvis_Physics" type="RigidBody2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Torso" unique_id=1382454831]
+position = Vector2(0, 32)
+collision_layer = 0
+collision_mask = 256
+
+[node name="Torso_Pelvis_Pin" type="PinJoint2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Torso/Pelvis_Physics" unique_id=1913886694]
+position = Vector2(1, 0)
+node_a = NodePath("../../Torso_Physics")
+node_b = NodePath("..")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Torso/Pelvis_Physics" unique_id=1570753308]
+shape = SubResource("CircleShape2D_xcnuv")
+
+[node name="Leg_Front" type="Node2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll" unique_id=118287000]
+z_index = 10
+position = Vector2(-1.7412033, -62.838593)
+
+[node name="Hip_Front_Physics" type="RigidBody2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Leg_Front" unique_id=1908394161]
+collision_layer = 0
+collision_mask = 256
+
+[node name="Pelvis_Hip_Pin" type="PinJoint2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Leg_Front/Hip_Front_Physics" unique_id=1898225424]
+node_a = NodePath("../../../Torso/Pelvis_Physics")
+node_b = NodePath("..")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Leg_Front/Hip_Front_Physics" unique_id=516159544]
+shape = SubResource("CircleShape2D_xcnuv")
+
+[node name="Thigh_Physics" type="RigidBody2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Leg_Front" unique_id=119566520]
+collision_layer = 512
+collision_mask = 768
+
+[node name="Hip_Thigh_Pin" type="PinJoint2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Leg_Front/Thigh_Physics" unique_id=1973784548]
+node_a = NodePath("../../Hip_Front_Physics")
+node_b = NodePath("..")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Leg_Front/Thigh_Physics" unique_id=633885757]
+position = Vector2(-18, 0)
+rotation = -1.5707964
+shape = SubResource("CapsuleShape2D_fjxoa")
+
+[node name="FrontThigh" type="Sprite2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Leg_Front/Thigh_Physics" unique_id=2097456061 groups=["flip_on_facing_change"]]
+rotation = 1.5707964
+scale = Vector2(0.2, 0.2)
+texture = SubResource("CompressedTexture2D_xcnuv")
+offset = Vector2(-5.554199, 90.80542)
+flip_h = true
+region_enabled = true
+region_rect = Rect2(671, 205, 131, 244)
+
+[node name="Foot_Physics" type="RigidBody2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Leg_Front" unique_id=1771615570]
+position = Vector2(-78.00001, 0)
+collision_layer = 512
+collision_mask = 768
 
 [node name="Calf_Foot_Pin" type="PinJoint2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Leg_Front/Foot_Physics" unique_id=1586634006]
 node_a = NodePath("../../Calf_Physics")
 node_b = NodePath("..")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Leg_Front/Foot_Physics" unique_id=87434636]
-position = Vector2(0, 10)
+position = Vector2(-5, 0)
 shape = SubResource("CapsuleShape2D_2uvqg")
 
 [node name="FrontFoot" type="Sprite2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Leg_Front/Foot_Physics" unique_id=179639561 groups=["flip_on_facing_change"]]
-position = Vector2(-14.258793, 9.838593)
+position = Vector2(1.018042, 0.4135682)
+rotation = 1.5707964
 scale = Vector2(0.2, 0.2)
 texture = SubResource("CompressedTexture2D_hjies")
-offset = Vector2(74.99998, 3.8146973e-06)
+offset = Vector2(1.3254623, 28.090336)
 region_enabled = true
 region_rect = Rect2(797, 862, 220, 77)
 
-[node name="Arm_Front" type="Node2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll" unique_id=1120296567]
-visible = false
-z_index = 10
-position = Vector2(6, -112)
+[node name="Calf_Physics" type="RigidBody2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Leg_Front" unique_id=1321632887]
+position = Vector2(-40.000008, 0)
+collision_layer = 512
+collision_mask = 768
 
-[node name="Shoulder_Physics" type="RigidBody2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Arm_Front" unique_id=1746398816]
-position = Vector2(0, 3)
+[node name="Thigh_Calf_Pin" type="PinJoint2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Leg_Front/Calf_Physics" unique_id=1656465838]
+node_a = NodePath("../../Thigh_Physics")
+node_b = NodePath("..")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Leg_Front/Calf_Physics" unique_id=160928634]
+position = Vector2(-19, 0)
+rotation = -1.5707964
+shape = SubResource("CapsuleShape2D_gswnw")
+
+[node name="FrontCalf" type="Sprite2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Leg_Front/Calf_Physics" unique_id=512641425 groups=["flip_on_facing_change"]]
+rotation = 1.5707964
+scale = Vector2(0.2, 0.2)
+texture = SubResource("CompressedTexture2D_j55il")
+offset = Vector2(-5.608856, 76.60211)
+region_enabled = true
+region_rect = Rect2(668, 536, 134, 228)
+
+[node name="Arm_Front" type="Node2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll" unique_id=1120296567]
+z_index = 10
+position = Vector2(5, -119)
+
+[node name="Shoulder_Front_Physics" type="RigidBody2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Arm_Front" unique_id=1746398816]
 collision_layer = 0
 collision_mask = 256
-freeze = true
 freeze_mode = 1
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Arm_Front/Shoulder_Physics" unique_id=2140890372]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Arm_Front/Shoulder_Front_Physics" unique_id=2140890372]
 shape = SubResource("CircleShape2D_xcnuv")
 
-[node name="Torso_Shoulder_Pin" type="PinJoint2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Arm_Front/Shoulder_Physics" unique_id=1425970839]
+[node name="Torso_Shoulder_Pin" type="PinJoint2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Arm_Front/Shoulder_Front_Physics" unique_id=1425970839]
 node_a = NodePath("../../../Torso/Torso_Physics")
 node_b = NodePath("..")
 
-[node name="UpperArm_Physics" type="RigidBody2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Arm_Front" unique_id=2119285860]
-position = Vector2(0.25878716, 3.161415)
+[node name="UpperArm_Front_Physics" type="RigidBody2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Arm_Front" unique_id=2119285860]
 collision_layer = 0
 collision_mask = 256
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Arm_Front/UpperArm_Physics" unique_id=1474938076]
-position = Vector2(10.999985, 0)
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Arm_Front/UpperArm_Front_Physics" unique_id=1474938076]
+position = Vector2(9.999985, 0)
 rotation = 1.5707964
 shape = SubResource("CapsuleShape2D_1s1yo")
 
-[node name="RightUpperArm" type="Sprite2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Arm_Front/UpperArm_Physics" unique_id=2080759251 groups=["flip_on_facing_change"]]
-position = Vector2(0, 1)
+[node name="RightUpperArm" type="Sprite2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Arm_Front/UpperArm_Front_Physics" unique_id=2080759251 groups=["flip_on_facing_change"]]
 rotation = -1.5707964
 scale = Vector2(-0.2, 0.2)
 texture = SubResource("CompressedTexture2D_xcnuv")
@@ -6736,74 +6752,78 @@ offset = Vector2(0, 60)
 region_enabled = true
 region_rect = Rect2(54, 205, 89, 180)
 
-[node name="Shoulder_UpperArm_Pin" type="PinJoint2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Arm_Front/UpperArm_Physics" unique_id=808895389]
+[node name="Shoulder_UpperArm_Pin" type="PinJoint2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Arm_Front/UpperArm_Front_Physics" unique_id=808895389]
 scale = Vector2(0.99999994, 0.99999994)
-node_a = NodePath("../../Shoulder_Physics")
+node_a = NodePath("../../Shoulder_Front_Physics")
 node_b = NodePath("..")
 bias = 0.9
 
-[node name="LowerArm_Physics" type="RigidBody2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Arm_Front" unique_id=1974117299]
-position = Vector2(29.258799, 4.1614075)
+[node name="Forearm_Front_Physics" type="RigidBody2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Arm_Front" unique_id=1974117299]
+position = Vector2(25, 0)
 collision_layer = 0
 collision_mask = 256
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Arm_Front/LowerArm_Physics" unique_id=2073085427]
-position = Vector2(16, 0)
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Arm_Front/Forearm_Front_Physics" unique_id=2073085427]
+position = Vector2(15, 0)
 rotation = 1.5707964
 shape = SubResource("CapsuleShape2D_5ejfk")
 
-[node name="RightLowerArm" type="Sprite2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Arm_Front/LowerArm_Physics" unique_id=426892669 groups=["flip_on_facing_change"]]
-position = Vector2(0, -1)
+[node name="RightLowerArm" type="Sprite2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Arm_Front/Forearm_Front_Physics" unique_id=426892669 groups=["flip_on_facing_change"]]
 rotation = -1.5707964
 scale = Vector2(-0.2, 0.2)
 texture = SubResource("CompressedTexture2D_j55il")
-offset = Vector2(0, 54)
+offset = Vector2(-4.2197266, 55.016357)
 region_enabled = true
 region_rect = Rect2(56, 491, 87, 170)
 
-[node name="UpperArm_LowerArm_Pin" type="PinJoint2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Arm_Front/LowerArm_Physics" unique_id=1831347541]
-node_a = NodePath("../../UpperArm_Physics")
+[node name="UpperArm_LowerArm_Pin" type="PinJoint2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Arm_Front/Forearm_Front_Physics" unique_id=1831347541]
+node_a = NodePath("../../UpperArm_Front_Physics")
 node_b = NodePath("..")
 
-[node name="Hand_Physics" type="RigidBody2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Arm_Front" unique_id=1685388125]
-position = Vector2(66.49997, 4.5003967)
+[node name="Hand_Front_Physics" type="RigidBody2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Arm_Front" unique_id=1685388125]
+position = Vector2(55, 0)
 collision_layer = 0
 collision_mask = 256
 freeze_mode = 1
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Arm_Front/Hand_Physics" unique_id=870316851]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Arm_Front/Hand_Front_Physics" unique_id=870316851]
+position = Vector2(5, 0)
 shape = SubResource("CapsuleShape2D_2uvqg")
 
-[node name="RightHand" type="Sprite2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Arm_Front/Hand_Physics" unique_id=21913142 groups=["flip_on_facing_change"]]
-position = Vector2(0, -1.421)
+[node name="RightHand" type="Sprite2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Arm_Front/Hand_Front_Physics" unique_id=21913142 groups=["flip_on_facing_change"]]
 rotation = 1.5707964
 scale = Vector2(-0.2, 0.2)
 texture = SubResource("CompressedTexture2D_hjies")
-offset = Vector2(7.926178, -52.62892)
+offset = Vector2(9.337006, -54.264603)
 region_enabled = true
 region_rect = Rect2(53, 780, 108, 134)
 
-[node name="UpperArm_Hand_Pin" type="PinJoint2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Arm_Front/Hand_Physics" unique_id=1708239370]
-position = Vector2(-6, 0)
-node_a = NodePath("../../LowerArm_Physics")
+[node name="UpperArm_Hand_Pin" type="PinJoint2D" parent="PlayerBody/SpritePivot/Armature/Ragdoll/Arm_Front/Hand_Front_Physics" unique_id=1708239370]
+node_a = NodePath("../../Forearm_Front_Physics")
 node_b = NodePath("..")
 
 [node name="Skeleton2D" type="Skeleton2D" parent="PlayerBody/SpritePivot/Armature" unique_id=1739330150]
 scale = Vector2(0.9999999, 0.9999999)
 modification_stack = SubResource("SkeletonModificationStack2D_b8hi5")
 
-[node name="Pelvis" type="Bone2D" parent="PlayerBody/SpritePivot/Armature/Skeleton2D" unique_id=982320474]
+[node name="Pelvis" type="Bone2D" parent="PlayerBody/SpritePivot/Armature/Skeleton2D" unique_id=594647518 node_paths=PackedStringArray("physics_body", "position_body")]
 position = Vector2(-4.7683716e-07, -119.999985)
-scale = Vector2(0.9999843, 0.9999843)
+scale = Vector2(0.99998486, 0.99998486)
 rest = Transform2D(0.99998486, 0, 0, 0.99998486, 0.10991356, -122.84068)
-editor_settings/show_bone_gizmo = false
+script = ExtResource("32_gswnw")
+physics_body = NodePath("../../Ragdoll/Torso/Torso_Physics")
+position_body = NodePath("../../Ragdoll/Torso/Pelvis_Physics")
+inverted_scale_x_compensation_degrees = 180.0
+bone_groups = 80
+metadata/_custom_type_script = "uid://cns3xkrq4cwa4"
 
-[node name="Spine" type="Bone2D" parent="PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis" unique_id=1841079769]
+[node name="Spine" type="Bone2D" parent="PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis" unique_id=982948741]
 position = Vector2(10.7840805, -93.58375)
 rotation = 0.20871371
-scale = Vector2(0.9999998, 0.9999998)
 rest = Transform2D(0.97829825, 0.20720169, -0.20720169, 0.97829825, 10.7840805, -93.58375)
-editor_settings/show_bone_gizmo = false
+script = ExtResource("32_gswnw")
+inverted_scale_x_compensation_degrees = 180.0
+metadata/_custom_type_script = "uid://cns3xkrq4cwa4"
 
 [node name="Torso" type="Sprite2D" parent="PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine" unique_id=231744044]
 z_index = 1
@@ -6813,11 +6833,15 @@ offset = Vector2(11, 82)
 region_enabled = true
 region_rect = Rect2(395.2, 350.80002, 239.99994, 325.6)
 
-[node name="Head" type="Bone2D" parent="PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine" unique_id=2063665213]
+[node name="Head" type="Bone2D" parent="PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine" unique_id=1311195525 node_paths=PackedStringArray("physics_body")]
 position = Vector2(3, -45)
-scale = Vector2(0.9999995, 0.9999995)
+scale = Vector2(0.9999856, 0.9999856)
 rest = Transform2D(0.9999856, 0, 0, 0.9999856, 3, -45)
-editor_settings/show_bone_gizmo = false
+script = ExtResource("32_gswnw")
+physics_body = NodePath("../../../../Ragdoll/Head/Head_Physics")
+inverted_scale_x_compensation_degrees = 180.0
+bone_groups = 32
+metadata/_custom_type_script = "uid://cns3xkrq4cwa4"
 
 [node name="Head" type="Sprite2D" parent="PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/Head" unique_id=255580531]
 z_index = 1
@@ -6827,14 +6851,19 @@ offset = Vector2(18, -30)
 region_enabled = true
 region_rect = Rect2(404, 42.000004, 227.19995, 208.79999)
 
-[node name="LeftShoulder" type="Bone2D" parent="PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine" unique_id=732858989]
+[node name="UpperArm_Back" type="Bone2D" parent="PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine" unique_id=1018357160 node_paths=PackedStringArray("physics_body")]
 position = Vector2(-6.5663757, 0.07548523)
-rotation = -1.2886109
-scale = Vector2(0.99997216, 0.99997216)
+rotation = -1.5313199
+scale = Vector2(0.9999758, 0.9999758)
 rest = Transform2D(-0.40414256, -0.9146696, 0.9146696, -0.40414256, -15.097828, -7.0690055)
-editor_settings/show_bone_gizmo = false
+script = ExtResource("32_gswnw")
+physics_body = NodePath("../../../../Ragdoll/Arm_Back/UpperArm_Back_Physics")
+ik_lookup_mask = 4
+bone_groups = 130
+metadata/_custom_type_script = "uid://cns3xkrq4cwa4"
+metadata/_local_pose_override_enabled_ = true
 
-[node name="LeftUpperArm" type="Sprite2D" parent="PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/LeftShoulder" unique_id=766854331]
+[node name="LeftUpperArm" type="Sprite2D" parent="PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/UpperArm_Back" unique_id=766854331]
 position = Vector2(-21.756226, -3.9180145)
 rotation = 1.5707964
 scale = Vector2(0.4, 0.4)
@@ -6843,26 +6872,35 @@ offset = Vector2(0, 50)
 region_enabled = true
 region_rect = Rect2(250, 205, 88, 180)
 
-[node name="LeftElbow" type="Bone2D" parent="PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/LeftShoulder" unique_id=1642723795]
+[node name="Forearm_Back" type="Bone2D" parent="PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/UpperArm_Back" unique_id=1412615192 node_paths=PackedStringArray("physics_body")]
 position = Vector2(-66, 0)
 scale = Vector2(0.9999931, 0.9999931)
 rest = Transform2D(0.9999931, -2.682209e-07, 2.682209e-07, 0.9999931, -66, 0)
-editor_settings/show_bone_gizmo = false
+script = ExtResource("32_gswnw")
+physics_body = NodePath("../../../../../Ragdoll/Arm_Back/Forearm_Back_Physics")
+ik_lookup_mask = 4
+bone_groups = 130
+metadata/_custom_type_script = "uid://cns3xkrq4cwa4"
+metadata/_local_pose_override_enabled_ = true
 
-[node name="LeftLowerArm" type="Sprite2D" parent="PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/LeftShoulder/LeftElbow" unique_id=1391476331]
-rotation = -4.712389
+[node name="LeftLowerArm" type="Sprite2D" parent="PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/UpperArm_Back/Forearm_Back" unique_id=1391476331]
+rotation = 1.5707964
 scale = Vector2(0.40000004, 0.40000004)
 texture = SubResource("CompressedTexture2D_5ejfk")
 offset = Vector2(4, 50)
 region_enabled = true
 region_rect = Rect2(250, 491, 86, 170)
 
-[node name="LeftHand" type="Bone2D" parent="PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/LeftShoulder/LeftElbow" unique_id=1083275217]
+[node name="Hand_Back" type="Bone2D" parent="PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/UpperArm_Back/Forearm_Back" unique_id=483007548 node_paths=PackedStringArray("physics_body")]
 position = Vector2(-60, 0)
 rest = Transform2D(1, 0, 0, 1, -60, 0)
-editor_settings/show_bone_gizmo = false
+script = ExtResource("32_gswnw")
+physics_body = NodePath("../../../../../../Ragdoll/Arm_Back/Hand_Back_Physics")
+ik_lookup_mask = 4
+bone_groups = 2
+metadata/_custom_type_script = "uid://cns3xkrq4cwa4"
 
-[node name="LeftHand" type="Sprite2D" parent="PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/LeftShoulder/LeftElbow/LeftHand" unique_id=622200561]
+[node name="LeftHand" type="Sprite2D" parent="PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/UpperArm_Back/Forearm_Back/Hand_Back" unique_id=622200561]
 rotation = -1.5707964
 scale = Vector2(0.40000004, 0.40000004)
 texture = SubResource("CompressedTexture2D_jd2rm")
@@ -6870,14 +6908,19 @@ offset = Vector2(-9, -56)
 region_enabled = true
 region_rect = Rect2(231, 780, 109, 134)
 
-[node name="RightShoulder" type="Bone2D" parent="PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine" unique_id=908919963]
+[node name="UpperArm_Front" type="Bone2D" parent="PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine" unique_id=1660870108 node_paths=PackedStringArray("physics_body")]
 position = Vector2(-1.1036072, 4.633301)
-rotation = 1.2007625
-scale = Vector2(0.99997574, 0.99997574)
+rotation = 1.3611468
+scale = Vector2(0.9999761, 0.9999761)
 rest = Transform2D(0.18983588, 0.9817922, -0.9817922, 0.18983588, 12, 0)
-editor_settings/show_bone_gizmo = false
+script = ExtResource("32_gswnw")
+physics_body = NodePath("../../../../Ragdoll/Arm_Front/UpperArm_Front_Physics")
+ik_lookup_mask = 8
+bone_groups = 129
+metadata/_custom_type_script = "uid://cns3xkrq4cwa4"
+metadata/_local_pose_override_enabled_ = true
 
-[node name="RightUpperArm" type="Sprite2D" parent="PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/RightShoulder" unique_id=1857845250]
+[node name="RightUpperArm" type="Sprite2D" parent="PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/UpperArm_Front" unique_id=1857845250]
 z_index = 5
 rotation = -1.5707964
 scale = Vector2(0.40000004, 0.40000004)
@@ -6886,13 +6929,18 @@ offset = Vector2(-2, 54)
 region_enabled = true
 region_rect = Rect2(54, 205, 89, 180)
 
-[node name="RightElbow" type="Bone2D" parent="PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/RightShoulder" unique_id=465326054]
+[node name="Forearm_Front" type="Bone2D" parent="PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/UpperArm_Front" unique_id=1035770698 node_paths=PackedStringArray("physics_body")]
 position = Vector2(66, 0)
 scale = Vector2(0.9999942, 0.9999942)
 rest = Transform2D(0.9999942, -4.2840835e-08, 4.2840835e-08, 0.9999942, 66, 0)
-editor_settings/show_bone_gizmo = false
+script = ExtResource("32_gswnw")
+physics_body = NodePath("../../../../../Ragdoll/Arm_Front/Forearm_Front_Physics")
+ik_lookup_mask = 8
+bone_groups = 129
+metadata/_custom_type_script = "uid://cns3xkrq4cwa4"
+metadata/_local_pose_override_enabled_ = true
 
-[node name="RightLowerArm" type="Sprite2D" parent="PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/RightShoulder/RightElbow" unique_id=1650198071]
+[node name="RightLowerArm" type="Sprite2D" parent="PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/UpperArm_Front/Forearm_Front" unique_id=1650198071]
 z_index = 4
 rotation = -1.5707964
 scale = Vector2(0.40000004, 0.40000004)
@@ -6901,28 +6949,37 @@ offset = Vector2(-2, 60)
 region_enabled = true
 region_rect = Rect2(56, 491, 87, 170)
 
-[node name="RightHand" type="Bone2D" parent="PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/RightShoulder/RightElbow" unique_id=2120196851]
+[node name="Hand_Front" type="Bone2D" parent="PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/UpperArm_Front/Forearm_Front" unique_id=528853216 node_paths=PackedStringArray("physics_body")]
 position = Vector2(60, 0)
 rest = Transform2D(1, 0, 0, 1, 60, 0)
-editor_settings/show_bone_gizmo = false
+script = ExtResource("32_gswnw")
+physics_body = NodePath("../../../../../../Ragdoll/Arm_Front/Hand_Front_Physics")
+ik_lookup_mask = 8
+bone_groups = 1
+metadata/_custom_type_script = "uid://cns3xkrq4cwa4"
 
-[node name="RightHand" type="Sprite2D" parent="PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/RightShoulder/RightElbow/RightHand" unique_id=1257267574]
+[node name="RightHand" type="Sprite2D" parent="PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Spine/UpperArm_Front/Forearm_Front/Hand_Front" unique_id=1257267574]
 z_index = 3
-rotation = 1.5707964
-scale = Vector2(-0.4, 0.4)
+rotation = -1.5707963
+scale = Vector2(0.4, -0.4)
 texture = SubResource("CompressedTexture2D_pnw6m")
 offset = Vector2(9, -60)
 region_enabled = true
 region_rect = Rect2(53, 780, 108, 134)
 
-[node name="LeftHip" type="Bone2D" parent="PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis" unique_id=1901562911]
+[node name="Thigh_Back" type="Bone2D" parent="PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis" unique_id=26425080 node_paths=PackedStringArray("physics_body")]
 position = Vector2(-12.174713, 6.8692093)
-scale = Vector2(0.99996656, 0.99996656)
+rotation = 1.0421991
+scale = Vector2(0.9999674, 0.9999674)
 rest = Transform2D(0.3662702, 0.93047357, -0.93047357, 0.3662702, 10.495453, -10.16515)
-editor_settings/show_bone_gizmo = false
+script = ExtResource("32_gswnw")
+physics_body = NodePath("../../../Ragdoll/Leg_Back/Thigh_Physics")
+ik_lookup_mask = 1
+bone_groups = 8
+metadata/_custom_type_script = "uid://cns3xkrq4cwa4"
 metadata/_local_pose_override_enabled_ = true
 
-[node name="LeftUpperLeg" type="Sprite2D" parent="PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/LeftHip" unique_id=1926169765]
+[node name="LeftUpperLeg" type="Sprite2D" parent="PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Thigh_Back" unique_id=1926169765]
 rotation = -1.5750881
 scale = Vector2(0.40002462, 0.40002462)
 texture = SubResource("CompressedTexture2D_1so5t")
@@ -6930,14 +6987,19 @@ offset = Vector2(7, 75)
 region_enabled = true
 region_rect = Rect2(860, 205, 130, 244)
 
-[node name="LeftKnee" type="Bone2D" parent="PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/LeftHip" unique_id=909098214]
+[node name="Calf_Back" type="Bone2D" parent="PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Thigh_Back" unique_id=1430774658 node_paths=PackedStringArray("physics_body")]
 position = Vector2(80, 0)
+rotation = 0.5591839
 scale = Vector2(0.99998957, 0.99998957)
 rest = Transform2D(0.8476795, 0.530489, -0.530489, 0.8476795, 80, 0)
-editor_settings/show_bone_gizmo = false
+script = ExtResource("32_gswnw")
+physics_body = NodePath("../../../../Ragdoll/Leg_Back/Calf_Physics")
+ik_lookup_mask = 1
+bone_groups = 8
+metadata/_custom_type_script = "uid://cns3xkrq4cwa4"
 metadata/_local_pose_override_enabled_ = true
 
-[node name="LeftLowerLeg" type="Sprite2D" parent="PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/LeftHip/LeftKnee" unique_id=1387117750]
+[node name="LeftLowerLeg" type="Sprite2D" parent="PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Thigh_Back/Calf_Back" unique_id=1387117750]
 rotation = -1.575088
 scale = Vector2(0.40003416, 0.40003416)
 texture = SubResource("CompressedTexture2D_55jnj")
@@ -6945,30 +7007,38 @@ offset = Vector2(7, 75)
 region_enabled = true
 region_rect = Rect2(874, 536, 116, 228)
 
-[node name="LeftFoot" type="Bone2D" parent="PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/LeftHip/LeftKnee" unique_id=1233006473]
+[node name="Foot_Back" type="Bone2D" parent="PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Thigh_Back/Calf_Back" unique_id=1123735630 node_paths=PackedStringArray("physics_body")]
 position = Vector2(80, 0)
-scale = Vector2(0.99998707, 0.99998707)
+scale = Vector2(0.9999914, 0.9999914)
 rest = Transform2D(0.9894251, -0.14498658, 0.14498658, 0.9894251, 80, 0)
-editor_settings/show_bone_gizmo = false
+script = ExtResource("32_gswnw")
+physics_body = NodePath("../../../../../Ragdoll/Leg_Back/Foot_Physics")
+ik_lookup_mask = 1
+bone_groups = 8
+metadata/_custom_type_script = "uid://cns3xkrq4cwa4"
 metadata/_local_pose_override_enabled_ = true
 
-[node name="LeftFoot" type="Sprite2D" parent="PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/LeftHip/LeftKnee/LeftFoot" unique_id=1190936341]
-rotation = 1.5707964
-scale = Vector2(-0.4, -0.4)
+[node name="LeftFoot" type="Sprite2D" parent="PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Thigh_Back/Calf_Back/Foot_Back" unique_id=1190936341]
+rotation = -1.5707963
+scale = Vector2(0.4, 0.4)
 texture = SubResource("CompressedTexture2D_dx5ib")
 offset = Vector2(32, 20)
 region_enabled = true
 region_rect = Rect2(856, 862, 151, 77)
 
-[node name="RightHip" type="Bone2D" parent="PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis" unique_id=1096470667]
+[node name="Thigh_Front" type="Bone2D" parent="PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis" unique_id=1691323672 node_paths=PackedStringArray("physics_body")]
 position = Vector2(-9.1992035, -1.658081)
-rotation = -1.5643358
-scale = Vector2(0.9999706, 0.9999706)
+rotation = -2.0136223
+scale = Vector2(0.99997187, 0.99997187)
 rest = Transform2D(-0.3575367, -0.9338695, 0.9338695, -0.3575367, -5.495452, -5.030177)
-editor_settings/show_bone_gizmo = false
+script = ExtResource("32_gswnw")
+physics_body = NodePath("../../../Ragdoll/Leg_Front/Thigh_Physics")
+ik_lookup_mask = 2
+bone_groups = 4
+metadata/_custom_type_script = "uid://cns3xkrq4cwa4"
 metadata/_local_pose_override_enabled_ = true
 
-[node name="RightUpperLeg" type="Sprite2D" parent="PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/RightHip" unique_id=1516870258]
+[node name="Thigh_Front" type="Sprite2D" parent="PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Thigh_Front" unique_id=1516870258]
 z_index = 2
 rotation = 1.5707964
 scale = Vector2(0.4, 0.4)
@@ -6977,14 +7047,19 @@ offset = Vector2(10, 80)
 region_enabled = true
 region_rect = Rect2(671, 205, 131, 244)
 
-[node name="RightKnee" type="Bone2D" parent="PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/RightHip" unique_id=1556958948]
+[node name="Calf_Front" type="Bone2D" parent="PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Thigh_Front" unique_id=958770271 node_paths=PackedStringArray("physics_body")]
 position = Vector2(-80, 0)
+rotation = 1.0097011
 scale = Vector2(0.9999924, 0.9999924)
 rest = Transform2D(0.53210974, 0.8466664, -0.8466664, 0.53210974, -80, 0)
-editor_settings/show_bone_gizmo = false
+script = ExtResource("32_gswnw")
+physics_body = NodePath("../../../../Ragdoll/Leg_Front/Calf_Physics")
+ik_lookup_mask = 2
+bone_groups = 4
+metadata/_custom_type_script = "uid://cns3xkrq4cwa4"
 metadata/_local_pose_override_enabled_ = true
 
-[node name="RightLowerLeg" type="Sprite2D" parent="PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/RightHip/RightKnee" unique_id=129227509]
+[node name="Calf_Front" type="Sprite2D" parent="PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Thigh_Front/Calf_Front" unique_id=129227509]
 z_index = 2
 rotation = 1.5707964
 scale = Vector2(0.40000004, 0.40000004)
@@ -6993,17 +7068,21 @@ offset = Vector2(10, 80)
 region_enabled = true
 region_rect = Rect2(668, 536, 134, 228)
 
-[node name="RightFoot" type="Bone2D" parent="PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/RightHip/RightKnee" unique_id=1432731254]
+[node name="Foot_Front" type="Bone2D" parent="PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Thigh_Front/Calf_Front" unique_id=437911451 node_paths=PackedStringArray("physics_body")]
 position = Vector2(-81.38, 4.2539825)
-scale = Vector2(0.9999747, 0.9999747)
+scale = Vector2(0.99990696, 0.99990696)
 rest = Transform2D(0.83783185, -0.5459122, 0.5459122, 0.83783185, -81.38, 4.2539825)
-editor_settings/show_bone_gizmo = false
+script = ExtResource("32_gswnw")
+physics_body = NodePath("../../../../../Ragdoll/Leg_Front/Foot_Physics")
+ik_lookup_mask = 2
+bone_groups = 4
+metadata/_custom_type_script = "uid://cns3xkrq4cwa4"
 metadata/_local_pose_override_enabled_ = true
 
-[node name="RightFoot" type="Sprite2D" parent="PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/RightHip/RightKnee/RightFoot" unique_id=1288577735]
+[node name="RightFoot" type="Sprite2D" parent="PlayerBody/SpritePivot/Armature/Skeleton2D/Pelvis/Thigh_Front/Calf_Front/Foot_Front" unique_id=1288577735]
 z_index = 2
-rotation = 1.5707964
-scale = Vector2(-0.4, 0.4)
+rotation = -1.5707963
+scale = Vector2(0.4, -0.4)
 texture = SubResource("CompressedTexture2D_fjxoa")
 offset = Vector2(-41, 25)
 region_enabled = true
@@ -7138,6 +7217,9 @@ script = ExtResource("42_art4l")
 
 [node name="Dead" type="Node" parent="PlayerBody/StateMachine" unique_id=1530615474]
 script = ExtResource("42_fjxoa")
+
+[node name="Hanging" type="Node" parent="PlayerBody/StateMachine" unique_id=1556554125]
+script = ExtResource("45_xcnuv")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=2081955361]
 visible = false

@@ -1,18 +1,20 @@
 extends PlayerState
 
 func enter() -> void:
-	# Trigger the animation instantly
-	player.animator.play("dead") 
-	
-	# Optional but recommended: Disable hitboxes/hurtboxes so enemies don't keep hitting a corpse
-	# player.get_node("CollisionShape2D").set_deferred("disabled", true)
-	
-	# Create our respawn timer safely
+	# Default to idle with a quick 0.1s blend when we land
+	player.animator.play("idle", 0.1)
 	if not player.is_inside_tree(): return
-	var timer = get_tree().create_timer(1.2)
+	var timer = get_tree().create_timer(5.0)
 	timer.timeout.connect(_on_respawn_timeout)
 
+
 func physics_update(delta: float) -> void:
+	
+	player.animator.stop()
+	player.ragdoll.set_ragdoll_state(player.ragdoll.RagdollState.FULL_BODY)
+	player.ragdoll.root.freeze = false
+
+	
 	# Apply death friction (sliding to a halt)
 	player.velocity.x = move_toward(player.velocity.x, 0, player.SPEED * delta * 4.0)
 	
@@ -25,8 +27,8 @@ func physics_update(delta: float) -> void:
 			player.velocity.y += current_gravity.y * delta
 
 func _on_respawn_timeout() -> void:
-	# Re-enable collision if you disabled it above
-	# player.get_node("CollisionShape2D").set_deferred("disabled", false)
+	# Cleanly tell the manager to lock the anchors and snap back tracking before ground state takes over
+	player.ragdoll.set_ragdoll_state(player.ragdoll.RagdollState.ANIMATED)
 	
 	state_machine.transition_to("ground")
 	GameManager.trigger_player_respawn()

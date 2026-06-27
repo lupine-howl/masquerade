@@ -1,8 +1,9 @@
 extends PlayerState
 
 func enter() -> void:
-	# Disable the floppy ragdoll instantly so the hands snap firmly to the ledge geometry
-	player.ragdoll.disable()
+	# Engage Hanging layout: Torso, legs, and back arm drop loose under gravity,
+	# while the front arm/hand stays locked firmly to the ledge anchor.
+	player.ragdoll.set_ragdoll_state(player.ragdoll.RagdollState.ANIMATED)
 
 	player.animator.play("ledge_climb", 0.0)
 	player.velocity = Vector2.ZERO
@@ -39,15 +40,7 @@ func _finalize_climb() -> void:
 	player.global_position += Vector2(50.0 * player.facing, -140.0)
 
 	# 3. COMPENSATE: Immediately move the armature in the OPPOSITE direction
-	# of the teleport. This keeps the sprite visually "locked" in the same 
-	# world-space location while the root node moves underneath it.
-	#player.armature.position -= Vector2(30.0, -140.0)
 	player.armature.position = Vector2.ZERO
-
-	# 4. Now, smoothly return the armature to local zero using a Tween.
-	# This removes the "snap" and replaces it with a clean, invisible transition.
-	#var tween = player.create_tween()
-	#tween.tween_property(player.armature, "position", Vector2.ZERO, 0.1)
 
 	player.get_node("CollisionShape2D").disabled = false
 	state_machine.transition_to("ground")
