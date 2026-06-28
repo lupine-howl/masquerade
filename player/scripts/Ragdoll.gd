@@ -121,6 +121,7 @@ func _physics_process(_delta: float) -> void:
 # Inverts limits smoothly without flipping node_a and node_b assignments
 func _flip_joint_limits(flipped: bool) -> void:
 	for joint in all_joints:
+		
 		if not joint.angular_limit_enabled:
 			continue
 			

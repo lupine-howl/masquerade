@@ -3,9 +3,14 @@ extends Node2D
 var active_marker: Node2D = null
 
 # Drag your HUD node into this export variable in the Inspector!
-@export var pose_hud: CanvasLayer 
+@export var pose_hud: CanvasLayer
+@export var player: CharacterBody2D 
 
 func _ready() -> void:
+	
+	if player:
+		player.is_posing = true
+	
 	for child in get_children():
 		if child.has_signal("clicked_on_marker"):
 			child.clicked_on_marker.connect(_on_marker_selected)
@@ -32,7 +37,9 @@ func _on_marker_selected(selected_marker: Node2D) -> void:
 		pose_hud.set_active_marker(active_marker)
 	
 	for child in get_children():
-		if child.has_method("set_hud_visible"):
+		if child.has_method("set_active"):
+			child.set_active(child == active_marker)
+		if not active_marker.follow_parent_rotation and child.has_method("set_hud_visible"):
 			child.set_hud_visible(child == active_marker)
 
 func _unhandled_input(event: InputEvent) -> void:

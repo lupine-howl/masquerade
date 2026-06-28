@@ -24,6 +24,7 @@ extends CharacterBody2D
 
 @export_category("Debug")
 @export var show_debug_ui := true
+@export var is_posing := true
 
 @export var ragdoll : Node2D
 
@@ -43,6 +44,7 @@ var wall_jump_lock := 0.0
 var spawn_point
 var is_submerged := false 
 var is_on_ladder := false 
+
 
 const COYOTE_TIME := 0.12
 const JUMP_BUFFER_TIME := 0.12
@@ -84,6 +86,12 @@ func _ready() -> void:
 	state_machine.transition_to("ground")
 
 func _physics_process(delta: float) -> void:
+
+	if is_posing:
+		# Keep velocity at zero so the player doesn't slide away
+		velocity = Vector2.ZERO 
+		return
+
 	if velocity.y > 10000: die()
 	
 	var current_node := get_state_name()

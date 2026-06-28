@@ -8,6 +8,9 @@ signal drag_dropped(marker_node: Node2D)
 @export var slave_parent: RigidBody2D
 @export var follow_parent_rotation: bool = false
 @export var is_controlled: bool = true
+@export var pivot: Node2D
+@export var invert_rotation_on_flip: bool
+
 
 @export_category("Dimensions")
 @export var inner_radius: float = 16.0   
@@ -19,11 +22,14 @@ signal drag_dropped(marker_node: Node2D)
 # Interaction States
 var is_dragging_position: bool = false
 var is_dragging_rotation: bool = false
+
 var mouse_over: bool = false
 
 @onready var area_2d: Area2D = $Area2D
 @onready var collision_shape: CollisionShape2D = $Area2D/CollisionShape2D
 @onready var outer_rotation_ring: Panel = $OuterRotationRing
+@onready var inner_move_circle: Panel = $InnerMoveCircle
+@onready var inner_move_selected: Panel = $InnerMoveCircleSelected
 
 func _ready() -> void:
 	area_2d.mouse_entered.connect(func(): mouse_over = true)
@@ -44,6 +50,11 @@ func set_hud_visible(is_visible: bool) -> void:
 	if outer_rotation_ring:
 		outer_rotation_ring.visible = is_visible
 
+func set_active(is_active: bool) -> void:
+	if inner_move_circle and inner_move_selected:
+		inner_move_selected.visible = is_active
+		inner_move_circle.visible = not is_active
+
 func _process(_delta: float) -> void:
 	if not is_dev_mode:
 		return
@@ -58,25 +69,32 @@ func _process(_delta: float) -> void:
 		rotation = target_angle
 
 func take_control():
-	slave.freeze = true
-	is_controlled = true
-	slave.linear_velocity = Vector2.ZERO
-	slave.angular_velocity = 0.0
-	global_position = slave.global_position
-	global_rotation = slave.global_rotation	
+	if(slave):
+		slave.freeze = true
+		is_controlled = true
+		slave.linear_velocity = Vector2.ZERO
+		slave.angular_velocity = 0.0
+		global_position = slave.global_position
+		global_rotation = slave.global_rotation	
 
 func release_control():
 	is_controlled = false
-	slave.freeze = false
+	#slave.freeze = false
 
 func _physics_process(delta: float) -> void:
-
-	if(slave and is_controlled):
-		slave.global_position = global_position
+	var is_flipped = pivot.scale.x < 0
+	if(slave):
+		var target_rotation = global_rotation_degrees
 		if(slave_parent and follow_parent_rotation):
-			global_rotation = slave_parent.global_rotation
-		slave.global_rotation = global_rotation
-		
+			target_rotation = slave_parent.global_rotation_degrees
+		if(invert_rotation_on_flip and is_flipped): target_rotation += 180
+		if(is_controlled):
+			slave.global_position = global_position
+			slave.global_rotation_degrees = target_rotation
+		else:
+			global_position = slave.global_position
+			global_rotation_degrees = slave.global_rotation
+					
 func _input(event: InputEvent) -> void:
 	if not is_dev_mode:
 		return
