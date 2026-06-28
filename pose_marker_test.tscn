@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://c24xmmv7qxcme"]
+
+[ext_resource type="PackedScene" uid="uid://cs1txumcsbrpb" path="res://player/PoseMarker.tscn" id="1_pv181"]
+
+[node name="PoseMarkerTest" type="Node2D" unique_id=1618226401]
+
+[node name="PoseMarker" parent="." unique_id=2036979389 instance=ExtResource("1_pv181")]
+position = Vector2(221, 160)

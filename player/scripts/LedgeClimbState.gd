@@ -42,5 +42,5 @@ func _finalize_climb() -> void:
 	# 3. COMPENSATE: Immediately move the armature in the OPPOSITE direction
 	player.armature.position = Vector2.ZERO
 
-	player.get_node("CollisionShape2D").disabled = false
+	player.get_node("MasterCollisionShape").disabled = false
 	state_machine.transition_to("ground")

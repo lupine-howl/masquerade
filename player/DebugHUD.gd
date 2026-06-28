@@ -10,6 +10,9 @@ func _ready() -> void:
 	# Setup Physics Label
 	lbl_physics = Label.new()
 	lbl_physics.position = Vector2(16, 16)
+	
+	lbl_physics.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	
 	lbl_physics.add_theme_color_override("font_outline_color", Color.BLACK)
 	lbl_physics.add_theme_constant_override("outline_size", 4)
 	add_child(lbl_physics)

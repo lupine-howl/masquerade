@@ -1,0 +1,86 @@
+[gd_scene format=3 uid="uid://cs1txumcsbrpb"]
+
+[ext_resource type="Script" uid="uid://bb8as4tat8c72" path="res://player/scripts/PoseMarker.gd" id="1_ljuav"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_g4c7l"]
+radius = 40.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ljuav"]
+bg_color = Color(0, 0.71, 0.4733334, 0.16470589)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0, 0.91764706, 0.8666667, 0.18431373)
+corner_radius_top_left = 40
+corner_radius_top_right = 40
+corner_radius_bottom_right = 40
+corner_radius_bottom_left = 40
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_lvskx"]
+bg_color = Color(0, 0.91764706, 0.8666667, 0.18431373)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_knn7v"]
+bg_color = Color(0, 0.71, 0.4733334, 0.16470589)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8pea7"]
+bg_color = Color(1, 0, 0, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+
+[node name="PoseMarker" type="Node2D" unique_id=2036979389]
+script = ExtResource("1_ljuav")
+
+[node name="Area2D" type="Area2D" parent="." unique_id=356062753]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=1943209305]
+shape = SubResource("CircleShape2D_g4c7l")
+
+[node name="OuterRotationRing" type="Panel" parent="." unique_id=770619347]
+custom_minimum_size = Vector2(80, 80)
+offset_left = -40.0
+offset_top = -40.0
+offset_right = 40.0
+offset_bottom = 40.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_ljuav")
+
+[node name="RotationMarker" type="Panel" parent="OuterRotationRing" unique_id=164742471]
+custom_minimum_size = Vector2(9, 2)
+layout_mode = 1
+offset_left = 55.0
+offset_top = 39.0
+offset_right = 79.0
+offset_bottom = 41.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_lvskx")
+
+[node name="InnerMoveCircle" type="Panel" parent="." unique_id=2085043019]
+offset_left = -16.0
+offset_top = -16.0
+offset_right = 16.0
+offset_bottom = 16.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_knn7v")
+
+[node name="Marker" type="Panel" parent="InnerMoveCircle" unique_id=354484444]
+layout_mode = 1
+offset_left = 12.0
+offset_top = 12.0
+offset_right = 20.0
+offset_bottom = 20.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_8pea7")
+
+[connection signal="mouse_entered" from="Area2D" to="." method="_on_area_2d_mouse_entered"]
+[connection signal="mouse_exited" from="Area2D" to="." method="_on_area_2d_mouse_exited"]

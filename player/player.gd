@@ -51,16 +51,19 @@ const JUMP_BUFFER_TIME := 0.12
 @onready var debug_hud := $DebugHUD 
 @onready var state_machine := $StateMachine 
 
-@onready var sprite_pivot := $SpritePivot
-@onready var hazard_detector := $SpritePivot/HazardDetector
+@onready var sprite_pivot := $FacingPivot
 @onready var animator := $PlayerAnimator 
-@onready var sprite_upper := $SpritePivot/SpriteContainer/SpriteUpper
-@onready var sprite_lower := $SpritePivot/SpriteContainer/SpriteLower
-@onready var attack_area := $SpritePivot/AttackArea
-@onready var wall_detector := $SpritePivot/WallDetector 
-@onready var ledge_detector := $SpritePivot/LedgeDetector
-@onready var hanging_detector := $SpritePivot/HangingDetector
-@onready var armature := $SpritePivot/Armature
+@onready var sprite_upper := $FacingPivot/SpriteContainer/SpriteUpper
+@onready var sprite_lower := $FacingPivot/SpriteContainer/SpriteLower
+@onready var armature := $FacingPivot/Armature
+
+# Detectors
+@onready var hazard_detector := $FacingPivot/Detection/HazardDetector
+@onready var attack_area := $FacingPivot/Detection/AttackArea
+@onready var wall_detector := $FacingPivot/Detection/WallDetector 
+@onready var ledge_detector := $FacingPivot/Detection/LedgeDetector
+@onready var hanging_detector := $FacingPivot/Detection/HangingDetector
+
 
 # ---------------------------------------------------------
 # BUILT-IN ENGINE METHODS
