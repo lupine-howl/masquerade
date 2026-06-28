@@ -349,6 +349,8 @@ texture = ExtResource("12_u15cw")
 [sub_resource type="TileSet" id="TileSet_7cbku"]
 sources/2 = SubResource("TileSetAtlasSource_t8vbo")
 
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_wuvkx"]
+
 [node name="DesertWilderness" type="Node" unique_id=1519557901]
 
 [node name="CanvasModulate" type="CanvasModulate" parent="." unique_id=373355576]
@@ -368,7 +370,7 @@ tile_set = ExtResource("3_hbkgd")
 collision_enabled = false
 
 [node name="Player" parent="." unique_id=1696343506 instance=ExtResource("4_fbd0n")]
-position = Vector2(480, 201)
+position = Vector2(480, 257)
 
 [node name="Hazards" type="TileMapLayer" parent="." unique_id=1348659226]
 tile_set = ExtResource("5_myk7f")
@@ -401,3 +403,11 @@ collision_enabled = false
 
 [node name="TileMapLayer" type="TileMapLayer" parent="." unique_id=552936336]
 tile_set = SubResource("TileSet_7cbku")
+
+[node name="StaticBody2D" type="StaticBody2D" parent="." unique_id=7962642]
+position = Vector2(0, 391)
+collision_layer = 257
+collision_mask = 257
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D" unique_id=395766426]
+shape = SubResource("WorldBoundaryShape2D_wuvkx")

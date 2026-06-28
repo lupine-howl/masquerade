@@ -1,5 +1,5 @@
 # ==============================================================================
-#                             RagdollManager.gd
+#                               RagdollManager.gd
 # ==============================================================================
 extends Node2D
 class_name RagdollManager
@@ -29,7 +29,7 @@ enum BoneGroup {
 	HIP       = 1 << 6,  # Bit 5 (Value 64)
 	FOREARM   = 1 << 7,  # Bit 5 (Value 128)
 	UPPER_BODY= 1 << 8,  # Bit 5 (Value 256)
-	LOWER_BODY= 1 << 9	  # Bit 5 (Value 512)
+	LOWER_BODY= 1 << 9   # Bit 5 (Value 512)
 }
 
 @export_category("Skeletal Systems")
@@ -45,13 +45,24 @@ var current_state: RagdollState = RagdollState.ANIMATED
 var all_bones: Array[SyncedBone2D] = []
 var root_origin: Vector2
 
+# New: Structure to keep track of discovered joints and their baseline limits
+var all_joints: Array[PinJoint2D] = []
+var joint_default_limits: Dictionary = {} # Key: PinJoint2D, Value: Vector2(lower, upper)
+
 # Reference Counting Stack for shared IKs. Key: IK_Index (int), Value: Active Requests (int)
 var ik_disable_counters: Dictionary = {}
+
+# Keep track of last frame flip state to prevent running limit assignments every single frame tick
+var was_flipped_last_frame: bool = false
 
 func _ready() -> void:
 	# Automatically discover all SyncedBone2D data nodes living under the skeleton root
 	if skeleton_node:
 		_gather_synced_bones(skeleton_node)
+		
+	# Automatically discover all PinJoint2D nodes belonging to this subsystem
+	_gather_pin_joints(self)
+	_cache_default_joint_limits()
 		
 	set_ragdoll_state(RagdollState.ANIMATED)
 	root_origin = root.position
@@ -68,27 +79,61 @@ func _gather_synced_bones(current_node: Node) -> void:
 	for child in current_node.get_children():
 		_gather_synced_bones(child)
 
+# Discovers any PinJoint2D instances regardless of how deep they are nested
+func _gather_pin_joints(current_node: Node) -> void:
+	if current_node is PinJoint2D:
+		all_joints.append(current_node)
+	for child in current_node.get_children():
+		_gather_pin_joints(child)
+
+# Memorizes the inspector setup as your absolute facing-right zero baseline
+func _cache_default_joint_limits() -> void:
+	for joint in all_joints:
+		joint_default_limits[joint] = Vector2(
+			joint.angular_limit_lower,
+			joint.angular_limit_upper
+		)
+
 ## Centralized execution timing step: Bones remain completely naive about frames
 func _physics_process(_delta: float) -> void:
-	#if current_state == RagdollState.ANIMATED:
-	#	return
-		
-# Determine if the character is flipped by checking your parent node scale
+	# Determine if the character is flipped by checking your parent node scale
 	var is_flipped: bool = pivot.scale.x < 0
+	
+	# Programmatic Limit Inversion Layer
+	if is_flipped != was_flipped_last_frame:
+		_flip_joint_limits(is_flipped)
+		was_flipped_last_frame = is_flipped
 	
 	for bone in all_bones:
 		if bone.controlled_by_physics and bone.physics_body:
 			var compensation_degrees = 0
-			if(bone.inverted_scale_x_compensation_degrees):	
-				compensation_degrees = bone.inverted_scale_x_compensation_degrees
-			if is_flipped:
-				# If flipped, invert the target angle to prevent the upside-down calculation spike
-				bone.global_rotation_degrees = bone.physics_body.global_rotation_degrees - compensation_degrees
-			else:
-				bone.global_rotation = bone.physics_body.global_rotation			
-
-			if bone.position_body:
+			if(is_flipped and bone.inverted_scale_x_rotation_compensation):
+				compensation_degrees = bone.inverted_scale_x_rotation_compensation
+			elif(bone.rotation_compensation):
+				compensation_degrees = bone.rotation_compensation
+				
+			bone.global_rotation_degrees = bone.physics_body.global_rotation_degrees + compensation_degrees
+			if(bone.position_body):
 				bone.global_position = bone.position_body.global_position
+			else:
+				bone.global_position = bone.physics_body.global_position
+
+# Inverts limits smoothly without flipping node_a and node_b assignments
+func _flip_joint_limits(flipped: bool) -> void:
+	for joint in all_joints:
+		if not joint.angular_limit_enabled:
+			continue
+			
+		var defaults = joint_default_limits[joint]
+		if flipped:
+			# Swaps boundaries and inverts signs to account for the mirrored world space axis
+			joint.angular_limit_lower = -defaults.y
+			joint.angular_limit_upper = -defaults.x
+		else:
+			# Recalls the clean, original baseline settings
+			joint.angular_limit_lower = defaults.x
+			joint.angular_limit_upper = defaults.y
+
 
 ## Main state router called by your Player State Machine
 func set_ragdoll_state(new_state: RagdollState) -> void:
@@ -133,10 +178,6 @@ func set_ragdoll_state(new_state: RagdollState) -> void:
 			_set_bitmask_physics_state(0xFFFF, true)
 			
 		RagdollState.HANGING:
-			# Torso, head, back arm, and both legs fall loose under gravity.
-			# Front arm/hand remains false (retaining full animation/ledge-grab target authority).
-			#back_hand.freeze = true
-			#front_hand.freeze = true
 			_set_bitmask_physics_state(0xFFFF, true)
 
 # --- Atomic Control & Filtering Systems ---
@@ -185,6 +226,3 @@ func snap_physics_to_skeleton() -> void:
 			# Reset momentum so they don't carry old energy into the next handoff
 			bone.physics_body.linear_velocity = Vector2.ZERO
 			bone.physics_body.angular_velocity = 0.0
-			
-			# Match current visual position/rotation
-			bone.physics_body.global_transform = bone.global_transform

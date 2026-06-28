@@ -8,7 +8,8 @@ class_name SyncedBone2D
 ## The corresponding physical part driving this bone in world space
 @export var physics_body: RigidBody2D
 @export var position_body: RigidBody2D
-@export var inverted_scale_x_compensation_degrees: float
+@export var rotation_compensation: float
+@export var inverted_scale_x_rotation_compensation: float
 
 ## Select which IK stack index modifiers affect this specific bone chain.
 @export_flags(
