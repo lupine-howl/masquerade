@@ -6,11 +6,9 @@ var active_marker: Node2D = null
 @export var pose_hud: CanvasLayer
 @export var player: CharacterBody2D 
 
+
 func _ready() -> void:
-	
-	if player:
-		player.is_posing = true
-	
+		
 	for child in get_children():
 		if child.has_signal("clicked_on_marker"):
 			child.clicked_on_marker.connect(_on_marker_selected)

@@ -2,17 +2,19 @@
 
 [ext_resource type="Script" uid="uid://drp2eynrmclma" path="res://player/RainbowModulate.gd" id="1_2uvqg"]
 [ext_resource type="Script" uid="uid://dpj2ed23nxprf" path="res://player/player.gd" id="1_rgyib"]
+[ext_resource type="Texture2D" uid="uid://cfq62xvkj3rp8" path="res://Assets/Icons/Record.png" id="2_g4c7l"]
+[ext_resource type="Texture2D" uid="uid://crr3u1lwdv3fg" path="res://Assets/Icons/Record_active.png" id="2_knn7v"]
 [ext_resource type="Script" uid="uid://cc8lkv8uivhgr" path="res://player/hazard_detector.gd" id="4_2uvqg"]
+[ext_resource type="Texture2D" uid="uid://dte3yp3ud1r6n" path="res://Assets/Icons/Play-game.png" id="4_uw77l"]
+[ext_resource type="Texture2D" uid="uid://c7cndjlj0qw37" path="res://Assets/Icons/pose.png" id="5_rptt4"]
 [ext_resource type="Script" uid="uid://iy4r8g2k1kfb" path="res://player/PlayerCamera.gd" id="6_knn7v"]
 [ext_resource type="Script" uid="uid://g8s4ffy7n2ju" path="res://player/scripts/PoseController.gd" id="9_g4c7l"]
 [ext_resource type="PackedScene" uid="uid://cs1txumcsbrpb" path="res://player/PoseMarker.tscn" id="9_s7qer"]
 [ext_resource type="Script" uid="uid://bnhxy3tk85v7d" path="res://player/scripts/PoseHUD.gd" id="11_knn7v"]
-[ext_resource type="Texture2D" uid="uid://dv84llji04mbp" path="res://player/assets/player_ledge_climb.png" id="19_knn7v"]
 [ext_resource type="Texture2D" uid="uid://b1govaot86lmk" path="res://light-mask.png" id="24_g4c7l"]
 [ext_resource type="Script" uid="uid://b8j54hiva7jef" path="res://player/DebugHUD.gd" id="28_rptt4"]
 [ext_resource type="Texture2D" uid="uid://cmvjnsywbvyar" path="res://player/assets/character.png" id="30_b8hi5"]
 [ext_resource type="Script" uid="uid://bo3h510q3ok2g" path="res://player/scripts/Ragdoll.gd" id="30_fjxoa"]
-[ext_resource type="Script" uid="uid://vd62fxarftgp" path="res://player/PlayerAnimator.gd" id="31_1s1yo"]
 [ext_resource type="Script" uid="uid://cns3xkrq4cwa4" path="res://player/scripts/SyncedBone2D.gd" id="32_gswnw"]
 [ext_resource type="Script" uid="uid://cu4xh4ryvnh24" path="res://player/scripts/PlayerStateMachine.gd" id="33_jd2rm"]
 [ext_resource type="Script" uid="uid://bc7ucmt1gfah4" path="res://player/scripts/GroundState.gd" id="34_q28gw"]
@@ -25,6 +27,9 @@
 [ext_resource type="Script" uid="uid://dc301x4lrovbu" path="res://player/scripts/LedgeClimbState.gd" id="42_art4l"]
 [ext_resource type="Script" uid="uid://b8784bru0cofh" path="res://player/scripts/DeadState.gd" id="42_fjxoa"]
 [ext_resource type="Script" uid="uid://7ett2ig3wkug" path="res://player/scripts/HangingState.gd" id="45_xcnuv"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_s7qer"]
+bg_color = Color(0, 0, 0, 0.7882353)
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_whnp6"]
 radius = 80.0
@@ -843,233 +848,6 @@ nodes/ClimbScale/node = SubResource("AnimationNodeTimeScale_s7qer")
 nodes/ClimbScale/position = Vector2(-40, 140)
 node_connections = [&"output", 0, &"Add2", &"Add2", 0, &"ClimbScale", &"Add2", 1, &"LowerState", &"ClimbScale", 0, &"UpperState"]
 
-[sub_resource type="Animation" id="Animation_a2xo5"]
-length = 0.001
-
-[sub_resource type="Animation" id="Animation_65viv"]
-resource_name = "air_spin"
-length = 0.4
-step = 0.0667
-
-[sub_resource type="Animation" id="Animation_26ehw"]
-resource_name = "dash"
-length = 0.4
-step = 0.0667
-
-[sub_resource type="Animation" id="Animation_xgxvu"]
-resource_name = "upper_ladder_climb"
-length = 0.4
-loop_mode = 1
-
-[sub_resource type="Animation" id="Animation_s7qer"]
-resource_name = "full_climb_back_idle"
-length = 0.4
-loop_mode = 1
-
-[sub_resource type="Animation" id="Animation_mikk3"]
-resource_name = "full_climb_side"
-length = 0.26666668
-loop_mode = 1
-
-[sub_resource type="Animation" id="Animation_gswnw"]
-resource_name = "full_death"
-
-[sub_resource type="Animation" id="Animation_art4l"]
-resource_name = "full_idle"
-length = 2.0
-loop_mode = 1
-
-[sub_resource type="Animation" id="Animation_hjies"]
-resource_name = "full_jump"
-length = 0.4
-
-[sub_resource type="Animation" id="Animation_8ix03"]
-resource_name = "full_land"
-length = 0.3
-loop_mode = 1
-
-[sub_resource type="Animation" id="Animation_ebdw7"]
-resource_name = "full_ledge_grab_climb"
-length = 0.5
-tracks/0/type = "method"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath(".")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0.5),
-"transitions": PackedFloat32Array(1),
-"values": [{
-"args": [],
-"method": &"finalize_ledge_climb"
-}]
-}
-
-[sub_resource type="Animation" id="Animation_j55il"]
-resource_name = "full_standing_katana_attack"
-length = 0.6
-
-[sub_resource type="Animation" id="Animation_xcnuv"]
-resource_name = "full_walk"
-length = 0.8
-
-[sub_resource type="Animation" id="Animation_j3o0i"]
-resource_name = "full_wall_idle"
-length = 0.033333335
-loop_mode = 1
-
-[sub_resource type="Animation" id="Animation_mteo0"]
-resource_name = "full_wall_land"
-length = 0.3
-loop_mode = 1
-
-[sub_resource type="Animation" id="Animation_ge24q"]
-resource_name = "lower_blank"
-length = 0.2667
-
-[sub_resource type="Animation" id="Animation_5ntu2"]
-resource_name = "lower_crouch_idle"
-length = 0.8
-loop_mode = 1
-
-[sub_resource type="Animation" id="Animation_ebec5"]
-resource_name = "lower_idle"
-length = 0.8
-loop_mode = 1
-
-[sub_resource type="Animation" id="Animation_gci7n"]
-resource_name = "lower_jump"
-length = 0.6
-
-[sub_resource type="Animation" id="Animation_iojyt"]
-resource_name = "lower_land"
-length = 0.3
-loop_mode = 1
-
-[sub_resource type="Animation" id="Animation_8pxes"]
-resource_name = "lower_run"
-length = 0.533
-loop_mode = 1
-
-[sub_resource type="Animation" id="Animation_hggc2"]
-resource_name = "lower_standing_attack"
-length = 0.2
-step = 0.05
-
-[sub_resource type="Animation" id="Animation_w7j2h"]
-resource_name = "lower_walk"
-length = 0.8
-loop_mode = 1
-
-[sub_resource type="Animation" id="Animation_ycggl"]
-resource_name = "upper_crouch_idle"
-length = 0.8
-loop_mode = 1
-
-[sub_resource type="Animation" id="Animation_teerl"]
-resource_name = "upper_crouch_walk"
-length = 0.8
-loop_mode = 1
-
-[sub_resource type="Animation" id="Animation_wodsf"]
-resource_name = "upper_idle"
-length = 0.8
-loop_mode = 1
-
-[sub_resource type="Animation" id="Animation_tcwf7"]
-resource_name = "upper_jump"
-length = 0.6
-
-[sub_resource type="Animation" id="Animation_q28gw"]
-resource_name = "upper_katana_attack_end"
-length = 0.2
-step = 0.05
-tracks/0/type = "method"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath(".")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0.0342),
-"transitions": PackedFloat32Array(1),
-"values": [{
-"args": [],
-"method": &"_process_attack"
-}]
-}
-
-[sub_resource type="Animation" id="Animation_mmwog"]
-resource_name = "upper_katana_attack"
-length = 0.2
-step = 0.05
-tracks/0/type = "method"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath(".")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0.023446996),
-"transitions": PackedFloat32Array(1),
-"values": [{
-"args": [],
-"method": &"_process_attack"
-}]
-}
-
-[sub_resource type="Animation" id="Animation_uju0u"]
-resource_name = "upper_roll"
-length = 0.4667
-step = 0.0667
-
-[sub_resource type="Animation" id="Animation_fjxoa"]
-resource_name = "upper_run"
-length = 0.5333
-loop_mode = 1
-
-[sub_resource type="Animation" id="Animation_fmu53"]
-resource_name = "upper_walk"
-length = 0.8
-loop_mode = 1
-
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_fmu53"]
-_data = {
-&"RESET": SubResource("Animation_a2xo5"),
-&"air_spin": SubResource("Animation_65viv"),
-&"dash": SubResource("Animation_26ehw"),
-&"full_climb_back": SubResource("Animation_xgxvu"),
-&"full_climb_back_idle": SubResource("Animation_s7qer"),
-&"full_climb_side": SubResource("Animation_mikk3"),
-&"full_death": SubResource("Animation_gswnw"),
-&"full_idle": SubResource("Animation_art4l"),
-&"full_jump": SubResource("Animation_hjies"),
-&"full_land": SubResource("Animation_8ix03"),
-&"full_ledge_grab_climb": SubResource("Animation_ebdw7"),
-&"full_standing_katana_attack": SubResource("Animation_j55il"),
-&"full_walk": SubResource("Animation_xcnuv"),
-&"full_wall_idle": SubResource("Animation_j3o0i"),
-&"full_wall_land": SubResource("Animation_mteo0"),
-&"lower_blank": SubResource("Animation_ge24q"),
-&"lower_crouch_idle": SubResource("Animation_5ntu2"),
-&"lower_idle": SubResource("Animation_ebec5"),
-&"lower_jump": SubResource("Animation_gci7n"),
-&"lower_land": SubResource("Animation_iojyt"),
-&"lower_run": SubResource("Animation_8pxes"),
-&"lower_standing_attack": SubResource("Animation_hggc2"),
-&"lower_walk": SubResource("Animation_w7j2h"),
-&"upper_crouch_idle": SubResource("Animation_ycggl"),
-&"upper_crouch_walk": SubResource("Animation_teerl"),
-&"upper_idle": SubResource("Animation_wodsf"),
-&"upper_jump": SubResource("Animation_tcwf7"),
-&"upper_katana_attack_end": SubResource("Animation_q28gw"),
-&"upper_katana_attack_start": SubResource("Animation_mmwog"),
-&"upper_roll": SubResource("Animation_uju0u"),
-&"upper_run": SubResource("Animation_fjxoa"),
-&"upper_walk": SubResource("Animation_fmu53")
-}
-
 [sub_resource type="Animation" id="Animation_b8hi5"]
 length = 0.001
 
@@ -1105,6 +883,9 @@ length = 0.6
 loop_mode = 1
 step = 0.02
 
+[sub_resource type="Animation" id="Animation_uw77l"]
+resource_name = "jump_launch"
+
 [sub_resource type="Animation" id="Animation_2uvqg"]
 resource_name = "run"
 length = 0.8
@@ -1118,16 +899,489 @@ _data = {
 &"hanging": SubResource("Animation_237xx"),
 &"idle": SubResource("Animation_1s1yo"),
 &"jump": SubResource("Animation_5ejfk"),
+&"jump_launch": SubResource("Animation_uw77l"),
 &"run": SubResource("Animation_2uvqg")
 }
 
 [node name="Player" type="Node2D" unique_id=1696343506]
 
-[node name="RainbowModulate" type="Node" parent="." unique_id=804857668]
-script = ExtResource("1_2uvqg")
-rainbow_speed = 0.01
-saturation = 1.0
-brightness = 0.5
+[node name="PoseHUD" type="CanvasLayer" parent="." unique_id=1919478648 node_paths=PackedStringArray("anim_player", "character", "ragdoll")]
+script = ExtResource("11_knn7v")
+anim_player = NodePath("../PlayerBody/PlayerAnimator")
+character = NodePath("../PlayerBody")
+ragdoll = NodePath("../PlayerBody/Ragdoll")
+
+[node name="PanelContainer" type="PanelContainer" parent="PoseHUD" unique_id=293060877]
+custom_minimum_size = Vector2(0, 150)
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -172.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_s7qer")
+
+[node name="MarginContainer" type="MarginContainer" parent="PoseHUD/PanelContainer" unique_id=519141308]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="HBoxContainer" type="HBoxContainer" parent="PoseHUD/PanelContainer/MarginContainer" unique_id=1340176088]
+layout_mode = 2
+
+[node name="BoneInfo" type="VBoxContainer" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer" unique_id=1793044008]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/BoneInfo" unique_id=2056782484]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/BoneInfo/HBoxContainer" unique_id=899506662]
+custom_minimum_size = Vector2(130, 0)
+layout_mode = 2
+text = "Selected Part"
+
+[node name="BtnKeyAll" type="Button" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/BoneInfo/HBoxContainer" unique_id=1429492521]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "ꄗ"
+flat = true
+
+[node name="BoneDropdown" type="OptionButton" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/BoneInfo" unique_id=227367216]
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
+flat = true
+
+[node name="ParentLabel" type="Label" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/BoneInfo" unique_id=2145445949]
+visible = false
+layout_mode = 2
+text = "Parent: None"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/BoneInfo" unique_id=318349264]
+layout_mode = 2
+theme_override_constants/separation = -12
+
+[node name="HBoxContainer" type="HBoxContainer" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/BoneInfo/VBoxContainer" unique_id=1887199590]
+layout_mode = 2
+
+[node name="PosLabel" type="Label" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/BoneInfo/VBoxContainer/HBoxContainer" unique_id=1213107119]
+custom_minimum_size = Vector2(130, 0)
+layout_mode = 2
+theme_override_constants/line_spacing = 7
+theme_override_font_sizes/font_size = 11
+text = "   ⚲    Position: -"
+
+[node name="BtnKeyPos" type="Button" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/BoneInfo/VBoxContainer/HBoxContainer" unique_id=166894965]
+layout_mode = 2
+text = "ꄗ"
+flat = true
+
+[node name="BtnResetPos" type="Button" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/BoneInfo/VBoxContainer/HBoxContainer" unique_id=904668090]
+layout_mode = 2
+text = "⌫"
+flat = true
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/BoneInfo/VBoxContainer" unique_id=986254600]
+layout_mode = 2
+
+[node name="RotLabel" type="Label" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/BoneInfo/VBoxContainer/HBoxContainer2" unique_id=170487125]
+custom_minimum_size = Vector2(130, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
+text = "   ↻   Rotation: -"
+
+[node name="BtnKeyRot" type="Button" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/BoneInfo/VBoxContainer/HBoxContainer2" unique_id=351596138]
+layout_mode = 2
+text = "ꄗ"
+flat = true
+
+[node name="BtnResetRot" type="Button" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/BoneInfo/VBoxContainer/HBoxContainer2" unique_id=536351532]
+layout_mode = 2
+text = "⌫"
+flat = true
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/BoneInfo/VBoxContainer" unique_id=1050171573]
+layout_mode = 2
+
+[node name="ControlledCheck" type="CheckBox" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/BoneInfo/VBoxContainer/HBoxContainer3" unique_id=2120697499]
+custom_minimum_size = Vector2(130, 0)
+layout_mode = 2
+focus_mode = 0
+theme_override_font_sizes/font_size = 11
+text = "Controlled"
+
+[node name="BtnKeyControlled" type="Button" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/BoneInfo/VBoxContainer/HBoxContainer3" unique_id=1921767595]
+layout_mode = 2
+text = "ꄗ"
+flat = true
+
+[node name="HBoxContainer4" type="HBoxContainer" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/BoneInfo/VBoxContainer" unique_id=1829357124]
+layout_mode = 2
+
+[node name="FollowRotationCheck" type="CheckBox" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/BoneInfo/VBoxContainer/HBoxContainer4" unique_id=667256226]
+custom_minimum_size = Vector2(130, 0)
+layout_mode = 2
+focus_mode = 0
+theme_override_font_sizes/font_size = 11
+text = "Auto Rotation"
+
+[node name="BtnKeyFollowRotation" type="Button" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/BoneInfo/VBoxContainer/HBoxContainer4" unique_id=681964449]
+layout_mode = 2
+text = "ꄗ"
+flat = true
+
+[node name="HBoxContainer5" type="HBoxContainer" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/BoneInfo/VBoxContainer" unique_id=1739731199]
+layout_mode = 2
+theme_override_constants/separation = -10
+
+[node name="FreezeCheck" type="CheckBox" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/BoneInfo/VBoxContainer/HBoxContainer5" unique_id=74725144]
+custom_minimum_size = Vector2(145, 0)
+layout_mode = 2
+focus_mode = 0
+theme_override_font_sizes/font_size = 11
+text = "Freeze"
+
+[node name="BtnKeyFreeze" type="Button" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/BoneInfo/VBoxContainer/HBoxContainer5" unique_id=531517934]
+layout_mode = 2
+text = "ꄗ"
+flat = true
+
+[node name="VSeparator" type="VSeparator" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer" unique_id=1385157934]
+layout_mode = 2
+
+[node name="TransformInfo2" type="VBoxContainer" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer" unique_id=1103519101]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/TransformInfo2" unique_id=571298585]
+layout_mode = 2
+text = "Animation"
+
+[node name="TimeLabel" type="Label" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/TransformInfo2" unique_id=1902751416]
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
+text = "Animation Dropdown"
+
+[node name="ParentPosLabel" type="Label" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/TransformInfo2" unique_id=516756585]
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
+text = "Speed and duration"
+
+[node name="ParentRotLabel" type="Label" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/TransformInfo2" unique_id=78608491]
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
+text = "Number of steps
+changes when
+duration changes"
+
+[node name="VSeparator3" type="VSeparator" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer" unique_id=1983501179]
+layout_mode = 2
+
+[node name="AnimatorSection" type="VBoxContainer" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer" unique_id=339532123]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection" unique_id=894432655]
+layout_mode = 2
+text = "Sequencer"
+
+[node name="Header" type="HBoxContainer" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection" unique_id=80486204]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="AnimDropdown" type="OptionButton" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/Header" unique_id=711204534]
+custom_minimum_size = Vector2(186, 0)
+layout_mode = 2
+focus_mode = 0
+theme_override_font_sizes/font_size = 11
+flat = true
+
+[node name="StepGrid" type="HBoxContainer" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection" unique_id=797222708]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="Step0" type="ColorRect" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/StepGrid" unique_id=2020655983]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+
+[node name="Panel" type="ColorRect" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/StepGrid/Step0" unique_id=1413474534]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 24.0
+offset_bottom = 24.0
+mouse_filter = 2
+
+[node name="Step1" type="ColorRect" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/StepGrid" unique_id=843406066]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+
+[node name="Panel" type="ColorRect" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/StepGrid/Step1" unique_id=889971453]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 24.0
+offset_bottom = 24.0
+mouse_filter = 2
+
+[node name="Step2" type="ColorRect" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/StepGrid" unique_id=747667415]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+
+[node name="Panel" type="ColorRect" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/StepGrid/Step2" unique_id=1350028801]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 24.0
+offset_bottom = 24.0
+mouse_filter = 2
+
+[node name="Step3" type="ColorRect" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/StepGrid" unique_id=447809761]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+
+[node name="Panel" type="ColorRect" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/StepGrid/Step3" unique_id=1920274475]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 24.0
+offset_bottom = 24.0
+mouse_filter = 2
+
+[node name="Step4" type="ColorRect" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/StepGrid" unique_id=88003167]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+
+[node name="Panel" type="ColorRect" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/StepGrid/Step4" unique_id=1907099547]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 24.0
+offset_bottom = 24.0
+mouse_filter = 2
+
+[node name="Step5" type="ColorRect" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/StepGrid" unique_id=1779355074]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+
+[node name="Panel" type="ColorRect" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/StepGrid/Step5" unique_id=1001335672]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 24.0
+offset_bottom = 24.0
+mouse_filter = 2
+
+[node name="Step6" type="ColorRect" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/StepGrid" unique_id=592387035]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+
+[node name="Panel" type="ColorRect" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/StepGrid/Step6" unique_id=1374645189]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 24.0
+offset_bottom = 24.0
+mouse_filter = 2
+
+[node name="Step7" type="ColorRect" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/StepGrid" unique_id=2077252678]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+
+[node name="Panel" type="ColorRect" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/StepGrid/Step7" unique_id=322663071]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 24.0
+offset_bottom = 24.0
+mouse_filter = 2
+
+[node name="StepGrid2" type="HBoxContainer" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection" unique_id=2096046961]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="Step0" type="ColorRect" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/StepGrid2" unique_id=1455099320]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+
+[node name="Panel" type="ColorRect" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/StepGrid2/Step0" unique_id=1716593992]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 24.0
+offset_bottom = 24.0
+mouse_filter = 2
+
+[node name="Step1" type="ColorRect" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/StepGrid2" unique_id=336295207]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+
+[node name="Panel" type="ColorRect" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/StepGrid2/Step1" unique_id=2007133878]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 24.0
+offset_bottom = 24.0
+mouse_filter = 2
+
+[node name="Step2" type="ColorRect" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/StepGrid2" unique_id=597712957]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+
+[node name="Panel" type="ColorRect" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/StepGrid2/Step2" unique_id=1577262241]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 24.0
+offset_bottom = 24.0
+mouse_filter = 2
+
+[node name="Step3" type="ColorRect" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/StepGrid2" unique_id=951549053]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+
+[node name="Panel" type="ColorRect" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/StepGrid2/Step3" unique_id=718063527]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 24.0
+offset_bottom = 24.0
+mouse_filter = 2
+
+[node name="Step4" type="ColorRect" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/StepGrid2" unique_id=1578840808]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+
+[node name="Panel" type="ColorRect" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/StepGrid2/Step4" unique_id=224727984]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 24.0
+offset_bottom = 24.0
+mouse_filter = 2
+
+[node name="Step5" type="ColorRect" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/StepGrid2" unique_id=616035917]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+
+[node name="Panel" type="ColorRect" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/StepGrid2/Step5" unique_id=680261136]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 24.0
+offset_bottom = 24.0
+mouse_filter = 2
+
+[node name="Step6" type="ColorRect" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/StepGrid2" unique_id=795658772]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+
+[node name="Panel" type="ColorRect" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/StepGrid2/Step6" unique_id=1733738903]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 24.0
+offset_bottom = 24.0
+mouse_filter = 2
+
+[node name="Step7" type="ColorRect" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/StepGrid2" unique_id=1974265318]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+
+[node name="Panel" type="ColorRect" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/StepGrid2/Step7" unique_id=306199478]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 24.0
+offset_bottom = 24.0
+mouse_filter = 2
+
+[node name="PlaybackControls" type="HBoxContainer" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection" unique_id=1337660025]
+layout_mode = 2
+
+[node name="BtnRewind" type="Button" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/PlaybackControls" unique_id=16692025]
+layout_mode = 2
+focus_mode = 0
+text = "◁"
+flat = true
+
+[node name="BtnStop" type="Button" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/PlaybackControls" unique_id=1325336453]
+layout_mode = 2
+focus_mode = 0
+text = " || "
+flat = true
+
+[node name="BtnPlay" type="Button" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/PlaybackControls" unique_id=140180053]
+layout_mode = 2
+focus_mode = 0
+text = "▷"
+flat = true
+
+[node name="RecordCheck" type="CheckBox" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/PlaybackControls" unique_id=1950183948]
+layout_mode = 2
+focus_mode = 0
+theme_override_font_sizes/font_size = 10
+theme_override_icons/checked = ExtResource("2_knn7v")
+theme_override_icons/unchecked = ExtResource("2_g4c7l")
+
+[node name="BtnReset" type="Button" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/PlaybackControls" unique_id=200118915]
+layout_mode = 2
+focus_mode = 0
+text = "↺"
+flat = true
+
+[node name="SpeedLabel" type="Label" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/PlaybackControls" unique_id=582250524]
+layout_mode = 2
+text = "—͟͟͞͞★"
+
+[node name="SpeedSpinBox" type="SpinBox" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/PlaybackControls" unique_id=862609696]
+layout_mode = 2
+min_value = 0.1
+max_value = 5.0
+step = 0.1
+value = 1.0
+alignment = 1
+
+[node name="VSeparator2" type="VSeparator" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer" unique_id=732805575]
+layout_mode = 2
+
+[node name="TransformInfo" type="VBoxContainer" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer" unique_id=259173902]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/TransformInfo" unique_id=1296454146]
+layout_mode = 2
+text = "Current Frame"
+
+[node name="TimeLabel" type="Label" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/TransformInfo" unique_id=1189055011]
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
+text = "t: -"
+
+[node name="ParentPosLabel" type="Label" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/TransformInfo" unique_id=2146755403]
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
+text = "List of keys"
+
+[node name="ParentRotLabel" type="Label" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/TransformInfo" unique_id=56514903]
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
+text = "Clear current selected bone
+Clear all bones"
+
+[node name="Mode" type="VBoxContainer" parent="PoseHUD/PanelContainer/MarginContainer" unique_id=2012058645]
+layout_direction = 3
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+mouse_filter = 2
+
+[node name="PosingCheck" type="CheckBox" parent="PoseHUD/PanelContainer/MarginContainer/Mode" unique_id=1482292167]
+layout_mode = 2
+focus_mode = 0
+theme_override_font_sizes/font_size = 10
+theme_override_icons/checked = ExtResource("5_rptt4")
+theme_override_icons/unchecked = ExtResource("4_uw77l")
 
 [node name="PlayerBody" type="CharacterBody2D" parent="." unique_id=411922790 node_paths=PackedStringArray("ragdoll") groups=["player"]]
 position = Vector2(1, 1)
@@ -1138,19 +1392,22 @@ script = ExtResource("1_rgyib")
 SPEED = 600.0
 LADDER_CLIMB_SPEED = 400.0
 WALL_CLIMB_SPEED = 400.0
-JUMP_VELOCITY = -1.0
+JUMP_VELOCITY = -1000.0
 DOUBLE_JUMP_VELOCITY = -1000.0
 is_posing = false
 ragdoll = NodePath("Ragdoll")
 metadata/_edit_group_ = true
 
+[node name="RainbowModulate" type="Node" parent="PlayerBody" unique_id=804857668]
+script = ExtResource("1_2uvqg")
+rainbow_speed = 0.01
+saturation = 1.0
+brightness = 0.5
+
 [node name="Camera2D" type="Camera2D" parent="PlayerBody" unique_id=158208042]
-position_smoothing_enabled = true
 position_smoothing_speed = 20.0
 rotation_smoothing_enabled = true
 rotation_smoothing_speed = 20.0
-drag_horizontal_enabled = true
-drag_vertical_enabled = true
 script = ExtResource("6_knn7v")
 
 [node name="MasterCollisionShape" type="CollisionShape2D" parent="PlayerBody" unique_id=49677294]
@@ -1158,10 +1415,10 @@ visible = false
 scale = Vector2(0.99998474, 0.99998474)
 shape = SubResource("CapsuleShape2D_whnp6")
 
-[node name="Ragdoll" type="Node2D" parent="PlayerBody" unique_id=35418647 node_paths=PackedStringArray("skeleton_node", "animator", "pivot")]
+[node name="Ragdoll" type="Node2D" parent="PlayerBody" unique_id=35418647 node_paths=PackedStringArray("skeleton_node", "pivot")]
+visible = false
 script = ExtResource("30_fjxoa")
 skeleton_node = NodePath("../FacingPivot/Armature/Skeleton2D")
-animator = NodePath("../PlayerAnimator")
 pivot = NodePath("../FacingPivot")
 
 [node name="Root" type="RigidBody2D" parent="PlayerBody/Ragdoll" unique_id=1009429225]
@@ -2100,276 +2357,50 @@ position = Vector2(-62.911102, -142.74261)
 [node name="PoseController" type="Node2D" parent="PlayerBody/FacingPivot" unique_id=1069471292 node_paths=PackedStringArray("pose_hud", "player")]
 z_index = 20
 script = ExtResource("9_g4c7l")
-pose_hud = NodePath("PoseHUD")
+pose_hud = NodePath("../../../PoseHUD")
 player = NodePath("../..")
 
-[node name="PoseMarker" parent="PlayerBody/FacingPivot/PoseController" unique_id=2036979389 node_paths=PackedStringArray("slave", "slave_parent", "pivot") instance=ExtResource("9_s7qer")]
+[node name="HandFront" parent="PlayerBody/FacingPivot/PoseController" unique_id=2036979389 node_paths=PackedStringArray("slave", "slave_parent", "sibling", "pivot") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
 position = Vector2(-248, 0)
 slave = NodePath("../../../Ragdoll/Arm_Front/Hand_Front_Physics")
 slave_parent = NodePath("../../../Ragdoll/Arm_Front/Forearm_Front_Physics")
+sibling = NodePath("../HandBack")
 pivot = NodePath("../..")
 
-[node name="PoseMarker2" parent="PlayerBody/FacingPivot/PoseController" unique_id=1872066078 node_paths=PackedStringArray("slave", "slave_parent", "pivot") instance=ExtResource("9_s7qer")]
+[node name="HandBack" parent="PlayerBody/FacingPivot/PoseController" unique_id=1872066078 node_paths=PackedStringArray("slave", "slave_parent", "sibling", "pivot") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
 position = Vector2(-248, 0)
 slave = NodePath("../../../Ragdoll/Arm_Back/Hand_Back_Physics")
 slave_parent = NodePath("../../../Ragdoll/Arm_Back/Forearm_Back_Physics")
+sibling = NodePath("../HandFront")
 pivot = NodePath("../..")
 
-[node name="PoseMarker3" parent="PlayerBody/FacingPivot/PoseController" unique_id=1591964902 node_paths=PackedStringArray("slave", "slave_parent", "pivot") instance=ExtResource("9_s7qer")]
+[node name="FootBack" parent="PlayerBody/FacingPivot/PoseController" unique_id=1591964902 node_paths=PackedStringArray("slave", "slave_parent", "sibling", "pivot") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
 position = Vector2(-248, 0)
 slave = NodePath("../../../Ragdoll/Leg_Back/Foot_Back_Physics")
 slave_parent = NodePath("../../../Ragdoll/Leg_Back/Calf_Back_Physics")
+sibling = NodePath("../FootFront")
 pivot = NodePath("../..")
 
-[node name="PoseMarker4" parent="PlayerBody/FacingPivot/PoseController" unique_id=960569227 node_paths=PackedStringArray("slave", "slave_parent", "pivot") instance=ExtResource("9_s7qer")]
+[node name="FootFront" parent="PlayerBody/FacingPivot/PoseController" unique_id=960569227 node_paths=PackedStringArray("slave", "slave_parent", "sibling", "pivot") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
 position = Vector2(-248, 0)
 slave = NodePath("../../../Ragdoll/Leg_Front/Foot_Front_Physics")
 slave_parent = NodePath("../../../Ragdoll/Leg_Front/Calf_Front_Physics")
+sibling = NodePath("../FootBack")
 pivot = NodePath("../..")
 
-[node name="PoseMarker5" parent="PlayerBody/FacingPivot/PoseController" unique_id=1488133409 node_paths=PackedStringArray("slave", "pivot") instance=ExtResource("9_s7qer")]
+[node name="Neck" parent="PlayerBody/FacingPivot/PoseController" unique_id=1488133409 node_paths=PackedStringArray("slave", "pivot") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
 position = Vector2(-248, 0)
 slave = NodePath("../../../Ragdoll/Head/Neck_Physics")
 pivot = NodePath("../..")
 invert_rotation_on_flip = true
 
-[node name="PoseMarker6" parent="PlayerBody/FacingPivot/PoseController" unique_id=219274694 node_paths=PackedStringArray("slave", "pivot") instance=ExtResource("9_s7qer")]
+[node name="Root" parent="PlayerBody/FacingPivot/PoseController" unique_id=219274694 node_paths=PackedStringArray("slave", "pivot") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
 position = Vector2(-248, 0)
 slave = NodePath("../../../Ragdoll/Root")
 pivot = NodePath("../..")
 
-[node name="PoseHUD" type="CanvasLayer" parent="PlayerBody/FacingPivot/PoseController" unique_id=1919478648 node_paths=PackedStringArray("anim_player", "character")]
-script = ExtResource("11_knn7v")
-anim_player = NodePath("../../../ArmatureAnimationPlayer")
-character = NodePath("../../..")
-
-[node name="PanelContainer" type="PanelContainer" parent="PlayerBody/FacingPivot/PoseController/PoseHUD" unique_id=293060877]
-custom_minimum_size = Vector2(0, 150)
-anchors_preset = 12
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 0
-mouse_filter = 2
-
-[node name="MarginContainer" type="MarginContainer" parent="PlayerBody/FacingPivot/PoseController/PoseHUD/PanelContainer" unique_id=519141308]
-layout_mode = 2
-theme_override_constants/margin_left = 10
-theme_override_constants/margin_top = 10
-theme_override_constants/margin_right = 10
-theme_override_constants/margin_bottom = 10
-
-[node name="HBoxContainer" type="HBoxContainer" parent="PlayerBody/FacingPivot/PoseController/PoseHUD/PanelContainer/MarginContainer" unique_id=1340176088]
-layout_mode = 2
-
-[node name="BoneInfo" type="VBoxContainer" parent="PlayerBody/FacingPivot/PoseController/PoseHUD/PanelContainer/MarginContainer/HBoxContainer" unique_id=1793044008]
-layout_mode = 2
-
-[node name="TitleLabel" type="Label" parent="PlayerBody/FacingPivot/PoseController/PoseHUD/PanelContainer/MarginContainer/HBoxContainer/BoneInfo" unique_id=222730180]
-layout_mode = 2
-text = "Selected Bone: None"
-
-[node name="ParentLabel" type="Label" parent="PlayerBody/FacingPivot/PoseController/PoseHUD/PanelContainer/MarginContainer/HBoxContainer/BoneInfo" unique_id=2145445949]
-layout_mode = 2
-text = "Parent: None"
-
-[node name="ControlledCheck" type="CheckBox" parent="PlayerBody/FacingPivot/PoseController/PoseHUD/PanelContainer/MarginContainer/HBoxContainer/BoneInfo" unique_id=2120697499]
-layout_mode = 2
-focus_mode = 0
-text = "Controlled"
-
-[node name="RotationCheck" type="CheckBox" parent="PlayerBody/FacingPivot/PoseController/PoseHUD/PanelContainer/MarginContainer/HBoxContainer/BoneInfo" unique_id=667256226]
-layout_mode = 2
-focus_mode = 0
-text = "Follow Parent Rotation"
-
-[node name="FreezeCheck" type="CheckBox" parent="PlayerBody/FacingPivot/PoseController/PoseHUD/PanelContainer/MarginContainer/HBoxContainer/BoneInfo" unique_id=74725144]
-layout_mode = 2
-focus_mode = 0
-text = "Freeze"
-
-[node name="VSeparator" type="VSeparator" parent="PlayerBody/FacingPivot/PoseController/PoseHUD/PanelContainer/MarginContainer/HBoxContainer" unique_id=1385157934]
-layout_mode = 2
-
-[node name="TransformInfo" type="VBoxContainer" parent="PlayerBody/FacingPivot/PoseController/PoseHUD/PanelContainer/MarginContainer/HBoxContainer" unique_id=259173902]
-layout_mode = 2
-
-[node name="SlavePosLabel" type="Label" parent="PlayerBody/FacingPivot/PoseController/PoseHUD/PanelContainer/MarginContainer/HBoxContainer/TransformInfo" unique_id=1296454146]
-layout_mode = 2
-text = "Slave Pos: (0,0)"
-
-[node name="SlaveRotLabel" type="Label" parent="PlayerBody/FacingPivot/PoseController/PoseHUD/PanelContainer/MarginContainer/HBoxContainer/TransformInfo" unique_id=1189055011]
-layout_mode = 2
-text = "Slave Rot: 0°"
-
-[node name="ParentPosLabel" type="Label" parent="PlayerBody/FacingPivot/PoseController/PoseHUD/PanelContainer/MarginContainer/HBoxContainer/TransformInfo" unique_id=2146755403]
-layout_mode = 2
-text = "Parent Pos: (0,0)"
-
-[node name="ParentRotLabel" type="Label" parent="PlayerBody/FacingPivot/PoseController/PoseHUD/PanelContainer/MarginContainer/HBoxContainer/TransformInfo" unique_id=56514903]
-layout_mode = 2
-text = "Parent Rot: 0°"
-
-[node name="VSeparator2" type="VSeparator" parent="PlayerBody/FacingPivot/PoseController/PoseHUD/PanelContainer/MarginContainer/HBoxContainer" unique_id=732805575]
-layout_mode = 2
-
-[node name="AnimatorSection" type="VBoxContainer" parent="PlayerBody/FacingPivot/PoseController/PoseHUD/PanelContainer/MarginContainer/HBoxContainer" unique_id=339532123]
-layout_mode = 2
-
-[node name="Header" type="HBoxContainer" parent="PlayerBody/FacingPivot/PoseController/PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection" unique_id=80486204]
-layout_mode = 2
-
-[node name="AnimDropdown" type="OptionButton" parent="PlayerBody/FacingPivot/PoseController/PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/Header" unique_id=711204534]
-layout_mode = 2
-focus_mode = 0
-
-[node name="SpeedLabel" type="Label" parent="PlayerBody/FacingPivot/PoseController/PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/Header" unique_id=582250524]
-layout_mode = 2
-text = "Speed:"
-
-[node name="SpeedSpinBox" type="SpinBox" parent="PlayerBody/FacingPivot/PoseController/PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/Header" unique_id=862609696]
-layout_mode = 2
-min_value = 0.1
-max_value = 5.0
-step = 0.1
-value = 1.0
-
-[node name="StepGrid" type="HBoxContainer" parent="PlayerBody/FacingPivot/PoseController/PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection" unique_id=797222708]
-layout_mode = 2
-
-[node name="Step0" type="ColorRect" parent="PlayerBody/FacingPivot/PoseController/PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/StepGrid" unique_id=2020655983]
-custom_minimum_size = Vector2(32, 32)
-layout_mode = 2
-
-[node name="Panel" type="ColorRect" parent="PlayerBody/FacingPivot/PoseController/PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/StepGrid/Step0" unique_id=1413474534]
-layout_mode = 0
-offset_left = 8.0
-offset_top = 8.0
-offset_right = 24.0
-offset_bottom = 24.0
-mouse_filter = 2
-
-[node name="Step1" type="ColorRect" parent="PlayerBody/FacingPivot/PoseController/PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/StepGrid" unique_id=843406066]
-custom_minimum_size = Vector2(32, 32)
-layout_mode = 2
-
-[node name="Panel" type="ColorRect" parent="PlayerBody/FacingPivot/PoseController/PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/StepGrid/Step1" unique_id=889971453]
-layout_mode = 0
-offset_left = 8.0
-offset_top = 8.0
-offset_right = 24.0
-offset_bottom = 24.0
-mouse_filter = 2
-
-[node name="Step2" type="ColorRect" parent="PlayerBody/FacingPivot/PoseController/PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/StepGrid" unique_id=747667415]
-custom_minimum_size = Vector2(32, 32)
-layout_mode = 2
-
-[node name="Panel" type="ColorRect" parent="PlayerBody/FacingPivot/PoseController/PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/StepGrid/Step2" unique_id=1350028801]
-layout_mode = 0
-offset_left = 8.0
-offset_top = 8.0
-offset_right = 24.0
-offset_bottom = 24.0
-mouse_filter = 2
-
-[node name="Step3" type="ColorRect" parent="PlayerBody/FacingPivot/PoseController/PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/StepGrid" unique_id=447809761]
-custom_minimum_size = Vector2(32, 32)
-layout_mode = 2
-
-[node name="Panel" type="ColorRect" parent="PlayerBody/FacingPivot/PoseController/PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/StepGrid/Step3" unique_id=1920274475]
-layout_mode = 0
-offset_left = 8.0
-offset_top = 8.0
-offset_right = 24.0
-offset_bottom = 24.0
-mouse_filter = 2
-
-[node name="Step4" type="ColorRect" parent="PlayerBody/FacingPivot/PoseController/PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/StepGrid" unique_id=88003167]
-custom_minimum_size = Vector2(32, 32)
-layout_mode = 2
-
-[node name="Panel" type="ColorRect" parent="PlayerBody/FacingPivot/PoseController/PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/StepGrid/Step4" unique_id=1907099547]
-layout_mode = 0
-offset_left = 8.0
-offset_top = 8.0
-offset_right = 24.0
-offset_bottom = 24.0
-mouse_filter = 2
-
-[node name="Step5" type="ColorRect" parent="PlayerBody/FacingPivot/PoseController/PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/StepGrid" unique_id=1779355074]
-custom_minimum_size = Vector2(32, 32)
-layout_mode = 2
-
-[node name="Panel" type="ColorRect" parent="PlayerBody/FacingPivot/PoseController/PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/StepGrid/Step5" unique_id=1001335672]
-layout_mode = 0
-offset_left = 8.0
-offset_top = 8.0
-offset_right = 24.0
-offset_bottom = 24.0
-mouse_filter = 2
-
-[node name="Step6" type="ColorRect" parent="PlayerBody/FacingPivot/PoseController/PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/StepGrid" unique_id=592387035]
-custom_minimum_size = Vector2(32, 32)
-layout_mode = 2
-
-[node name="Panel" type="ColorRect" parent="PlayerBody/FacingPivot/PoseController/PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/StepGrid/Step6" unique_id=1374645189]
-layout_mode = 0
-offset_left = 8.0
-offset_top = 8.0
-offset_right = 24.0
-offset_bottom = 24.0
-mouse_filter = 2
-
-[node name="Step7" type="ColorRect" parent="PlayerBody/FacingPivot/PoseController/PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/StepGrid" unique_id=2077252678]
-custom_minimum_size = Vector2(32, 32)
-layout_mode = 2
-
-[node name="Panel" type="ColorRect" parent="PlayerBody/FacingPivot/PoseController/PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/StepGrid/Step7" unique_id=322663071]
-layout_mode = 0
-offset_left = 8.0
-offset_top = 8.0
-offset_right = 24.0
-offset_bottom = 24.0
-mouse_filter = 2
-
-[node name="PlaybackControls" type="HBoxContainer" parent="PlayerBody/FacingPivot/PoseController/PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection" unique_id=1337660025]
-layout_mode = 2
-
-[node name="BtnRewind" type="Button" parent="PlayerBody/FacingPivot/PoseController/PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/PlaybackControls" unique_id=16692025]
-layout_mode = 2
-focus_mode = 0
-text = "⏮"
-
-[node name="BtnStop" type="Button" parent="PlayerBody/FacingPivot/PoseController/PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/PlaybackControls" unique_id=1325336453]
-layout_mode = 2
-focus_mode = 0
-text = "⏹"
-
-[node name="BtnPlay" type="Button" parent="PlayerBody/FacingPivot/PoseController/PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/PlaybackControls" unique_id=140180053]
-layout_mode = 2
-focus_mode = 0
-text = "▶"
-
-[node name="BtnReset" type="Button" parent="PlayerBody/FacingPivot/PoseController/PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/PlaybackControls" unique_id=200118915]
-layout_mode = 2
-focus_mode = 0
-text = "⎚"
-
-[node name="RecordCheck" type="CheckBox" parent="PlayerBody/FacingPivot/PoseController/PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/PlaybackControls" unique_id=1950183948]
-layout_mode = 2
-focus_mode = 0
-text = "Record"
-
-[node name="PosingCheck" type="CheckBox" parent="PlayerBody/FacingPivot/PoseController/PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/PlaybackControls" unique_id=1482292167]
-layout_mode = 2
-focus_mode = 0
-text = "Posing"
-
 [node name="AnimationTree" type="AnimationTree" parent="PlayerBody" unique_id=1787523656]
 tree_root = SubResource("AnimationNodeBlendTree_dx5ib")
-anim_player = NodePath("../AnimationPlayer")
 parameters/UpperState/conditions/is_attacking = false
 parameters/UpperState/conditions/is_crouching = false
 parameters/UpperState/conditions/is_dashing = false
@@ -2428,20 +2459,9 @@ parameters/LowerState/conditions/is_wall_climbing = false
 parameters/Add2/add_amount = 1.0
 parameters/ClimbScale/scale = 1.0
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="PlayerBody" unique_id=234749464]
-libraries/ = SubResource("AnimationLibrary_fmu53")
-
-[node name="ArmatureAnimationPlayer" type="AnimationPlayer" parent="PlayerBody" unique_id=384783702]
+[node name="PlayerAnimator" type="AnimationPlayer" parent="PlayerBody" unique_id=384783702]
 libraries/ = SubResource("AnimationLibrary_1s1yo")
 autoplay = &"run"
-
-[node name="PlayerAnimator" type="Node" parent="PlayerBody" unique_id=1551766568 node_paths=PackedStringArray("anim_player")]
-script = ExtResource("31_1s1yo")
-anim_player = NodePath("../ArmatureAnimationPlayer")
-
-[node name="DebugHUD" type="CanvasLayer" parent="PlayerBody" unique_id=730528789]
-visible = false
-script = ExtResource("28_rptt4")
 
 [node name="StateMachine" type="Node" parent="PlayerBody" unique_id=1888989459 node_paths=PackedStringArray("initial_state")]
 script = ExtResource("33_jd2rm")
@@ -2477,11 +2497,6 @@ script = ExtResource("42_fjxoa")
 [node name="Hanging" type="Node" parent="PlayerBody/StateMachine" unique_id=1556554125]
 script = ExtResource("45_xcnuv")
 
-[node name="Sprite2D" type="Sprite2D" parent="." unique_id=2081955361]
+[node name="DebugHUD" type="CanvasLayer" parent="PlayerBody" unique_id=730528789]
 visible = false
-modulate = Color(1, 1, 1, 0.8392157)
-z_index = 3
-position = Vector2(0.99999976, -99.999985)
-scale = Vector2(5, 5)
-texture = ExtResource("19_knn7v")
-hframes = 5
+script = ExtResource("28_rptt4")

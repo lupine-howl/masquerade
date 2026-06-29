@@ -16,23 +16,20 @@ func enter() -> void:
 		player.velocity.y = 0 
 
 		# Play the targeted launch/crouch animation
-		if is_running and player.animator.anim_player.has_animation("run_jump_launch"):
+		if is_running and player.animator.has_animation("run_jump_launch"):
 			player.animator.play("run_jump_launch")
 		else:
 			player.animator.play("jump_launch")
 		
-		# Keep them safely locked in animation framework during the push-off phase
-		player.ragdoll.set_ragdoll_state(player.ragdoll.RagdollState.FULL_BODY )
-		
-		if not player.animator.anim_player.animation_finished.is_connected(_on_launch_animation_finished):
-			player.animator.anim_player.animation_finished.connect(_on_launch_animation_finished)
+		if not player.animator.animation_finished.is_connected(_on_launch_animation_finished):
+			player.animator.animation_finished.connect(_on_launch_animation_finished)
 	else:
 		# Ledge fall safeguard
 		_execute_true_launch()
 
 func exit() -> void:
-	if player.animator.anim_player.animation_finished.is_connected(_on_launch_animation_finished):
-		player.animator.anim_player.animation_finished.disconnect(_on_launch_animation_finished)
+	if player.animator.animation_finished.is_connected(_on_launch_animation_finished):
+		player.animator.animation_finished.disconnect(_on_launch_animation_finished)
 
 func _on_launch_animation_finished(anim_name: String) -> void:
 	if anim_name in ["jump_launch", "run_jump_launch"]:
@@ -42,10 +39,7 @@ func _execute_true_launch() -> void:
 	is_launching = false
 	
 	# Blast off!
-	player.velocity.y = player.JUMP_VELOCITY 
-	
-	# Smoothly drop loose into your full physics ragdoll setup mid-air
-	player.ragdoll.set_ragdoll_state(player.ragdoll.RagdollState.FULL_BODY)
+	player.velocity.y = player.JUMP_VELOCITY 	
 	player.animator.play("jump")
 
 func physics_update(delta: float) -> void:
@@ -81,7 +75,6 @@ func physics_update(delta: float) -> void:
 	# --- ANIMATION & RAGDOLL CONTEXT LOGIC ---
 	if player.velocity.y >= 0:
 		player.animator.play("fall")
-		player.ragdoll.set_ragdoll_state(player.ragdoll.RagdollState.FULL_BODY)
 
 	# Jump Buffering & Double Jump
 	if player.jump_buffer_timer > 0:
@@ -89,13 +82,11 @@ func physics_update(delta: float) -> void:
 			player.jump_buffer_timer = 0
 			player.velocity.y = player.water_swim_velocity
 			player.animator.play("jump") 
-			player.ragdoll.set_ragdoll_state(player.ragdoll.RagdollState.FULL_BODY)
 		elif player.can_double_jump:
 			player.jump_buffer_timer = 0
 			player.can_double_jump = false
 			player.velocity.y = player.DOUBLE_JUMP_VELOCITY
 			player.animator.play("double_jump", 0.0) 
-			player.ragdoll.set_ragdoll_state(player.ragdoll.RagdollState.FULL_BODY)
 
 	# Dash Transition
 	if Input.is_action_just_pressed("ui_dash") and not player.is_submerged:

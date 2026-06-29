@@ -15,6 +15,7 @@ func _ready() -> void:
 	
 	lbl_physics.add_theme_color_override("font_outline_color", Color.BLACK)
 	lbl_physics.add_theme_constant_override("outline_size", 4)
+	lbl_physics.add_theme_font_size_override("font_size", 11)
 	add_child(lbl_physics)
 
 func update_physics(player: CharacterBody2D) -> void:
@@ -30,8 +31,8 @@ func update_physics(player: CharacterBody2D) -> void:
 
 	# --- PULL CURRENT ANIMATION DIRECTLY FROM THE PLAYER ---
 	var current_anim = "Unknown"
-	if player.animator and player.animator.anim_player:
-		current_anim = player.animator.anim_player.current_animation
+	if player.animator and player.animator:
+		current_anim = player.animator.current_animation
 		if current_anim == "": 
 			current_anim = "[Stopped]"
 
