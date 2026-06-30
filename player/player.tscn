@@ -12,7 +12,8 @@
 [ext_resource type="Script" uid="uid://g8s4ffy7n2ju" path="res://player/scripts/PoseController.gd" id="9_g4c7l"]
 [ext_resource type="PackedScene" uid="uid://cs1txumcsbrpb" path="res://player/PoseMarker.tscn" id="9_s7qer"]
 [ext_resource type="Script" uid="uid://bnhxy3tk85v7d" path="res://player/scripts/PoseHUD.gd" id="11_knn7v"]
-[ext_resource type="Animation" path="res://player/animations/idle.res" id="17_r7pn3"]
+[ext_resource type="Animation" uid="uid://di1d413uxeojc" path="res://player/animations/idle.res" id="17_r7pn3"]
+[ext_resource type="Animation" uid="uid://ba2kp3ffd72y" path="res://player/animations/run.res" id="18_b8hi5"]
 [ext_resource type="Texture2D" uid="uid://b1govaot86lmk" path="res://light-mask.png" id="24_g4c7l"]
 [ext_resource type="Script" uid="uid://b8j54hiva7jef" path="res://player/DebugHUD.gd" id="28_rptt4"]
 [ext_resource type="Texture2D" uid="uid://cmvjnsywbvyar" path="res://player/assets/character.png" id="30_b8hi5"]
@@ -871,12 +872,6 @@ step = 0.02
 [sub_resource type="Animation" id="Animation_uw77l"]
 resource_name = "jump_launch"
 
-[sub_resource type="Animation" id="Animation_2uvqg"]
-resource_name = "run"
-length = 0.8
-loop_mode = 1
-step = 0.02
-
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_1s1yo"]
 _data = {
 &"RESET": SubResource("Animation_b8hi5"),
@@ -885,7 +880,7 @@ _data = {
 &"idle": ExtResource("17_r7pn3"),
 &"jump": SubResource("Animation_5ejfk"),
 &"jump_launch": SubResource("Animation_uw77l"),
-&"run": SubResource("Animation_2uvqg")
+&"run": ExtResource("18_b8hi5")
 }
 
 [node name="Player" type="Node2D" unique_id=1696343506]
@@ -1110,13 +1105,6 @@ alignment = 1
 [node name="VBoxContainer" type="VBoxContainer" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/Animation" unique_id=947378667]
 layout_mode = 2
 
-[node name="ParentRotLabel" type="Label" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/Animation/VBoxContainer" unique_id=78608491]
-layout_mode = 2
-theme_override_font_sizes/font_size = 11
-text = "Number of steps
-changes when
-duration changes"
-
 [node name="VSeparator3" type="VSeparator" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer" unique_id=1983501179]
 layout_mode = 2
 
@@ -1277,10 +1265,10 @@ layout_mode = 2
 layout_mode = 2
 text = "Current Frame"
 
-[node name="TimeLabel" type="Label" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/TransformInfo" unique_id=1189055011]
+[node name="TimecodeLabel" type="Label" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/TransformInfo" unique_id=1189055011]
+unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 11
-text = "t: -"
 
 [node name="ParentPosLabel" type="Label" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/TransformInfo" unique_id=2146755403]
 layout_mode = 2
@@ -2307,7 +2295,7 @@ is_controlled = false
 pivot = NodePath("../..")
 
 [node name="FootBack" parent="PlayerBody/FacingPivot/PoseController" unique_id=1591964902 node_paths=PackedStringArray("slave", "slave_parent", "sibling") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
-position = Vector2(0, 154.5)
+position = Vector2(-87.85718, 149.7143)
 rotation = 1.5707964
 slave = NodePath("../../../Ragdoll/Leg_Back/Foot_Back_Physics")
 slave_parent = NodePath("../../../Ragdoll/Leg_Back/Calf_Back_Physics")
@@ -2407,6 +2395,7 @@ parameters/ClimbScale/scale = 1.0
 [node name="PlayerAnimator" type="AnimationPlayer" parent="PlayerBody" unique_id=384783702]
 libraries/ = SubResource("AnimationLibrary_1s1yo")
 autoplay = &"run"
+speed_scale = 0.1
 
 [node name="StateMachine" type="Node" parent="PlayerBody" unique_id=1888989459 node_paths=PackedStringArray("initial_state")]
 script = ExtResource("33_jd2rm")

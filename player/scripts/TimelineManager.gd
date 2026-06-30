@@ -6,6 +6,10 @@ extends Node
 
 var current_step: int = 0
 
+# Clipboard storage container for the copied frame payload
+# Format: [{"path": NodePath, "value": Variant, "interpolation": int}]
+var _clipboard_step_data: Array = []
+
 func play(anim_name: String) -> void:
 	if anim_player: anim_player.play(anim_name)
 
@@ -17,8 +21,8 @@ func seek_step(step: int) -> void:
 	if anim_player:
 		anim_player.seek(current_step * step_duration, true)
 
-func get_animations() ->PackedStringArray:
-	return anim_player.get_animation_list()
+func get_animations() -> PackedStringArray:
+	return anim_player.get_animation_list() if anim_player else PackedStringArray()
 
 func set_length(anim_name: String, length: float) -> void:
 	if anim_player and anim_player.has_animation(anim_name):
@@ -33,7 +37,7 @@ func get_current_playback_step() -> int:
 		return current_step
 	return int(round(anim_player.current_animation_position / step_duration))
 
-# --- KEYFRAME MATH ---
+# --- KEYFRAME MATH & SMART DELTA-KEYING ---
 
 func key_property(anim_name: String, target_node: Node, property_suffix: String, value: Variant) -> void:
 	if not anim_player or not anim_player.has_animation(anim_name) or not target_node: return
@@ -44,7 +48,7 @@ func key_property(anim_name: String, target_node: Node, property_suffix: String,
 	
 	var track_idx = animation.find_track(track_path, Animation.TYPE_VALUE)
 	
-	# 🆕 RESOURCE DELTA CHECK
+	# RESOURCE DELTA CHECK
 	if track_idx != -1 and animation.track_get_key_count(track_idx) > 0:
 		var target_time = current_step * step_duration
 		
@@ -95,6 +99,96 @@ func remove_keyframe(anim_name: String, target_node: Node, property_suffix: Stri
 			if abs(key_time - target_time) <= 0.01:
 				animation.track_remove_key(track_idx, key_idx)
 
+# --- CLIPBOARD OPERATIONS (COPY / CUT / PASTE) ---
+
+## Captures all keyframe data located exactly at a specific step index across all tracks
+func copy_step_to_clipboard(anim_name: String, source_step: int) -> void:
+	_clipboard_step_data.clear()
+	if not anim_player or not anim_player.has_animation(anim_name): return
+	
+	var animation = anim_player.get_animation(anim_name)
+	var source_time = source_step * step_duration
+	var time_tolerance = 0.01
+	
+	for track_idx in animation.get_track_count():
+		var key_idx = animation.track_find_key(track_idx, source_time, Animation.FIND_MODE_NEAREST)
+		if key_idx != -1:
+			var key_time = animation.track_get_key_time(track_idx, key_idx)
+			if abs(key_time - source_time) <= time_tolerance:
+				var track_data = {
+					"path": animation.track_get_path(track_idx),
+					"value": animation.track_get_key_value(track_idx, key_idx),
+					"interpolation": animation.track_get_interpolation_type(track_idx)
+				}
+				_clipboard_step_data.append(track_data)
+				
+	print("Copied ", _clipboard_step_data.size(), " tracks from step ", source_step)
+
+## Deletes all keyframe data located exactly at a specific step index
+func delete_step_keyframes(anim_name: String, step_index: int) -> void:
+	if not anim_player or not anim_player.has_animation(anim_name): return
+	var animation = anim_player.get_animation(anim_name)
+	var target_time = step_index * step_duration
+	var time_tolerance = 0.01
+	
+	for track_idx in animation.get_track_count():
+		var key_idx = animation.track_find_key(track_idx, target_time, Animation.FIND_MODE_NEAREST)
+		if key_idx != -1:
+			var key_time = animation.track_get_key_time(track_idx, key_idx)
+			if abs(key_time - target_time) <= time_tolerance:
+				animation.track_remove_key(track_idx, key_idx)
+
+# Inside TimelineManager.gd
+
+## Keyframes the playback speed scale of the AnimationPlayer itself
+func key_speed_scale(anim_name: String, speed_value: float) -> void:
+	if not anim_player or not anim_player.has_animation(anim_name): return
+	
+	var animation = anim_player.get_animation(anim_name)
+	var root_node = anim_player.get_node(anim_player.root_node)
+	
+	# Get the relative path from the root node back to the AnimationPlayer
+	var player_path = str(root_node.get_path_to(anim_player)) + ":speed_scale"
+	
+	var track_idx = animation.find_track(player_path, Animation.TYPE_VALUE)
+
+	# Create the track targeting the player if it doesn't exist
+	if track_idx == -1:
+		track_idx = animation.add_track(Animation.TYPE_VALUE)
+		animation.track_set_path(track_idx, player_path)
+		# Speed updates usually look best with NEAREST or LINEAR interpolation
+		animation.track_set_interpolation_type(track_idx, Animation.INTERPOLATION_NEAREST)
+	
+	animation.track_insert_key(track_idx, 0.0, speed_value)
+	print("Keyed speed_scale: ", speed_value, " at step ", current_step)
+
+## Pastes the clipboard payload onto the designated target step index
+func paste_clipboard_to_step(anim_name: String, target_step: int) -> void:
+	if _clipboard_step_data.is_empty(): return
+	if not anim_player or not anim_player.has_animation(anim_name): return
+	
+	var animation = anim_player.get_animation(anim_name)
+	var target_time = target_step * step_duration
+	
+	# Wipe keys currently occupying the column to prevent data ghosts
+	delete_step_keyframes(anim_name, target_step)
+	
+	# Reconstruct keys from clipboard data structures
+	for track_data in _clipboard_step_data:
+		var path = track_data["path"]
+		var track_idx = animation.find_track(path, Animation.TYPE_VALUE)
+		
+		if track_idx == -1:
+			track_idx = animation.add_track(Animation.TYPE_VALUE)
+			animation.track_set_path(track_idx, path)
+			
+		animation.track_set_interpolation_type(track_idx, track_data["interpolation"])
+		animation.track_insert_key(track_idx, target_time, track_data["value"])
+		
+	print("Pasted ", _clipboard_step_data.size(), " tracks onto step ", target_step)
+
+# --- UI SEQUENCER GRAPHICS PIPELINE ---
+
 # Used by the HUD to figure out where to draw the red/white dots
 func get_step_visual_data(anim_name: String, active_marker: Node, total_steps: int) -> Array:
 	var result = []
@@ -125,7 +219,7 @@ func get_step_visual_data(anim_name: String, active_marker: Node, total_steps: i
 		result.append({"any": has_any, "active": has_active})
 	return result
 
-# Inside TimelineManager.gd
+# --- FILE SYSTEM IO OPERATIONS ---
 
 ## Saves a specific animation resource back to a given file path
 func save_animation_to_disk(anim_name: String, custom_path: String = "") -> void:
@@ -134,20 +228,15 @@ func save_animation_to_disk(anim_name: String, custom_path: String = "") -> void
 		return
 		
 	var anim_resource: Animation = anim_player.get_animation(anim_name)
-	
-	# If no path is supplied, check if the resource already has a path assigned
 	var path = custom_path if custom_path != "" else anim_resource.resource_path
 	
 	if path == "" or path.begins_with("local://"):
-		# Fallback path if the animation was built entirely in memory
 		path = "res://animations/" + anim_name + ".tres"
 		
-	# Ensure the directory exists so the engine doesn't crash on export
 	var dir = DirAccess.open("res://")
 	if not dir.dir_exists(path.get_base_dir()):
 		dir.make_dir_recursive(path.get_base_dir())
 		
-	# Write the data to disk!
 	var error = ResourceSaver.save(anim_resource, path)
 	if error == OK:
 		print("Successfully saved animation out-of-game to: ", path)

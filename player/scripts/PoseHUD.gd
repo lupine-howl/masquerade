@@ -72,7 +72,7 @@ func _ready() -> void:
 	btn_stop.pressed.connect(_on_stop_pressed)
 	btn_rewind.pressed.connect(_on_rewind_pressed)
 	btn_reset.pressed.connect(_on_reset_pressed)
-	speed_box.value_changed.connect(func(val): if timeline.anim_player: timeline.anim_player.speed_scale = val)
+	speed_box.value_changed.connect(_on_speed_box_changed)
 	duration_box.value_changed.connect(_on_duration_changed)
 	anim_dropdown.item_selected.connect(_on_animation_changed)
 	
@@ -82,6 +82,7 @@ func _ready() -> void:
 		timeline.stop()
 
 # --- CONTROLLER INTEGRATION ---
+
 
 func _populate_bone_dropdown(markers: Array[PoseMarker]) -> void:
 	bone_dropdown.clear()
@@ -103,6 +104,15 @@ func _on_bone_dropdown_selected(index: int) -> void:
 	else:
 		var marker = bone_dropdown.get_item_metadata(index)
 		pose_controller.set_active_marker(marker)
+
+func _on_speed_box_changed(val: float):
+	if timeline.anim_player:
+		timeline.anim_player.speed_scale = val
+	var anim = _get_current_anim()
+	if anim != "" and timeline:
+		timeline.key_speed_scale(anim, val)
+		_update_grid_visuals()
+
 
 func _on_active_marker_changed(marker: PoseMarker) -> void:
 	if timeline.anim_player and timeline.anim_player.is_playing():
@@ -299,7 +309,7 @@ func _on_duration_changed(new_duration: float) -> void:
 
 func _build_step_grid(duration: float) -> void:
 	for child in step_grid.get_children():
-		child.queue_free()
+		child.free()
 		
 	var num_steps = int(round(duration / timeline.step_duration)) + 1
 	if num_steps < 1: num_steps = 1
@@ -329,11 +339,24 @@ func _build_step_grid(duration: float) -> void:
 
 func _on_step_clicked(event: InputEvent, step_index: int) -> void:
 	if not posing_check.button_pressed: return
+	
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
-		timeline.seek_step(step_index)
+		# 🆕 Check if Ctrl (or Cmd on Mac) is being held down during the click
+		var ctrl_pressed = event.is_command_or_control_pressed()
+		
+		if ctrl_pressed:
+			# --- 👻 GHOST SELECTION MODE ---
+			# Update the timeline selection index visually without moving the characters
+			timeline.current_step = step_index
+		else:
+			# --- 🔄 STANDARD SHUTTLE MODE ---
+			# Normal click behavior: select step and scrub the animation player
+			timeline.seek_step(step_index)
+			
+		# Redraw selection bars and lookups instantly
 		_update_grid_visuals()
 		_update_bone_info_checkboxes(pose_controller.active_marker if pose_controller else null)
-
+		
 func _update_grid_visuals() -> void:
 	var marker = pose_controller.active_marker if pose_controller else null
 	var num_steps = step_grid.get_child_count()
@@ -347,10 +370,17 @@ func _update_grid_visuals() -> void:
 		
 		# Set selection color
 		if i == timeline.current_step:
-			step_rect.color = Color(0.3, 0.6, 1.0)
+			# 🆕 Calculate exactly where the physical character model is standing in time right now
+			var physical_time = timeline.anim_player.current_animation_position if timeline.anim_player else 0.0
+			var physical_step = int(round(physical_time / timeline.step_duration))
+			
+			if timeline.current_step == physical_step:
+				step_rect.color = Color(0.3, 0.6, 1.0) # Standard Blue (Sync mode - character is here)
+			else:
+				step_rect.color = Color(0.6, 0.3, 0.8) # Ghost Purple (Ghost mode - character is elsewhere!)
 		else:
 			step_rect.color = step_rect.get_meta("base_color", Color(0.2, 0.2, 0.2))
-			
+				
 		if not dot: continue
 			
 		# Render the dots based on timeline data
@@ -363,11 +393,30 @@ func _update_grid_visuals() -> void:
 			dot.modulate = Color.WHITE
 		else:
 			dot.visible = false
+			
+	# 1. Fetch the raw seconds for the currently selected step
+	var current_step_time: float = timeline.current_step * timeline.step_duration
+
+	# 2. Break it down into whole seconds and remaining milliseconds/frames
+	var whole_seconds: int = int(current_step_time)
+	var milliseconds: int = int((current_step_time - whole_seconds) * 100)
+
+	# 3. Format into a clean MM:SS.mm or SS.mm string block
+	# %02d forces two digits with leading zeros (e.g., "02" instead of "2")
+	var timecode_text: String = "%02d:%02d.%02d" % [
+		int(whole_seconds / 60), # Minutes
+		whole_seconds % 60,      # Seconds
+		milliseconds             # Milliseconds / Step fraction
+	]
+
+	# 4. Assign it to your text block node (Change %TimecodeLabel to your actual node name)
+	%TimecodeLabel.text = timecode_text
 
 func _on_export_pressed() -> void:
 	var current_anim = _get_current_anim()
 	if current_anim != "" and timeline:
 		timeline.save_animation_to_disk(current_anim)
+		
 func _on_play_pressed():
 	if anim_dropdown.item_count > 0:
 		playback_started.emit()
@@ -378,17 +427,29 @@ func _on_stop_pressed():
 
 func _on_rewind_pressed():
 	timeline.seek_step(0)
-	timeline.stop()
 	_update_grid_visuals()
 
 func _on_animation_changed(_index: int) -> void:
+	var current_anim = _get_current_anim()
+	
+	# 🆕 TRACK TRANSITION FIX: Check if the player is currently running
+	var was_playing: bool = false
+	if timeline.anim_player:
+		was_playing = timeline.anim_player.is_playing()
+		if was_playing:
+			timeline.stop() # Interrupt the active playback cycle immediately
+	
 	if timeline.anim_player and anim_dropdown.item_count > 0:
-		var anim = timeline.anim_player.get_animation(_get_current_anim())
+		var anim = timeline.anim_player.get_animation(current_anim)
 		duration_box.set_value_no_signal(anim.length)
 		_build_step_grid(anim.length)
 	
-	_update_grid_visuals()
-	_on_rewind_pressed()
+	# If it was playing, hot-swap and keep running the new animation instantly
+	if was_playing:
+		timeline.play(current_anim)
+	else:
+		# Standard behavior: rewind back to frame 0 if stopped
+		_on_rewind_pressed()
 
 func _on_reset_pressed() -> void:
 	timeline.clear_animation(_get_current_anim())

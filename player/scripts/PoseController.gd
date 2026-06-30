@@ -28,28 +28,63 @@ func _ready() -> void:
 # Inside PoseController.gd
 
 func _input(event: InputEvent) -> void:
-	# Only allow hotkeys if a marker is actually selected
+	# Fetch active context parameters safely out of the UI Layer
+	var current_anim = pose_hud._get_current_anim() if pose_hud else ""
+	if current_anim == "" or not pose_hud.timeline: return
+	
+	var timeline = pose_hud.timeline
+	var current_step = timeline.current_step
+	var modifier_pressed = event.is_command_or_control_pressed()
+	
+	# --- 1. GLOBAL TIMELINE CLIPBOARD HOTKEYS (Requires Ctrl/Cmd) ---
+	if event is InputEventKey and event.pressed and modifier_pressed:
+		match event.keycode:
+			KEY_C:
+				timeline.copy_step_to_clipboard(current_anim, current_step)
+				get_viewport().set_input_as_handled()
+				return
+				
+			KEY_X:
+				timeline.copy_step_to_clipboard(current_anim, current_step)
+				timeline.delete_step_keyframes(current_anim, current_step)
+				pose_hud._update_grid_visuals()
+				get_viewport().set_input_as_handled()
+				return
+				
+			KEY_V:
+				timeline.paste_clipboard_to_step(current_anim, current_step)
+				pose_hud._update_grid_visuals()
+				get_viewport().set_input_as_handled()
+				return
+
+	# --- 2. SINGLE-PRESS DELETE HOTKEY (Must NOT have Ctrl/Cmd pressed) ---
+	if event is InputEventKey and event.pressed and not modifier_pressed:
+		if event.keycode == KEY_DELETE or event.keycode == KEY_BACKSPACE:
+			timeline.delete_step_keyframes(current_anim, current_step)
+			pose_hud._update_grid_visuals()
+			get_viewport().set_input_as_handled()
+			return
+
+	# --- 3. ACTIVE MARKER SELECTION HOTKEYS ---
+	# Only allow the following filters if a physical limb marker is highlighted
 	if not active_marker: return
 	
-	# 1. ESCAPE key to revert/cancel changes
+	# ESCAPE key to revert/cancel changes
 	if event.is_action_pressed("ui_cancel") or (event is InputEventKey and event.keycode == KEY_ESCAPE and event.pressed):
 		if active_marker.has_method("revert_to_original"):
-			# This handles the physical move, UI cleanup, and fires 'deselected'
 			active_marker.revert_to_original()
 			get_viewport().set_input_as_handled()
 			
-	# 2. 'K' or 'I' key to manually commit/keyframe the pose
+	# 'K' key to manually commit/keyframe the active marker's pose
 	elif event is InputEventKey and event.keycode == KEY_K and event.pressed:
 		if pose_hud and pose_hud.has_method("_on_marker_save_requested"):
-			# Force the HUD to process the save requested logic on the active marker
 			pose_hud._on_marker_save_requested(active_marker)
 			
-			# After saving, tell the marker to clean up its orange visual state
 			if active_marker.has_method("_reset_marker_ui"):
 				active_marker._reset_marker_ui()
 				
 			get_viewport().set_input_as_handled()
-
+			
 func _on_marker_selected(marker: PoseMarker) -> void:
 	set_active_marker(marker)
 
