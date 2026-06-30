@@ -255,7 +255,8 @@ func _on_key_all_pressed():
 		timeline.key_property(anim, m, ":is_controlled", m.is_controlled)
 		timeline.key_property(anim, m, ":follow_parent_rotation", m.follow_parent_rotation)
 		timeline.key_property(anim, m, ":position", m.position)
-		timeline.key_property(anim, m, ":rotation", m.rotation)
+		if not m.follow_parent_rotation:
+			timeline.key_property(anim, m, ":rotation", m.rotation)
 		if m.slave:
 			timeline.key_property(anim, m.slave, ":freeze", m.slave.freeze)
 			

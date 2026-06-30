@@ -1439,7 +1439,6 @@ region_rect = Rect2(874, 536, 116, 228)
 position = Vector2(-114.5, -7.6293945e-06)
 collision_layer = 0
 collision_mask = 256
-freeze = true
 freeze_mode = 1
 angular_damp = 20.0
 
@@ -1542,7 +1541,6 @@ region_rect = Rect2(56, 491, 87, 170)
 position = Vector2(114, 0)
 collision_layer = 0
 collision_mask = 256
-freeze = true
 freeze_mode = 1
 angular_damp = 20.0
 
@@ -1748,7 +1746,6 @@ region_rect = Rect2(668, 536, 134, 228)
 position = Vector2(-155.50002, 0)
 collision_layer = 512
 collision_mask = 33024
-freeze = true
 freeze_mode = 1
 
 [node name="Calf_Foot_Pin" type="PinJoint2D" parent="PlayerBody/Ragdoll/Leg_Front/Foot_Front_Physics" unique_id=1586634006]
@@ -2295,6 +2292,7 @@ slave_parent = NodePath("../../../Ragdoll/Arm_Front/Forearm_Front_Physics")
 sibling = NodePath("../HandBack")
 can_rotate = true
 follow_parent_rotation = true
+is_controlled = false
 pivot = NodePath("../..")
 
 [node name="HandBack" parent="PlayerBody/FacingPivot/PoseController" unique_id=1872066078 node_paths=PackedStringArray("slave", "slave_parent", "sibling", "pivot") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
@@ -2305,6 +2303,7 @@ slave_parent = NodePath("../../../Ragdoll/Arm_Back/Forearm_Back_Physics")
 sibling = NodePath("../HandFront")
 can_rotate = true
 follow_parent_rotation = true
+is_controlled = false
 pivot = NodePath("../..")
 
 [node name="FootBack" parent="PlayerBody/FacingPivot/PoseController" unique_id=1591964902 node_paths=PackedStringArray("slave", "slave_parent", "sibling") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
@@ -2317,16 +2316,17 @@ can_rotate = true
 follow_parent_rotation = true
 
 [node name="FootFront" parent="PlayerBody/FacingPivot/PoseController" unique_id=960569227 node_paths=PackedStringArray("slave", "slave_parent", "sibling") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
-position = Vector2(0, 155.5)
+position = Vector2(-15, 156)
 rotation = -1.5058976
 slave = NodePath("../../../Ragdoll/Leg_Front/Foot_Front_Physics")
 slave_parent = NodePath("../../../Ragdoll/Leg_Front/Calf_Front_Physics")
 sibling = NodePath("../FootBack")
 can_rotate = true
 follow_parent_rotation = true
+is_controlled = false
 
 [node name="Neck" parent="PlayerBody/FacingPivot/PoseController" unique_id=1488133409 node_paths=PackedStringArray("slave", "pivot") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
-position = Vector2(0, -104)
+position = Vector2(-24, -88)
 slave = NodePath("../../../Ragdoll/Head/Neck_Physics")
 pivot = NodePath("../..")
 invert_rotation_on_flip = true
@@ -2339,7 +2339,6 @@ slave_parent = NodePath("../../../Ragdoll/Torso/Torso_Physics")
 can_rotate = true
 follow_parent_rotation = true
 pivot = NodePath("../..")
-invert_rotation_on_flip = true
 
 [node name="Root" parent="PlayerBody/FacingPivot/PoseController" unique_id=219274694 node_paths=PackedStringArray("slave", "pivot") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
 slave = NodePath("../../../Ragdoll/Root")
