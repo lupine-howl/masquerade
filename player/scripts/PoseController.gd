@@ -25,8 +25,6 @@ func _ready() -> void:
 	# Tell the HUD the list is ready to be put in the dropdown
 	marker_list_ready.emit(all_markers)
 
-# Inside PoseController.gd
-
 func _input(event: InputEvent) -> void:
 	# Fetch active context parameters safely out of the UI Layer
 	var current_anim = pose_hud._get_current_anim() if pose_hud else ""
@@ -36,30 +34,56 @@ func _input(event: InputEvent) -> void:
 	var current_step = timeline.current_step
 	var modifier_pressed = event.is_command_or_control_pressed()
 	
-	# --- 1. GLOBAL TIMELINE CLIPBOARD HOTKEYS (Requires Ctrl/Cmd) ---
+	# --- 1. GLOBAL / SELECTED TIMELINE CLIPBOARD HOTKEYS (Requires Ctrl/Cmd) ---
 	if event is InputEventKey and event.pressed and modifier_pressed:
+		var shift_pressed = Input.is_key_pressed(KEY_SHIFT)
+		var filter_path = ""
+		
+		# If shift is pressed, calculate the specific track path prefix for the active marker
+		if shift_pressed and active_marker and timeline.anim_player:
+			var root_node = timeline.anim_player.get_node(timeline.anim_player.root_node)
+			filter_path = str(root_node.get_path_to(active_marker))
+		
 		match event.keycode:
 			KEY_C:
-				timeline.copy_step_to_clipboard(current_anim, current_step)
+				# 📋 COPY (All tracks OR Filtered Node branch)
+				timeline.copy_step_to_clipboard(current_anim, current_step, filter_path)
 				get_viewport().set_input_as_handled()
 				return
 				
 			KEY_X:
-				timeline.copy_step_to_clipboard(current_anim, current_step)
-				timeline.delete_step_keyframes(current_anim, current_step)
+				# ✂️ CUT (All tracks OR Filtered Node branch)
+				timeline.copy_step_to_clipboard(current_anim, current_step, filter_path)
+				timeline.delete_step_keyframes(current_anim, current_step, filter_path)
 				pose_hud._update_grid_visuals()
 				get_viewport().set_input_as_handled()
 				return
 				
 			KEY_V:
-				timeline.paste_clipboard_to_step(current_anim, current_step)
+				# 📥 PASTE (Ctrl + V = standard paste | Ctrl + Shift + V = cross-node paste)
+				filter_path = ""
+				if shift_pressed and active_marker and timeline.anim_player:
+					var root_node = timeline.anim_player.get_node(timeline.anim_player.root_node)
+					filter_path = str(root_node.get_path_to(active_marker))
+				
+				# Pass the filter path into the updated execution statement
+				timeline.paste_clipboard_to_step(current_anim, current_step, filter_path)
 				pose_hud._update_grid_visuals()
 				get_viewport().set_input_as_handled()
 				return
+								
+			KEY_DELETE, KEY_BACKSPACE:
+				# 🗑️ TARGETED DELETE (Ctrl + Shift + Delete clears only the active limb track)
+				if shift_pressed:
+					timeline.delete_step_keyframes(current_anim, current_step, filter_path)
+					pose_hud._update_grid_visuals()
+					get_viewport().set_input_as_handled()
+					return
 
 	# --- 2. SINGLE-PRESS DELETE HOTKEY (Must NOT have Ctrl/Cmd pressed) ---
 	if event is InputEventKey and event.pressed and not modifier_pressed:
 		if event.keycode == KEY_DELETE or event.keycode == KEY_BACKSPACE:
+			# Wipes all keyframes on this step entirely
 			timeline.delete_step_keyframes(current_anim, current_step)
 			pose_hud._update_grid_visuals()
 			get_viewport().set_input_as_handled()
@@ -84,7 +108,7 @@ func _input(event: InputEvent) -> void:
 				active_marker._reset_marker_ui()
 				
 			get_viewport().set_input_as_handled()
-			
+									
 func _on_marker_selected(marker: PoseMarker) -> void:
 	set_active_marker(marker)
 

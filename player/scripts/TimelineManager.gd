@@ -102,7 +102,10 @@ func remove_keyframe(anim_name: String, target_node: Node, property_suffix: Stri
 # --- CLIPBOARD OPERATIONS (COPY / CUT / PASTE) ---
 
 ## Captures all keyframe data located exactly at a specific step index across all tracks
-func copy_step_to_clipboard(anim_name: String, source_step: int) -> void:
+# Inside TimelineManager.gd
+
+## Captures keyframe data at a specific step. If filter_path is provided, only copies tracks starting with that path.
+func copy_step_to_clipboard(anim_name: String, source_step: int, filter_path: String = "") -> void:
 	_clipboard_step_data.clear()
 	if not anim_player or not anim_player.has_animation(anim_name): return
 	
@@ -111,6 +114,12 @@ func copy_step_to_clipboard(anim_name: String, source_step: int) -> void:
 	var time_tolerance = 0.01
 	
 	for track_idx in animation.get_track_count():
+		var track_path_str = str(animation.track_get_path(track_idx))
+		
+		# 🆕 FILTER: Skip if we are targeting a single part and this track doesn't match
+		if filter_path != "" and not track_path_str.begins_with(filter_path):
+			continue
+			
 		var key_idx = animation.track_find_key(track_idx, source_time, Animation.FIND_MODE_NEAREST)
 		if key_idx != -1:
 			var key_time = animation.track_get_key_time(track_idx, key_idx)
@@ -122,24 +131,28 @@ func copy_step_to_clipboard(anim_name: String, source_step: int) -> void:
 				}
 				_clipboard_step_data.append(track_data)
 				
-	print("Copied ", _clipboard_step_data.size(), " tracks from step ", source_step)
+	print("Copied ", _clipboard_step_data.size(), " tracks from step ", source_step, " (Filter: ", filter_path if filter_path != "" else "All", ")")
 
-## Deletes all keyframe data located exactly at a specific step index
-func delete_step_keyframes(anim_name: String, step_index: int) -> void:
+## Deletes keyframe data at a specific step. Can be filtered to a single target node path.
+func delete_step_keyframes(anim_name: String, step_index: int, filter_path: String = "") -> void:
 	if not anim_player or not anim_player.has_animation(anim_name): return
 	var animation = anim_player.get_animation(anim_name)
 	var target_time = step_index * step_duration
 	var time_tolerance = 0.01
 	
 	for track_idx in animation.get_track_count():
+		var track_path_str = str(animation.track_get_path(track_idx))
+		
+		# 🆕 FILTER: Skip if we are deleting a single part and this track doesn't match
+		if filter_path != "" and not track_path_str.begins_with(filter_path):
+			continue
+			
 		var key_idx = animation.track_find_key(track_idx, target_time, Animation.FIND_MODE_NEAREST)
 		if key_idx != -1:
 			var key_time = animation.track_get_key_time(track_idx, key_idx)
 			if abs(key_time - target_time) <= time_tolerance:
 				animation.track_remove_key(track_idx, key_idx)
-
-# Inside TimelineManager.gd
-
+				
 ## Keyframes the playback speed scale of the AnimationPlayer itself
 func key_speed_scale(anim_name: String, speed_value: float) -> void:
 	if not anim_player or not anim_player.has_animation(anim_name): return
@@ -162,31 +175,45 @@ func key_speed_scale(anim_name: String, speed_value: float) -> void:
 	animation.track_insert_key(track_idx, 0.0, speed_value)
 	print("Keyed speed_scale: ", speed_value, " at step ", current_step)
 
-## Pastes the clipboard payload onto the designated target step index
-func paste_clipboard_to_step(anim_name: String, target_step: int) -> void:
+## Pastes the clipboard payload onto the target step. 
+## If override_target_path is provided, redirects the tracks to target that node instead.
+func paste_clipboard_to_step(anim_name: String, target_step: int, override_target_path: String = "") -> void:
 	if _clipboard_step_data.is_empty(): return
 	if not anim_player or not anim_player.has_animation(anim_name): return
 	
 	var animation = anim_player.get_animation(anim_name)
 	var target_time = target_step * step_duration
 	
-	# Wipe keys currently occupying the column to prevent data ghosts
-	delete_step_keyframes(anim_name, target_step)
+	# If we are doing a targeted paste onto a different limb, only wipe out 
+	# the destination tracks for THAT specific limb on this frame
+	delete_step_keyframes(anim_name, target_step, override_target_path)
 	
-	# Reconstruct keys from clipboard data structures
 	for track_data in _clipboard_step_data:
-		var path = track_data["path"]
-		var track_idx = animation.find_track(path, Animation.TYPE_VALUE)
+		var original_path: NodePath = track_data["path"]
+		var target_path: NodePath = original_path
 		
+		# 🆕 CROSS-NODE REDIRECTION LOGIC
+		if override_target_path != "":
+			# Extract the property segment (e.g., ":position" or ":rotation")
+			var property_suffix = ""
+			var path_string = str(original_path)
+			var colon_idx = path_string.find(":")
+			if colon_idx != -1:
+				property_suffix = path_string.substr(colon_idx)
+				
+			# Splice the new target node path together with the old property rules
+			target_path = NodePath(override_target_path + property_suffix)
+		
+		var track_idx = animation.find_track(target_path, Animation.TYPE_VALUE)
 		if track_idx == -1:
 			track_idx = animation.add_track(Animation.TYPE_VALUE)
-			animation.track_set_path(track_idx, path)
+			animation.track_set_path(track_idx, target_path)
 			
 		animation.track_set_interpolation_type(track_idx, track_data["interpolation"])
 		animation.track_insert_key(track_idx, target_time, track_data["value"])
 		
-	print("Pasted ", _clipboard_step_data.size(), " tracks onto step ", target_step)
-
+	print("Pasted ", _clipboard_step_data.size(), " tracks onto path: ", override_target_path if override_target_path != "" else "Original Tracks")
+	
 # --- UI SEQUENCER GRAPHICS PIPELINE ---
 
 # Used by the HUD to figure out where to draw the red/white dots

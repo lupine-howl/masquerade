@@ -2,7 +2,6 @@ class_name PoseMarker
 extends Node2D
 
 # --- GLOBAL BROADCAST SIGNALS ---
-# Standardized signals for the Controller and Timeline to listen to
 signal selected(marker: PoseMarker)
 signal deselected(marker: PoseMarker)
 signal drag_ended(marker: PoseMarker)
@@ -23,12 +22,19 @@ signal save_requested(marker: PoseMarker)
 
 @export_category("Settings")
 @export var is_dev_mode: bool = true
+@export var drag_threshold: float = 3.0 # 🆕 Threshold baseline in pixels before dragging kicks in
 
 # Interaction States
 var is_dragging_position: bool = false
 var is_dragging_rotation: bool = false
 var mouse_over: bool = false
 var is_active: bool = false
+
+# 🆕 Internal Drag-Correction Math States
+var _is_prepare_drag_position: bool = false
+var _is_prepare_drag_rotation: bool = false
+var _mouse_start_pos: Vector2 = Vector2.ZERO
+var _drag_offset: Vector2 = Vector2.ZERO
 
 # Unsaved State Tracking (Source of Truth)
 var original_position: Vector2
@@ -80,9 +86,20 @@ func _process(_delta: float) -> void:
 	rotation_indicator_selected.visible = is_active and can_rotate
 	outer_rotation_ring.visible = is_active and can_rotate and not follow_parent_rotation and is_controlled
 	
-	# Dragging logic
+	# 🆕 EVALUATE DRAG THRESHOLDS BEFORE MUTATING
+	if _is_prepare_drag_position and not is_dragging_position:
+		if mouse_pos.distance_to(_mouse_start_pos) > drag_threshold:
+			_capture_original_state()
+			is_dragging_position = true
+			
+	if _is_prepare_drag_rotation and not is_dragging_rotation:
+		if mouse_pos.distance_to(_mouse_start_pos) > drag_threshold:
+			_capture_original_state()
+			is_dragging_rotation = true
+	
+	# Translocation updates
 	if is_dragging_position:
-		global_position = mouse_pos
+		global_position = mouse_pos - _drag_offset # Maintains structural tracking without snapping!
 	elif is_dragging_rotation:
 		global_rotation = global_position.angle_to_point(mouse_pos)
 
@@ -124,28 +141,36 @@ func _input(event: InputEvent) -> void:
 	if not is_dev_mode: return
 
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
+		var mouse_pos = get_global_mouse_position()
+		
 		if event.pressed and mouse_over:
-			var distance = global_position.distance_to(get_global_mouse_position())
+			var distance = global_position.distance_to(mouse_pos)
 			
 			if distance <= outer_radius:
 				selected.emit(self)
 			
 			if distance <= inner_radius:
-				_capture_original_state()
-				get_viewport().set_input_as_handled()
+				# 🆕 Queue position movement check setup safely
+				_mouse_start_pos = mouse_pos
+				_drag_offset = mouse_pos - global_position # Maintain exact relative coordinate offset
 				if is_controlled:
-					is_dragging_position = true
+					_is_prepare_drag_position = true
+				get_viewport().set_input_as_handled()
 				
 			elif distance > inner_radius and distance <= outer_radius:
 				if outer_rotation_ring.visible:
-					_capture_original_state()
-					is_dragging_rotation = true
+					# 🆕 Queue rotation track check setup safely
+					_mouse_start_pos = mouse_pos
+					_is_prepare_drag_rotation = true
 					get_viewport().set_input_as_handled()
 					
 		elif not event.pressed:
+			# 🆕 Clear absolute threshold evaluation pipelines
 			var was_dragging = is_dragging_position or is_dragging_rotation
 			is_dragging_position = false
 			is_dragging_rotation = false
+			_is_prepare_drag_position = false
+			_is_prepare_drag_rotation = false
 			
 			if was_dragging:
 				_show_unsaved_state()
