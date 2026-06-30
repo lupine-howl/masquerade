@@ -55,8 +55,6 @@ const JUMP_BUFFER_TIME := 0.12
 
 @onready var sprite_pivot := $FacingPivot
 @onready var animator := $PlayerAnimator 
-@onready var sprite_upper := $FacingPivot/SpriteContainer/SpriteUpper
-@onready var sprite_lower := $FacingPivot/SpriteContainer/SpriteLower
 @onready var armature := $FacingPivot/Armature
 
 # Detectors

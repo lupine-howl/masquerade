@@ -5,21 +5,6 @@
 [sub_resource type="CircleShape2D" id="CircleShape2D_g4c7l"]
 radius = 16.0
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5lwv6"]
-bg_color = Color(1, 1, 1, 1)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_x1a2m"]
-bg_color = Color(0, 0.70980394, 0.4745098, 0)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(1, 1, 1, 1)
-corner_radius_top_left = 16
-corner_radius_top_right = 16
-corner_radius_bottom_right = 16
-corner_radius_bottom_left = 16
-
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ljuav"]
 bg_color = Color(0, 0.71, 0.4733334, 0.16470589)
 border_width_left = 2
@@ -32,11 +17,38 @@ corner_radius_top_right = 40
 corner_radius_bottom_right = 40
 corner_radius_bottom_left = 40
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_lvskx"]
-bg_color = Color(1, 1, 1, 1)
-
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_e13fh"]
 bg_color = Color(0, 0.70980394, 0.4745098, 0.16470589)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.3364, 0.58, 0.49879998, 0.5294118)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5lwv6"]
+bg_color = Color(0.3372549, 0.5803922, 0.49803922, 0.5294118)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_x1a2m"]
+bg_color = Color(0.4911914, 0.4911909, 0.4911903, 0.42745098)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.27899086, 0.2789908, 0.27899086, 0.5647059)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_t6bqv"]
+bg_color = Color(0.2784314, 0.2784314, 0.2784314, 0.5647059)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_knn7v"]
+bg_color = Color(0.91, 0.45454505, 0.08189998, 0)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
@@ -54,17 +66,8 @@ corner_radius_top_right = 16
 corner_radius_bottom_right = 16
 corner_radius_bottom_left = 16
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_knn7v"]
-bg_color = Color(0.9098039, 0.45490196, 0.08627451, 0.42745098)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(1, 1, 1, 1)
-corner_radius_top_left = 16
-corner_radius_top_right = 16
-corner_radius_bottom_right = 16
-corner_radius_bottom_left = 16
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_lvskx"]
+bg_color = Color(1, 1, 1, 1)
 
 [node name="PoseMarker" type="Node2D" unique_id=2036979389]
 script = ExtResource("1_ljuav")
@@ -72,45 +75,11 @@ script = ExtResource("1_ljuav")
 [node name="Area2D" type="Area2D" parent="." unique_id=356062753]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=1943209305]
+visible = false
 shape = SubResource("CircleShape2D_g4c7l")
 
-[node name="TextureButton" type="TextureButton" parent="." unique_id=116250931]
-offset_left = 16.0
-offset_top = -16.0
-offset_right = 24.0
-offset_bottom = -8.0
-
-[node name="Controls" type="Node2D" parent="." unique_id=1878982436]
+[node name="OuterRotationRing" type="Panel" parent="." unique_id=770619347]
 visible = false
-position = Vector2(23, -33)
-
-[node name="RotationMarker2" type="Panel" parent="Controls" unique_id=727960171]
-custom_minimum_size = Vector2(9, 2)
-offset_left = -8.0
-offset_top = 32.0
-offset_right = 18.0
-offset_bottom = 34.0
-mouse_filter = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_5lwv6")
-
-[node name="Panel" type="Panel" parent="Controls" unique_id=2135653723]
-offset_left = 17.0
-offset_top = 25.0
-offset_right = 33.0
-offset_bottom = 41.0
-theme_override_styles/panel = SubResource("StyleBoxFlat_x1a2m")
-
-[node name="BtnSave" type="Button" parent="Controls/Panel" unique_id=1469555242]
-layout_mode = 0
-offset_left = 1.0
-offset_top = 1.0
-offset_right = 15.0
-offset_bottom = 15.0
-flat = true
-
-[node name="RotatingArea" type="Node2D" parent="." unique_id=1684026965]
-
-[node name="OuterRotationRing" type="Panel" parent="RotatingArea" unique_id=770619347]
 custom_minimum_size = Vector2(48, 48)
 offset_left = -24.0
 offset_top = -24.0
@@ -119,17 +88,7 @@ offset_bottom = 24.0
 mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_ljuav")
 
-[node name="RotationMarker" type="Panel" parent="RotatingArea/OuterRotationRing" unique_id=164742471]
-custom_minimum_size = Vector2(9, 2)
-layout_mode = 1
-offset_left = 23.0
-offset_top = 23.0
-offset_right = 39.0
-offset_bottom = 25.0
-mouse_filter = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_lvskx")
-
-[node name="InnerMoveCircle" type="Panel" parent="RotatingArea" unique_id=2085043019]
+[node name="InnerMoveCircleControlled" type="Panel" parent="." unique_id=2085043019]
 custom_minimum_size = Vector2(32, 32)
 offset_left = -16.0
 offset_top = -16.0
@@ -138,17 +97,38 @@ offset_bottom = 16.0
 mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_e13fh")
 
-[node name="Marker" type="Panel" parent="RotatingArea/InnerMoveCircle" unique_id=354484444]
-custom_minimum_size = Vector2(2, 2)
+[node name="RotationIndicator" type="Panel" parent="InnerMoveCircleControlled" unique_id=311638360]
+visible = false
+custom_minimum_size = Vector2(9, 2)
 layout_mode = 1
-offset_left = 15.0
+offset_left = 16.0
 offset_top = 15.0
-offset_right = 17.0
+offset_right = 30.0
 offset_bottom = 17.0
 mouse_filter = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_8pea7")
+theme_override_styles/panel = SubResource("StyleBoxFlat_5lwv6")
 
-[node name="InnerMoveCircleSelected" type="Panel" parent="RotatingArea" unique_id=355193620]
+[node name="InnerMoveCircleUncontrolled" type="Panel" parent="." unique_id=1639253154]
+visible = false
+custom_minimum_size = Vector2(32, 32)
+offset_left = -16.0
+offset_top = -16.0
+offset_right = 16.0
+offset_bottom = 16.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_x1a2m")
+
+[node name="RotationIndicator" type="Panel" parent="InnerMoveCircleUncontrolled" unique_id=1246893631]
+custom_minimum_size = Vector2(9, 2)
+layout_mode = 1
+offset_left = 17.0
+offset_top = 15.0
+offset_right = 30.0
+offset_bottom = 17.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_t6bqv")
+
+[node name="InnerMoveCircleSelected" type="Panel" parent="." unique_id=355193620]
 visible = false
 custom_minimum_size = Vector2(32, 32)
 offset_left = -16.0
@@ -158,7 +138,7 @@ offset_bottom = 16.0
 mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_knn7v")
 
-[node name="Marker" type="Panel" parent="RotatingArea/InnerMoveCircleSelected" unique_id=891643385]
+[node name="Marker" type="Panel" parent="InnerMoveCircleSelected" unique_id=891643385]
 custom_minimum_size = Vector2(2, 2)
 layout_mode = 1
 offset_left = 15.0
@@ -167,6 +147,17 @@ offset_right = 17.0
 offset_bottom = 17.0
 mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_8pea7")
+
+[node name="RotationIndicator" type="Panel" parent="InnerMoveCircleSelected" unique_id=164742471]
+visible = false
+custom_minimum_size = Vector2(9, 2)
+layout_mode = 1
+offset_left = 16.0
+offset_top = 15.0
+offset_right = 31.0
+offset_bottom = 17.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_lvskx")
 
 [connection signal="mouse_entered" from="Area2D" to="." method="_on_area_2d_mouse_entered"]
 [connection signal="mouse_exited" from="Area2D" to="." method="_on_area_2d_mouse_exited"]

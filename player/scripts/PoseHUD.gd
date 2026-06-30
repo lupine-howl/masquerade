@@ -1,66 +1,53 @@
+class_name PoseHUD
 extends CanvasLayer
 
 signal playback_started
 
-@export var anim_player: AnimationPlayer
-@export var character: Player
-@export var ragdoll: RagdollManager
-@export var step_duration: float = 0.1
+# 🆕 The two pillars of our new architecture
+@export var pose_controller: PoseController 
+@export var timeline: TimelineManager
 
-var active_marker: Node2D = null
-var current_step: int = 0
-
-# --- Animator UI References ---
-@onready var anim_dropdown: OptionButton = $PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/Header/AnimDropdown
-@onready var speed_box: SpinBox = $PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/PlaybackControls/SpeedSpinBox
-@onready var step_grid: HBoxContainer = $PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/StepGrid
+# --- UI References ---
+@onready var anim_dropdown: OptionButton = %AnimDropdown
+@onready var speed_box: SpinBox = %SpeedSpinBox
+@onready var duration_box: SpinBox = %DurationSpinBox
+@onready var step_grid: Control = %StepGrid 
 @onready var btn_play: Button = $PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/PlaybackControls/BtnPlay
 @onready var btn_stop: Button = $PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/PlaybackControls/BtnStop
 @onready var btn_rewind: Button = $PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/PlaybackControls/BtnRewind
+@onready var btn_export: Button = %BtnExportAnimation
 
-# --- UI References ---
 @onready var bone_dropdown: OptionButton = $PanelContainer/MarginContainer/HBoxContainer/BoneInfo/BoneDropdown
 @onready var parent_label: Label = $PanelContainer/MarginContainer/HBoxContainer/BoneInfo/ParentLabel
-
 @onready var pos_label: Label = $PanelContainer/MarginContainer/HBoxContainer/BoneInfo/VBoxContainer/HBoxContainer/PosLabel
-@onready var btn_key_position: Button = $PanelContainer/MarginContainer/HBoxContainer/BoneInfo/VBoxContainer/HBoxContainer/BtnKeyPos
-@onready var btn_reset_position: Button = $PanelContainer/MarginContainer/HBoxContainer/BoneInfo/VBoxContainer/HBoxContainer/BtnResetPos
-
 @onready var rot_label: Label = $PanelContainer/MarginContainer/HBoxContainer/BoneInfo/VBoxContainer/HBoxContainer2/RotLabel
-@onready var btn_key_rotation: Button = $PanelContainer/MarginContainer/HBoxContainer/BoneInfo/VBoxContainer/HBoxContainer2/BtnKeyRot
-@onready var btn_reset_rotation: Button = $PanelContainer/MarginContainer/HBoxContainer/BoneInfo/VBoxContainer/HBoxContainer2/BtnResetRot
 
+# Checkboxes & Keying Buttons
 @onready var controlled_check: CheckBox = $PanelContainer/MarginContainer/HBoxContainer/BoneInfo/VBoxContainer/HBoxContainer3/ControlledCheck
-@onready var btn_key_controlled: Button = $PanelContainer/MarginContainer/HBoxContainer/BoneInfo/VBoxContainer/HBoxContainer3/BtnKeyControlled
-
 @onready var follow_rotation_check: CheckBox = $PanelContainer/MarginContainer/HBoxContainer/BoneInfo/VBoxContainer/HBoxContainer4/FollowRotationCheck
-@onready var btn_key_follow_rotation: Button = $PanelContainer/MarginContainer/HBoxContainer/BoneInfo/VBoxContainer/HBoxContainer4/BtnKeyFollowRotation
-
 @onready var freeze_check: CheckBox = $PanelContainer/MarginContainer/HBoxContainer/BoneInfo/VBoxContainer/HBoxContainer5/FreezeCheck
-@onready var btn_key_freeze: Button = $PanelContainer/MarginContainer/HBoxContainer/BoneInfo/VBoxContainer/HBoxContainer5/BtnKeyFreeze
-
-@onready var slave_pos_label: Label = $PanelContainer/MarginContainer/HBoxContainer/TransformInfo/SlavePosLabel
-@onready var slave_rot_label: Label = $PanelContainer/MarginContainer/HBoxContainer/TransformInfo/SlaveRotLabel
-@onready var parent_pos_label: Label = $PanelContainer/MarginContainer/HBoxContainer/TransformInfo/ParentPosLabel
-@onready var parent_rot_label: Label = $PanelContainer/MarginContainer/HBoxContainer/TransformInfo/ParentRotLabel
-
 @onready var record_check: CheckBox = $PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/PlaybackControls/RecordCheck
 @onready var posing_check: CheckBox = $PanelContainer/MarginContainer/Mode/PosingCheck
+
+@onready var btn_key_position: Button = $PanelContainer/MarginContainer/HBoxContainer/BoneInfo/VBoxContainer/HBoxContainer/BtnKeyPos
+@onready var btn_reset_position: Button = $PanelContainer/MarginContainer/HBoxContainer/BoneInfo/VBoxContainer/HBoxContainer/BtnResetPos
+@onready var btn_key_rotation: Button = $PanelContainer/MarginContainer/HBoxContainer/BoneInfo/VBoxContainer/HBoxContainer2/BtnKeyRot
+@onready var btn_reset_rotation: Button = $PanelContainer/MarginContainer/HBoxContainer/BoneInfo/VBoxContainer/HBoxContainer2/BtnResetRot
+@onready var btn_key_controlled: Button = $PanelContainer/MarginContainer/HBoxContainer/BoneInfo/VBoxContainer/HBoxContainer3/BtnKeyControlled
+@onready var btn_key_follow_rotation: Button = $PanelContainer/MarginContainer/HBoxContainer/BoneInfo/VBoxContainer/HBoxContainer4/BtnKeyFollowRotation
+@onready var btn_key_freeze: Button = $PanelContainer/MarginContainer/HBoxContainer/BoneInfo/VBoxContainer/HBoxContainer5/BtnKeyFreeze
+@onready var btn_key_all: Button = $PanelContainer/MarginContainer/HBoxContainer/BoneInfo/HBoxContainer/BtnKeyAll
 @onready var btn_reset: Button = $PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/PlaybackControls/BtnReset
 
-@onready var btn_key_all: Button = $PanelContainer/MarginContainer/HBoxContainer/BoneInfo/HBoxContainer/BtnKeyAll
-
-# Container reference to easily hide the panel holding playback controls
 @onready var playback_controls_container: Control = $PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/PlaybackControls
 
-var active_marker_position_revert
-var active_marker_rotation_revert
-
 func _ready() -> void:
-	# Set default modes
 	record_check.button_pressed = true
-	character.is_posing = true
 	posing_check.button_pressed = true
+	
+	if pose_controller:
+		pose_controller.active_marker_changed.connect(_on_active_marker_changed)
+		pose_controller.marker_list_ready.connect(_populate_bone_dropdown)
 	
 	controlled_check.toggled.connect(_on_controlled_toggled)
 	follow_rotation_check.toggled.connect(_on_rotation_toggled)
@@ -73,9 +60,9 @@ func _ready() -> void:
 	btn_key_position.pressed.connect(_on_key_position_pressed)
 	btn_key_rotation.pressed.connect(_on_key_rotation_pressed)
 	btn_key_all.pressed.connect(_on_key_all_pressed)
-	
 	btn_reset_position.pressed.connect(_on_reset_position_pressed)
 	btn_reset_rotation.pressed.connect(_on_reset_rotation_pressed)
+	btn_export.pressed.connect(_on_export_pressed)
 	
 	bone_dropdown.item_selected.connect(_on_bone_dropdown_selected)
 	
@@ -85,380 +72,323 @@ func _ready() -> void:
 	btn_stop.pressed.connect(_on_stop_pressed)
 	btn_rewind.pressed.connect(_on_rewind_pressed)
 	btn_reset.pressed.connect(_on_reset_pressed)
-	speed_box.value_changed.connect(_on_speed_changed)
+	speed_box.value_changed.connect(func(val): if timeline.anim_player: timeline.anim_player.speed_scale = val)
+	duration_box.value_changed.connect(_on_duration_changed)
 	anim_dropdown.item_selected.connect(_on_animation_changed)
 	
-	for i in range(step_grid.get_child_count()):
-		var step_rect = step_grid.get_child(i)
-		step_rect.gui_input.connect(_on_step_clicked.bind(i))
-	
 	_populate_animations()
-	_populate_bone_dropdown()
-	_update_grid_visuals()
-	anim_player.stop()
+	if timeline and anim_dropdown.item_count > 0:
+		_on_animation_changed(0) 
+		timeline.stop()
 
-func _populate_bone_dropdown() -> void:
+# --- CONTROLLER INTEGRATION ---
+
+func _populate_bone_dropdown(markers: Array[PoseMarker]) -> void:
 	bone_dropdown.clear()
 	bone_dropdown.add_item("None")
-	var markers = get_tree().get_nodes_in_group("anim_markers")
 	for i in range(markers.size()):
 		var m = markers[i]
 		if m.slave:
 			bone_dropdown.add_item(m.slave.name)
 			bone_dropdown.set_item_metadata(i + 1, m) 
+			
+		# Route the new save_requested signal from the refactored marker directly to our keying logic
+		if not m.save_requested.is_connected(_on_marker_save_requested):
+			m.save_requested.connect(_on_marker_save_requested)
 
 func _on_bone_dropdown_selected(index: int) -> void:
+	if not pose_controller: return
 	if index == 0:
-		set_active_marker(null)
+		pose_controller.set_active_marker(null)
 	else:
 		var marker = bone_dropdown.get_item_metadata(index)
-		set_active_marker(marker)
+		pose_controller.set_active_marker(marker)
 
-func _on_marker_deactivated(_marker: Node2D):
-	set_active_marker(null)
+func _on_active_marker_changed(marker: PoseMarker) -> void:
+	if timeline.anim_player and timeline.anim_player.is_playing():
+		timeline.stop()
 
-func set_active_marker(marker: Node2D) -> void:
-	active_marker = marker
-	if(anim_player.is_playing()):
-		anim_player.stop()
-
-	if active_marker:
-		if not marker.request_save.is_connected(auto_save_pose):
-			marker.request_save.connect(auto_save_pose)
-		if not marker.request_deactivate.is_connected(_on_marker_deactivated):
-			marker.request_deactivate.connect(_on_marker_deactivated)
-			
+	if marker:
 		for i in range(bone_dropdown.item_count):
 			if bone_dropdown.get_item_metadata(i) == marker:
 				bone_dropdown.select(i)
 				break
 	else:
 		clear_hud()
-		return
 		
-	parent_label.text = "Parent: " + (active_marker.slave_parent.name if active_marker.slave_parent else "None")
-	_update_bone_info_checkboxes()
+	_update_bone_info_checkboxes(marker)
 	_update_grid_visuals()
 
 func clear_hud() -> void:
-	bone_dropdown.select(0)
-	#parent_label.text = "Parent: None"
-	#slave_pos_label.text = "Slave Pos: (-, -)"
-	#slave_rot_label.text = "Slave Rot: -°"
-	#parent_pos_label.text = "Parent Pos: (-, -)"
-	#parent_rot_label.text = "Parent Rot: -°"
-	_update_bone_info_checkboxes()
+	if(bone_dropdown.size):
+		bone_dropdown.select(0)
+	parent_label.text = "Parent: None"
 
-func _update_bone_info_checkboxes():
-	if active_marker:
-		controlled_check.set_pressed_no_signal(active_marker.is_controlled)
-		follow_rotation_check.set_pressed_no_signal(active_marker.follow_parent_rotation)
-		if active_marker.slave:
-			freeze_check.set_pressed_no_signal(active_marker.slave.freeze)
-		else:
-			freeze_check.set_pressed_no_signal(false)
+func _update_bone_info_checkboxes(marker: PoseMarker):
+	if marker:
+		controlled_check.set_pressed_no_signal(marker.is_controlled)
+		follow_rotation_check.set_pressed_no_signal(marker.follow_parent_rotation)
+		freeze_check.set_pressed_no_signal(marker.slave.freeze if marker.slave else false)
 	else:
 		controlled_check.set_pressed_no_signal(false)
 		follow_rotation_check.set_pressed_no_signal(false)
 		freeze_check.set_pressed_no_signal(false)
 
 func _process(_delta: float) -> void:
-	# 🆕 FEATURE: Track active animation player status when NOT in pose mode
-	if anim_player and not character.is_posing and anim_player.is_playing():
-		var playing_anim = anim_player.current_animation
-		if playing_anim != "":
+	if not timeline or not timeline.anim_player: return
+	
+	var active_marker = pose_controller.active_marker if pose_controller else null
+	var is_posing = posing_check.button_pressed
+
+	# Keep UI in sync with playing animation
+	if timeline.anim_player.is_playing():
+		var playing_anim = timeline.anim_player.current_animation
+		if not is_posing and playing_anim != "":
 			for i in range(anim_dropdown.item_count):
 				if anim_dropdown.get_item_text(i) == playing_anim:
 					if anim_dropdown.selected != i:
 						anim_dropdown.select(i)
-						# Refresh track markers for the new animation
-						_update_grid_visuals()
+						var current_anim_len = timeline.anim_player.get_animation(playing_anim).length
+						duration_box.set_value_no_signal(current_anim_len)
+						_build_step_grid(current_anim_len)
 					break
 		
-		# Keep step grid sequencer position updated smoothly 
-		var current_time = anim_player.current_animation_position
-		if step_grid.get_child_count() > 0:
-			var playing_step = int(round(current_time / step_duration))
-			playing_step = clampi(playing_step, 0, step_grid.get_child_count() - 1)
-			
-			if current_step != playing_step:
-				current_step = playing_step
-				_update_grid_visuals()
-				_update_bone_info_checkboxes()
+		# Sync step sequencer visually
+		var playing_step = timeline.get_current_playback_step()
+		var max_steps = max(0, step_grid.get_child_count() - 1)
+		playing_step = clampi(playing_step, 0, max_steps)
+		
+		if timeline.current_step != playing_step:
+			timeline.current_step = playing_step
+			_update_grid_visuals()
+			if not is_posing:
+				_update_bone_info_checkboxes(active_marker)
 
-	# Marker updates
+	# Read Realtime Physics Data for HUD
 	if active_marker and active_marker.slave:
 		var pos = active_marker.global_position
 		pos_label.text = "    ⚲    Position: (%d, %d)" % [round(pos.x), round(pos.y)]
 		rot_label.text = "    ↻    Rotation: %0.1f°" % rad_to_deg(active_marker.global_rotation)
 
-	# Regular execution for step sequencer parsing when animating via the editor tools
-	if anim_player and character.is_posing and anim_player.is_playing():
-		var current_time = anim_player.current_animation_position
-		if step_grid.get_child_count() > 0:
-			var playing_step = int(round(current_time / step_duration))
-			playing_step = clampi(playing_step, 0, step_grid.get_child_count() - 1)
-			if current_step != playing_step:
-				current_step = playing_step
-				_update_grid_visuals()
+# --- UI TOGGLES (Passes commands to the Controller) ---
 
-# --- UI Input Handlers ---
 func _on_controlled_toggled(toggled_on: bool) -> void:
-	if active_marker:
-		if toggled_on: active_marker.take_control()
-		else: active_marker.release_control()
-		_update_bone_info_checkboxes()
-		if record_check.button_pressed:
-			var track_path = str(anim_player.get_node(anim_player.root_node).get_path_to(active_marker)) + ":is_controlled"
-			_manual_key_insert(track_path, active_marker.is_controlled)
-			track_path = str(anim_player.get_node(anim_player.root_node).get_path_to(active_marker.slave)) + ":freeze"
-			_manual_key_insert(track_path, active_marker.slave.freeze)
+	if pose_controller:
+		pose_controller.toggle_controlled(toggled_on)
+		_update_bone_info_checkboxes(pose_controller.active_marker)
+		if record_check.button_pressed: _on_key_controlled_pressed()
 
 func _on_rotation_toggled(toggled_on: bool) -> void:
-	if active_marker:
-		active_marker.follow_parent_rotation = toggled_on
-		if record_check.button_pressed:
-			var track_path = str(anim_player.get_node(anim_player.root_node).get_path_to(active_marker)) + ":follow_parent_rotation"
-			_manual_key_insert(track_path, active_marker.follow_parent_rotation)
+	if pose_controller:
+		pose_controller.toggle_follow_rotation(toggled_on)
+		if record_check.button_pressed: _on_key_follow_rotation_pressed()
 
 func _on_freeze_toggled(toggled_on: bool) -> void:
-	if active_marker and active_marker.slave:
-		active_marker.slave.freeze = toggled_on
-		if record_check.button_pressed:
-			var track_path = str(anim_player.get_node(anim_player.root_node).get_path_to(active_marker.slave)) + ":freeze"
-			_manual_key_insert(track_path, active_marker.slave.freeze)
+	if pose_controller:
+		pose_controller.toggle_freeze(toggled_on)
+		if record_check.button_pressed: _on_key_freeze_pressed()
 
 func _on_pose_toggled(is_posing: bool) -> void:
-	character.is_posing = is_posing
-	anim_player.stop()
+	if pose_controller and pose_controller.player:
+		pose_controller.player.is_posing = is_posing
+		
+	timeline.stop()
 	
-	# 🆕 FEATURE: Handle layout state visibility variations based on Posing state
 	if not is_posing:
 		record_check.button_pressed = false
-		if playback_controls_container:
-			playback_controls_container.visible = false
+		if playback_controls_container: playback_controls_container.visible = false
 	else:
-		if playback_controls_container:
-			playback_controls_container.visible = true
+		if playback_controls_container: playback_controls_container.visible = true
 
-# --- MANUAL KEYING ---
+# --- KEYING ACTIONS (Passes commands to the TimelineManager) ---
+
+func _get_current_anim() -> String:
+	return anim_dropdown.get_item_text(anim_dropdown.selected) if anim_dropdown.item_count > 0 else ""
+
 func _on_key_controlled_pressed():
-	if active_marker:
-		var track_path = str(anim_player.get_node(anim_player.root_node).get_path_to(active_marker)) + ":is_controlled"
-		_manual_key_insert(track_path, controlled_check.button_pressed)
-		track_path = str(anim_player.get_node(anim_player.root_node).get_path_to(active_marker.slave)) + ":freeze"
-		_manual_key_insert(track_path, active_marker.slave.freeze)
-		
-func _on_key_all_pressed():
-	var markers = get_tree().get_nodes_in_group("anim_markers")
-	var root_node = anim_player.get_node(anim_player.root_node)
-	
-	for i in range(markers.size()):
-		var m = markers[i]
-		var relative_path = root_node.get_path_to(m)
-		var slave_path = root_node.get_path_to(m.slave) if m.slave else ""
-		
-		_manual_key_insert(str(relative_path) + ":is_controlled", m.is_controlled)
-		_manual_key_insert(str(relative_path) + ":follow_parent_rotation", m.follow_parent_rotation)
-		_manual_key_insert(str(relative_path) + ":position", m.position)
-		_manual_key_insert(str(relative_path) + ":rotation", m.rotation)
-		
-		if m.slave:
-			_manual_key_insert(str(slave_path) + ":freeze", m.slave.freeze)
+	var marker = pose_controller.active_marker if pose_controller else null
+	if marker:
+		var anim = _get_current_anim()
+		timeline.key_property(anim, marker, ":is_controlled", controlled_check.button_pressed)
+		timeline.key_property(anim, marker.slave, ":freeze", marker.slave.freeze)
+		_update_grid_visuals()
 
 func _on_key_follow_rotation_pressed():
-	if active_marker:
-		var track_path = str(anim_player.get_node(anim_player.root_node).get_path_to(active_marker)) + ":follow_parent_rotation"
-		_manual_key_insert(track_path, follow_rotation_check.button_pressed)
+	var marker = pose_controller.active_marker if pose_controller else null
+	if marker:
+		timeline.key_property(_get_current_anim(), marker, ":follow_parent_rotation", follow_rotation_check.button_pressed)
+		_update_grid_visuals()
 
 func _on_key_position_pressed():
-	if active_marker:
-		var track_path = str(anim_player.get_node(anim_player.root_node).get_path_to(active_marker)) + ":position"
-		_manual_key_insert(track_path, active_marker.position)
+	var marker = pose_controller.active_marker if pose_controller else null
+	if marker:
+		timeline.key_property(_get_current_anim(), marker, ":position", marker.position)
+		_update_grid_visuals()
 
 func _on_key_rotation_pressed():
-	if active_marker:
-		var track_path = str(anim_player.get_node(anim_player.root_node).get_path_to(active_marker)) + ":rotation"
-		_manual_key_insert(track_path, active_marker.rotation)
+	var marker = pose_controller.active_marker if pose_controller else null
+	if marker:
+		timeline.key_property(_get_current_anim(), marker, ":rotation", marker.rotation)
+		_update_grid_visuals()
 
 func _on_key_freeze_pressed():
-	if active_marker and active_marker.slave:
-		var track_path = str(anim_player.get_node(anim_player.root_node).get_path_to(active_marker.slave)) + ":freeze"
-		_manual_key_insert(track_path, freeze_check.button_pressed)
+	var marker = pose_controller.active_marker if pose_controller else null
+	if marker and marker.slave:
+		timeline.key_property(_get_current_anim(), marker.slave, ":freeze", freeze_check.button_pressed)
+		_update_grid_visuals()
 
-func _manual_key_insert(track_path: String, value: Variant):
-	if not anim_player or anim_dropdown.item_count == 0: return
-	var anim_name = anim_dropdown.get_item_text(anim_dropdown.selected)
-	var animation: Animation = anim_player.get_animation(anim_name)
-	_insert_key(animation, track_path, value)
+func _on_key_all_pressed():
+	if not pose_controller: return
+	var anim = _get_current_anim()
+	
+	for m in pose_controller.all_markers:
+		# 🆕 FILTER: If this marker is NOT controlled, skip keying its transforms entirely!
+		if not m.is_controlled:
+			# Optional: Still key its control/freeze state flags so the animation player 
+			# knows exactly when it hands control back over to physics
+			timeline.key_property(anim, m, ":is_controlled", m.is_controlled)
+			if m.slave:
+				timeline.key_property(anim, m.slave, ":freeze", m.slave.freeze)
+			continue
+			
+		# Active, manually positioned limbs get full smart keying checks
+		timeline.key_property(anim, m, ":is_controlled", m.is_controlled)
+		timeline.key_property(anim, m, ":follow_parent_rotation", m.follow_parent_rotation)
+		timeline.key_property(anim, m, ":position", m.position)
+		timeline.key_property(anim, m, ":rotation", m.rotation)
+		if m.slave:
+			timeline.key_property(anim, m.slave, ":freeze", m.slave.freeze)
+			
+	_update_grid_visuals()
+# Called when the physical marker is dragged in the 2D view and "saved"
+func _on_marker_save_requested(marker: PoseMarker) -> void:
+	if not record_check.button_pressed: return
+	var anim = _get_current_anim()
+	timeline.key_property(anim, marker, ":rotation", marker.rotation)
+	timeline.key_property(anim, marker, ":position", marker.position)
 	_update_grid_visuals()
 
-# --- RESET HANDLERS ---
+# --- REVERT HANDLERS ---
+
 func _on_reset_position_pressed():
-	_remove_keyframe(":position")
-	if active_marker:
-		if "original_position" in active_marker:
-			active_marker.global_position = active_marker.original_position
-		elif active_marker_position_revert != null:
-			active_marker.global_position = active_marker_position_revert
+	var marker = pose_controller.active_marker if pose_controller else null
+	if marker:
+		timeline.remove_keyframe(_get_current_anim(), marker, ":position")
+		if marker.has_method("revert_to_original"): marker.revert_to_original()
+		_update_grid_visuals()
 
 func _on_reset_rotation_pressed():
-	_remove_keyframe(":rotation")
-	if active_marker:
-		if "original_rotation" in active_marker:
-			active_marker.global_rotation = active_marker.original_rotation
-		elif active_marker_rotation_revert != null:
-			active_marker.global_rotation = active_marker_rotation_revert
+	var marker = pose_controller.active_marker if pose_controller else null
+	if marker:
+		timeline.remove_keyframe(_get_current_anim(), marker, ":rotation")
+		if marker.has_method("revert_to_original"): marker.revert_to_original()
+		_update_grid_visuals()
 
-func _remove_keyframe(property_suffix: String):
-	if not anim_player or anim_dropdown.item_count == 0 or not active_marker: return
-	var anim_name = anim_dropdown.get_item_text(anim_dropdown.selected)
-	var animation: Animation = anim_player.get_animation(anim_name)
-	
-	var root_node = anim_player.get_node(anim_player.root_node)
-	var relative_path = root_node.get_path_to(active_marker)
-	var track_path = str(relative_path) + property_suffix
-	
-	var track_idx = animation.find_track(track_path, Animation.TYPE_VALUE)
-	if track_idx != -1:
-		var target_time = current_step * step_duration
-		var key_idx = animation.track_find_key(track_idx, target_time, Animation.FIND_MODE_NEAREST)
-		
-		if key_idx != -1:
-			var key_time = animation.track_get_key_time(track_idx, key_idx)
-			if abs(key_time - target_time) <= 0.01:
-				animation.track_remove_key(track_idx, key_idx)
-				
-	_update_grid_visuals()
+# --- STEP GRID & ANIMATION TIMELINE ---
 
-# --- ANIMATOR FUNCTIONS ---
 func _populate_animations() -> void:
-	if not anim_player: return
 	anim_dropdown.clear()
-	for anim_name in anim_player.get_animation_list():
+	for anim_name in timeline.get_animations():
 		anim_dropdown.add_item(anim_name)
 
-func _on_step_clicked(event: InputEvent, step_index: int) -> void:
-	# Only allow manual step alteration if in configuration mode
-	if not character.is_posing: return
-	
-	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
-		current_step = step_index
-		var target_time = current_step * step_duration
-		if anim_player:
-			anim_player.seek(target_time, true)
-		_update_grid_visuals()
-		_update_bone_info_checkboxes()
-			
-func _update_grid_visuals() -> void:
-	var current_anim: Animation = null
-	if anim_player and anim_dropdown.item_count > 0:
-		var anim_name = anim_dropdown.get_item_text(anim_dropdown.selected)
-		if anim_player.has_animation(anim_name):
-			current_anim = anim_player.get_animation(anim_name)
-			
-	var active_path = ""
-	if active_marker and active_marker.slave:
-		var root_node = anim_player.get_node(anim_player.root_node)
-		active_path = str(root_node.get_path_to(active_marker))
+func _on_duration_changed(new_duration: float) -> void:
+	timeline.set_length(_get_current_anim(), new_duration)
+	_build_step_grid(new_duration)
+	_update_grid_visuals()
 
-	for i in range(step_grid.get_child_count()):
+func _build_step_grid(duration: float) -> void:
+	for child in step_grid.get_children():
+		child.queue_free()
+		
+	var num_steps = int(round(duration / timeline.step_duration)) + 1
+	if num_steps < 1: num_steps = 1
+	
+	for i in range(num_steps):
+		var step_rect = ColorRect.new()
+		step_rect.custom_minimum_size = Vector2(24, 24) 
+		var is_dark_group = (i / 4) % 2 == 0
+		var base_color = Color(0.2, 0.2, 0.2) if is_dark_group else Color(0.35, 0.35, 0.35)
+		
+		step_rect.color = base_color
+		step_rect.set_meta("base_color", base_color)
+		
+		var dot = ColorRect.new() 
+		dot.custom_minimum_size = Vector2(10, 10)
+		dot.set_anchors_preset(Control.PRESET_CENTER)
+		dot.grow_horizontal = Control.GROW_DIRECTION_BOTH
+		dot.grow_vertical = Control.GROW_DIRECTION_BOTH
+		dot.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		dot.visible = false
+		step_rect.add_child(dot)
+		
+		step_rect.gui_input.connect(_on_step_clicked.bind(i))
+		step_grid.add_child(step_rect)
+		
+	_update_grid_visuals()
+
+func _on_step_clicked(event: InputEvent, step_index: int) -> void:
+	if not posing_check.button_pressed: return
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+		timeline.seek_step(step_index)
+		_update_grid_visuals()
+		_update_bone_info_checkboxes(pose_controller.active_marker if pose_controller else null)
+
+func _update_grid_visuals() -> void:
+	var marker = pose_controller.active_marker if pose_controller else null
+	var num_steps = step_grid.get_child_count()
+	
+	# Let the timeline calculate where the keys actually are!
+	var visual_data = timeline.get_step_visual_data(_get_current_anim(), marker, num_steps)
+
+	for i in range(num_steps):
 		var step_rect: ColorRect = step_grid.get_child(i)
 		var dot = step_rect.get_child(0) if step_rect.get_child_count() > 0 else null 
 		
-		if i == current_step:
+		# Set selection color
+		if i == timeline.current_step:
 			step_rect.color = Color(0.3, 0.6, 1.0)
 		else:
-			step_rect.color = Color(0.2, 0.2, 0.2)
+			step_rect.color = step_rect.get_meta("base_color", Color(0.2, 0.2, 0.2))
 			
 		if not dot: continue
 			
-		var has_any_key = false
-		var has_active_bone_key = false
-		
-		if current_anim:
-			var target_time = i * step_duration
-			var time_tolerance = 0.01
-			
-			for track_idx in current_anim.get_track_count():
-				var key_idx = current_anim.track_find_key(track_idx, target_time, Animation.FIND_MODE_NEAREST)
-				if key_idx != -1:
-					var key_time = current_anim.track_get_key_time(track_idx, key_idx)
-					if abs(key_time - target_time) <= time_tolerance:
-						has_any_key = true
-						var track_path = str(current_anim.track_get_path(track_idx))
-						if active_path != "" and track_path.begins_with(active_path):
-							has_active_bone_key = true
-							break
-
-		if has_active_bone_key:
+		# Render the dots based on timeline data
+		var frame_data = visual_data[i]
+		if frame_data["active"]:
 			dot.visible = true
 			dot.modulate = Color.RED
-		elif has_any_key:
+		elif frame_data["any"]:
 			dot.visible = true
 			dot.modulate = Color.WHITE
 		else:
 			dot.visible = false
 
-func auto_save_pose(marker: Node2D) -> void:
-	if not record_check.button_pressed: return
-	if not anim_player or anim_dropdown.item_count == 0: return
-	if not marker or not marker.slave: return
-	
-	var root_node = anim_player.get_node(anim_player.root_node)
-	var relative_path = root_node.get_path_to(marker)
-	
-	var anim_name = anim_dropdown.get_item_text(anim_dropdown.selected)
-	var animation: Animation = anim_player.get_animation(anim_name)
-	
-	_insert_key(animation, NodePath(str(relative_path) + ":rotation"), marker.rotation)
-	_insert_key(animation, NodePath(str(relative_path) + ":position"), marker.position)
-	
-	_update_grid_visuals()
-			
-func _insert_key(anim: Animation, track_path: String, value: Variant) -> void:
-	var track_idx = anim.find_track(track_path, Animation.TYPE_VALUE)
-	if track_idx == -1:
-		track_idx = anim.add_track(Animation.TYPE_VALUE)
-		anim.track_set_path(track_idx, track_path)
-		
-	if typeof(value) == TYPE_VECTOR2 or typeof(value) == TYPE_FLOAT:
-		anim.track_set_interpolation_type(track_idx, Animation.INTERPOLATION_LINEAR)
-	
-	var total_required_time = step_grid.get_child_count() * step_duration
-	if anim.length < total_required_time:
-		anim.length = total_required_time
-	
-	anim.track_insert_key(track_idx, current_step * step_duration, value)
-
-# --- PLAYBACK CONTROLS ---
+func _on_export_pressed() -> void:
+	var current_anim = _get_current_anim()
+	if current_anim != "" and timeline:
+		timeline.save_animation_to_disk(current_anim)
 func _on_play_pressed():
-	if anim_player and anim_dropdown.item_count > 0:
-		var anim_name = anim_dropdown.get_item_text(anim_dropdown.selected)
+	if anim_dropdown.item_count > 0:
 		playback_started.emit()
-		anim_player.play(anim_name)
+		timeline.play(_get_current_anim())
 
 func _on_stop_pressed():
-	if anim_player:
-		anim_player.stop()
+	timeline.stop()
 
 func _on_rewind_pressed():
-	current_step = 0
+	timeline.seek_step(0)
+	timeline.stop()
 	_update_grid_visuals()
-	if anim_player:
-		anim_player.seek(0, true)
-
-func _on_speed_changed(new_speed: float):
-	if anim_player:
-		anim_player.speed_scale = new_speed
 
 func _on_animation_changed(_index: int) -> void:
+	if timeline.anim_player and anim_dropdown.item_count > 0:
+		var anim = timeline.anim_player.get_animation(_get_current_anim())
+		duration_box.set_value_no_signal(anim.length)
+		_build_step_grid(anim.length)
+	
 	_update_grid_visuals()
 	_on_rewind_pressed()
 
 func _on_reset_pressed() -> void:
-	if anim_player and anim_dropdown.item_count > 0:
-		var anim_name = anim_dropdown.get_item_text(anim_dropdown.selected)
-		var animation = anim_player.get_animation(anim_name)
-		animation.clear() 
-		_update_grid_visuals()
+	timeline.clear_animation(_get_current_anim())
+	_update_grid_visuals()
