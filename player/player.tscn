@@ -12,8 +12,9 @@
 [ext_resource type="Script" uid="uid://g8s4ffy7n2ju" path="res://player/scripts/PoseController.gd" id="9_g4c7l"]
 [ext_resource type="PackedScene" uid="uid://cs1txumcsbrpb" path="res://player/PoseMarker.tscn" id="9_s7qer"]
 [ext_resource type="Script" uid="uid://bnhxy3tk85v7d" path="res://player/scripts/PoseHUD.gd" id="11_knn7v"]
-[ext_resource type="Animation" uid="uid://di1d413uxeojc" path="res://player/animations/idle.res" id="17_r7pn3"]
-[ext_resource type="Animation" uid="uid://ba2kp3ffd72y" path="res://player/animations/run.res" id="18_b8hi5"]
+[ext_resource type="Animation" uid="uid://45eb4xgs6pds" path="res://player/animations/RESET.res" id="17_2uvqg"]
+[ext_resource type="Animation" uid="uid://c7csesg8r5usc" path="res://player/animations/idle.res" id="17_r7pn3"]
+[ext_resource type="Animation" uid="uid://bqhiyulid3l1u" path="res://player/animations/run.res" id="18_b8hi5"]
 [ext_resource type="Texture2D" uid="uid://b1govaot86lmk" path="res://light-mask.png" id="24_g4c7l"]
 [ext_resource type="Script" uid="uid://b8j54hiva7jef" path="res://player/DebugHUD.gd" id="28_rptt4"]
 [ext_resource type="Texture2D" uid="uid://cmvjnsywbvyar" path="res://player/assets/character.png" id="30_b8hi5"]
@@ -851,9 +852,6 @@ nodes/ClimbScale/node = SubResource("AnimationNodeTimeScale_s7qer")
 nodes/ClimbScale/position = Vector2(-40, 140)
 node_connections = [&"output", 0, &"Add2", &"Add2", 0, &"ClimbScale", &"Add2", 1, &"LowerState", &"ClimbScale", 0, &"UpperState"]
 
-[sub_resource type="Animation" id="Animation_b8hi5"]
-length = 0.001
-
 [sub_resource type="Animation" id="Animation_1so5t"]
 resource_name = "fall"
 length = 0.1
@@ -861,6 +859,7 @@ step = 0.02
 
 [sub_resource type="Animation" id="Animation_237xx"]
 resource_name = "hanging"
+loop_mode = 1
 step = 0.02
 
 [sub_resource type="Animation" id="Animation_5ejfk"]
@@ -874,7 +873,7 @@ resource_name = "jump_launch"
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_1s1yo"]
 _data = {
-&"RESET": SubResource("Animation_b8hi5"),
+&"RESET": ExtResource("17_2uvqg"),
 &"fall": SubResource("Animation_1so5t"),
 &"hanging": SubResource("Animation_237xx"),
 &"idle": ExtResource("17_r7pn3"),
@@ -1035,6 +1034,22 @@ text = "Freeze"
 layout_mode = 2
 focus_mode = 0
 text = "ꄗ"
+flat = true
+
+[node name="HBoxContainer6" type="HBoxContainer" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/BoneInfo/VBoxContainer" unique_id=784003356]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/BoneInfo/VBoxContainer/HBoxContainer6" unique_id=376703073]
+custom_minimum_size = Vector2(130, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
+text = "        Swap with sibling"
+
+[node name="BtnSwapSibling" type="Button" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/BoneInfo/VBoxContainer/HBoxContainer6" unique_id=62341365]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 0
+text = "⇆"
 flat = true
 
 [node name="VSeparator" type="VSeparator" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer" unique_id=1385157934]
@@ -1427,6 +1442,7 @@ region_rect = Rect2(874, 536, 116, 228)
 position = Vector2(-114.5, -7.6293945e-06)
 collision_layer = 0
 collision_mask = 256
+freeze = true
 freeze_mode = 1
 angular_damp = 20.0
 
@@ -1529,6 +1545,7 @@ region_rect = Rect2(56, 491, 87, 170)
 position = Vector2(114, 0)
 collision_layer = 0
 collision_mask = 256
+freeze = true
 freeze_mode = 1
 angular_damp = 20.0
 
@@ -1734,6 +1751,7 @@ region_rect = Rect2(668, 536, 134, 228)
 position = Vector2(-155.50002, 0)
 collision_layer = 512
 collision_mask = 33024
+freeze = true
 freeze_mode = 1
 
 [node name="Calf_Foot_Pin" type="PinJoint2D" parent="PlayerBody/Ragdoll/Leg_Front/Foot_Front_Physics" unique_id=1586634006]
@@ -2273,29 +2291,27 @@ player = NodePath("../..")
 pose_hud = NodePath("../../../PoseHUD")
 
 [node name="HandFront" parent="PlayerBody/FacingPivot/PoseController" unique_id=2036979389 node_paths=PackedStringArray("slave", "slave_parent", "sibling", "pivot") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
-position = Vector2(0, 28)
+position = Vector2(-52.47058, 17.904587)
 rotation = 1.4617479
 slave = NodePath("../../../Ragdoll/Arm_Front/Hand_Front_Physics")
 slave_parent = NodePath("../../../Ragdoll/Arm_Front/Forearm_Front_Physics")
 sibling = NodePath("../HandBack")
 can_rotate = true
 follow_parent_rotation = true
-is_controlled = false
 pivot = NodePath("../..")
 
 [node name="HandBack" parent="PlayerBody/FacingPivot/PoseController" unique_id=1872066078 node_paths=PackedStringArray("slave", "slave_parent", "sibling", "pivot") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
-position = Vector2(26.200005, 4.2)
+position = Vector2(60.90216, -2.053894)
 rotation = -2.4603875
 slave = NodePath("../../../Ragdoll/Arm_Back/Hand_Back_Physics")
 slave_parent = NodePath("../../../Ragdoll/Arm_Back/Forearm_Back_Physics")
 sibling = NodePath("../HandFront")
 can_rotate = true
 follow_parent_rotation = true
-is_controlled = false
 pivot = NodePath("../..")
 
 [node name="FootBack" parent="PlayerBody/FacingPivot/PoseController" unique_id=1591964902 node_paths=PackedStringArray("slave", "slave_parent", "sibling") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
-position = Vector2(-87.85718, 149.7143)
+position = Vector2(-97.14282, 53.07141)
 rotation = 1.5707964
 slave = NodePath("../../../Ragdoll/Leg_Back/Foot_Back_Physics")
 slave_parent = NodePath("../../../Ragdoll/Leg_Back/Calf_Back_Physics")
@@ -2304,23 +2320,21 @@ can_rotate = true
 follow_parent_rotation = true
 
 [node name="FootFront" parent="PlayerBody/FacingPivot/PoseController" unique_id=960569227 node_paths=PackedStringArray("slave", "slave_parent", "sibling") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
-position = Vector2(-15, 156)
-rotation = -1.5058976
+position = Vector2(88.57141, 139.7857)
+rotation = -2.4535134
 slave = NodePath("../../../Ragdoll/Leg_Front/Foot_Front_Physics")
 slave_parent = NodePath("../../../Ragdoll/Leg_Front/Calf_Front_Physics")
 sibling = NodePath("../FootBack")
 can_rotate = true
-follow_parent_rotation = true
-is_controlled = false
 
 [node name="Neck" parent="PlayerBody/FacingPivot/PoseController" unique_id=1488133409 node_paths=PackedStringArray("slave", "pivot") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
-position = Vector2(-24, -88)
+position = Vector2(8.726257, -94.85774)
 slave = NodePath("../../../Ragdoll/Head/Neck_Physics")
 pivot = NodePath("../..")
 invert_rotation_on_flip = true
 
 [node name="Head" parent="PlayerBody/FacingPivot/PoseController" unique_id=1906863 node_paths=PackedStringArray("slave", "slave_parent", "pivot") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
-position = Vector2(0, -116)
+position = Vector2(8.353577, -93.02951)
 rotation = -0.0034784384
 slave = NodePath("../../../Ragdoll/Head/Head_Physics")
 slave_parent = NodePath("../../../Ragdoll/Torso/Torso_Physics")
@@ -2328,7 +2342,17 @@ can_rotate = true
 follow_parent_rotation = true
 pivot = NodePath("../..")
 
+[node name="Torso" parent="PlayerBody/FacingPivot/PoseController" unique_id=1164425788 node_paths=PackedStringArray("slave", "pivot") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
+position = Vector2(0, -116)
+rotation = -0.0034784384
+slave = NodePath("../../../Ragdoll/Torso/Torso_Physics")
+can_rotate = true
+is_controlled = false
+pivot = NodePath("../..")
+invert_rotation_on_flip = true
+
 [node name="Root" parent="PlayerBody/FacingPivot/PoseController" unique_id=219274694 node_paths=PackedStringArray("slave", "pivot") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
+position = Vector2(-5.7142334, 18.571426)
 slave = NodePath("../../../Ragdoll/Root")
 pivot = NodePath("../..")
 
@@ -2395,7 +2419,6 @@ parameters/ClimbScale/scale = 1.0
 [node name="PlayerAnimator" type="AnimationPlayer" parent="PlayerBody" unique_id=384783702]
 libraries/ = SubResource("AnimationLibrary_1s1yo")
 autoplay = &"run"
-speed_scale = 0.1
 
 [node name="StateMachine" type="Node" parent="PlayerBody" unique_id=1888989459 node_paths=PackedStringArray("initial_state")]
 script = ExtResource("33_jd2rm")

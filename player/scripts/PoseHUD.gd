@@ -38,6 +38,7 @@ signal playback_started
 @onready var btn_key_freeze: Button = $PanelContainer/MarginContainer/HBoxContainer/BoneInfo/VBoxContainer/HBoxContainer5/BtnKeyFreeze
 @onready var btn_key_all: Button = $PanelContainer/MarginContainer/HBoxContainer/BoneInfo/HBoxContainer/BtnKeyAll
 @onready var btn_reset: Button = $PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/PlaybackControls/BtnReset
+@onready var btn_swap_sibling: Button = %BtnSwapSibling
 
 @onready var playback_controls_container: Control = $PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/PlaybackControls
 
@@ -63,6 +64,7 @@ func _ready() -> void:
 	btn_reset_position.pressed.connect(_on_reset_position_pressed)
 	btn_reset_rotation.pressed.connect(_on_reset_rotation_pressed)
 	btn_export.pressed.connect(_on_export_pressed)
+	btn_swap_sibling.pressed.connect(_on_swap_sibling_pressed)
 	
 	bone_dropdown.item_selected.connect(_on_bone_dropdown_selected)
 	
@@ -96,6 +98,10 @@ func _populate_bone_dropdown(markers: Array[PoseMarker]) -> void:
 		# Route the new save_requested signal from the refactored marker directly to our keying logic
 		if not m.save_requested.is_connected(_on_marker_save_requested):
 			m.save_requested.connect(_on_marker_save_requested)
+
+func _on_swap_sibling_pressed():
+	if not pose_controller or not pose_controller.active_marker: return
+	pose_controller.swap_with_sibling(pose_controller.active_marker)
 
 func _on_bone_dropdown_selected(index: int) -> void:
 	if not pose_controller: return

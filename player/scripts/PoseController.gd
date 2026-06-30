@@ -80,6 +80,38 @@ func _input(event: InputEvent) -> void:
 					get_viewport().set_input_as_handled()
 					return
 
+
+# --- 2. SINGLE-PRESS TIMELINE NAVIGATION & ACTIONS (No Ctrl/Cmd) ---
+	if event is InputEventKey and event.pressed and not modifier_pressed:
+		# Wipes all keyframes on this step entirely
+		if event.keycode == KEY_DELETE or event.keycode == KEY_BACKSPACE:
+			timeline.delete_step_keyframes(current_anim, current_step)
+			pose_hud._update_grid_visuals()
+			get_viewport().set_input_as_handled()
+			return
+			
+		# 🆕 ADDITION: Support for , (comma/back) and . (period/forward) frame stepping
+		elif event.keycode == KEY_PERIOD:
+			var total_steps = pose_hud.step_grid.get_child_count() if pose_hud else 0
+			if total_steps == 0: return
+			
+			var next_step = clampi(timeline.current_step + 1, 0, total_steps - 1)
+			timeline.seek_step(next_step)
+			pose_hud._update_grid_visuals()
+			pose_hud._update_bone_info_checkboxes(active_marker)
+			get_viewport().set_input_as_handled()
+			return
+			
+		elif event.keycode == KEY_COMMA:
+			var total_steps = pose_hud.step_grid.get_child_count() if pose_hud else 0
+			if total_steps == 0: return
+			
+			var next_step = clampi(timeline.current_step - 1, 0, total_steps - 1)
+			timeline.seek_step(next_step)
+			pose_hud._update_grid_visuals()
+			pose_hud._update_bone_info_checkboxes(active_marker)
+			get_viewport().set_input_as_handled()
+			return
 	# --- 2. SINGLE-PRESS DELETE HOTKEY (Must NOT have Ctrl/Cmd pressed) ---
 	if event is InputEventKey and event.pressed and not modifier_pressed:
 		if event.keycode == KEY_DELETE or event.keycode == KEY_BACKSPACE:
@@ -156,3 +188,12 @@ func toggle_follow_rotation(follow: bool) -> void:
 func toggle_freeze(freeze: bool) -> void:
 	if active_marker and active_marker.slave:
 		active_marker.slave.freeze = freeze
+		
+func swap_with_sibling(marker: PoseMarker):
+	if not marker.sibling: return
+	var original_sibling_pos = marker.sibling.global_position
+	var original_sibling_rot = marker.sibling.global_rotation
+	marker.sibling.global_rotation = marker.global_rotation
+	marker.sibling.global_position = marker.global_position
+	marker.global_position = original_sibling_pos
+	marker.global_rotation = original_sibling_rot
