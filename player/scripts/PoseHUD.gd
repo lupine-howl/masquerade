@@ -12,35 +12,33 @@ signal playback_started
 @onready var speed_box: SpinBox = %SpeedSpinBox
 @onready var duration_box: SpinBox = %DurationSpinBox
 @onready var step_grid: Control = %StepGrid 
-@onready var btn_play: Button = $PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/PlaybackControls/BtnPlay
-@onready var btn_stop: Button = $PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/PlaybackControls/BtnStop
-@onready var btn_rewind: Button = $PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/PlaybackControls/BtnRewind
+@onready var btn_play: Button = %BtnPlay
+@onready var btn_stop: Button = %BtnStop
+@onready var btn_rewind: Button = %BtnRewind
 @onready var btn_export: Button = %BtnExportAnimation
 
-@onready var bone_dropdown: OptionButton = $PanelContainer/MarginContainer/HBoxContainer/BoneInfo/BoneDropdown
-@onready var parent_label: Label = $PanelContainer/MarginContainer/HBoxContainer/BoneInfo/ParentLabel
-@onready var pos_label: Label = $PanelContainer/MarginContainer/HBoxContainer/BoneInfo/VBoxContainer/HBoxContainer/PosLabel
-@onready var rot_label: Label = $PanelContainer/MarginContainer/HBoxContainer/BoneInfo/VBoxContainer/HBoxContainer2/RotLabel
+@onready var pos_label: Label = %PosLabel
+@onready var rot_label: Label = %RotLabel
 
 # Checkboxes & Keying Buttons
-@onready var controlled_check: CheckBox = $PanelContainer/MarginContainer/HBoxContainer/BoneInfo/VBoxContainer/HBoxContainer3/ControlledCheck
-@onready var follow_rotation_check: CheckBox = $PanelContainer/MarginContainer/HBoxContainer/BoneInfo/VBoxContainer/HBoxContainer4/FollowRotationCheck
-@onready var freeze_check: CheckBox = $PanelContainer/MarginContainer/HBoxContainer/BoneInfo/VBoxContainer/HBoxContainer5/FreezeCheck
-@onready var record_check: CheckBox = $PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/PlaybackControls/RecordCheck
-@onready var posing_check: CheckBox = $PanelContainer/MarginContainer/Mode/PosingCheck
+@onready var controlled_check: CheckBox = %ControlledCheck
+@onready var follow_rotation_check: CheckBox = %FollowRotationCheck
+@onready var freeze_check: CheckBox = %FreezeCheck
+@onready var record_check: CheckBox = %RecordCheck
+@onready var posing_check: CheckBox = %PosingCheck
 
-@onready var btn_key_position: Button = $PanelContainer/MarginContainer/HBoxContainer/BoneInfo/VBoxContainer/HBoxContainer/BtnKeyPos
-@onready var btn_reset_position: Button = $PanelContainer/MarginContainer/HBoxContainer/BoneInfo/VBoxContainer/HBoxContainer/BtnResetPos
-@onready var btn_key_rotation: Button = $PanelContainer/MarginContainer/HBoxContainer/BoneInfo/VBoxContainer/HBoxContainer2/BtnKeyRot
-@onready var btn_reset_rotation: Button = $PanelContainer/MarginContainer/HBoxContainer/BoneInfo/VBoxContainer/HBoxContainer2/BtnResetRot
-@onready var btn_key_controlled: Button = $PanelContainer/MarginContainer/HBoxContainer/BoneInfo/VBoxContainer/HBoxContainer3/BtnKeyControlled
-@onready var btn_key_follow_rotation: Button = $PanelContainer/MarginContainer/HBoxContainer/BoneInfo/VBoxContainer/HBoxContainer4/BtnKeyFollowRotation
-@onready var btn_key_freeze: Button = $PanelContainer/MarginContainer/HBoxContainer/BoneInfo/VBoxContainer/HBoxContainer5/BtnKeyFreeze
-@onready var btn_key_all: Button = $PanelContainer/MarginContainer/HBoxContainer/BoneInfo/HBoxContainer/BtnKeyAll
-@onready var btn_reset: Button = $PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/PlaybackControls/BtnReset
+@onready var btn_key_position: Button = %BtnKeyPos
+@onready var btn_reset_position: Button = %BtnResetPos
+@onready var btn_key_rotation: Button = %BtnKeyRot
+@onready var btn_reset_rotation: Button = %BtnResetRot
+@onready var btn_key_controlled: Button = %BtnKeyControlled
+@onready var btn_key_follow_rotation: = %BtnKeyFollowRotation
+@onready var btn_key_freeze: Button = %BtnKeyFreeze
+@onready var btn_key_all: Button = %BtnKeyAll
+@onready var btn_reset: Button = %BtnReset
 @onready var btn_swap_sibling: Button = %BtnSwapSibling
 
-@onready var playback_controls_container: Control = $PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/PlaybackControls
+@onready var playback_controls_container: Control = %PlaybackControls
 
 func _ready() -> void:
 	record_check.button_pressed = true
@@ -48,12 +46,13 @@ func _ready() -> void:
 	
 	if pose_controller:
 		pose_controller.active_marker_changed.connect(_on_active_marker_changed)
-		pose_controller.marker_list_ready.connect(_populate_bone_dropdown)
 	
 	controlled_check.toggled.connect(_on_controlled_toggled)
 	follow_rotation_check.toggled.connect(_on_rotation_toggled)
 	freeze_check.toggled.connect(_on_freeze_toggled)
 	posing_check.toggled.connect(_on_pose_toggled)
+	
+	pose_controller.marker_list_ready.connect(_setup_part_table)
 	
 	btn_key_controlled.pressed.connect(_on_key_controlled_pressed)
 	btn_key_follow_rotation.pressed.connect(_on_key_follow_rotation_pressed)
@@ -66,9 +65,7 @@ func _ready() -> void:
 	btn_export.pressed.connect(_on_export_pressed)
 	btn_swap_sibling.pressed.connect(_on_swap_sibling_pressed)
 	
-	bone_dropdown.item_selected.connect(_on_bone_dropdown_selected)
 	
-	clear_hud()
 	
 	btn_play.pressed.connect(_on_play_pressed)
 	btn_stop.pressed.connect(_on_stop_pressed)
@@ -83,33 +80,208 @@ func _ready() -> void:
 		_on_animation_changed(0) 
 		timeline.stop()
 
+	_setup_animation_table()
+
+# Inside PoseHUD.gd
+
+@onready var anim_table: Tree = %AnimTable
+
+func _setup_animation_table() -> void:
+	if not timeline or not timeline.anim_player: return
+	
+	anim_table.columns = 4
+	anim_table.hide_root = true
+	
+	# Structure layout columns
+	anim_table.set_column_expand(0, true) # Animation title stretches
+	#anim_table.set_column_custom_minimum_width(1, 60) # Speed
+	#anim_table.set_column_custom_minimum_width(2, 60) # Steps
+	#anim_table.set_column_custom_minimum_width(3, 50) # Loop Check
+	
+	# Set Headers
+	anim_table.create_item()
+	anim_table.set_column_title(0, "Animation")
+	anim_table.set_column_title(1, "Speed")
+	anim_table.set_column_title(2, "Steps")
+	anim_table.set_column_title(3, "Loop")
+	anim_table.column_titles_visible = true
+	
+	anim_table.item_selected.connect(_on_anim_row_selected)
+	anim_table.item_edited.connect(_on_anim_cell_edited)
+	
+	_populate_anim_table()
+
+func _populate_anim_table() -> void:
+	anim_table.clear()
+	var root = anim_table.create_item()
+	
+	var anim_list = timeline.get_animations()
+	var active_anim_name = _get_current_anim()
+	
+	for anim_name in anim_list:
+		var anim = timeline.anim_player.get_animation(anim_name)
+		var row = anim_table.create_item(root)
+		row.set_metadata(0, anim_name) # Track the string key name directly
+		
+		# Col 0: Name string entry
+		row.set_text(0, anim_name)
+		row.set_selectable(0, true)
+		
+		# Col 1: Playback speed scale value
+		# Note: pulling default speed scale or hardcoded fallback value 1.0
+		row.set_text(1, "1.0") 
+		row.set_editable(1, true)
+		
+		# Col 2: Duration converted dynamically to total steps
+		var total_steps = _time_to_steps(anim.length)
+		row.set_text(2, str(total_steps))
+		row.set_editable(2, true)
+		
+		# Col 3: Loop State check box flag configuration
+		var is_looping = anim.loop_mode != Animation.LOOP_NONE
+		row.set_cell_mode(3, TreeItem.CELL_MODE_CHECK)
+		row.set_checked(3, is_looping)
+		row.set_editable(3, true)
+		
+		# Auto-select the currently active animation row visually
+		if anim_name == active_anim_name:
+			row.select(0)
+
+## Converts an animation length in seconds to total steps
+func _time_to_steps(duration_seconds: float) -> int:
+	if not timeline or timeline.step_duration <= 0: return 0
+	return int(round(duration_seconds / timeline.step_duration))
+
+## Converts a step count back to seconds
+func _steps_to_time(steps: int) -> float:
+	if not timeline: return 0.0
+	return steps * timeline.step_duration
+
 # --- CONTROLLER INTEGRATION ---
+@onready var part_table: Tree = %PartTable
 
+func _setup_part_table(markers: Array[PoseMarker]) -> void:
+	part_table.columns = 5
+	part_table.hide_root = true
+	
+	part_table.set_column_custom_minimum_width(0, 100)
+	part_table.set_column_expand(0, true) # Animation title stretches
 
-func _populate_bone_dropdown(markers: Array[PoseMarker]) -> void:
-	bone_dropdown.clear()
-	bone_dropdown.add_item("None")
-	for i in range(markers.size()):
-		var m = markers[i]
-		if m.slave:
-			bone_dropdown.add_item(m.slave.name)
-			bone_dropdown.set_item_metadata(i + 1, m) 
+	# Create table header labels
+	var root = part_table.create_item()
+	part_table.set_column_title(0, "")
+	part_table.set_column_title(1, "✧") #controlled
+	part_table.set_column_title(2, "⬩➤") #follow parent rotation
+	part_table.set_column_title(3, "ꗃx") #lock x
+	part_table.set_column_title(4, "ꗃy") #lock y
+	part_table.column_titles_visible = true
+	
+	# Wire selection and column checkbox modification clicks
+	part_table.item_selected.connect(_on_table_part_selected)
+	part_table.item_edited.connect(_on_table_cell_edited)
+	
+	# Populate rows dynamically out of the controller's engine array
+	for marker in markers:
+		var row = part_table.create_item(root)
+		row.set_metadata(0, marker) # Keep a direct reference to the object
+		
+		# Col 0: Title Text
+		row.set_text(0, marker.name)
+		row.set_selectable(0, true)
+		
+		# Cols 1-5: Checkboxes
+		_create_tree_checkbox(row, 1, marker.is_controlled)
+		_create_tree_checkbox(row, 2, marker.follow_parent_rotation)
+		
+		# (Note: Ensure your PoseMarker class exports these properties if needed)
+		var lock_x = marker.get("lock_x") if "lock_x" in marker else false
+		var lock_y = marker.get("lock_y") if "lock_y" in marker else false
+		
+		_create_tree_checkbox(row, 3, lock_x)
+		_create_tree_checkbox(row, 4, lock_y)
+		
+
+func _create_tree_checkbox(item: TreeItem, column: int, checked: bool) -> void:
+	item.set_cell_mode(column, TreeItem.CELL_MODE_CHECK)
+	item.set_checked(column, checked)
+	item.set_editable(column, true)
+
+## Fires when you click the row title string to switch target tracks
+func _on_anim_row_selected() -> void:
+	var selected_item = anim_table.get_selected()
+	if not selected_item: return
+	
+	var anim_name = selected_item.get_metadata(0) as String
+	
+	# Find index matching your dropdown or switch directly via code interface
+	if anim_dropdown:
+		for i in range(anim_dropdown.item_count):
+			if anim_dropdown.get_item_text(i) == anim_name:
+				anim_dropdown.select(i)
+				_on_animation_changed(i) # Trigger the hot-swap system we built yesterday
+				break
+
+## Fires when values or checkbox configurations shift inside your rows
+func _on_anim_cell_edited() -> void:
+	var edited_item = anim_table.get_edited()
+	var col = anim_table.get_edited_column()
+	if not edited_item: return
+	
+	var anim_name = edited_item.get_metadata(0) as String
+	var anim = timeline.anim_player.get_animation(anim_name)
+	
+	match col:
+		1:
+			# Update playback speed context safely
+			var speed_val = float(edited_item.get_text(col))
+			if timeline.anim_player:
+				timeline.anim_player.speed_scale = speed_val
+		2:
+			# Update overall duration length mapping using raw steps conversion
+			var target_steps = int(edited_item.get_text(col))
+			var next_time = _steps_to_time(target_steps)
 			
-		# Route the new save_requested signal from the refactored marker directly to our keying logic
-		if not m.save_requested.is_connected(_on_marker_save_requested):
-			m.save_requested.connect(_on_marker_save_requested)
+			timeline.set_length(anim_name, next_time)
+			
+			# If it's the current running profile, rebuild the layout dots matrix instantly
+			if anim_name == _get_current_anim():
+				duration_box.set_value_no_signal(next_time)
+				_build_step_grid(next_time)
+				_update_grid_visuals()
+		3:
+			# Toggle loop behaviors cleanly between built-in engine parameters
+			var should_loop = edited_item.is_checked(col)
+			anim.loop_mode = Animation.LOOP_LINEAR if should_loop else Animation.LOOP_NONE
+
+## Fires whenever you click a row text title
+func _on_table_part_selected() -> void:
+	var selected_item = part_table.get_selected()
+	if selected_item:
+		var target_marker = selected_item.get_metadata(0) as PoseMarker
+		if pose_controller and target_marker:
+			pose_controller.set_active_marker(target_marker)
+
+## Fires whenever any checkbox toggles or offset numbers are updated in the table row
+func _on_table_cell_edited() -> void:
+	var edited_item = part_table.get_edited()
+	var col = part_table.get_edited_column()
+	if not edited_item: return
+	
+	var marker = edited_item.get_metadata(0) as PoseMarker
+	if not marker: return
+	
+	match col:
+		1: 
+			marker.is_controlled = edited_item.is_checked(col)
+			if marker.is_controlled: marker.take_control()
+			else: marker.release_control()
+		2: marker.follow_parent_rotation = edited_item.is_checked(col)
+		3: if "lock_x" in marker: marker.set("lock_x", edited_item.is_checked(col))
+		4: if "lock_y" in marker: marker.set("lock_y", edited_item.is_checked(col))
 
 func _on_swap_sibling_pressed():
 	if not pose_controller or not pose_controller.active_marker: return
 	pose_controller.swap_with_sibling(pose_controller.active_marker)
-
-func _on_bone_dropdown_selected(index: int) -> void:
-	if not pose_controller: return
-	if index == 0:
-		pose_controller.set_active_marker(null)
-	else:
-		var marker = bone_dropdown.get_item_metadata(index)
-		pose_controller.set_active_marker(marker)
 
 func _on_speed_box_changed(val: float):
 	if timeline.anim_player:
@@ -119,26 +291,20 @@ func _on_speed_box_changed(val: float):
 		timeline.key_speed_scale(anim, val)
 		_update_grid_visuals()
 
-
 func _on_active_marker_changed(marker: PoseMarker) -> void:
 	if timeline.anim_player and timeline.anim_player.is_playing():
 		timeline.stop()
 
-	if marker:
-		for i in range(bone_dropdown.item_count):
-			if bone_dropdown.get_item_metadata(i) == marker:
-				bone_dropdown.select(i)
-				break
-	else:
-		clear_hud()
+	if not part_table: return
+	# Loop and match row objects to highlight the correct row inside the table list layout
+	var current_item = part_table.get_root().get_first_child()
+	while current_item:
+		if current_item.get_metadata(0) == marker:
+			current_item.select(0) # Visually highlights the cell row row tracking match target node
+			break
+		current_item = current_item.get_next()
 		
-	_update_bone_info_checkboxes(marker)
 	_update_grid_visuals()
-
-func clear_hud() -> void:
-	if(bone_dropdown.size):
-		bone_dropdown.select(0)
-	parent_label.text = "Parent: None"
 
 func _update_bone_info_checkboxes(marker: PoseMarker):
 	if marker:
@@ -322,7 +488,7 @@ func _build_step_grid(duration: float) -> void:
 	
 	for i in range(num_steps):
 		var step_rect = ColorRect.new()
-		step_rect.custom_minimum_size = Vector2(24, 24) 
+		step_rect.custom_minimum_size = Vector2(28, 28) 
 		var is_dark_group = (i / 4) % 2 == 0
 		var base_color = Color(0.2, 0.2, 0.2) if is_dark_group else Color(0.35, 0.35, 0.35)
 		
@@ -330,7 +496,7 @@ func _build_step_grid(duration: float) -> void:
 		step_rect.set_meta("base_color", base_color)
 		
 		var dot = ColorRect.new() 
-		dot.custom_minimum_size = Vector2(10, 10)
+		dot.custom_minimum_size = Vector2(16, 16)
 		dot.set_anchors_preset(Control.PRESET_CENTER)
 		dot.grow_horizontal = Control.GROW_DIRECTION_BOTH
 		dot.grow_vertical = Control.GROW_DIRECTION_BOTH

@@ -33,9 +33,6 @@
 [ext_resource type="Script" uid="uid://b8784bru0cofh" path="res://player/scripts/DeadState.gd" id="42_fjxoa"]
 [ext_resource type="Script" uid="uid://7ett2ig3wkug" path="res://player/scripts/HangingState.gd" id="45_xcnuv"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_s7qer"]
-bg_color = Color(0, 0, 0, 0.7882353)
-
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_whnp6"]
 radius = 80.0
 height = 320.0
@@ -899,187 +896,227 @@ timeline = NodePath("TimelineManager")
 script = ExtResource("2_rptt4")
 anim_player = NodePath("../../PlayerBody/PlayerAnimator")
 
-[node name="PanelContainer" type="PanelContainer" parent="PoseHUD" unique_id=293060877]
-custom_minimum_size = Vector2(0, 150)
-anchors_preset = 12
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_top = -172.0
-grow_horizontal = 2
-grow_vertical = 0
-mouse_filter = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_s7qer")
+[node name="PanelContainer2" type="PanelContainer" parent="PoseHUD" unique_id=1757806156]
+offset_right = 40.0
+offset_bottom = 40.0
 
-[node name="MarginContainer" type="MarginContainer" parent="PoseHUD/PanelContainer" unique_id=519141308]
-layout_mode = 2
-theme_override_constants/margin_left = 10
-theme_override_constants/margin_top = 10
-theme_override_constants/margin_right = 10
-theme_override_constants/margin_bottom = 10
-
-[node name="HBoxContainer" type="HBoxContainer" parent="PoseHUD/PanelContainer/MarginContainer" unique_id=1340176088]
+[node name="MarginContainer" type="MarginContainer" parent="PoseHUD/PanelContainer2" unique_id=549058022]
+custom_minimum_size = Vector2(210, 0)
 layout_mode = 2
 
-[node name="BoneInfo" type="VBoxContainer" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer" unique_id=1793044008]
+[node name="VBoxContainer" type="VBoxContainer" parent="PoseHUD/PanelContainer2/MarginContainer" unique_id=2093546065]
 layout_mode = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/BoneInfo" unique_id=2056782484]
+[node name="PartTable" type="Tree" parent="PoseHUD/PanelContainer2/MarginContainer/VBoxContainer" unique_id=936658464]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/title_button_font_size = 12
+column_titles_visible = true
+scroll_horizontal_enabled = false
+scroll_vertical_enabled = false
+
+[node name="BoneInfo" type="VBoxContainer" parent="PoseHUD/PanelContainer2/MarginContainer/VBoxContainer" unique_id=1793044008]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/BoneInfo/HBoxContainer" unique_id=899506662]
+[node name="HBoxContainer" type="HBoxContainer" parent="PoseHUD/PanelContainer2/MarginContainer/VBoxContainer/BoneInfo" unique_id=2056782484]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="PoseHUD/PanelContainer2/MarginContainer/VBoxContainer/BoneInfo/HBoxContainer" unique_id=899506662]
 custom_minimum_size = Vector2(130, 0)
 layout_mode = 2
 text = "Selected Part"
+horizontal_alignment = 1
 
-[node name="BtnKeyAll" type="Button" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/BoneInfo/HBoxContainer" unique_id=1429492521]
+[node name="BtnKeyAll" type="Button" parent="PoseHUD/PanelContainer2/MarginContainer/VBoxContainer/BoneInfo/HBoxContainer" unique_id=1429492521]
+unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 16
 text = "ꄗ"
 flat = true
 
-[node name="BoneDropdown" type="OptionButton" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/BoneInfo" unique_id=227367216]
-layout_mode = 2
-theme_override_font_sizes/font_size = 11
-flat = true
-
-[node name="ParentLabel" type="Label" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/BoneInfo" unique_id=2145445949]
+[node name="ParentLabel" type="Label" parent="PoseHUD/PanelContainer2/MarginContainer/VBoxContainer/BoneInfo" unique_id=2145445949]
 visible = false
 layout_mode = 2
 text = "Parent: None"
 
-[node name="VBoxContainer" type="VBoxContainer" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/BoneInfo" unique_id=318349264]
+[node name="VBoxContainer" type="VBoxContainer" parent="PoseHUD/PanelContainer2/MarginContainer/VBoxContainer/BoneInfo" unique_id=318349264]
 layout_mode = 2
 theme_override_constants/separation = -12
 
-[node name="HBoxContainer" type="HBoxContainer" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/BoneInfo/VBoxContainer" unique_id=1887199590]
+[node name="HBoxContainer" type="HBoxContainer" parent="PoseHUD/PanelContainer2/MarginContainer/VBoxContainer/BoneInfo/VBoxContainer" unique_id=1887199590]
 layout_mode = 2
 
-[node name="PosLabel" type="Label" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/BoneInfo/VBoxContainer/HBoxContainer" unique_id=1213107119]
+[node name="PosLabel" type="Label" parent="PoseHUD/PanelContainer2/MarginContainer/VBoxContainer/BoneInfo/VBoxContainer/HBoxContainer" unique_id=1213107119]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(130, 0)
 layout_mode = 2
 theme_override_constants/line_spacing = 7
 theme_override_font_sizes/font_size = 11
 text = "   ⚲    Position: -"
 
-[node name="BtnKeyPos" type="Button" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/BoneInfo/VBoxContainer/HBoxContainer" unique_id=166894965]
+[node name="BtnKeyPos" type="Button" parent="PoseHUD/PanelContainer2/MarginContainer/VBoxContainer/BoneInfo/VBoxContainer/HBoxContainer" unique_id=166894965]
+unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
 text = "ꄗ"
 flat = true
 
-[node name="BtnResetPos" type="Button" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/BoneInfo/VBoxContainer/HBoxContainer" unique_id=904668090]
+[node name="BtnResetPos" type="Button" parent="PoseHUD/PanelContainer2/MarginContainer/VBoxContainer/BoneInfo/VBoxContainer/HBoxContainer" unique_id=904668090]
+unique_name_in_owner = true
 layout_mode = 2
 text = "⌫"
 flat = true
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/BoneInfo/VBoxContainer" unique_id=986254600]
+[node name="HBoxContainer2" type="HBoxContainer" parent="PoseHUD/PanelContainer2/MarginContainer/VBoxContainer/BoneInfo/VBoxContainer" unique_id=986254600]
 layout_mode = 2
 
-[node name="RotLabel" type="Label" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/BoneInfo/VBoxContainer/HBoxContainer2" unique_id=170487125]
+[node name="RotLabel" type="Label" parent="PoseHUD/PanelContainer2/MarginContainer/VBoxContainer/BoneInfo/VBoxContainer/HBoxContainer2" unique_id=170487125]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(130, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 11
 text = "   ↻   Rotation: -"
 
-[node name="BtnKeyRot" type="Button" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/BoneInfo/VBoxContainer/HBoxContainer2" unique_id=351596138]
+[node name="BtnKeyRot" type="Button" parent="PoseHUD/PanelContainer2/MarginContainer/VBoxContainer/BoneInfo/VBoxContainer/HBoxContainer2" unique_id=351596138]
+unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
 text = "ꄗ"
 flat = true
 
-[node name="BtnResetRot" type="Button" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/BoneInfo/VBoxContainer/HBoxContainer2" unique_id=536351532]
+[node name="BtnResetRot" type="Button" parent="PoseHUD/PanelContainer2/MarginContainer/VBoxContainer/BoneInfo/VBoxContainer/HBoxContainer2" unique_id=536351532]
+unique_name_in_owner = true
 layout_mode = 2
 text = "⌫"
 flat = true
 
-[node name="HBoxContainer3" type="HBoxContainer" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/BoneInfo/VBoxContainer" unique_id=1050171573]
+[node name="HBoxContainer3" type="HBoxContainer" parent="PoseHUD/PanelContainer2/MarginContainer/VBoxContainer/BoneInfo/VBoxContainer" unique_id=1050171573]
 layout_mode = 2
 
-[node name="ControlledCheck" type="CheckBox" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/BoneInfo/VBoxContainer/HBoxContainer3" unique_id=2120697499]
+[node name="ControlledCheck" type="CheckBox" parent="PoseHUD/PanelContainer2/MarginContainer/VBoxContainer/BoneInfo/VBoxContainer/HBoxContainer3" unique_id=2120697499]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(130, 0)
 layout_mode = 2
 focus_mode = 0
 theme_override_font_sizes/font_size = 11
 text = "Controlled"
 
-[node name="BtnKeyControlled" type="Button" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/BoneInfo/VBoxContainer/HBoxContainer3" unique_id=1921767595]
+[node name="BtnKeyControlled" type="Button" parent="PoseHUD/PanelContainer2/MarginContainer/VBoxContainer/BoneInfo/VBoxContainer/HBoxContainer3" unique_id=1921767595]
+unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
 text = "ꄗ"
 flat = true
 
-[node name="HBoxContainer4" type="HBoxContainer" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/BoneInfo/VBoxContainer" unique_id=1829357124]
+[node name="HBoxContainer4" type="HBoxContainer" parent="PoseHUD/PanelContainer2/MarginContainer/VBoxContainer/BoneInfo/VBoxContainer" unique_id=1829357124]
 layout_mode = 2
 
-[node name="FollowRotationCheck" type="CheckBox" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/BoneInfo/VBoxContainer/HBoxContainer4" unique_id=667256226]
+[node name="FollowRotationCheck" type="CheckBox" parent="PoseHUD/PanelContainer2/MarginContainer/VBoxContainer/BoneInfo/VBoxContainer/HBoxContainer4" unique_id=667256226]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(130, 0)
 layout_mode = 2
 focus_mode = 0
 theme_override_font_sizes/font_size = 11
 text = "Auto Rotation"
 
-[node name="BtnKeyFollowRotation" type="Button" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/BoneInfo/VBoxContainer/HBoxContainer4" unique_id=681964449]
+[node name="BtnKeyFollowRotation" type="Button" parent="PoseHUD/PanelContainer2/MarginContainer/VBoxContainer/BoneInfo/VBoxContainer/HBoxContainer4" unique_id=681964449]
+unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
 text = "ꄗ"
 flat = true
 
-[node name="HBoxContainer5" type="HBoxContainer" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/BoneInfo/VBoxContainer" unique_id=1739731199]
+[node name="HBoxContainer5" type="HBoxContainer" parent="PoseHUD/PanelContainer2/MarginContainer/VBoxContainer/BoneInfo/VBoxContainer" unique_id=1739731199]
 layout_mode = 2
 theme_override_constants/separation = -10
 
-[node name="FreezeCheck" type="CheckBox" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/BoneInfo/VBoxContainer/HBoxContainer5" unique_id=74725144]
+[node name="FreezeCheck" type="CheckBox" parent="PoseHUD/PanelContainer2/MarginContainer/VBoxContainer/BoneInfo/VBoxContainer/HBoxContainer5" unique_id=74725144]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(145, 0)
 layout_mode = 2
 focus_mode = 0
 theme_override_font_sizes/font_size = 11
 text = "Freeze"
 
-[node name="BtnKeyFreeze" type="Button" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/BoneInfo/VBoxContainer/HBoxContainer5" unique_id=531517934]
+[node name="BtnKeyFreeze" type="Button" parent="PoseHUD/PanelContainer2/MarginContainer/VBoxContainer/BoneInfo/VBoxContainer/HBoxContainer5" unique_id=531517934]
+unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
 text = "ꄗ"
 flat = true
 
-[node name="HBoxContainer6" type="HBoxContainer" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/BoneInfo/VBoxContainer" unique_id=784003356]
+[node name="HBoxContainer6" type="HBoxContainer" parent="PoseHUD/PanelContainer2/MarginContainer/VBoxContainer/BoneInfo/VBoxContainer" unique_id=784003356]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/BoneInfo/VBoxContainer/HBoxContainer6" unique_id=376703073]
+[node name="Label" type="Label" parent="PoseHUD/PanelContainer2/MarginContainer/VBoxContainer/BoneInfo/VBoxContainer/HBoxContainer6" unique_id=376703073]
 custom_minimum_size = Vector2(130, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 11
 text = "        Swap with sibling"
 
-[node name="BtnSwapSibling" type="Button" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/BoneInfo/VBoxContainer/HBoxContainer6" unique_id=62341365]
+[node name="BtnSwapSibling" type="Button" parent="PoseHUD/PanelContainer2/MarginContainer/VBoxContainer/BoneInfo/VBoxContainer/HBoxContainer6" unique_id=62341365]
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
 text = "⇆"
 flat = true
 
-[node name="VSeparator" type="VSeparator" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer" unique_id=1385157934]
+[node name="PanelContainer3" type="PanelContainer" parent="PoseHUD" unique_id=574195588]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -210.0
+offset_bottom = 350.0
+grow_horizontal = 0
+size_flags_horizontal = 8
+size_flags_vertical = 0
+
+[node name="MarginContainer" type="MarginContainer" parent="PoseHUD/PanelContainer3" unique_id=519141308]
+custom_minimum_size = Vector2(210, 0)
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PoseHUD/PanelContainer3/MarginContainer" unique_id=379605365]
+layout_mode = 2
+size_flags_horizontal = 8
+
+[node name="AnimTable" type="Tree" parent="PoseHUD/PanelContainer3/MarginContainer/VBoxContainer" unique_id=1285730883]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/title_button_font_size = 12
+column_titles_visible = true
+scroll_horizontal_enabled = false
+scroll_vertical_enabled = false
+
+[node name="Animation" type="VBoxContainer" parent="PoseHUD/PanelContainer3/MarginContainer/VBoxContainer" unique_id=1103519101]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="PoseHUD/PanelContainer3/MarginContainer/VBoxContainer/Animation" unique_id=1910024116]
 layout_mode = 2
 
-[node name="Animation" type="VBoxContainer" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer" unique_id=1103519101]
-layout_mode = 2
-
-[node name="HBoxContainer" type="HBoxContainer" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/Animation" unique_id=1910024116]
-layout_mode = 2
-
-[node name="Title" type="Label" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/Animation/HBoxContainer" unique_id=571298585]
+[node name="Title" type="Label" parent="PoseHUD/PanelContainer3/MarginContainer/VBoxContainer/Animation/HBoxContainer" unique_id=571298585]
 custom_minimum_size = Vector2(158, 0)
 layout_mode = 2
 text = "Animation"
 
-[node name="BtnExportAnimation" type="Button" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/Animation/HBoxContainer" unique_id=373318321]
+[node name="BtnExportAnimation" type="Button" parent="PoseHUD/PanelContainer3/MarginContainer/VBoxContainer/Animation/HBoxContainer" unique_id=373318321]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 12
 text = "➜]"
 flat = true
 
-[node name="AnimDropdown" type="OptionButton" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/Animation" unique_id=711204534]
+[node name="AnimDropdown" type="OptionButton" parent="PoseHUD/PanelContainer3/MarginContainer/VBoxContainer/Animation" unique_id=711204534]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(186, 0)
 layout_mode = 2
@@ -1087,16 +1124,16 @@ focus_mode = 0
 theme_override_font_sizes/font_size = 11
 flat = true
 
-[node name="SpeedContainer" type="HBoxContainer" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/Animation" unique_id=1063331086]
+[node name="SpeedContainer" type="HBoxContainer" parent="PoseHUD/PanelContainer3/MarginContainer/VBoxContainer/Animation" unique_id=1063331086]
 layout_mode = 2
 
-[node name="SpeedLabel" type="Label" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/Animation/SpeedContainer" unique_id=1902751416]
+[node name="SpeedLabel" type="Label" parent="PoseHUD/PanelContainer3/MarginContainer/VBoxContainer/Animation/SpeedContainer" unique_id=1902751416]
 custom_minimum_size = Vector2(94, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 11
 text = "Speed"
 
-[node name="SpeedSpinBox" type="SpinBox" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/Animation/SpeedContainer" unique_id=862609696]
+[node name="SpeedSpinBox" type="SpinBox" parent="PoseHUD/PanelContainer3/MarginContainer/VBoxContainer/Animation/SpeedContainer" unique_id=862609696]
 unique_name_in_owner = true
 layout_mode = 2
 min_value = 0.1
@@ -1105,16 +1142,16 @@ step = 0.1
 value = 1.0
 alignment = 1
 
-[node name="DurationContainer" type="HBoxContainer" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/Animation" unique_id=679858342]
+[node name="DurationContainer" type="HBoxContainer" parent="PoseHUD/PanelContainer3/MarginContainer/VBoxContainer/Animation" unique_id=679858342]
 layout_mode = 2
 
-[node name="SpeedLabel" type="Label" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/Animation/DurationContainer" unique_id=252504703]
+[node name="SpeedLabel" type="Label" parent="PoseHUD/PanelContainer3/MarginContainer/VBoxContainer/Animation/DurationContainer" unique_id=252504703]
 custom_minimum_size = Vector2(94, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 11
 text = "Duration"
 
-[node name="DurationSpinBox" type="SpinBox" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/Animation/DurationContainer" unique_id=2072087584]
+[node name="DurationSpinBox" type="SpinBox" parent="PoseHUD/PanelContainer3/MarginContainer/VBoxContainer/Animation/DurationContainer" unique_id=2072087584]
 unique_name_in_owner = true
 layout_mode = 2
 min_value = 0.1
@@ -1123,194 +1160,123 @@ step = 0.1
 value = 0.7999999999999999
 alignment = 1
 
-[node name="VBoxContainer" type="VBoxContainer" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/Animation" unique_id=947378667]
+[node name="VBoxContainer" type="VBoxContainer" parent="PoseHUD/PanelContainer3/MarginContainer/VBoxContainer/Animation" unique_id=947378667]
 layout_mode = 2
 
-[node name="VSeparator3" type="VSeparator" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer" unique_id=1983501179]
+[node name="AnimatorSection" type="VBoxContainer" parent="PoseHUD/PanelContainer3/MarginContainer/VBoxContainer" unique_id=339532123]
 layout_mode = 2
+size_flags_horizontal = 0
 
-[node name="AnimatorSection" type="VBoxContainer" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer" unique_id=339532123]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection" unique_id=894432655]
-layout_mode = 2
-text = "Sequencer"
-
-[node name="Header" type="HBoxContainer" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection" unique_id=80486204]
-layout_mode = 2
-theme_override_constants/separation = 4
-
-[node name="StepGrid" type="HFlowContainer" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection" unique_id=843651302]
+[node name="PlaybackControls" type="HBoxContainer" parent="PoseHUD/PanelContainer3/MarginContainer/VBoxContainer/AnimatorSection" unique_id=1337660025]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(220, 110)
-layout_mode = 2
-
-[node name="Step0" type="ColorRect" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/StepGrid" unique_id=2020655983]
-custom_minimum_size = Vector2(32, 32)
-layout_mode = 2
-
-[node name="Panel" type="ColorRect" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/StepGrid/Step0" unique_id=1413474534]
-layout_mode = 0
-offset_left = 8.0
-offset_top = 8.0
-offset_right = 24.0
-offset_bottom = 24.0
-mouse_filter = 2
-
-[node name="Step1" type="ColorRect" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/StepGrid" unique_id=843406066]
-custom_minimum_size = Vector2(32, 32)
-layout_mode = 2
-
-[node name="Panel" type="ColorRect" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/StepGrid/Step1" unique_id=889971453]
-layout_mode = 0
-offset_left = 8.0
-offset_top = 8.0
-offset_right = 24.0
-offset_bottom = 24.0
-mouse_filter = 2
-
-[node name="Step2" type="ColorRect" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/StepGrid" unique_id=747667415]
-custom_minimum_size = Vector2(32, 32)
-layout_mode = 2
-
-[node name="Panel" type="ColorRect" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/StepGrid/Step2" unique_id=1350028801]
-layout_mode = 0
-offset_left = 8.0
-offset_top = 8.0
-offset_right = 24.0
-offset_bottom = 24.0
-mouse_filter = 2
-
-[node name="Step3" type="ColorRect" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/StepGrid" unique_id=447809761]
-custom_minimum_size = Vector2(32, 32)
-layout_mode = 2
-
-[node name="Panel" type="ColorRect" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/StepGrid/Step3" unique_id=1920274475]
-layout_mode = 0
-offset_left = 8.0
-offset_top = 8.0
-offset_right = 24.0
-offset_bottom = 24.0
-mouse_filter = 2
-
-[node name="Step4" type="ColorRect" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/StepGrid" unique_id=88003167]
-custom_minimum_size = Vector2(32, 32)
-layout_mode = 2
-
-[node name="Panel" type="ColorRect" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/StepGrid/Step4" unique_id=1907099547]
-layout_mode = 0
-offset_left = 8.0
-offset_top = 8.0
-offset_right = 24.0
-offset_bottom = 24.0
-mouse_filter = 2
-
-[node name="Step5" type="ColorRect" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/StepGrid" unique_id=1779355074]
-custom_minimum_size = Vector2(32, 32)
-layout_mode = 2
-
-[node name="Panel" type="ColorRect" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/StepGrid/Step5" unique_id=1001335672]
-layout_mode = 0
-offset_left = 8.0
-offset_top = 8.0
-offset_right = 24.0
-offset_bottom = 24.0
-mouse_filter = 2
-
-[node name="Step6" type="ColorRect" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/StepGrid" unique_id=592387035]
-custom_minimum_size = Vector2(32, 32)
-layout_mode = 2
-
-[node name="Panel" type="ColorRect" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/StepGrid/Step6" unique_id=1374645189]
-layout_mode = 0
-offset_left = 8.0
-offset_top = 8.0
-offset_right = 24.0
-offset_bottom = 24.0
-mouse_filter = 2
-
-[node name="Step7" type="ColorRect" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/StepGrid" unique_id=2077252678]
-custom_minimum_size = Vector2(32, 32)
-layout_mode = 2
-
-[node name="Panel" type="ColorRect" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/StepGrid/Step7" unique_id=322663071]
-layout_mode = 0
-offset_left = 8.0
-offset_top = 8.0
-offset_right = 24.0
-offset_bottom = 24.0
-mouse_filter = 2
-
-[node name="PlaybackControls" type="HBoxContainer" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection" unique_id=1337660025]
 layout_mode = 2
 size_flags_horizontal = 4
 
-[node name="BtnRewind" type="Button" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/PlaybackControls" unique_id=16692025]
+[node name="BtnRewind" type="Button" parent="PoseHUD/PanelContainer3/MarginContainer/VBoxContainer/AnimatorSection/PlaybackControls" unique_id=16692025]
+unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
 text = "◁"
 flat = true
 
-[node name="BtnStop" type="Button" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/PlaybackControls" unique_id=1325336453]
+[node name="BtnStop" type="Button" parent="PoseHUD/PanelContainer3/MarginContainer/VBoxContainer/AnimatorSection/PlaybackControls" unique_id=1325336453]
+unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
 text = " || "
 flat = true
 
-[node name="BtnPlay" type="Button" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/PlaybackControls" unique_id=140180053]
+[node name="BtnPlay" type="Button" parent="PoseHUD/PanelContainer3/MarginContainer/VBoxContainer/AnimatorSection/PlaybackControls" unique_id=140180053]
+unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
 text = "▷"
 flat = true
 
-[node name="RecordCheck" type="CheckBox" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/PlaybackControls" unique_id=1950183948]
+[node name="RecordCheck" type="CheckBox" parent="PoseHUD/PanelContainer3/MarginContainer/VBoxContainer/AnimatorSection/PlaybackControls" unique_id=1950183948]
+unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
 theme_override_font_sizes/font_size = 10
 theme_override_icons/checked = ExtResource("2_knn7v")
 theme_override_icons/unchecked = ExtResource("2_g4c7l")
 
-[node name="BtnReset" type="Button" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/AnimatorSection/PlaybackControls" unique_id=200118915]
+[node name="BtnReset" type="Button" parent="PoseHUD/PanelContainer3/MarginContainer/VBoxContainer/AnimatorSection/PlaybackControls" unique_id=200118915]
+unique_name_in_owner = true
+visible = false
 layout_mode = 2
 focus_mode = 0
 text = "↺"
 flat = true
 
-[node name="VSeparator2" type="VSeparator" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer" unique_id=732805575]
-layout_mode = 2
-
-[node name="TransformInfo" type="VBoxContainer" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer" unique_id=259173902]
-layout_mode = 2
-
-[node name="Title" type="Label" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/TransformInfo" unique_id=1296454146]
-layout_mode = 2
-text = "Current Frame"
-
-[node name="TimecodeLabel" type="Label" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/TransformInfo" unique_id=1189055011]
+[node name="TimecodeLabel" type="Label" parent="PoseHUD/PanelContainer3/MarginContainer/VBoxContainer/AnimatorSection/PlaybackControls" unique_id=1189055011]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 11
 
-[node name="ParentPosLabel" type="Label" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/TransformInfo" unique_id=2146755403]
+[node name="StepGrid" type="GridContainer" parent="PoseHUD/PanelContainer3/MarginContainer/VBoxContainer/AnimatorSection" unique_id=2066120046]
+unique_name_in_owner = true
 layout_mode = 2
-theme_override_font_sizes/font_size = 11
-text = "List of keys"
+size_flags_horizontal = 0
+columns = 6
 
-[node name="ParentRotLabel" type="Label" parent="PoseHUD/PanelContainer/MarginContainer/HBoxContainer/TransformInfo" unique_id=56514903]
+[node name="Step0" type="ColorRect" parent="PoseHUD/PanelContainer3/MarginContainer/VBoxContainer/AnimatorSection/StepGrid" unique_id=2020655983]
+custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
-theme_override_font_sizes/font_size = 11
-text = "Clear current selected bone
-Clear all bones
-Swap with sibling"
 
-[node name="Mode" type="VBoxContainer" parent="PoseHUD/PanelContainer/MarginContainer" unique_id=2012058645]
+[node name="Panel" type="ColorRect" parent="PoseHUD/PanelContainer3/MarginContainer/VBoxContainer/AnimatorSection/StepGrid/Step0" unique_id=1413474534]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 24.0
+offset_bottom = 24.0
+mouse_filter = 2
+
+[node name="Step1" type="ColorRect" parent="PoseHUD/PanelContainer3/MarginContainer/VBoxContainer/AnimatorSection/StepGrid" unique_id=843406066]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+
+[node name="Panel" type="ColorRect" parent="PoseHUD/PanelContainer3/MarginContainer/VBoxContainer/AnimatorSection/StepGrid/Step1" unique_id=889971453]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 24.0
+offset_bottom = 24.0
+mouse_filter = 2
+
+[node name="Step2" type="ColorRect" parent="PoseHUD/PanelContainer3/MarginContainer/VBoxContainer/AnimatorSection/StepGrid" unique_id=747667415]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+
+[node name="Panel" type="ColorRect" parent="PoseHUD/PanelContainer3/MarginContainer/VBoxContainer/AnimatorSection/StepGrid/Step2" unique_id=1350028801]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 24.0
+offset_bottom = 24.0
+mouse_filter = 2
+
+[node name="Step3" type="ColorRect" parent="PoseHUD/PanelContainer3/MarginContainer/VBoxContainer/AnimatorSection/StepGrid" unique_id=447809761]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+
+[node name="Panel" type="ColorRect" parent="PoseHUD/PanelContainer3/MarginContainer/VBoxContainer/AnimatorSection/StepGrid/Step3" unique_id=1920274475]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 24.0
+offset_bottom = 24.0
+mouse_filter = 2
+
+[node name="Mode" type="VBoxContainer" parent="PoseHUD/PanelContainer3/MarginContainer/VBoxContainer" unique_id=2012058645]
 layout_direction = 3
 layout_mode = 2
 size_flags_horizontal = 8
 size_flags_vertical = 0
 mouse_filter = 2
 
-[node name="PosingCheck" type="CheckBox" parent="PoseHUD/PanelContainer/MarginContainer/Mode" unique_id=1482292167]
+[node name="PosingCheck" type="CheckBox" parent="PoseHUD/PanelContainer3/MarginContainer/VBoxContainer/Mode" unique_id=1482292167]
+unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
 theme_override_font_sizes/font_size = 10

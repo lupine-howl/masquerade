@@ -95,8 +95,12 @@ func _input(event: InputEvent) -> void:
 			var is_posing = pose_hud.posing_check.button_pressed if pose_hud else false
 			
 			if is_posing and active_marker:
-				# --- 🛠️ MODE A: NUDGE ACTIVE MARKER ---
-				var nudge_amt = 1.0 # Adjust pixel distance per tap here
+# --- 🛠️ MODE A: NUDGE ACTIVE MARKER ---
+				# Check if Shift is held down for a bigger shuttle multiplier
+				var shift_pressed = Input.is_key_pressed(KEY_SHIFT)
+				
+				# Base movement is 1 pixel; holding Shift shifts it to 10 pixels
+				var nudge_amt = 10.0 if shift_pressed else 1.0 
 				var motion = Vector2.ZERO
 				
 				match event.keycode:
@@ -110,7 +114,7 @@ func _input(event: InputEvent) -> void:
 				
 				# Force the marker to save the change if record mode is active
 				if pose_hud and pose_hud.record_check.button_pressed:
-					pose_hud._on_marker_save_requested(active_marker)
+					pose_hud._on_marker_save_requested(active_marker)			
 			else:
 				# --- 🎞️ MODE B: SCRUB TIMELINE (Fallback when not posing) ---
 				if event.keycode == KEY_UP or event.keycode == KEY_DOWN: return # Ignore vertical keys here
