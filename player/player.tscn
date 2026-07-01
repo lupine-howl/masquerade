@@ -19,6 +19,7 @@
 [ext_resource type="Script" uid="uid://b8j54hiva7jef" path="res://player/DebugHUD.gd" id="28_rptt4"]
 [ext_resource type="Texture2D" uid="uid://cmvjnsywbvyar" path="res://player/assets/character.png" id="30_b8hi5"]
 [ext_resource type="Script" uid="uid://bo3h510q3ok2g" path="res://player/scripts/Ragdoll.gd" id="30_fjxoa"]
+[ext_resource type="Script" uid="uid://c1upbm8vmye35" path="res://player/scripts/OriginCrosshair.gd" id="32_1s1yo"]
 [ext_resource type="Script" uid="uid://cns3xkrq4cwa4" path="res://player/scripts/SyncedBone2D.gd" id="32_gswnw"]
 [ext_resource type="Script" uid="uid://cu4xh4ryvnh24" path="res://player/scripts/PlayerStateMachine.gd" id="33_jd2rm"]
 [ext_resource type="Script" uid="uid://bc7ucmt1gfah4" path="res://player/scripts/GroundState.gd" id="34_q28gw"]
@@ -883,6 +884,11 @@ _data = {
 }
 
 [node name="Player" type="Node2D" unique_id=1696343506]
+
+[node name="OriginCrosshair" type="Node2D" parent="." unique_id=846286726]
+script = ExtResource("32_1s1yo")
+crosshair_length = 6400.0
+grid_spacing = 64.0
 
 [node name="PoseHUD" type="CanvasLayer" parent="." unique_id=1919478648 node_paths=PackedStringArray("pose_controller", "timeline")]
 script = ExtResource("11_knn7v")
@@ -2419,6 +2425,7 @@ parameters/ClimbScale/scale = 1.0
 [node name="PlayerAnimator" type="AnimationPlayer" parent="PlayerBody" unique_id=384783702]
 libraries/ = SubResource("AnimationLibrary_1s1yo")
 autoplay = &"run"
+speed_scale = 1.4
 
 [node name="StateMachine" type="Node" parent="PlayerBody" unique_id=1888989459 node_paths=PackedStringArray("initial_state")]
 script = ExtResource("33_jd2rm")

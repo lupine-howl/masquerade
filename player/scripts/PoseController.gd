@@ -81,7 +81,7 @@ func _input(event: InputEvent) -> void:
 					return
 
 
-# --- 2. SINGLE-PRESS TIMELINE NAVIGATION & ACTIONS (No Ctrl/Cmd) ---
+	# --- 2. SINGLE-PRESS TIMELINE NAVIGATION & ACTIONS (No Ctrl/Cmd) ---
 	if event is InputEventKey and event.pressed and not modifier_pressed:
 		# Wipes all keyframes on this step entirely
 		if event.keycode == KEY_DELETE or event.keycode == KEY_BACKSPACE:
@@ -90,11 +90,48 @@ func _input(event: InputEvent) -> void:
 			get_viewport().set_input_as_handled()
 			return
 			
-		# 🆕 ADDITION: Support for , (comma/back) and . (period/forward) frame stepping
+		# 🆕 ARROW KEY NUDGING VS SCRUBBING
+		elif event.keycode in [KEY_RIGHT, KEY_LEFT, KEY_UP, KEY_DOWN]:
+			var is_posing = pose_hud.posing_check.button_pressed if pose_hud else false
+			
+			if is_posing and active_marker:
+				# --- 🛠️ MODE A: NUDGE ACTIVE MARKER ---
+				var nudge_amt = 1.0 # Adjust pixel distance per tap here
+				var motion = Vector2.ZERO
+				
+				match event.keycode:
+					KEY_UP:    motion.y = -nudge_amt
+					KEY_DOWN:  motion.y = nudge_amt
+					KEY_LEFT:  motion.x = -nudge_amt
+					KEY_RIGHT: motion.x = nudge_amt
+					
+				# Apply position adjustment smoothly
+				active_marker.global_position += motion
+				
+				# Force the marker to save the change if record mode is active
+				if pose_hud and pose_hud.record_check.button_pressed:
+					pose_hud._on_marker_save_requested(active_marker)
+			else:
+				# --- 🎞️ MODE B: SCRUB TIMELINE (Fallback when not posing) ---
+				if event.keycode == KEY_UP or event.keycode == KEY_DOWN: return # Ignore vertical keys here
+				
+				var total_steps = pose_hud.step_grid.get_child_count() if pose_hud else 0
+				if total_steps == 0: return
+				
+				var delta = 1 if event.keycode == KEY_RIGHT else -1
+				var next_step = clampi(timeline.current_step + delta, 0, total_steps - 1)
+				
+				timeline.seek_step(next_step)
+				pose_hud._update_grid_visuals()
+				pose_hud._update_bone_info_checkboxes(active_marker)
+				
+			get_viewport().set_input_as_handled()
+			return
+			
+		# --- Keep Comma/Period hotkeys dedicated strictly to frame stepping ---
 		elif event.keycode == KEY_PERIOD:
 			var total_steps = pose_hud.step_grid.get_child_count() if pose_hud else 0
 			if total_steps == 0: return
-			
 			var next_step = clampi(timeline.current_step + 1, 0, total_steps - 1)
 			timeline.seek_step(next_step)
 			pose_hud._update_grid_visuals()
@@ -105,7 +142,6 @@ func _input(event: InputEvent) -> void:
 		elif event.keycode == KEY_COMMA:
 			var total_steps = pose_hud.step_grid.get_child_count() if pose_hud else 0
 			if total_steps == 0: return
-			
 			var next_step = clampi(timeline.current_step - 1, 0, total_steps - 1)
 			timeline.seek_step(next_step)
 			pose_hud._update_grid_visuals()

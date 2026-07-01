@@ -134,8 +134,8 @@ func _physics_process(_delta: float) -> void:
 	
 	if is_controlled:
 		slave.global_position = global_position
-	else:
-		global_position = slave.global_position
+	#else:
+		#global_position = slave.global_position
 
 func _input(event: InputEvent) -> void:
 	if not is_dev_mode: return
@@ -153,8 +153,8 @@ func _input(event: InputEvent) -> void:
 				# 🆕 Queue position movement check setup safely
 				_mouse_start_pos = mouse_pos
 				_drag_offset = mouse_pos - global_position # Maintain exact relative coordinate offset
-				if is_controlled:
-					_is_prepare_drag_position = true
+				#if is_controlled:
+				_is_prepare_drag_position = true
 				get_viewport().set_input_as_handled()
 				
 			elif distance > inner_radius and distance <= outer_radius:

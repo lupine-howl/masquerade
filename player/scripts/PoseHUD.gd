@@ -259,22 +259,22 @@ func _on_key_all_pressed():
 	
 	for m in pose_controller.all_markers:
 		# 🆕 FILTER: If this marker is NOT controlled, skip keying its transforms entirely!
-		if not m.is_controlled:
+		#if not m.is_controlled:
 			# Optional: Still key its control/freeze state flags so the animation player 
 			# knows exactly when it hands control back over to physics
-			timeline.key_property(anim, m, ":is_controlled", m.is_controlled)
-			if m.slave:
-				timeline.key_property(anim, m.slave, ":freeze", m.slave.freeze)
-			continue
+			#timeline.key_property(anim, m, ":is_controlled", m.is_controlled)
+			#if m.slave:
+			#	timeline.key_property(anim, m.slave, ":freeze", m.slave.freeze)
+			#continue
 			
 		# Active, manually positioned limbs get full smart keying checks
-		timeline.key_property(anim, m, ":is_controlled", m.is_controlled)
-		timeline.key_property(anim, m, ":follow_parent_rotation", m.follow_parent_rotation)
+		#timeline.key_property(anim, m, ":is_controlled", m.is_controlled)
+		#timeline.key_property(anim, m, ":follow_parent_rotation", m.follow_parent_rotation)
 		timeline.key_property(anim, m, ":position", m.position)
 		if not m.follow_parent_rotation:
 			timeline.key_property(anim, m, ":rotation", m.rotation)
-		if m.slave:
-			timeline.key_property(anim, m.slave, ":freeze", m.slave.freeze)
+		#if m.slave:
+		#	timeline.key_property(anim, m.slave, ":freeze", m.slave.freeze)
 			
 	_update_grid_visuals()
 # Called when the physical marker is dragged in the 2D view and "saved"

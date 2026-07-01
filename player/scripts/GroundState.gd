@@ -3,7 +3,6 @@ extends PlayerState
 func enter() -> void:
 	# Default to idle with a quick 0.1s blend when we land
 	player.animator.play("idle", 0.5)
-	
 
 func physics_update(delta: float) -> void:
 	var direction := Input.get_axis("ui_left", "ui_right")
