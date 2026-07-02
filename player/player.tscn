@@ -14,7 +14,7 @@
 [ext_resource type="Script" uid="uid://bnhxy3tk85v7d" path="res://player/scripts/PoseHUD.gd" id="11_knn7v"]
 [ext_resource type="Animation" uid="uid://45eb4xgs6pds" path="res://player/animations/RESET.res" id="17_2uvqg"]
 [ext_resource type="Animation" uid="uid://c7csesg8r5usc" path="res://player/animations/idle.res" id="17_r7pn3"]
-[ext_resource type="Animation" uid="uid://bqhiyulid3l1u" path="res://player/animations/run.res" id="18_b8hi5"]
+[ext_resource type="Animation" uid="uid://sf7xtv50llc8" path="res://player/animations/run.res" id="18_b8hi5"]
 [ext_resource type="Texture2D" uid="uid://b1govaot86lmk" path="res://light-mask.png" id="24_g4c7l"]
 [ext_resource type="Script" uid="uid://b8j54hiva7jef" path="res://player/DebugHUD.gd" id="28_rptt4"]
 [ext_resource type="Texture2D" uid="uid://cmvjnsywbvyar" path="res://player/assets/character.png" id="30_b8hi5"]
@@ -95,10 +95,6 @@ load_path = "res://.godot/imported/character.png-61d4ad690a3c56af52dd59e6dbc9555
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_gswnw"]
 radius = 15.0
-
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_xcnuv"]
-radius = 25.0
-height = 57.0
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_mmwog"]
 radius = 22.0
@@ -1366,11 +1362,11 @@ rotation_smoothing_speed = 20.0
 script = ExtResource("6_knn7v")
 
 [node name="MasterCollisionShape" type="CollisionShape2D" parent="PlayerBody" unique_id=49677294]
+visible = false
 scale = Vector2(0.99998474, 0.99998474)
 shape = SubResource("CapsuleShape2D_whnp6")
 
 [node name="Ragdoll" type="Node2D" parent="PlayerBody" unique_id=35418647 node_paths=PackedStringArray("skeleton_node", "pivot")]
-visible = false
 script = ExtResource("30_fjxoa")
 skeleton_node = NodePath("../FacingPivot/Armature/Skeleton2D")
 pivot = NodePath("../FacingPivot")
@@ -1378,20 +1374,13 @@ pivot = NodePath("../FacingPivot")
 [node name="Root" type="RigidBody2D" parent="PlayerBody/Ragdoll" unique_id=1009429225]
 collision_layer = 0
 collision_mask = 256
-lock_rotation = true
-freeze = true
 freeze_mode = 1
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerBody/Ragdoll/Root" unique_id=861282684]
 shape = SubResource("CircleShape2D_jd2rm")
 
 [node name="Root_Head_Pin" type="PinJoint2D" parent="PlayerBody/Ragdoll/Root" unique_id=246760580]
-node_a = NodePath("../../Head/Head_Physics")
 node_b = NodePath("..")
-
-[node name="Abdomen_Root_Pin" type="PinJoint2D" parent="PlayerBody/Ragdoll" unique_id=1608925239]
-node_a = NodePath("../Root")
-node_b = NodePath("../Torso/Abdomen_Physics")
 
 [node name="Arm_Back" type="Node2D" parent="PlayerBody/Ragdoll" unique_id=1528559718]
 position = Vector2(0, -86)
@@ -1403,7 +1392,7 @@ collision_layer = 0
 collision_mask = 256
 
 [node name="Torso_Shoulder_Pin" type="PinJoint2D" parent="PlayerBody/Ragdoll/Arm_Back/Shoulder_Back_Physics" unique_id=949538224]
-node_a = NodePath("../../../Torso/Torso_Physics")
+node_a = NodePath("../../../Torso/Torso2_Physics")
 node_b = NodePath("..")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerBody/Ragdoll/Arm_Back/Shoulder_Back_Physics" unique_id=1034800554]
@@ -1506,7 +1495,7 @@ collision_mask = 256
 freeze_mode = 1
 
 [node name="Torso_Shoulder_Pin" type="PinJoint2D" parent="PlayerBody/Ragdoll/Arm_Front/Shoulder_Front_Physics" unique_id=1425970839]
-node_a = NodePath("../../../Torso/Torso_Physics")
+node_a = NodePath("../../../Torso/Torso2_Physics")
 node_b = NodePath("..")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerBody/Ragdoll/Arm_Front/Shoulder_Front_Physics" unique_id=2140890372]
@@ -1599,24 +1588,17 @@ region_rect = Rect2(53, 780, 108, 134)
 [node name="Leg_Back" type="Node2D" parent="PlayerBody/Ragdoll" unique_id=627364165]
 rotation = 1.5707964
 
-[node name="Back_Hip_Root_Pin" type="PinJoint2D" parent="PlayerBody/Ragdoll/Leg_Back" unique_id=978361203]
-node_a = NodePath("../../Root")
-node_b = NodePath("../Hip_Back_Physics")
-angular_limit_lower = -1.5707964
-angular_limit_upper = 1.5707964
-
-[node name="Back_Hip_Thigh_Pin" type="PinJoint2D" parent="PlayerBody/Ragdoll/Leg_Back" unique_id=856154987]
-node_a = NodePath("../Hip_Back_Physics")
-node_b = NodePath("../Thigh_Back_Physics")
-angular_limit_enabled = true
-angular_limit_lower = -2.0943952
-angular_limit_upper = 2.0943952
-
 [node name="Hip_Back_Physics" type="RigidBody2D" parent="PlayerBody/Ragdoll/Leg_Back" unique_id=605096192]
 collision_layer = 0
 collision_mask = 256
 lock_rotation = true
 angular_damp = 5.0
+
+[node name="Back_Hip_Root_Pin" type="PinJoint2D" parent="PlayerBody/Ragdoll/Leg_Back/Hip_Back_Physics" unique_id=978361203]
+node_a = NodePath("../../../Root")
+node_b = NodePath("..")
+angular_limit_lower = -1.5707964
+angular_limit_upper = 1.5707964
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerBody/Ragdoll/Leg_Back/Hip_Back_Physics" unique_id=1713980248]
 shape = SubResource("CircleShape2D_xcnuv")
@@ -1627,12 +1609,20 @@ collision_mask = 256
 mass = 5.0
 angular_damp = 5.0
 
+[node name="Back_Hip_Thigh_Pin" type="PinJoint2D" parent="PlayerBody/Ragdoll/Leg_Back/Thigh_Back_Physics" unique_id=856154987]
+node_a = NodePath("../../Hip_Back_Physics")
+node_b = NodePath("..")
+angular_limit_enabled = true
+angular_limit_lower = -2.0943952
+angular_limit_upper = 2.0943952
+
 [node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerBody/Ragdoll/Leg_Back/Thigh_Back_Physics" unique_id=195657611]
 position = Vector2(40, 0)
 rotation = 1.5707964
 shape = SubResource("CapsuleShape2D_j55il")
 
 [node name="Thigh_Back_Sprite2" type="Sprite2D" parent="PlayerBody/Ragdoll/Leg_Back/Thigh_Back_Physics" unique_id=2089244299]
+visible = false
 modulate = Color(0.69135684, 0.6913568, 0.69135684, 1)
 rotation = -1.5707961
 scale = Vector2(0.39998212, 0.39998212)
@@ -1654,7 +1644,7 @@ position = Vector2(37, 0)
 rotation = 1.5707964
 shape = SubResource("CapsuleShape2D_hjies")
 
-[node name="Thigh_Calf_Pin" type="PinJoint2D" parent="PlayerBody/Ragdoll/Leg_Back/Calf_Back_Physics" unique_id=1049873233]
+[node name="Thigh_Back_Calf_Pin" type="PinJoint2D" parent="PlayerBody/Ragdoll/Leg_Back/Calf_Back_Physics" unique_id=1049873233]
 node_a = NodePath("../../Thigh_Back_Physics")
 node_b = NodePath("..")
 angular_limit_enabled = true
@@ -1681,6 +1671,7 @@ freeze_mode = 1
 position = Vector2(0, 7.6293945e-06)
 node_a = NodePath("../../Calf_Back_Physics")
 node_b = NodePath("..")
+angular_limit_enabled = true
 angular_limit_lower = -0.5235988
 angular_limit_upper = 1.0471976
 
@@ -1737,6 +1728,7 @@ rotation = -1.5707964
 shape = SubResource("CapsuleShape2D_fjxoa")
 
 [node name="Thigh_Front_Sprite2" type="Sprite2D" parent="PlayerBody/Ragdoll/Leg_Front/Thigh_Front_Physics" unique_id=1775071556]
+visible = false
 z_index = 2
 rotation = 1.5707964
 scale = Vector2(0.39998212, 0.39998212)
@@ -1802,6 +1794,10 @@ flip_v = true
 region_enabled = true
 region_rect = Rect2(647, 862, 151, 77)
 
+[node name="Leg_Front2" type="Node2D" parent="PlayerBody/Ragdoll" unique_id=733830758]
+z_index = 10
+position = Vector2(0, -45)
+
 [node name="Head" type="Node2D" parent="PlayerBody/Ragdoll" unique_id=28840955]
 position = Vector2(0, -57)
 
@@ -1829,7 +1825,6 @@ region_rect = Rect2(404, 42.000004, 227.19995, 208.79999)
 position = Vector2(0, -47)
 collision_layer = 0
 collision_mask = 256
-freeze = true
 angular_damp = 200.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerBody/Ragdoll/Head/Neck_Physics" unique_id=254026208]
@@ -1841,71 +1836,100 @@ position = Vector2(0, -12)
 node_a = NodePath("../../Head_Physics")
 node_b = NodePath("..")
 angular_limit_enabled = true
+angular_limit_lower = -3.1415927
+angular_limit_upper = 3.1415927
+
+[node name="Neck_Torso_Pin" type="PinJoint2D" parent="PlayerBody/Ragdoll/Head/Neck_Physics" unique_id=798772774]
+position = Vector2(1, 0)
+node_b = NodePath("..")
+angular_limit_enabled = true
+angular_limit_lower = -3.1415927
+angular_limit_upper = 3.1415927
 
 [node name="Torso" type="Node2D" parent="PlayerBody/Ragdoll" unique_id=420461720]
 position = Vector2(0, -104)
 
-[node name="Torso_Physics" type="RigidBody2D" parent="PlayerBody/Ragdoll/Torso" unique_id=1455758360]
-position = Vector2(1, 0)
+[node name="Abdomen2_Physics" type="RigidBody2D" parent="PlayerBody/Ragdoll/Torso" unique_id=22459864]
+position = Vector2(0, 59)
 collision_layer = 512
-collision_mask = 768
-angular_damp = 100.0
+collision_mask = 33024
+mass = 5.0
+angular_damp = 5.0
 
-[node name="Neck_Torso_Pin" type="PinJoint2D" parent="PlayerBody/Ragdoll/Torso/Torso_Physics" unique_id=798772774]
-node_a = NodePath("..")
-node_b = NodePath("../../../Head/Neck_Physics")
-softness = 0.01
+[node name="Sternum_Abdoment_Pin_2" type="PinJoint2D" parent="PlayerBody/Ragdoll/Torso/Abdomen2_Physics" unique_id=1271630631]
+node_b = NodePath("..")
 angular_limit_enabled = true
+angular_limit_lower = -2.0943952
+angular_limit_upper = 2.0943952
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerBody/Ragdoll/Torso/Torso_Physics" unique_id=1540046956]
-position = Vector2(0, 29)
-shape = SubResource("CapsuleShape2D_xcnuv")
-
-[node name="Torso2" type="Sprite2D" parent="PlayerBody/Ragdoll/Torso/Torso_Physics" unique_id=872752003]
-z_index = 2
-position = Vector2(-1.9073486e-06, 18.001312)
-scale = Vector2(0.3999939, 0.3999939)
-texture = ExtResource("30_b8hi5")
-offset = Vector2(30.000454, 15.003662)
-region_enabled = true
-region_rect = Rect2(490, 316, 160, 194)
-
-[node name="Jetpack2" type="Sprite2D" parent="PlayerBody/Ragdoll/Torso/Torso_Physics" unique_id=1529127615]
-z_index = 1
-position = Vector2(-5.722046e-06, 17.999939)
-scale = Vector2(0.3999939, 0.3999939)
-texture = ExtResource("30_b8hi5")
-offset = Vector2(-70.00107, 40.007477)
-region_enabled = true
-region_rect = Rect2(394, 380, 75, 214)
-
-[node name="Abdomen_Physics" type="RigidBody2D" parent="PlayerBody/Ragdoll/Torso" unique_id=1382454831]
-position = Vector2(1, 58)
-collision_layer = 0
-collision_mask = 256
-
-[node name="Abdomen_Torso_Pin" type="PinJoint2D" parent="PlayerBody/Ragdoll/Torso/Abdomen_Physics" unique_id=1913886694]
-node_a = NodePath("..")
-node_b = NodePath("../../Torso_Physics")
-angular_limit_enabled = true
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerBody/Ragdoll/Torso/Abdomen_Physics" unique_id=1570753308]
-position = Vector2(0, 23)
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="PlayerBody/Ragdoll/Torso/Abdomen2_Physics" unique_id=2067522783]
+position = Vector2(0, 21.999998)
 rotation = 1.5707964
 shape = SubResource("CapsuleShape2D_mmwog")
 
-[node name="Abdomen_Sprite2" type="Sprite2D" parent="PlayerBody/Ragdoll/Torso/Abdomen_Physics" unique_id=1917151003]
+[node name="Abdomen_Sprite3" type="Sprite2D" parent="PlayerBody/Ragdoll/Torso/Abdomen2_Physics" unique_id=1551878096]
 z_index = 1
+position = Vector2(0, -1)
 scale = Vector2(0.3999939, 0.3999939)
 texture = ExtResource("30_b8hi5")
 offset = Vector2(24.424694, 51.63495)
 region_enabled = true
 region_rect = Rect2(508, 547, 140, 151)
 
+[node name="Abdomen_Root_Pin2" type="PinJoint2D" parent="PlayerBody/Ragdoll/Torso/Abdomen2_Physics" unique_id=950144043]
+position = Vector2(0, 45)
+node_a = NodePath("../../../Root")
+node_b = NodePath("..")
+angular_limit_enabled = true
+angular_limit_lower = -3.1415927
+angular_limit_upper = 3.1415927
+
+[node name="Torso2_Physics" type="RigidBody2D" parent="PlayerBody/Ragdoll/Torso" unique_id=997494969]
+collision_layer = 512
+collision_mask = 33024
+mass = 5.0
+angular_damp = 5.0
+
+[node name="Sternum_Abdoment_Pin_2" type="PinJoint2D" parent="PlayerBody/Ragdoll/Torso/Torso2_Physics" unique_id=234211932]
+node_a = NodePath("../../../Head/Neck_Physics")
+node_b = NodePath("..")
+angular_limit_enabled = true
+angular_limit_lower = -2.0943952
+angular_limit_upper = 2.0943952
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="PlayerBody/Ragdoll/Torso/Torso2_Physics" unique_id=1853237237]
+position = Vector2(0, 30)
+shape = SubResource("CapsuleShape2D_mmwog")
+
+[node name="Abdomen_Root_Pin2" type="PinJoint2D" parent="PlayerBody/Ragdoll/Torso/Torso2_Physics" unique_id=227268781]
+position = Vector2(0, 58)
+node_a = NodePath("../../Abdomen2_Physics")
+node_b = NodePath("..")
+angular_limit_enabled = true
+angular_limit_lower = -3.1415927
+angular_limit_upper = 3.1415927
+
+[node name="Torso3" type="Sprite2D" parent="PlayerBody/Ragdoll/Torso/Torso2_Physics" unique_id=764230273]
+z_index = 2
+position = Vector2(0.9999981, 18.001312)
+scale = Vector2(0.3999939, 0.3999939)
+texture = ExtResource("30_b8hi5")
+offset = Vector2(30.000454, 15.003662)
+region_enabled = true
+region_rect = Rect2(490, 316, 160, 194)
+
+[node name="Jetpack3" type="Sprite2D" parent="PlayerBody/Ragdoll/Torso/Torso2_Physics" unique_id=1346191763]
+z_index = 1
+position = Vector2(0.9999943, 17.999939)
+scale = Vector2(0.3999939, 0.3999939)
+texture = ExtResource("30_b8hi5")
+offset = Vector2(-70.00107, 40.007477)
+region_enabled = true
+region_rect = Rect2(394, 380, 75, 214)
+
 [node name="FacingPivot" type="Node2D" parent="PlayerBody" unique_id=786688240]
 
 [node name="Detection" type="Node2D" parent="PlayerBody/FacingPivot" unique_id=1054909727]
-visible = false
 
 [node name="HazardDetector" type="Area2D" parent="PlayerBody/FacingPivot/Detection" unique_id=187329462]
 collision_mask = 9
@@ -1945,6 +1969,7 @@ texture = ExtResource("24_g4c7l")
 texture_scale = 0.5
 
 [node name="Armature" type="Node2D" parent="PlayerBody/FacingPivot" unique_id=1602337061]
+visible = false
 
 [node name="Skeleton2D" type="Skeleton2D" parent="PlayerBody/FacingPivot/Armature" unique_id=1739330150]
 scale = Vector2(0.9999999, 0.9999999)
@@ -1963,7 +1988,7 @@ position = Vector2(0, -18.999634)
 rotation = -1.5707964
 rest = Transform2D(-4.371139e-08, -1, 1, -4.371139e-08, 0, -18.999634)
 script = ExtResource("32_gswnw")
-physics_body = NodePath("../../../../../Ragdoll/Torso/Abdomen_Physics")
+physics_body = NodePath("")
 position_body = NodePath("../../../../../Ragdoll/Root")
 rotation_compensation = 270.0
 bone_groups = 16
@@ -1984,8 +2009,8 @@ position = Vector2(26.999756, 0)
 rotation = 1.5707964
 rest = Transform2D(-4.371139e-08, 1, -1, -4.371139e-08, 26.999756, 0)
 script = ExtResource("32_gswnw")
-physics_body = NodePath("../../../../../../Ragdoll/Torso/Torso_Physics")
-position_body = NodePath("../../../../../../Ragdoll/Torso/Abdomen_Physics")
+physics_body = NodePath("")
+position_body = NodePath("")
 inverted_scale_x_rotation_compensation = 180.0
 bone_groups = 256
 metadata/_custom_type_script = "uid://cns3xkrq4cwa4"
@@ -2336,7 +2361,7 @@ can_rotate = true
 follow_parent_rotation = true
 pivot = NodePath("../..")
 
-[node name="FootBack" parent="PlayerBody/FacingPivot/PoseController" unique_id=1591964902 node_paths=PackedStringArray("slave", "slave_parent", "sibling") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
+[node name="FootBack" parent="PlayerBody/FacingPivot/PoseController" unique_id=1591964902 node_paths=PackedStringArray("slave", "slave_parent", "sibling", "pivot") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
 position = Vector2(-97.14282, 53.07141)
 rotation = 1.5707964
 slave = NodePath("../../../Ragdoll/Leg_Back/Foot_Back_Physics")
@@ -2344,6 +2369,7 @@ slave_parent = NodePath("../../../Ragdoll/Leg_Back/Calf_Back_Physics")
 sibling = NodePath("../FootFront")
 can_rotate = true
 follow_parent_rotation = true
+pivot = NodePath("../..")
 
 [node name="FootFront" parent="PlayerBody/FacingPivot/PoseController" unique_id=960569227 node_paths=PackedStringArray("slave", "slave_parent", "sibling") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
 position = Vector2(88.57141, 139.7857)
@@ -2363,7 +2389,7 @@ invert_rotation_on_flip = true
 position = Vector2(8.353577, -93.02951)
 rotation = -0.0034784384
 slave = NodePath("../../../Ragdoll/Head/Head_Physics")
-slave_parent = NodePath("../../../Ragdoll/Torso/Torso_Physics")
+slave_parent = NodePath("")
 can_rotate = true
 follow_parent_rotation = true
 pivot = NodePath("../..")
@@ -2371,7 +2397,40 @@ pivot = NodePath("../..")
 [node name="Torso" parent="PlayerBody/FacingPivot/PoseController" unique_id=1164425788 node_paths=PackedStringArray("slave", "pivot") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
 position = Vector2(0, -116)
 rotation = -0.0034784384
-slave = NodePath("../../../Ragdoll/Torso/Torso_Physics")
+slave = NodePath("")
+can_rotate = true
+is_controlled = false
+pivot = NodePath("../..")
+invert_rotation_on_flip = true
+
+[node name="Adbomen" parent="PlayerBody/FacingPivot/PoseController" unique_id=881103751 node_paths=PackedStringArray("slave", "pivot") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
+position = Vector2(0, -116)
+rotation = -0.0034784384
+slave = NodePath("")
+can_rotate = true
+is_controlled = false
+pivot = NodePath("../..")
+invert_rotation_on_flip = true
+
+[node name="Sternum" parent="PlayerBody/FacingPivot/PoseController" unique_id=226669695 node_paths=PackedStringArray("slave", "pivot") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
+position = Vector2(0, -116)
+rotation = -0.0034784384
+slave = NodePath("")
+pivot = NodePath("../..")
+
+[node name="HipBack" parent="PlayerBody/FacingPivot/PoseController" unique_id=1321901073 node_paths=PackedStringArray("slave", "pivot") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
+position = Vector2(0, -116)
+rotation = -0.0034784384
+slave = NodePath("../../../Ragdoll/Leg_Back/Hip_Back_Physics")
+can_rotate = true
+is_controlled = false
+pivot = NodePath("../..")
+invert_rotation_on_flip = true
+
+[node name="HipFront" parent="PlayerBody/FacingPivot/PoseController" unique_id=2121689421 node_paths=PackedStringArray("slave", "pivot") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
+position = Vector2(0, -116)
+rotation = -0.0034784384
+slave = NodePath("../../../Ragdoll/Leg_Front/Hip_Front_Physics")
 can_rotate = true
 is_controlled = false
 pivot = NodePath("../..")
@@ -2380,7 +2439,9 @@ invert_rotation_on_flip = true
 [node name="Root" parent="PlayerBody/FacingPivot/PoseController" unique_id=219274694 node_paths=PackedStringArray("slave", "pivot") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
 position = Vector2(-5.7142334, 18.571426)
 slave = NodePath("../../../Ragdoll/Root")
+can_rotate = true
 pivot = NodePath("../..")
+use_lock_x = true
 
 [node name="AnimationTree" type="AnimationTree" parent="PlayerBody" unique_id=1787523656]
 tree_root = SubResource("AnimationNodeBlendTree_dx5ib")

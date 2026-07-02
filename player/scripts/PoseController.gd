@@ -107,10 +107,15 @@ func _input(event: InputEvent) -> void:
 					KEY_RIGHT: motion.x = nudge_amt
 					
 				for m in active_markers:
-					m.global_position += motion
+					# 🆕 Calculate desired position, but enforce locks before moving
+					var new_pos = m.global_position + motion
+					if m.use_lock_x: new_pos.x = m.lock_x_val
+					if m.use_lock_y: new_pos.y = m.lock_y_val
+					
+					m.global_position = new_pos
+					
 					if pose_hud and pose_hud.record_check.button_pressed:
-						pose_hud._on_marker_save_requested(m)			
-				
+						pose_hud._on_marker_save_requested(m)				
 				get_viewport().set_input_as_handled()
 				return
 			

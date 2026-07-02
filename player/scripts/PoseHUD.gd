@@ -178,10 +178,17 @@ func _setup_part_table(markers: Array[PoseMarker]) -> void:
 		
 		var lock_x = marker.get("lock_x") if "lock_x" in marker else false
 		var lock_y = marker.get("lock_y") if "lock_y" in marker else false
+	
+		# 🆕 Cols 3-4: Lock X/Y (String Values)
+		# Shows the number if locked, or an empty string if unlocked
+		row.set_cell_mode(3, TreeItem.CELL_MODE_STRING)
+		row.set_text(3, str(marker.lock_x_val) if marker.use_lock_x else "")
+		row.set_editable(3, true)
 		
-		_create_tree_checkbox(row, 3, lock_x)
-		_create_tree_checkbox(row, 4, lock_y)
-		
+		row.set_cell_mode(4, TreeItem.CELL_MODE_STRING)
+		row.set_text(4, str(marker.lock_y_val) if marker.use_lock_y else "")
+		row.set_editable(4, true)
+				
 func _create_tree_checkbox(item: TreeItem, column: int, checked: bool) -> void:
 	item.set_cell_mode(column, TreeItem.CELL_MODE_CHECK)
 	item.set_checked(column, checked)
@@ -279,9 +286,29 @@ func _on_table_cell_edited() -> void:
 			if marker.is_controlled: marker.take_control()
 			else: marker.release_control()
 		2: marker.follow_parent_rotation = edited_item.is_checked(col)
-		3: if "lock_x" in marker: marker.set("lock_x", edited_item.is_checked(col))
-		4: if "lock_y" in marker: marker.set("lock_y", edited_item.is_checked(col))
-
+		3: 
+			var val_str = edited_item.get_text(col).strip_edges()
+			if val_str == "":
+				marker.use_lock_x = false
+			elif val_str.is_valid_float():
+				marker.use_lock_x = true
+				marker.lock_x_val = val_str.to_float()
+				marker.global_position.x = marker.lock_x_val
+			else:
+				# Revert text if the user typed random letters
+				edited_item.set_text(col, str(marker.lock_x_val) if marker.use_lock_x else "")
+				
+		4: 
+			var val_str = edited_item.get_text(col).strip_edges()
+			if val_str == "":
+				marker.use_lock_y = false
+			elif val_str.is_valid_float():
+				marker.use_lock_y = true
+				marker.lock_y_val = val_str.to_float()
+				marker.global_position.y = marker.lock_y_val
+			else:
+				# Revert text if the user typed random letters
+				edited_item.set_text(col, str(marker.lock_y_val) if marker.use_lock_y else "")
 # 🆕 UPDATED: Iterates array for swapping
 func _on_swap_sibling_pressed():
 	if not pose_controller or pose_controller.active_markers.is_empty(): return

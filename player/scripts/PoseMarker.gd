@@ -28,6 +28,12 @@ signal dragged_rotation(delta_angle: float)
 @export var is_dev_mode: bool = true
 @export var drag_threshold: float = 3.0
 
+@export_category("Axis Locks")
+@export var use_lock_x: bool = false
+@export var lock_x_val: float = 0.0
+@export var use_lock_y: bool = false
+@export var lock_y_val: float = 0.0
+
 # Interaction States
 var is_dragging_position: bool = false
 var is_dragging_rotation: bool = false
@@ -101,9 +107,14 @@ func _process(_delta: float) -> void:
 			_capture_original_state()
 			is_dragging_rotation = true
 	
-	# 🆕 Translocation updates with Delta Broadcasting
+# 🆕 Translocation updates with Delta Broadcasting and Axis Locks
 	if is_dragging_position:
 		var target_pos = mouse_pos - _drag_offset
+		
+		# Clamp the target position if locks are active
+		if use_lock_x: target_pos.x = lock_x_val
+		if use_lock_y: target_pos.y = lock_y_val
+		
 		var delta_pos = target_pos - global_position
 		if delta_pos != Vector2.ZERO:
 			global_position = target_pos
@@ -115,7 +126,11 @@ func _process(_delta: float) -> void:
 		if delta_rot != 0.0:
 			global_rotation = target_rot
 			dragged_rotation.emit(delta_rot)
-
+			
+	# 🆕 Hard-enforce locks at the end of the frame (stops physics drifting)
+	if use_lock_x: global_position.x = lock_x_val
+	if use_lock_y: global_position.y = lock_y_val
+	
 func take_control():
 	if slave:
 		slave.freeze = true
