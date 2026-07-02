@@ -3,7 +3,7 @@ extends CanvasLayer
 
 signal playback_started
 
-# 🆕 The two pillars of our new architecture
+# The two pillars of our new architecture
 @export var pose_controller: PoseController 
 @export var timeline: TimelineManager
 
@@ -40,6 +40,10 @@ signal playback_started
 
 @onready var playback_controls_container: Control = %PlaybackControls
 
+var _updating_from_ui: bool = false
+var _updating_from_controller: bool = false
+var _tree_selection_queued: bool = false
+
 func _ready() -> void:
 	record_check.button_pressed = true
 	posing_check.button_pressed = true
@@ -65,8 +69,6 @@ func _ready() -> void:
 	btn_export.pressed.connect(_on_export_pressed)
 	btn_swap_sibling.pressed.connect(_on_swap_sibling_pressed)
 	
-	
-	
 	btn_play.pressed.connect(_on_play_pressed)
 	btn_stop.pressed.connect(_on_stop_pressed)
 	btn_rewind.pressed.connect(_on_rewind_pressed)
@@ -82,8 +84,6 @@ func _ready() -> void:
 
 	_setup_animation_table()
 
-# Inside PoseHUD.gd
-
 @onready var anim_table: Tree = %AnimTable
 
 func _setup_animation_table() -> void:
@@ -92,13 +92,8 @@ func _setup_animation_table() -> void:
 	anim_table.columns = 4
 	anim_table.hide_root = true
 	
-	# Structure layout columns
-	anim_table.set_column_expand(0, true) # Animation title stretches
-	#anim_table.set_column_custom_minimum_width(1, 60) # Speed
-	#anim_table.set_column_custom_minimum_width(2, 60) # Steps
-	#anim_table.set_column_custom_minimum_width(3, 50) # Loop Check
+	anim_table.set_column_expand(0, true) 
 	
-	# Set Headers
 	anim_table.create_item()
 	anim_table.set_column_title(0, "Animation")
 	anim_table.set_column_title(1, "Speed")
@@ -121,38 +116,30 @@ func _populate_anim_table() -> void:
 	for anim_name in anim_list:
 		var anim = timeline.anim_player.get_animation(anim_name)
 		var row = anim_table.create_item(root)
-		row.set_metadata(0, anim_name) # Track the string key name directly
+		row.set_metadata(0, anim_name) 
 		
-		# Col 0: Name string entry
 		row.set_text(0, anim_name)
 		row.set_selectable(0, true)
 		
-		# Col 1: Playback speed scale value
-		# Note: pulling default speed scale or hardcoded fallback value 1.0
 		row.set_text(1, "1.0") 
 		row.set_editable(1, true)
 		
-		# Col 2: Duration converted dynamically to total steps
 		var total_steps = _time_to_steps(anim.length)
 		row.set_text(2, str(total_steps))
 		row.set_editable(2, true)
 		
-		# Col 3: Loop State check box flag configuration
 		var is_looping = anim.loop_mode != Animation.LOOP_NONE
 		row.set_cell_mode(3, TreeItem.CELL_MODE_CHECK)
 		row.set_checked(3, is_looping)
 		row.set_editable(3, true)
 		
-		# Auto-select the currently active animation row visually
 		if anim_name == active_anim_name:
 			row.select(0)
 
-## Converts an animation length in seconds to total steps
 func _time_to_steps(duration_seconds: float) -> int:
 	if not timeline or timeline.step_duration <= 0: return 0
 	return int(round(duration_seconds / timeline.step_duration))
 
-## Converts a step count back to seconds
 func _steps_to_time(steps: int) -> float:
 	if not timeline: return 0.0
 	return steps * timeline.step_duration
@@ -165,63 +152,54 @@ func _setup_part_table(markers: Array[PoseMarker]) -> void:
 	part_table.hide_root = true
 	
 	part_table.set_column_custom_minimum_width(0, 100)
-	part_table.set_column_expand(0, true) # Animation title stretches
+	part_table.set_column_expand(0, true) 
 
-	# Create table header labels
 	var root = part_table.create_item()
 	part_table.set_column_title(0, "")
-	part_table.set_column_title(1, "✧") #controlled
-	part_table.set_column_title(2, "⬩➤") #follow parent rotation
-	part_table.set_column_title(3, "ꗃx") #lock x
-	part_table.set_column_title(4, "ꗃy") #lock y
+	part_table.set_column_title(1, "✧") 
+	part_table.set_column_title(2, "⬩➤") 
+	part_table.set_column_title(3, "ꗃx") 
+	part_table.set_column_title(4, "ꗃy") 
 	part_table.column_titles_visible = true
 	
-	# Wire selection and column checkbox modification clicks
 	part_table.item_selected.connect(_on_table_part_selected)
+	part_table.multi_selected.connect(_on_table_part_selected) # 🆕 Add this!
 	part_table.item_edited.connect(_on_table_cell_edited)
 	
-	# Populate rows dynamically out of the controller's engine array
 	for marker in markers:
 		var row = part_table.create_item(root)
-		row.set_metadata(0, marker) # Keep a direct reference to the object
+		row.set_metadata(0, marker) 
 		
-		# Col 0: Title Text
 		row.set_text(0, marker.name)
 		row.set_selectable(0, true)
 		
-		# Cols 1-5: Checkboxes
 		_create_tree_checkbox(row, 1, marker.is_controlled)
 		_create_tree_checkbox(row, 2, marker.follow_parent_rotation)
 		
-		# (Note: Ensure your PoseMarker class exports these properties if needed)
 		var lock_x = marker.get("lock_x") if "lock_x" in marker else false
 		var lock_y = marker.get("lock_y") if "lock_y" in marker else false
 		
 		_create_tree_checkbox(row, 3, lock_x)
 		_create_tree_checkbox(row, 4, lock_y)
 		
-
 func _create_tree_checkbox(item: TreeItem, column: int, checked: bool) -> void:
 	item.set_cell_mode(column, TreeItem.CELL_MODE_CHECK)
 	item.set_checked(column, checked)
 	item.set_editable(column, true)
 
-## Fires when you click the row title string to switch target tracks
 func _on_anim_row_selected() -> void:
 	var selected_item = anim_table.get_selected()
 	if not selected_item: return
 	
 	var anim_name = selected_item.get_metadata(0) as String
 	
-	# Find index matching your dropdown or switch directly via code interface
 	if anim_dropdown:
 		for i in range(anim_dropdown.item_count):
 			if anim_dropdown.get_item_text(i) == anim_name:
 				anim_dropdown.select(i)
-				_on_animation_changed(i) # Trigger the hot-swap system we built yesterday
+				_on_animation_changed(i)
 				break
 
-## Fires when values or checkbox configurations shift inside your rows
 func _on_anim_cell_edited() -> void:
 	var edited_item = anim_table.get_edited()
 	var col = anim_table.get_edited_column()
@@ -232,36 +210,61 @@ func _on_anim_cell_edited() -> void:
 	
 	match col:
 		1:
-			# Update playback speed context safely
 			var speed_val = float(edited_item.get_text(col))
 			if timeline.anim_player:
 				timeline.anim_player.speed_scale = speed_val
 		2:
-			# Update overall duration length mapping using raw steps conversion
 			var target_steps = int(edited_item.get_text(col))
 			var next_time = _steps_to_time(target_steps)
 			
 			timeline.set_length(anim_name, next_time)
 			
-			# If it's the current running profile, rebuild the layout dots matrix instantly
 			if anim_name == _get_current_anim():
 				duration_box.set_value_no_signal(next_time)
 				_build_step_grid(next_time)
 				_update_grid_visuals()
 		3:
-			# Toggle loop behaviors cleanly between built-in engine parameters
 			var should_loop = edited_item.is_checked(col)
 			anim.loop_mode = Animation.LOOP_LINEAR if should_loop else Animation.LOOP_NONE
 
-## Fires whenever you click a row text title
-func _on_table_part_selected() -> void:
-	var selected_item = part_table.get_selected()
-	if selected_item:
-		var target_marker = selected_item.get_metadata(0) as PoseMarker
-		if pose_controller and target_marker:
-			pose_controller.set_active_marker(target_marker)
+# 🆕 The Gatekeeper: Catches the signal spam and defers it
+func _on_table_part_selected(item: TreeItem = null, column: int = 0, selected: bool = false) -> void:
+	if _updating_from_controller: return 
+	
+	# Only queue the scrape once per frame, even if Godot fires 50 signals
+	if not _tree_selection_queued:
+		_tree_selection_queued = true
+		call_deferred("_process_queued_tree_selection")
 
-## Fires whenever any checkbox toggles or offset numbers are updated in the table row
+# 🆕 The Processor: Runs exactly once at the end of the frame
+func _process_queued_tree_selection() -> void:
+	_tree_selection_queued = false # Reset the debounce
+	_updating_from_ui = true # Engage UI Lock
+	
+	var selected_markers: Array[PoseMarker] = []
+	var current_item = part_table.get_next_selected(null)
+	
+	# Scrape Godot's Tree node safely now that it is done updating
+	while current_item:
+		var marker = current_item.get_metadata(0) as PoseMarker
+		if marker:
+			selected_markers.append(marker)
+		current_item = part_table.get_next_selected(current_item)
+		
+	if pose_controller:
+		pose_controller.set_active_markers(selected_markers)
+		
+		var primary = pose_controller.get_primary_marker()
+		if primary:
+			if primary.slave:
+				%PartLabel.text = primary.slave.name
+			else:
+				%PartLabel.text = primary.name
+		else:
+			%PartLabel.text = "None"
+			
+	_updating_from_ui = false # Release UI Lock
+									
 func _on_table_cell_edited() -> void:
 	var edited_item = part_table.get_edited()
 	var col = part_table.get_edited_column()
@@ -279,9 +282,11 @@ func _on_table_cell_edited() -> void:
 		3: if "lock_x" in marker: marker.set("lock_x", edited_item.is_checked(col))
 		4: if "lock_y" in marker: marker.set("lock_y", edited_item.is_checked(col))
 
+# 🆕 UPDATED: Iterates array for swapping
 func _on_swap_sibling_pressed():
-	if not pose_controller or not pose_controller.active_marker: return
-	pose_controller.swap_with_sibling(pose_controller.active_marker)
+	if not pose_controller or pose_controller.active_markers.is_empty(): return
+	for m in pose_controller.active_markers:
+		pose_controller.swap_with_sibling(m)
 
 func _on_speed_box_changed(val: float):
 	if timeline.anim_player:
@@ -291,21 +296,28 @@ func _on_speed_box_changed(val: float):
 		timeline.key_speed_scale(anim, val)
 		_update_grid_visuals()
 
-func _on_active_marker_changed(marker: PoseMarker) -> void:
+func _on_active_marker_changed(_primary_marker: PoseMarker) -> void:
 	if timeline.anim_player and timeline.anim_player.is_playing():
 		timeline.stop()
 
 	if not part_table: return
-	# Loop and match row objects to highlight the correct row inside the table list layout
-	var current_item = part_table.get_root().get_first_child()
-	while current_item:
-		if current_item.get_metadata(0) == marker:
-			current_item.select(0) # Visually highlights the cell row row tracking match target node
-			break
-		current_item = current_item.get_next()
+	
+	# ONLY force a table redraw if the change came from the viewport, NOT from clicking the table itself
+	if not _updating_from_ui:
+		_updating_from_controller = true
+		
+		part_table.deselect_all()
+		var current_item = part_table.get_root().get_first_child()
+		while current_item:
+			var marker = current_item.get_metadata(0) as PoseMarker
+			if pose_controller and marker in pose_controller.active_markers:
+				current_item.select(0)
+			current_item = current_item.get_next()
+			
+		_updating_from_controller = false
 		
 	_update_grid_visuals()
-
+	
 func _update_bone_info_checkboxes(marker: PoseMarker):
 	if marker:
 		controlled_check.set_pressed_no_signal(marker.is_controlled)
@@ -319,10 +331,10 @@ func _update_bone_info_checkboxes(marker: PoseMarker):
 func _process(_delta: float) -> void:
 	if not timeline or not timeline.anim_player: return
 	
-	var active_marker = pose_controller.active_marker if pose_controller else null
+	# 🆕 Read ONLY the primary marker for UI visual updates
+	var primary_marker = pose_controller.get_primary_marker() if pose_controller else null
 	var is_posing = posing_check.button_pressed
 
-	# Keep UI in sync with playing animation
 	if timeline.anim_player.is_playing():
 		var playing_anim = timeline.anim_player.current_animation
 		if not is_posing and playing_anim != "":
@@ -335,7 +347,6 @@ func _process(_delta: float) -> void:
 						_build_step_grid(current_anim_len)
 					break
 		
-		# Sync step sequencer visually
 		var playing_step = timeline.get_current_playback_step()
 		var max_steps = max(0, step_grid.get_child_count() - 1)
 		playing_step = clampi(playing_step, 0, max_steps)
@@ -344,20 +355,23 @@ func _process(_delta: float) -> void:
 			timeline.current_step = playing_step
 			_update_grid_visuals()
 			if not is_posing:
-				_update_bone_info_checkboxes(active_marker)
+				_update_bone_info_checkboxes(primary_marker)
 
 	# Read Realtime Physics Data for HUD
-	if active_marker and active_marker.slave:
-		var pos = active_marker.global_position
+	if primary_marker and primary_marker.slave:
+		var pos = primary_marker.global_position
 		pos_label.text = "    ⚲    Position: (%d, %d)" % [round(pos.x), round(pos.y)]
-		rot_label.text = "    ↻    Rotation: %0.1f°" % rad_to_deg(active_marker.global_rotation)
+		rot_label.text = "    ↻    Rotation: %0.1f°" % rad_to_deg(primary_marker.global_rotation)
+	else:
+		pos_label.text = "    ⚲    Position: --"
+		rot_label.text = "    ↻    Rotation: --"
 
-# --- UI TOGGLES (Passes commands to the Controller) ---
+# --- UI TOGGLES ---
 
 func _on_controlled_toggled(toggled_on: bool) -> void:
 	if pose_controller:
 		pose_controller.toggle_controlled(toggled_on)
-		_update_bone_info_checkboxes(pose_controller.active_marker)
+		_update_bone_info_checkboxes(pose_controller.get_primary_marker())
 		if record_check.button_pressed: _on_key_controlled_pressed()
 
 func _on_rotation_toggled(toggled_on: bool) -> void:
@@ -382,68 +396,61 @@ func _on_pose_toggled(is_posing: bool) -> void:
 	else:
 		if playback_controls_container: playback_controls_container.visible = true
 
-# --- KEYING ACTIONS (Passes commands to the TimelineManager) ---
+# --- KEYING ACTIONS ---
+# 🆕 ALL KEYING FUNCTIONS NOW ITERATE THROUGH THE active_markers ARRAY
 
 func _get_current_anim() -> String:
 	return anim_dropdown.get_item_text(anim_dropdown.selected) if anim_dropdown.item_count > 0 else ""
 
 func _on_key_controlled_pressed():
-	var marker = pose_controller.active_marker if pose_controller else null
-	if marker:
-		var anim = _get_current_anim()
+	if not pose_controller: return
+	var anim = _get_current_anim()
+	for marker in pose_controller.active_markers:
 		timeline.key_property(anim, marker, ":is_controlled", controlled_check.button_pressed)
-		timeline.key_property(anim, marker.slave, ":freeze", marker.slave.freeze)
-		_update_grid_visuals()
+		if marker.slave:
+			timeline.key_property(anim, marker.slave, ":freeze", marker.slave.freeze)
+	_update_grid_visuals()
 
 func _on_key_follow_rotation_pressed():
-	var marker = pose_controller.active_marker if pose_controller else null
-	if marker:
-		timeline.key_property(_get_current_anim(), marker, ":follow_parent_rotation", follow_rotation_check.button_pressed)
-		_update_grid_visuals()
+	if not pose_controller: return
+	var anim = _get_current_anim()
+	for marker in pose_controller.active_markers:
+		timeline.key_property(anim, marker, ":follow_parent_rotation", follow_rotation_check.button_pressed)
+	_update_grid_visuals()
 
 func _on_key_position_pressed():
-	var marker = pose_controller.active_marker if pose_controller else null
-	if marker:
-		timeline.key_property(_get_current_anim(), marker, ":position", marker.position)
-		_update_grid_visuals()
+	if not pose_controller: return
+	var anim = _get_current_anim()
+	for marker in pose_controller.active_markers:
+		timeline.key_property(anim, marker, ":position", marker.position)
+	_update_grid_visuals()
 
 func _on_key_rotation_pressed():
-	var marker = pose_controller.active_marker if pose_controller else null
-	if marker:
-		timeline.key_property(_get_current_anim(), marker, ":rotation", marker.rotation)
-		_update_grid_visuals()
+	if not pose_controller: return
+	var anim = _get_current_anim()
+	for marker in pose_controller.active_markers:
+		timeline.key_property(anim, marker, ":rotation", marker.rotation)
+	_update_grid_visuals()
 
 func _on_key_freeze_pressed():
-	var marker = pose_controller.active_marker if pose_controller else null
-	if marker and marker.slave:
-		timeline.key_property(_get_current_anim(), marker.slave, ":freeze", freeze_check.button_pressed)
-		_update_grid_visuals()
+	if not pose_controller: return
+	var anim = _get_current_anim()
+	for marker in pose_controller.active_markers:
+		if marker.slave:
+			timeline.key_property(anim, marker.slave, ":freeze", freeze_check.button_pressed)
+	_update_grid_visuals()
 
 func _on_key_all_pressed():
 	if not pose_controller: return
 	var anim = _get_current_anim()
 	
 	for m in pose_controller.all_markers:
-		# 🆕 FILTER: If this marker is NOT controlled, skip keying its transforms entirely!
-		#if not m.is_controlled:
-			# Optional: Still key its control/freeze state flags so the animation player 
-			# knows exactly when it hands control back over to physics
-			#timeline.key_property(anim, m, ":is_controlled", m.is_controlled)
-			#if m.slave:
-			#	timeline.key_property(anim, m.slave, ":freeze", m.slave.freeze)
-			#continue
-			
-		# Active, manually positioned limbs get full smart keying checks
-		#timeline.key_property(anim, m, ":is_controlled", m.is_controlled)
-		#timeline.key_property(anim, m, ":follow_parent_rotation", m.follow_parent_rotation)
 		timeline.key_property(anim, m, ":position", m.position)
 		if not m.follow_parent_rotation:
 			timeline.key_property(anim, m, ":rotation", m.rotation)
-		#if m.slave:
-		#	timeline.key_property(anim, m.slave, ":freeze", m.slave.freeze)
 			
 	_update_grid_visuals()
-# Called when the physical marker is dragged in the 2D view and "saved"
+
 func _on_marker_save_requested(marker: PoseMarker) -> void:
 	if not record_check.button_pressed: return
 	var anim = _get_current_anim()
@@ -452,20 +459,23 @@ func _on_marker_save_requested(marker: PoseMarker) -> void:
 	_update_grid_visuals()
 
 # --- REVERT HANDLERS ---
+# 🆕 RESETS NOW ITERATE THROUGH THE active_markers ARRAY
 
 func _on_reset_position_pressed():
-	var marker = pose_controller.active_marker if pose_controller else null
-	if marker:
-		timeline.remove_keyframe(_get_current_anim(), marker, ":position")
+	if not pose_controller: return
+	var anim = _get_current_anim()
+	for marker in pose_controller.active_markers:
+		timeline.remove_keyframe(anim, marker, ":position")
 		if marker.has_method("revert_to_original"): marker.revert_to_original()
-		_update_grid_visuals()
+	_update_grid_visuals()
 
 func _on_reset_rotation_pressed():
-	var marker = pose_controller.active_marker if pose_controller else null
-	if marker:
-		timeline.remove_keyframe(_get_current_anim(), marker, ":rotation")
+	if not pose_controller: return
+	var anim = _get_current_anim()
+	for marker in pose_controller.active_markers:
+		timeline.remove_keyframe(anim, marker, ":rotation")
 		if marker.has_method("revert_to_original"): marker.revert_to_original()
-		_update_grid_visuals()
+	_update_grid_visuals()
 
 # --- STEP GRID & ANIMATION TIMELINE ---
 
@@ -488,7 +498,7 @@ func _build_step_grid(duration: float) -> void:
 	
 	for i in range(num_steps):
 		var step_rect = ColorRect.new()
-		step_rect.custom_minimum_size = Vector2(28, 28) 
+		step_rect.custom_minimum_size = Vector2(20, 20) 
 		var is_dark_group = (i / 4) % 2 == 0
 		var base_color = Color(0.2, 0.2, 0.2) if is_dark_group else Color(0.35, 0.35, 0.35)
 		
@@ -513,49 +523,40 @@ func _on_step_clicked(event: InputEvent, step_index: int) -> void:
 	if not posing_check.button_pressed: return
 	
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
-		# 🆕 Check if Ctrl (or Cmd on Mac) is being held down during the click
 		var ctrl_pressed = event.is_command_or_control_pressed()
 		
 		if ctrl_pressed:
-			# --- 👻 GHOST SELECTION MODE ---
-			# Update the timeline selection index visually without moving the characters
 			timeline.current_step = step_index
 		else:
-			# --- 🔄 STANDARD SHUTTLE MODE ---
-			# Normal click behavior: select step and scrub the animation player
 			timeline.seek_step(step_index)
 			
-		# Redraw selection bars and lookups instantly
 		_update_grid_visuals()
-		_update_bone_info_checkboxes(pose_controller.active_marker if pose_controller else null)
+		_update_bone_info_checkboxes(pose_controller.get_primary_marker() if pose_controller else null)
 		
 func _update_grid_visuals() -> void:
-	var marker = pose_controller.active_marker if pose_controller else null
+	# 🆕 Display timeline keys strictly for the primary selected limb
+	var primary_marker = pose_controller.get_primary_marker() if pose_controller else null
 	var num_steps = step_grid.get_child_count()
 	
-	# Let the timeline calculate where the keys actually are!
-	var visual_data = timeline.get_step_visual_data(_get_current_anim(), marker, num_steps)
+	var visual_data = timeline.get_step_visual_data(_get_current_anim(), primary_marker, num_steps)
 
 	for i in range(num_steps):
 		var step_rect: ColorRect = step_grid.get_child(i)
 		var dot = step_rect.get_child(0) if step_rect.get_child_count() > 0 else null 
 		
-		# Set selection color
 		if i == timeline.current_step:
-			# 🆕 Calculate exactly where the physical character model is standing in time right now
 			var physical_time = timeline.anim_player.current_animation_position if timeline.anim_player else 0.0
 			var physical_step = int(round(physical_time / timeline.step_duration))
 			
 			if timeline.current_step == physical_step:
-				step_rect.color = Color(0.3, 0.6, 1.0) # Standard Blue (Sync mode - character is here)
+				step_rect.color = Color(0.3, 0.6, 1.0) 
 			else:
-				step_rect.color = Color(0.6, 0.3, 0.8) # Ghost Purple (Ghost mode - character is elsewhere!)
+				step_rect.color = Color(0.6, 0.3, 0.8) 
 		else:
 			step_rect.color = step_rect.get_meta("base_color", Color(0.2, 0.2, 0.2))
 				
 		if not dot: continue
 			
-		# Render the dots based on timeline data
 		var frame_data = visual_data[i]
 		if frame_data["active"]:
 			dot.visible = true
@@ -566,23 +567,18 @@ func _update_grid_visuals() -> void:
 		else:
 			dot.visible = false
 			
-	# 1. Fetch the raw seconds for the currently selected step
 	var current_step_time: float = timeline.current_step * timeline.step_duration
-
-	# 2. Break it down into whole seconds and remaining milliseconds/frames
 	var whole_seconds: int = int(current_step_time)
 	var milliseconds: int = int((current_step_time - whole_seconds) * 100)
 
-	# 3. Format into a clean MM:SS.mm or SS.mm string block
-	# %02d forces two digits with leading zeros (e.g., "02" instead of "2")
 	var timecode_text: String = "%02d:%02d.%02d" % [
-		int(whole_seconds / 60), # Minutes
-		whole_seconds % 60,      # Seconds
-		milliseconds             # Milliseconds / Step fraction
+		int(whole_seconds / 60), 
+		whole_seconds % 60,      
+		milliseconds             
 	]
 
-	# 4. Assign it to your text block node (Change %TimecodeLabel to your actual node name)
-	%TimecodeLabel.text = timecode_text
+	if %TimecodeLabel:
+		%TimecodeLabel.text = timecode_text
 
 func _on_export_pressed() -> void:
 	var current_anim = _get_current_anim()
@@ -603,24 +599,21 @@ func _on_rewind_pressed():
 
 func _on_animation_changed(_index: int) -> void:
 	var current_anim = _get_current_anim()
-	
-	# 🆕 TRACK TRANSITION FIX: Check if the player is currently running
+	%AnimTitle.text = current_anim.get_basename()
 	var was_playing: bool = false
 	if timeline.anim_player:
 		was_playing = timeline.anim_player.is_playing()
 		if was_playing:
-			timeline.stop() # Interrupt the active playback cycle immediately
+			timeline.stop() 
 	
 	if timeline.anim_player and anim_dropdown.item_count > 0:
 		var anim = timeline.anim_player.get_animation(current_anim)
 		duration_box.set_value_no_signal(anim.length)
 		_build_step_grid(anim.length)
 	
-	# If it was playing, hot-swap and keep running the new animation instantly
 	if was_playing:
 		timeline.play(current_anim)
 	else:
-		# Standard behavior: rewind back to frame 0 if stopped
 		_on_rewind_pressed()
 
 func _on_reset_pressed() -> void:

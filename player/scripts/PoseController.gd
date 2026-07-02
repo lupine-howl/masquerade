@@ -1,58 +1,63 @@
 class_name PoseController
 extends Node2D
 
-# 🆕 Broadcasts state changes so the HUD can listen
+# Broadcasts state changes so the HUD can listen
 signal active_marker_changed(marker: PoseMarker)
 signal marker_list_ready(markers: Array[PoseMarker])
 
-var active_marker: PoseMarker = null
+var active_markers: Array[PoseMarker] = []
 var all_markers: Array[PoseMarker] = []
 
 @export var player: CharacterBody2D 
 @export var pose_hud: PoseHUD
 
+# 🆕 Helper to act as the "lead" marker for UI tracking
+func get_primary_marker() -> PoseMarker:
+	return active_markers.back() if not active_markers.is_empty() else null
+
 func _ready() -> void:
-	# Gather markers (Assuming they are children, or you can use your group method)
+	# Gather markers 
 	for child in get_children():
 		if child is PoseMarker:
 			all_markers.append(child)
 			
-			# Listen to the clean signals we set up in the marker
 			child.selected.connect(_on_marker_selected)
 			child.deselected.connect(_on_marker_deselected)
 			child.drag_ended.connect(_on_marker_drag_ended)
+			
+			# 🆕 Connect multi-drag synchronization signals
+			child.dragged_position.connect(_on_marker_dragged_position.bind(child))
+			child.dragged_rotation.connect(_on_marker_dragged_rotation.bind(child))
 			
 	# Tell the HUD the list is ready to be put in the dropdown
 	marker_list_ready.emit(all_markers)
 
 func _input(event: InputEvent) -> void:
-	# Fetch active context parameters safely out of the UI Layer
 	var current_anim = pose_hud._get_current_anim() if pose_hud else ""
 	if current_anim == "" or not pose_hud.timeline: return
 	
 	var timeline = pose_hud.timeline
 	var current_step = timeline.current_step
 	var modifier_pressed = event.is_command_or_control_pressed()
+	var primary_marker = get_primary_marker()
 	
 	# --- 1. GLOBAL / SELECTED TIMELINE CLIPBOARD HOTKEYS (Requires Ctrl/Cmd) ---
 	if event is InputEventKey and event.pressed and modifier_pressed:
 		var shift_pressed = Input.is_key_pressed(KEY_SHIFT)
 		var filter_path = ""
 		
-		# If shift is pressed, calculate the specific track path prefix for the active marker
-		if shift_pressed and active_marker and timeline.anim_player:
+		# If shift is pressed, calculate the specific track path prefix for the primary marker
+		if shift_pressed and primary_marker and timeline.anim_player:
 			var root_node = timeline.anim_player.get_node(timeline.anim_player.root_node)
-			filter_path = str(root_node.get_path_to(active_marker))
+			filter_path = str(root_node.get_path_to(primary_marker))
 		
 		match event.keycode:
 			KEY_C:
-				# 📋 COPY (All tracks OR Filtered Node branch)
 				timeline.copy_step_to_clipboard(current_anim, current_step, filter_path)
 				get_viewport().set_input_as_handled()
 				return
 				
 			KEY_X:
-				# ✂️ CUT (All tracks OR Filtered Node branch)
 				timeline.copy_step_to_clipboard(current_anim, current_step, filter_path)
 				timeline.delete_step_keyframes(current_anim, current_step, filter_path)
 				pose_hud._update_grid_visuals()
@@ -60,26 +65,22 @@ func _input(event: InputEvent) -> void:
 				return
 				
 			KEY_V:
-				# 📥 PASTE (Ctrl + V = standard paste | Ctrl + Shift + V = cross-node paste)
 				filter_path = ""
-				if shift_pressed and active_marker and timeline.anim_player:
+				if shift_pressed and primary_marker and timeline.anim_player:
 					var root_node = timeline.anim_player.get_node(timeline.anim_player.root_node)
-					filter_path = str(root_node.get_path_to(active_marker))
+					filter_path = str(root_node.get_path_to(primary_marker))
 				
-				# Pass the filter path into the updated execution statement
 				timeline.paste_clipboard_to_step(current_anim, current_step, filter_path)
 				pose_hud._update_grid_visuals()
 				get_viewport().set_input_as_handled()
 				return
 								
 			KEY_DELETE, KEY_BACKSPACE:
-				# 🗑️ TARGETED DELETE (Ctrl + Shift + Delete clears only the active limb track)
 				if shift_pressed:
 					timeline.delete_step_keyframes(current_anim, current_step, filter_path)
 					pose_hud._update_grid_visuals()
 					get_viewport().set_input_as_handled()
 					return
-
 
 	# --- 2. SINGLE-PRESS TIMELINE NAVIGATION & ACTIONS (No Ctrl/Cmd) ---
 	if event is InputEventKey and event.pressed and not modifier_pressed:
@@ -90,16 +91,12 @@ func _input(event: InputEvent) -> void:
 			get_viewport().set_input_as_handled()
 			return
 			
-		# 🆕 ARROW KEY NUDGING VS SCRUBBING
+		# 🆕 ARROW KEY NUDGING 
 		elif event.keycode in [KEY_RIGHT, KEY_LEFT, KEY_UP, KEY_DOWN]:
 			var is_posing = pose_hud.posing_check.button_pressed if pose_hud else false
 			
-			if is_posing and active_marker:
-# --- 🛠️ MODE A: NUDGE ACTIVE MARKER ---
-				# Check if Shift is held down for a bigger shuttle multiplier
+			if is_posing and not active_markers.is_empty():
 				var shift_pressed = Input.is_key_pressed(KEY_SHIFT)
-				
-				# Base movement is 1 pixel; holding Shift shifts it to 10 pixels
 				var nudge_amt = 10.0 if shift_pressed else 1.0 
 				var motion = Vector2.ZERO
 				
@@ -109,37 +106,21 @@ func _input(event: InputEvent) -> void:
 					KEY_LEFT:  motion.x = -nudge_amt
 					KEY_RIGHT: motion.x = nudge_amt
 					
-				# Apply position adjustment smoothly
-				active_marker.global_position += motion
+				for m in active_markers:
+					m.global_position += motion
+					if pose_hud and pose_hud.record_check.button_pressed:
+						pose_hud._on_marker_save_requested(m)			
 				
-				# Force the marker to save the change if record mode is active
-				if pose_hud and pose_hud.record_check.button_pressed:
-					pose_hud._on_marker_save_requested(active_marker)			
-			else:
-				# --- 🎞️ MODE B: SCRUB TIMELINE (Fallback when not posing) ---
-				if event.keycode == KEY_UP or event.keycode == KEY_DOWN: return # Ignore vertical keys here
-				
-				var total_steps = pose_hud.step_grid.get_child_count() if pose_hud else 0
-				if total_steps == 0: return
-				
-				var delta = 1 if event.keycode == KEY_RIGHT else -1
-				var next_step = clampi(timeline.current_step + delta, 0, total_steps - 1)
-				
-				timeline.seek_step(next_step)
-				pose_hud._update_grid_visuals()
-				pose_hud._update_bone_info_checkboxes(active_marker)
-				
-			get_viewport().set_input_as_handled()
-			return
+				get_viewport().set_input_as_handled()
+				return
 			
-		# --- Keep Comma/Period hotkeys dedicated strictly to frame stepping ---
 		elif event.keycode == KEY_PERIOD:
 			var total_steps = pose_hud.step_grid.get_child_count() if pose_hud else 0
 			if total_steps == 0: return
 			var next_step = clampi(timeline.current_step + 1, 0, total_steps - 1)
 			timeline.seek_step(next_step)
 			pose_hud._update_grid_visuals()
-			pose_hud._update_bone_info_checkboxes(active_marker)
+			pose_hud._update_bone_info_checkboxes(primary_marker)
 			get_viewport().set_input_as_handled()
 			return
 			
@@ -149,86 +130,123 @@ func _input(event: InputEvent) -> void:
 			var next_step = clampi(timeline.current_step - 1, 0, total_steps - 1)
 			timeline.seek_step(next_step)
 			pose_hud._update_grid_visuals()
-			pose_hud._update_bone_info_checkboxes(active_marker)
-			get_viewport().set_input_as_handled()
-			return
-	# --- 2. SINGLE-PRESS DELETE HOTKEY (Must NOT have Ctrl/Cmd pressed) ---
-	if event is InputEventKey and event.pressed and not modifier_pressed:
-		if event.keycode == KEY_DELETE or event.keycode == KEY_BACKSPACE:
-			# Wipes all keyframes on this step entirely
-			timeline.delete_step_keyframes(current_anim, current_step)
-			pose_hud._update_grid_visuals()
+			pose_hud._update_bone_info_checkboxes(primary_marker)
 			get_viewport().set_input_as_handled()
 			return
 
-	# --- 3. ACTIVE MARKER SELECTION HOTKEYS ---
-	# Only allow the following filters if a physical limb marker is highlighted
-	if not active_marker: return
-	
-	# ESCAPE key to revert/cancel changes
-	if event.is_action_pressed("ui_cancel") or (event is InputEventKey and event.keycode == KEY_ESCAPE and event.pressed):
-		if active_marker.has_method("revert_to_original"):
-			active_marker.revert_to_original()
-			get_viewport().set_input_as_handled()
-			
-	# 'K' key to manually commit/keyframe the active marker's pose
-	elif event is InputEventKey and event.keycode == KEY_K and event.pressed:
-		if pose_hud and pose_hud.has_method("_on_marker_save_requested"):
-			pose_hud._on_marker_save_requested(active_marker)
-			
-			if active_marker.has_method("_reset_marker_ui"):
-				active_marker._reset_marker_ui()
+# --- 3. KEYFRAME & SELECTION HOTKEYS ---
+
+	# 'K' key to manually commit a keyframe
+	if event is InputEventKey and event.physical_keycode == KEY_K and event.pressed and not event.echo:
+		if active_markers.is_empty():
+			# 🆕 Global Key All: If nothing is selected, K keys the entire body!
+			if pose_hud and pose_hud.has_method("_on_key_all_pressed"):
+				pose_hud._on_key_all_pressed()
+		else:
+			# 🆕 Targeted Key: Bypasses the "Auto-Record" checkbox completely
+			for m in active_markers:
+				timeline.key_property(current_anim, m, ":position", m.position)
+				if not m.follow_parent_rotation:
+					timeline.key_property(current_anim, m, ":rotation", m.rotation)
+					
+				if m.has_method("_reset_marker_ui"):
+					m._reset_marker_ui()
+					
+			if pose_hud:
+				pose_hud._update_grid_visuals()
 				
-			get_viewport().set_input_as_handled()
-									
-func _on_marker_selected(marker: PoseMarker) -> void:
-	set_active_marker(marker)
+		get_viewport().set_input_as_handled()
+		return
 
-func _on_marker_deselected(marker: PoseMarker) -> void:
-	if active_marker == marker:
-		set_active_marker(null)
+	# Only allow the ESCAPE key if we actively have limbs highlighted to cancel
+	if active_markers.is_empty(): return
+	
+	if event.is_action_pressed("ui_cancel") or (event is InputEventKey and event.physical_keycode == KEY_ESCAPE and event.pressed):
+		for m in active_markers:
+			if m.has_method("revert_to_original"):
+				m.revert_to_original()
+		get_viewport().set_input_as_handled()
+# --- 🆕 MULTI-DRAG SYNC ---
+func _on_marker_dragged_position(delta: Vector2, source_marker: PoseMarker) -> void:
+	for m in active_markers:
+		if m != source_marker:
+			m.global_position += delta
+			m._capture_original_state()
+
+func _on_marker_dragged_rotation(delta_angle: float, source_marker: PoseMarker) -> void:
+	for m in active_markers:
+		if m != source_marker:
+			m.global_rotation += delta_angle
+			m._capture_original_state()
+
+# --- 🆕 SELECTION LOGIC ---
+func _on_marker_selected(marker: PoseMarker) -> void:
+	# Safely check global keyboard state for Ctrl (Win/Linux) or Cmd (Mac)
+	var is_ctrl_pressed = Input.is_key_pressed(KEY_CTRL) or Input.is_key_pressed(KEY_META)
+	
+	if is_ctrl_pressed:
+		if marker in active_markers:
+			remove_marker_from_selection(marker)
+		else:
+			add_markers_to_selection([marker])
+	else:
+		set_active_markers([marker])
+		
+func set_active_markers(markers: Array[PoseMarker]) -> void:
+	# Deactivate old
+	for m in active_markers:
+		if m not in markers:
+			m.set_active(false)
+			
+	active_markers = markers
+	
+	# Activate new
+	for m in active_markers:
+		m.set_active(true)
+		
+	active_marker_changed.emit(get_primary_marker())
+
+func add_markers_to_selection(markers: Array[PoseMarker]) -> void:
+	for m in markers:
+		if m not in active_markers:
+			active_markers.append(m)
+			m.set_active(true)
+	active_marker_changed.emit(get_primary_marker())
+
+func remove_marker_from_selection(marker: PoseMarker) -> void:
+	if marker in active_markers:
+		active_markers.erase(marker)
+		marker.set_active(false)
+		active_marker_changed.emit(get_primary_marker())
+
+func _on_marker_deselected(_marker: PoseMarker) -> void:
+	pass # Handled safely by array filtering above
 
 func _on_marker_drag_ended(marker: PoseMarker) -> void:
-	# Check if the HUD exists and has record mode enabled
 	if pose_hud and pose_hud.record_check.button_pressed:
-		# Pass the marker directly to the HUD's save handler
-		pose_hud._on_marker_save_requested(marker)
-
-func set_active_marker(marker: PoseMarker) -> void:
-	if active_marker == marker: return
-	
-	# Deactivate old marker
-	if active_marker:
-		active_marker.set_active(false)
-		
-	active_marker = marker
-	
-	# Activate new marker
-	if active_marker:
-		active_marker.set_active(true)
-		
-	# Broadcast to the HUD!
-	active_marker_changed.emit(active_marker)
+		# Save all active markers when dragging ends for the group
+		for m in active_markers:
+			pose_hud._on_marker_save_requested(m)
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
-		set_active_marker(null)
+		set_active_markers([])
 
-# --- PUBLIC MUTATORS (The HUD calls these) ---
-
+# --- PUBLIC MUTATORS ---
 func toggle_controlled(is_controlled: bool) -> void:
-	if active_marker:
-		if is_controlled: active_marker.take_control()
-		else: active_marker.release_control()
+	for m in active_markers:
+		if is_controlled: m.take_control()
+		else: m.release_control()
 
 func toggle_follow_rotation(follow: bool) -> void:
-	if active_marker:
-		active_marker.follow_parent_rotation = follow
+	for m in active_markers:
+		m.follow_parent_rotation = follow
 
 func toggle_freeze(freeze: bool) -> void:
-	if active_marker and active_marker.slave:
-		active_marker.slave.freeze = freeze
-		
+	for m in active_markers:
+		if m.slave:
+			m.slave.freeze = freeze
+			
 func swap_with_sibling(marker: PoseMarker):
 	if not marker.sibling: return
 	var original_sibling_pos = marker.sibling.global_position

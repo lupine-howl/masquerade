@@ -3,8 +3,10 @@ extends Node2D
 
 @export_group("Crosshair Settings")
 @export var color: Color = Color.WHITE
+@export var secondary_color: Color = Color.RED
 @export var line_width: float = 2.0
 @export var crosshair_length: float = 1000.0
+@export var collision_height: float = 320.0
 
 @export_group("Grid Settings")
 @export var show_grid: bool = true
@@ -14,6 +16,8 @@ extends Node2D
 
 func _draw() -> void:
 	# 1. Draw the Main Crosshair
+	draw_line(Vector2(-crosshair_length, -collision_height/2), Vector2(crosshair_length, -collision_height/2), secondary_color, line_width)
+	draw_line(Vector2(-crosshair_length, collision_height/2), Vector2(crosshair_length, collision_height/2), secondary_color, line_width)
 	draw_line(Vector2(-crosshair_length, 0), Vector2(crosshair_length, 0), color, line_width)
 	draw_line(Vector2(0, -crosshair_length), Vector2(0, crosshair_length), color, line_width)
 	

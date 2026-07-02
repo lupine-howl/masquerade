@@ -7,6 +7,10 @@ signal deselected(marker: PoseMarker)
 signal drag_ended(marker: PoseMarker)
 signal save_requested(marker: PoseMarker)
 
+# 🆕 Multi-Select Drag Delta Broadcasters
+signal dragged_position(delta: Vector2)
+signal dragged_rotation(delta_angle: float)
+
 @export var slave: RigidBody2D
 @export var slave_parent: RigidBody2D
 @export var sibling: PoseMarker
@@ -22,7 +26,7 @@ signal save_requested(marker: PoseMarker)
 
 @export_category("Settings")
 @export var is_dev_mode: bool = true
-@export var drag_threshold: float = 3.0 # 🆕 Threshold baseline in pixels before dragging kicks in
+@export var drag_threshold: float = 3.0
 
 # Interaction States
 var is_dragging_position: bool = false
@@ -30,7 +34,7 @@ var is_dragging_rotation: bool = false
 var mouse_over: bool = false
 var is_active: bool = false
 
-# 🆕 Internal Drag-Correction Math States
+# Internal Drag-Correction Math States
 var _is_prepare_drag_position: bool = false
 var _is_prepare_drag_rotation: bool = false
 var _mouse_start_pos: Vector2 = Vector2.ZERO
@@ -86,7 +90,7 @@ func _process(_delta: float) -> void:
 	rotation_indicator_selected.visible = is_active and can_rotate
 	outer_rotation_ring.visible = is_active and can_rotate and not follow_parent_rotation and is_controlled
 	
-	# 🆕 EVALUATE DRAG THRESHOLDS BEFORE MUTATING
+	# EVALUATE DRAG THRESHOLDS BEFORE MUTATING
 	if _is_prepare_drag_position and not is_dragging_position:
 		if mouse_pos.distance_to(_mouse_start_pos) > drag_threshold:
 			_capture_original_state()
@@ -97,11 +101,20 @@ func _process(_delta: float) -> void:
 			_capture_original_state()
 			is_dragging_rotation = true
 	
-	# Translocation updates
+	# 🆕 Translocation updates with Delta Broadcasting
 	if is_dragging_position:
-		global_position = mouse_pos - _drag_offset # Maintains structural tracking without snapping!
+		var target_pos = mouse_pos - _drag_offset
+		var delta_pos = target_pos - global_position
+		if delta_pos != Vector2.ZERO:
+			global_position = target_pos
+			dragged_position.emit(delta_pos)
+			
 	elif is_dragging_rotation:
-		global_rotation = global_position.angle_to_point(mouse_pos)
+		var target_rot = global_position.angle_to_point(mouse_pos)
+		var delta_rot = target_rot - global_rotation
+		if delta_rot != 0.0:
+			global_rotation = target_rot
+			dragged_rotation.emit(delta_rot)
 
 func take_control():
 	if slave:
@@ -134,8 +147,6 @@ func _physics_process(_delta: float) -> void:
 	
 	if is_controlled:
 		slave.global_position = global_position
-	#else:
-		#global_position = slave.global_position
 
 func _input(event: InputEvent) -> void:
 	if not is_dev_mode: return
@@ -150,22 +161,24 @@ func _input(event: InputEvent) -> void:
 				selected.emit(self)
 			
 			if distance <= inner_radius:
-				# 🆕 Queue position movement check setup safely
 				_mouse_start_pos = mouse_pos
-				_drag_offset = mouse_pos - global_position # Maintain exact relative coordinate offset
-				#if is_controlled:
-				_is_prepare_drag_position = true
+				
+				# 🆕 Check if 'R' is held to swap to rotation mode safely
+				if Input.is_key_pressed(KEY_R) and can_rotate and outer_rotation_ring.visible:
+					_is_prepare_drag_rotation = true
+				else:
+					_drag_offset = mouse_pos - global_position 
+					_is_prepare_drag_position = true
+					
 				get_viewport().set_input_as_handled()
 				
 			elif distance > inner_radius and distance <= outer_radius:
 				if outer_rotation_ring.visible:
-					# 🆕 Queue rotation track check setup safely
 					_mouse_start_pos = mouse_pos
 					_is_prepare_drag_rotation = true
 					get_viewport().set_input_as_handled()
 					
 		elif not event.pressed:
-			# 🆕 Clear absolute threshold evaluation pipelines
 			var was_dragging = is_dragging_position or is_dragging_rotation
 			is_dragging_position = false
 			is_dragging_rotation = false
