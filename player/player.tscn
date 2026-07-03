@@ -104,6 +104,13 @@ radius = 15.0
 radius = 22.0
 height = 60.0
 
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ge24q"]
+height = 20.0
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_pnw6m"]
+custom_solver_bias = 1.0
+height = 20.0
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_s7qer"]
 size = Vector2(69, 49)
 
@@ -1510,9 +1517,6 @@ freeze_mode = 1
 [node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerBody/Ragdoll/Root" unique_id=861282684]
 shape = SubResource("CircleShape2D_jd2rm")
 
-[node name="Root_Head_Pin" type="PinJoint2D" parent="PlayerBody/Ragdoll/Root" unique_id=246760580]
-node_b = NodePath("..")
-
 [node name="Arm_Back" type="Node2D" parent="PlayerBody/Ragdoll" unique_id=1528559718]
 position = Vector2(0, -86)
 rotation = -1.5707964
@@ -1923,10 +1927,6 @@ flip_v = true
 region_enabled = true
 region_rect = Rect2(647, 862, 151, 77)
 
-[node name="Leg_Front2" type="Node2D" parent="PlayerBody/Ragdoll" unique_id=733830758]
-z_index = 10
-position = Vector2(0, -45)
-
 [node name="Head" type="Node2D" parent="PlayerBody/Ragdoll" unique_id=28840955]
 position = Vector2(0, -57)
 
@@ -1978,41 +1978,6 @@ angular_limit_upper = 3.1415927
 [node name="Torso" type="Node2D" parent="PlayerBody/Ragdoll" unique_id=420461720]
 position = Vector2(0, -104)
 
-[node name="Abdomen2_Physics" type="RigidBody2D" parent="PlayerBody/Ragdoll/Torso" unique_id=22459864]
-position = Vector2(0, 59)
-collision_layer = 512
-collision_mask = 33024
-mass = 5.0
-angular_damp = 5.0
-
-[node name="Sternum_Abdoment_Pin_2" type="PinJoint2D" parent="PlayerBody/Ragdoll/Torso/Abdomen2_Physics" unique_id=1271630631]
-node_b = NodePath("..")
-angular_limit_enabled = true
-angular_limit_lower = -2.0943952
-angular_limit_upper = 2.0943952
-
-[node name="CollisionShape2D2" type="CollisionShape2D" parent="PlayerBody/Ragdoll/Torso/Abdomen2_Physics" unique_id=2067522783]
-position = Vector2(0, 21.999998)
-rotation = 1.5707964
-shape = SubResource("CapsuleShape2D_mmwog")
-
-[node name="Abdomen_Sprite3" type="Sprite2D" parent="PlayerBody/Ragdoll/Torso/Abdomen2_Physics" unique_id=1551878096]
-z_index = 1
-position = Vector2(0, -1)
-scale = Vector2(0.3999939, 0.3999939)
-texture = ExtResource("30_b8hi5")
-offset = Vector2(24.424694, 51.63495)
-region_enabled = true
-region_rect = Rect2(508, 547, 140, 151)
-
-[node name="Abdomen_Root_Pin2" type="PinJoint2D" parent="PlayerBody/Ragdoll/Torso/Abdomen2_Physics" unique_id=950144043]
-position = Vector2(0, 45)
-node_a = NodePath("../../../Root")
-node_b = NodePath("..")
-angular_limit_enabled = true
-angular_limit_lower = -3.1415927
-angular_limit_upper = 3.1415927
-
 [node name="Torso2_Physics" type="RigidBody2D" parent="PlayerBody/Ragdoll/Torso" unique_id=997494969]
 collision_layer = 512
 collision_mask = 33024
@@ -2032,10 +1997,10 @@ shape = SubResource("CapsuleShape2D_mmwog")
 
 [node name="Abdomen_Torso_Pin" type="PinJoint2D" parent="PlayerBody/Ragdoll/Torso/Torso2_Physics" unique_id=227268781]
 position = Vector2(0, 58)
-node_a = NodePath("../../Abdomen2_Physics")
+node_a = NodePath("../../UpperAbdomen_Physics")
 node_b = NodePath("..")
 angular_limit_enabled = true
-angular_limit_lower = -0.5235988
+angular_limit_lower = -0.17453292
 angular_limit_upper = 0.5235988
 
 [node name="Torso3" type="Sprite2D" parent="PlayerBody/Ragdoll/Torso/Torso2_Physics" unique_id=764230273]
@@ -2055,6 +2020,61 @@ texture = ExtResource("30_b8hi5")
 offset = Vector2(-70.00107, 40.007477)
 region_enabled = true
 region_rect = Rect2(394, 380, 75, 214)
+
+[node name="UpperAbdomen_Physics" type="RigidBody2D" parent="PlayerBody/Ragdoll/Torso" unique_id=22459864]
+position = Vector2(0, 59)
+collision_layer = 512
+collision_mask = 33024
+mass = 5.0
+angular_damp = 5.0
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="PlayerBody/Ragdoll/Torso/UpperAbdomen_Physics" unique_id=2067522783]
+position = Vector2(0, 11)
+shape = SubResource("CapsuleShape2D_ge24q")
+
+[node name="Abdomen_Sprite3" type="Sprite2D" parent="PlayerBody/Ragdoll/Torso/UpperAbdomen_Physics" unique_id=1551878096]
+z_index = 1
+position = Vector2(0, -9)
+scale = Vector2(0.3999939, 0.3999939)
+texture = ExtResource("30_b8hi5")
+offset = Vector2(24.424694, 51.63495)
+region_enabled = true
+region_rect = Rect2(508, 547, 140, 151)
+
+[node name="UpperAbdomen_LowerAbdomen_Pin" type="PinJoint2D" parent="PlayerBody/Ragdoll/Torso/UpperAbdomen_Physics" unique_id=950144043]
+position = Vector2(0, 21)
+node_a = NodePath("../../LowerAbdomen_Physics")
+node_b = NodePath("..")
+angular_limit_enabled = true
+angular_limit_lower = -0.2617994
+angular_limit_upper = 0.2617994
+
+[node name="LowerAbdomen_Physics" type="RigidBody2D" parent="PlayerBody/Ragdoll/Torso" unique_id=696033552]
+position = Vector2(0, 80)
+collision_layer = 512
+collision_mask = 33024
+mass = 5.0
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="PlayerBody/Ragdoll/Torso/LowerAbdomen_Physics" unique_id=1887743944]
+position = Vector2(0, 10.999998)
+shape = SubResource("CapsuleShape2D_pnw6m")
+
+[node name="LowerAbdomen_Root_Pin" type="PinJoint2D" parent="PlayerBody/Ragdoll/Torso/LowerAbdomen_Physics" unique_id=145239940]
+position = Vector2(0, 24)
+node_a = NodePath("../../../Root")
+node_b = NodePath("..")
+angular_limit_enabled = true
+angular_limit_lower = -0.7853982
+angular_limit_upper = 0.7853982
+
+[node name="Abdomen_Sprite3" type="Sprite2D" parent="PlayerBody/Ragdoll/Torso/LowerAbdomen_Physics" unique_id=575680597]
+z_index = 1
+position = Vector2(0, 8)
+scale = Vector2(0.3999939, 0.3999939)
+texture = ExtResource("30_b8hi5")
+offset = Vector2(24.424694, -3.3658905)
+region_enabled = true
+region_rect = Rect2(508, 547, 140, 151)
 
 [node name="FacingPivot" type="Node2D" parent="PlayerBody" unique_id=786688240]
 
@@ -2103,20 +2123,30 @@ texture_scale = 0.5
 scale = Vector2(0.9999999, 0.9999999)
 modification_stack = SubResource("SkeletonModificationStack2D_b8hi5")
 
-[node name="Pelvis" type="Bone2D" parent="PlayerBody/FacingPivot/Armature/Skeleton2D" unique_id=594647518 node_paths=PackedStringArray("physics_body")]
+[node name="Pelvis" type="Bone2D" parent="PlayerBody/FacingPivot/Armature/Skeleton2D" unique_id=594647518 node_paths=PackedStringArray("physics_body", "position_body")]
 scale = Vector2(0.99998486, 0.99998486)
 rest = Transform2D(0.99998486, 0, 0, 0.99998486, 0, 0)
 script = ExtResource("32_gswnw")
-physics_body = NodePath("../../../../Ragdoll/Root")
+physics_body = NodePath("../../../../Ragdoll/Torso/LowerAbdomen_Physics")
+position_body = NodePath("../../../../Ragdoll/Root")
 metadata/_custom_type_script = "uid://cns3xkrq4cwa4"
+
+[node name="LowerAbdomen_Sprite" type="Sprite2D" parent="PlayerBody/FacingPivot/Armature/Skeleton2D/Pelvis" unique_id=670815108]
+z_index = 1
+position = Vector2(0, -16.000244)
+scale = Vector2(0.4, 0.4)
+texture = ExtResource("30_b8hi5")
+offset = Vector2(24.424694, -3.3658905)
+region_enabled = true
+region_rect = Rect2(508, 547, 140, 151)
 
 [node name="Abdomen" type="Bone2D" parent="PlayerBody/FacingPivot/Armature/Skeleton2D/Pelvis" unique_id=961447841 node_paths=PackedStringArray("physics_body", "position_body")]
 position = Vector2(0, -18.999634)
 rotation = -1.5707964
 rest = Transform2D(-4.371139e-08, -1, 1, -4.371139e-08, 0, -18.999634)
 script = ExtResource("32_gswnw")
-physics_body = NodePath("../../../../../Ragdoll/Torso/Abdomen2_Physics")
-position_body = NodePath("../../../../../Ragdoll/Root")
+physics_body = NodePath("../../../../../Ragdoll/Torso/UpperAbdomen_Physics")
+position_body = NodePath("../../../../../Ragdoll/Torso/UpperAbdomen_Physics")
 rotation_compensation = -70.0
 metadata/_custom_type_script = "uid://cns3xkrq4cwa4"
 
@@ -2136,7 +2166,7 @@ rotation = 1.5707964
 rest = Transform2D(-4.371139e-08, 1, -1, -4.371139e-08, 26.999756, 0)
 script = ExtResource("32_gswnw")
 physics_body = NodePath("../../../../../../Ragdoll/Torso/Torso2_Physics")
-position_body = NodePath("../../../../../../Ragdoll/Torso/Abdomen2_Physics")
+position_body = NodePath("../../../../../../Ragdoll/Torso/UpperAbdomen_Physics")
 inverted_scale_x_rotation_compensation = 180.0
 metadata/_custom_type_script = "uid://cns3xkrq4cwa4"
 
@@ -2501,6 +2531,7 @@ ground_lock_lower = NodePath("../Ground")
 ground_lock_rotation_deg = -90.0
 
 [node name="Neck" parent="PlayerBody/FacingPivot/PoseController" unique_id=1488133409 node_paths=PackedStringArray("slave", "pivot") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
+visible = false
 position = Vector2(8.726257, -94.85774)
 slave = NodePath("../../../Ragdoll/Head/Neck_Physics")
 pivot = NodePath("../..")
@@ -2534,6 +2565,7 @@ position = Vector2(250, -110)
 rotation = -0.0034784384
 
 [node name="Torso" parent="PlayerBody/FacingPivot/PoseController" unique_id=1164425788 node_paths=PackedStringArray("slave", "pivot") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
+visible = false
 position = Vector2(0, -105.00001)
 rotation = -0.0034784384
 slave = NodePath("../../../Ragdoll/Torso/Torso2_Physics")
@@ -2541,9 +2573,10 @@ pivot = NodePath("../..")
 is_controlled = false
 
 [node name="Adbomen" parent="PlayerBody/FacingPivot/PoseController" unique_id=881103751 node_paths=PackedStringArray("slave", "pivot") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
+visible = false
 position = Vector2(0, -45.000008)
 rotation = -0.0034784384
-slave = NodePath("../../../Ragdoll/Torso/Abdomen2_Physics")
+slave = NodePath("../../../Ragdoll/Torso/UpperAbdomen_Physics")
 pivot = NodePath("../..")
 is_controlled = false
 
