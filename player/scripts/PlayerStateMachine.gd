@@ -4,6 +4,7 @@ extends Node
 @export var initial_state: PlayerState
 
 var current_state: PlayerState
+var previous_state: PlayerState
 var states: Dictionary = {}
 var player: Player 
 
@@ -30,6 +31,7 @@ func transition_to(state_name: String) -> void:
 		
 	if current_state == target_state: return
 		
+	previous_state = current_state
 	if current_state:
 		current_state.exit()
 		
