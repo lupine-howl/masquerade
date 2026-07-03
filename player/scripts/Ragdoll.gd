@@ -19,9 +19,6 @@ var root_origin: Vector2
 var all_joints: Array[PinJoint2D] = []
 var joint_default_limits: Dictionary = {} # Key: PinJoint2D, Value: Vector2(lower, upper)
 
-# Reference Counting Stack for shared IKs. Key: IK_Index (int), Value: Active Requests (int)
-var ik_disable_counters: Dictionary = {}
-
 # Keep track of last frame flip state to prevent running limit assignments every single frame tick
 var was_flipped_last_frame: bool = false
 

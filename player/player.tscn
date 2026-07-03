@@ -1497,6 +1497,7 @@ scale = Vector2(0.99998474, 0.99998474)
 shape = SubResource("CapsuleShape2D_whnp6")
 
 [node name="Ragdoll" type="Node2D" parent="PlayerBody" unique_id=35418647 node_paths=PackedStringArray("skeleton_node", "pivot")]
+visible = false
 script = ExtResource("30_fjxoa")
 skeleton_node = NodePath("../FacingPivot/Armature/Skeleton2D")
 pivot = NodePath("../FacingPivot")
@@ -2097,7 +2098,6 @@ texture = ExtResource("24_g4c7l")
 texture_scale = 0.5
 
 [node name="Armature" type="Node2D" parent="PlayerBody/FacingPivot" unique_id=1602337061]
-visible = false
 
 [node name="Skeleton2D" type="Skeleton2D" parent="PlayerBody/FacingPivot/Armature" unique_id=1739330150]
 scale = Vector2(0.9999999, 0.9999999)
@@ -2108,17 +2108,16 @@ scale = Vector2(0.99998486, 0.99998486)
 rest = Transform2D(0.99998486, 0, 0, 0.99998486, 0, 0)
 script = ExtResource("32_gswnw")
 physics_body = NodePath("../../../../Ragdoll/Root")
-bone_groups = 64
 metadata/_custom_type_script = "uid://cns3xkrq4cwa4"
 
-[node name="Abdomen" type="Bone2D" parent="PlayerBody/FacingPivot/Armature/Skeleton2D/Pelvis" unique_id=961447841 node_paths=PackedStringArray("position_body")]
+[node name="Abdomen" type="Bone2D" parent="PlayerBody/FacingPivot/Armature/Skeleton2D/Pelvis" unique_id=961447841 node_paths=PackedStringArray("physics_body", "position_body")]
 position = Vector2(0, -18.999634)
 rotation = -1.5707964
 rest = Transform2D(-4.371139e-08, -1, 1, -4.371139e-08, 0, -18.999634)
 script = ExtResource("32_gswnw")
+physics_body = NodePath("../../../../../Ragdoll/Torso/Abdomen2_Physics")
 position_body = NodePath("../../../../../Ragdoll/Root")
-rotation_compensation = 270.0
-bone_groups = 16
+rotation_compensation = -70.0
 metadata/_custom_type_script = "uid://cns3xkrq4cwa4"
 
 [node name="Abdomen_Sprite" type="Sprite2D" parent="PlayerBody/FacingPivot/Armature/Skeleton2D/Pelvis/Abdomen" unique_id=483297741]
@@ -2131,13 +2130,14 @@ offset = Vector2(33.24241, -14.755905)
 region_enabled = true
 region_rect = Rect2(508, 547, 140, 151)
 
-[node name="Torso" type="Bone2D" parent="PlayerBody/FacingPivot/Armature/Skeleton2D/Pelvis/Abdomen" unique_id=982948741]
+[node name="Torso" type="Bone2D" parent="PlayerBody/FacingPivot/Armature/Skeleton2D/Pelvis/Abdomen" unique_id=982948741 node_paths=PackedStringArray("physics_body", "position_body")]
 position = Vector2(26.999756, 0)
 rotation = 1.5707964
 rest = Transform2D(-4.371139e-08, 1, -1, -4.371139e-08, 26.999756, 0)
 script = ExtResource("32_gswnw")
+physics_body = NodePath("../../../../../../Ragdoll/Torso/Torso2_Physics")
+position_body = NodePath("../../../../../../Ragdoll/Torso/Abdomen2_Physics")
 inverted_scale_x_rotation_compensation = 180.0
-bone_groups = 256
 metadata/_custom_type_script = "uid://cns3xkrq4cwa4"
 
 [node name="Torso" type="Sprite2D" parent="PlayerBody/FacingPivot/Armature/Skeleton2D/Pelvis/Abdomen/Torso" unique_id=231744044]
@@ -2168,7 +2168,6 @@ rest = Transform2D(0.9999856, 0, 0, 0.9999856, 0, -12)
 script = ExtResource("32_gswnw")
 physics_body = NodePath("../../../../../../../../../Ragdoll/Head/Head_Physics")
 inverted_scale_x_rotation_compensation = 180.0
-bone_groups = 288
 metadata/_custom_type_script = "uid://cns3xkrq4cwa4"
 
 [node name="Head" type="Sprite2D" parent="PlayerBody/FacingPivot/Armature/Skeleton2D/Pelvis/Abdomen/Torso/Shoulders/Neck/Head" unique_id=255580531]
@@ -2190,8 +2189,6 @@ bone_angle = 0.0
 script = ExtResource("32_gswnw")
 physics_body = NodePath("../../../../../../../../Ragdoll/Arm_Back/UpperArm_Back_Physics")
 rotation_compensation = 180.0
-ik_lookup_mask = 8
-bone_groups = 385
 metadata/_custom_type_script = "uid://cns3xkrq4cwa4"
 
 [node name="UpperArm_Back_Sprite" type="Sprite2D" parent="PlayerBody/FacingPivot/Armature/Skeleton2D/Pelvis/Abdomen/Torso/Shoulders/UpperArm_Back" unique_id=485951798]
@@ -2213,8 +2210,6 @@ bone_angle = 0.0
 script = ExtResource("32_gswnw")
 physics_body = NodePath("../../../../../../../../../Ragdoll/Arm_Back/Forearm_Back_Physics")
 rotation_compensation = 180.0
-ik_lookup_mask = 8
-bone_groups = 385
 metadata/_custom_type_script = "uid://cns3xkrq4cwa4"
 
 [node name="Forearm_Back_Sprite" type="Sprite2D" parent="PlayerBody/FacingPivot/Armature/Skeleton2D/Pelvis/Abdomen/Torso/Shoulders/UpperArm_Back/Forearm_Back" unique_id=1993225440]
@@ -2236,8 +2231,6 @@ bone_angle = 0.0
 script = ExtResource("32_gswnw")
 physics_body = NodePath("../../../../../../../../../../Ragdoll/Arm_Back/Hand_Back_Physics")
 rotation_compensation = 180.0
-ik_lookup_mask = 8
-bone_groups = 257
 metadata/_custom_type_script = "uid://cns3xkrq4cwa4"
 
 [node name="Hand_Back_Sprite" type="Sprite2D" parent="PlayerBody/FacingPivot/Armature/Skeleton2D/Pelvis/Abdomen/Torso/Shoulders/UpperArm_Back/Forearm_Back/Hand_Back" unique_id=1521156544]
@@ -2259,8 +2252,6 @@ length = 65.999985
 bone_angle = 0.0
 script = ExtResource("32_gswnw")
 physics_body = NodePath("../../../../../../../../Ragdoll/Arm_Front/UpperArm_Front_Physics")
-ik_lookup_mask = 8
-bone_groups = 385
 metadata/_custom_type_script = "uid://cns3xkrq4cwa4"
 
 [node name="UpperArm_Front_Sprite" type="Sprite2D" parent="PlayerBody/FacingPivot/Armature/Skeleton2D/Pelvis/Abdomen/Torso/Shoulders/UpperArm_Front" unique_id=1857845250]
@@ -2281,8 +2272,6 @@ length = 60.0
 bone_angle = 0.0
 script = ExtResource("32_gswnw")
 physics_body = NodePath("../../../../../../../../../Ragdoll/Arm_Front/Forearm_Front_Physics")
-ik_lookup_mask = 8
-bone_groups = 385
 metadata/_custom_type_script = "uid://cns3xkrq4cwa4"
 
 [node name="Forearm_Front_Sprite" type="Sprite2D" parent="PlayerBody/FacingPivot/Armature/Skeleton2D/Pelvis/Abdomen/Torso/Shoulders/UpperArm_Front/Forearm_Front" unique_id=1650198071]
@@ -2302,8 +2291,6 @@ length = 16.0
 bone_angle = 0.0
 script = ExtResource("32_gswnw")
 physics_body = NodePath("../../../../../../../../../../Ragdoll/Arm_Front/Hand_Front_Physics")
-ik_lookup_mask = 8
-bone_groups = 257
 metadata/_custom_type_script = "uid://cns3xkrq4cwa4"
 
 [node name="Hand_Front_Sprite" type="Sprite2D" parent="PlayerBody/FacingPivot/Armature/Skeleton2D/Pelvis/Abdomen/Torso/Shoulders/UpperArm_Front/Forearm_Front/Hand_Front" unique_id=1257267574]
@@ -2330,8 +2317,6 @@ rest = Transform2D(-0.99997056, 1.5099135e-07, -1.5099135e-07, -0.99997056, 0, 0
 script = ExtResource("32_gswnw")
 physics_body = NodePath("../../../../../Ragdoll/Leg_Back/Thigh_Back_Physics")
 rotation_compensation = 180.0
-ik_lookup_mask = 2
-bone_groups = 4
 metadata/_custom_type_script = "uid://cns3xkrq4cwa4"
 
 [node name="Thigh_Back_Sprite" type="Sprite2D" parent="PlayerBody/FacingPivot/Armature/Skeleton2D/Pelvis/Thigh_Back" unique_id=694885624]
@@ -2351,8 +2336,6 @@ rest = Transform2D(0.9999924, 0, 0, 0.9999924, -80, 0)
 script = ExtResource("32_gswnw")
 physics_body = NodePath("../../../../../../Ragdoll/Leg_Back/Calf_Back_Physics")
 rotation_compensation = 180.0
-ik_lookup_mask = 2
-bone_groups = 4
 metadata/_custom_type_script = "uid://cns3xkrq4cwa4"
 
 [node name="Calf_Back_Sprite" type="Sprite2D" parent="PlayerBody/FacingPivot/Armature/Skeleton2D/Pelvis/Thigh_Back/Calf_Back" unique_id=190595938]
@@ -2371,8 +2354,6 @@ scale = Vector2(0.99990696, 0.99990696)
 rest = Transform2D(-0.99990696, -1.5098175e-07, 1.5098175e-07, -0.99990696, -75, 0)
 script = ExtResource("32_gswnw")
 physics_body = NodePath("../../../../../../../Ragdoll/Leg_Back/Foot_Back_Physics")
-ik_lookup_mask = 2
-bone_groups = 4
 metadata/_custom_type_script = "uid://cns3xkrq4cwa4"
 
 [node name="Foot_Sprite_Back" type="Sprite2D" parent="PlayerBody/FacingPivot/Armature/Skeleton2D/Pelvis/Thigh_Back/Calf_Back/Foot_Back" unique_id=1000729097]
@@ -2390,8 +2371,6 @@ scale = Vector2(0.99997056, 0.99997056)
 rest = Transform2D(0.99997056, 0, 0, 0.99997056, 0, 0)
 script = ExtResource("32_gswnw")
 physics_body = NodePath("../../../../../Ragdoll/Leg_Front/Thigh_Front_Physics")
-ik_lookup_mask = 2
-bone_groups = 4
 metadata/_custom_type_script = "uid://cns3xkrq4cwa4"
 
 [node name="Thigh_Front_Sprite" type="Sprite2D" parent="PlayerBody/FacingPivot/Armature/Skeleton2D/Pelvis/Thigh_Front" unique_id=1516870258]
@@ -2409,8 +2388,6 @@ scale = Vector2(0.9999924, 0.9999924)
 rest = Transform2D(0.9999924, 0, 0, 0.9999924, -80, 0)
 script = ExtResource("32_gswnw")
 physics_body = NodePath("../../../../../../Ragdoll/Leg_Front/Calf_Front_Physics")
-ik_lookup_mask = 2
-bone_groups = 4
 metadata/_custom_type_script = "uid://cns3xkrq4cwa4"
 
 [node name="Calf_Front_Sprite" type="Sprite2D" parent="PlayerBody/FacingPivot/Armature/Skeleton2D/Pelvis/Thigh_Front/Calf_Front" unique_id=129227509]
@@ -2428,8 +2405,6 @@ scale = Vector2(0.99990696, 0.99990696)
 rest = Transform2D(0.99990696, 0, 0, 0.99990696, -75, 0)
 script = ExtResource("32_gswnw")
 physics_body = NodePath("../../../../../../../Ragdoll/Leg_Front/Foot_Front_Physics")
-ik_lookup_mask = 2
-bone_groups = 4
 metadata/_custom_type_script = "uid://cns3xkrq4cwa4"
 
 [node name="Foot_Sprite_Front" type="Sprite2D" parent="PlayerBody/FacingPivot/Armature/Skeleton2D/Pelvis/Thigh_Front/Calf_Front/Foot_Front" unique_id=1288577735]
@@ -2529,7 +2504,6 @@ ground_lock_rotation_deg = -90.0
 position = Vector2(8.726257, -94.85774)
 slave = NodePath("../../../Ragdoll/Head/Neck_Physics")
 pivot = NodePath("../..")
-invert_rotation_on_flip = true
 is_controlled = false
 max_radius = 0.0
 
@@ -2538,6 +2512,7 @@ position = Vector2(8.353577, -93.02951)
 rotation = -0.0034784384
 slave = NodePath("../../../Ragdoll/Head/Head_Physics")
 pivot = NodePath("../..")
+invert_rotation_on_flip = true
 can_rotate = true
 use_radius_limit = true
 max_radius = 120.0
@@ -2563,7 +2538,6 @@ position = Vector2(0, -105.00001)
 rotation = -0.0034784384
 slave = NodePath("../../../Ragdoll/Torso/Torso2_Physics")
 pivot = NodePath("../..")
-invert_rotation_on_flip = true
 is_controlled = false
 
 [node name="Adbomen" parent="PlayerBody/FacingPivot/PoseController" unique_id=881103751 node_paths=PackedStringArray("slave", "pivot") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
@@ -2571,14 +2545,12 @@ position = Vector2(0, -45.000008)
 rotation = -0.0034784384
 slave = NodePath("../../../Ragdoll/Torso/Abdomen2_Physics")
 pivot = NodePath("../..")
-invert_rotation_on_flip = true
 is_controlled = false
 
 [node name="Root" parent="PlayerBody/FacingPivot/PoseController" unique_id=219274694 node_paths=PackedStringArray("slave", "pivot", "radius_constraint_parent", "radius_drag_partner") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
 position = Vector2(-5.7142334, 18.571426)
 slave = NodePath("../../../Ragdoll/Root")
 pivot = NodePath("../..")
-invert_rotation_on_flip = true
 can_rotate = true
 use_radius_limit = true
 max_radius = 120.0

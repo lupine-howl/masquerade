@@ -1,10 +1,6 @@
 extends PlayerState
 
 func enter() -> void:
-	# Engage Hanging layout: Torso, legs, and back arm drop loose under gravity,
-	# while the front arm/hand stays locked firmly to the ledge anchor.
-	player.ragdoll.set_ragdoll_state(player.ragdoll.RagdollState.ANIMATED)
-
 	player.animator.play("ledge_climb", 0.0)
 	player.velocity = Vector2.ZERO
 	

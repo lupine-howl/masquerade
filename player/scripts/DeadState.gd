@@ -11,7 +11,6 @@ func enter() -> void:
 func physics_update(delta: float) -> void:
 	
 	player.animator.stop()
-	player.ragdoll.set_ragdoll_state(player.ragdoll.RagdollState.FULL_BODY)
 	player.ragdoll.root.freeze = false
 
 	
@@ -27,8 +26,7 @@ func physics_update(delta: float) -> void:
 			player.velocity.y += current_gravity.y * delta
 
 func _on_respawn_timeout() -> void:
-	# Cleanly tell the manager to lock the anchors and snap back tracking before ground state takes over
-	player.ragdoll.set_ragdoll_state(player.ragdoll.RagdollState.ANIMATED)
+	player.ragdoll.reset_root()
 	
 	state_machine.transition_to("ground")
 	GameManager.trigger_player_respawn()

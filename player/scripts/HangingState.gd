@@ -1,9 +1,6 @@
 extends PlayerState
 
 func enter() -> void:
-	# Enforce absolute animation authority so the limbs snap firmly to the wall climb pose
-	player.ragdoll.set_ragdoll_state(player.ragdoll.RagdollState.HANGING)
-
 	# Snap instantly to the wall frame (0.0 blend time) so it doesn't 
 	# get frozen in a crossfade by the speed_scale drop!
 	player.animator.play("wall_climb", 0.0)
@@ -20,7 +17,6 @@ func physics_update(_delta: float) -> void:
 	player.ragdoll.front_hand.freeze = true
 	player.ragdoll.root.freeze = false
 	player.animator.stop()
-	player.ragdoll.set_ragdoll_state(player.ragdoll.RagdollState.HANGING)
 
 	# --- ANIMATION LOGIC ---
 	var is_moving := (y_dir != 0)
