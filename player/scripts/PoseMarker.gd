@@ -6,17 +6,12 @@ signal selected(marker: PoseMarker)
 signal deselected(marker: PoseMarker)
 signal drag_ended(marker: PoseMarker)
 signal save_requested(marker: PoseMarker)
-
-# 🆕 Multi-Select Drag Delta Broadcasters
 signal dragged_position(delta: Vector2)
 signal dragged_rotation(delta_angle: float)
 
 @export var slave: RigidBody2D
-@export var slave_parent: RigidBody2D
+@export var slave_parent: RigidBody2D # Default fallback parent node
 @export var sibling: PoseMarker
-@export var can_rotate: bool = false
-@export var follow_parent_rotation: bool = false
-@export var is_controlled: bool = true
 @export var pivot: Node2D
 @export var invert_rotation_on_flip: bool
 
@@ -27,12 +22,43 @@ signal dragged_rotation(delta_angle: float)
 @export_category("Settings")
 @export var is_dev_mode: bool = true
 @export var drag_threshold: float = 3.0
+@export var can_rotate: bool = false
+@export var is_controlled: bool = true
 
-@export_category("Axis Locks")
-@export var use_lock_x: bool = false
-@export var lock_x_val: float = 0.0
-@export var use_lock_y: bool = false
-@export var lock_y_val: float = 0.0
+# --- HIGH-FREQUENCY ANIMATION TARGETS (Driven by Canvas Mouse / HUD) ---
+@export_category("Animation Targets")
+@export var offset_x: float = 0.0
+@export var offset_y: float = 0.0
+@export var rotation_offset_deg: float = 0.0
+
+@export var global_x: bool = false
+@export var global_y: bool = false
+@export var follow_parent_rotation: bool = true 
+
+# --- DETAILED CONSTRAINT DEFINITIONS (Set up via Rigging Configuration) ---
+@export_category("X-Axis Constraint")
+@export var use_min_max_x: bool = false
+@export var min_x: float = -100.0
+@export var max_x: float = 100.0
+@export var x_constraint_parent: RigidBody2D # Override parent for X-bounds math
+
+@export_category("Y-Axis Constraint")
+@export var use_min_max_y: bool = false
+@export var min_y: float = -100.0
+@export var max_y: float = 100.0
+@export var y_constraint_parent: RigidBody2D # Override parent for Y-bounds math
+
+@export_category("Radius Constraint")
+@export var use_radius_limit: bool = false
+@export var max_radius: float = 50.0
+@export var radius_is_global: bool = false
+@export var radius_constraint_parent: RigidBody2D # Override center parent (e.g., Pelvis)
+
+@export_category("Rotation Constraint")
+@export var use_rotation_limit: bool = false
+@export var min_rotation_deg: float = -45.0
+@export var max_rotation_deg: float = 45.0
+@export var rotation_constraint_parent: RigidBody2D # Override rotational reference (e.g., Calf)
 
 # Interaction States
 var is_dragging_position: bool = false
@@ -40,13 +66,13 @@ var is_dragging_rotation: bool = false
 var mouse_over: bool = false
 var is_active: bool = false
 
-# Internal Drag-Correction Math States
+# Internal Drag States
 var _is_prepare_drag_position: bool = false
 var _is_prepare_drag_rotation: bool = false
 var _mouse_start_pos: Vector2 = Vector2.ZERO
 var _drag_offset: Vector2 = Vector2.ZERO
 
-# Unsaved State Tracking (Source of Truth)
+# Unsaved Source-of-Truth States
 var original_position: Vector2
 var original_rotation: float
 var has_unsaved_changes: bool = false
@@ -73,28 +99,24 @@ func _ready() -> void:
 		global_rotation = slave.global_rotation
 				
 	set_active(false)
-	
-	if is_controlled:
-		take_control()
+	if is_controlled: take_control()
 
 func set_active(active_state: bool) -> void:
 	is_active = active_state
-	if not is_active:
-		_reset_marker_ui()
+	if not is_active: _reset_marker_ui()
 
 func _process(_delta: float) -> void:
 	if not is_dev_mode: return
-		
 	var mouse_pos = get_global_mouse_position()
 	
-	# Update visual states
+	# Keep visual component visibility straight
 	inner_circle_uncontrolled.visible = not is_controlled
 	rotation_indicator_uncontrolled.visible = not is_controlled and can_rotate
 	inner_circle_controlled.visible = is_controlled
 	rotation_indicator_controlled.visible = is_controlled and can_rotate
 	inner_circle_selected.visible = is_active
 	rotation_indicator_selected.visible = is_active and can_rotate
-	outer_rotation_ring.visible = is_active and can_rotate and not follow_parent_rotation and is_controlled
+	outer_rotation_ring.visible = is_active and can_rotate and is_controlled
 	
 	# EVALUATE DRAG THRESHOLDS BEFORE MUTATING
 	if _is_prepare_drag_position and not is_dragging_position:
@@ -107,30 +129,32 @@ func _process(_delta: float) -> void:
 			_capture_original_state()
 			is_dragging_rotation = true
 	
-# 🆕 Translocation updates with Delta Broadcasting and Axis Locks
+	# Dragging updates (these modify the offset/targets, which _physics_process then clamps)
 	if is_dragging_position:
 		var target_pos = mouse_pos - _drag_offset
-		
-		# Clamp the target position if locks are active
-		if use_lock_x: target_pos.x = lock_x_val
-		if use_lock_y: target_pos.y = lock_y_val
-		
 		var delta_pos = target_pos - global_position
+		
 		if delta_pos != Vector2.ZERO:
-			global_position = target_pos
+			# Update the targets so the physics process has the new raw data to clamp
+			if global_x: offset_x = target_pos.x
+			else: offset_x = target_pos.x - (slave_parent.global_position.x if slave_parent else 0.0)
+				
+			if global_y: offset_y = target_pos.y
+			else: offset_y = target_pos.y - (slave_parent.global_position.y if slave_parent else 0.0)
+				
 			dragged_position.emit(delta_pos)
 			
 	elif is_dragging_rotation:
 		var target_rot = global_position.angle_to_point(mouse_pos)
 		var delta_rot = target_rot - global_rotation
+		
 		if delta_rot != 0.0:
-			global_rotation = target_rot
-			dragged_rotation.emit(delta_rot)
+			var rot_parent = rotation_constraint_parent if rotation_constraint_parent else slave_parent
+			var base_rot = rot_parent.global_rotation if rot_parent else 0.0
+			rotation_offset_deg = rad_to_deg(target_rot - base_rot)
 			
-	# 🆕 Hard-enforce locks at the end of the frame (stops physics drifting)
-	if use_lock_x: global_position.x = lock_x_val
-	if use_lock_y: global_position.y = lock_y_val
-	
+			dragged_rotation.emit(delta_rot)
+
 func take_control():
 	if slave:
 		slave.freeze = true
@@ -142,26 +166,74 @@ func take_control():
 
 func release_control():
 	is_controlled = false
-	if slave:
-		slave.freeze = false
+	if slave: slave.freeze = false
 
 func _physics_process(_delta: float) -> void:
 	if not slave: return
 	
-	var is_flipped = pivot and pivot.scale.x < 0
-	var target_rotation = global_rotation_degrees
-	
-	if slave_parent and follow_parent_rotation:
-		target_rotation = slave_parent.global_rotation_degrees
-	if invert_rotation_on_flip and is_flipped: 
-		target_rotation += 180
-
-	slave.global_rotation_degrees = target_rotation
-	if follow_parent_rotation:
-		global_rotation = slave.global_rotation
+	# Determine fallback positions 
+	var default_parent_pos = slave_parent.global_position if slave_parent else Vector2.ZERO
+	var final_pos = global_position
 	
 	if is_controlled:
-		slave.global_position = global_position
+		# 1. SOLVE RESOLUTION SPACE (Local vs Global)
+		if global_x:
+			final_pos.x = offset_x
+		else:
+			final_pos.x = default_parent_pos.x + offset_x
+			
+		if global_y:
+			final_pos.y = offset_y
+		else:
+			final_pos.y = default_parent_pos.y + offset_y
+
+		# 2. EVALUATE TARGETED MULTI-PARENT POSITION CONSTRAINTS
+		if use_min_max_x:
+			var ref_x = x_constraint_parent.global_position.x if x_constraint_parent else (0.0 if global_x else default_parent_pos.x)
+			final_pos.x = clamp(final_pos.x, ref_x + min_x, ref_x + max_x)
+			
+		if use_min_max_y:
+			var ref_y = y_constraint_parent.global_position.y if y_constraint_parent else (0.0 if global_y else default_parent_pos.y)
+			final_pos.y = clamp(final_pos.y, ref_y + min_y, ref_y + max_y)
+
+		# 3. EVALUATE TARGETED DISTANCE CONSTRAINTS (RADIUS)
+		if use_radius_limit:
+			var center_node = radius_constraint_parent if radius_constraint_parent else slave_parent
+			var origin_point = Vector2.ZERO if (radius_is_global or not center_node) else center_node.global_position
+			
+			if final_pos.distance_to(origin_point) > max_radius:
+				final_pos = origin_point + (final_pos - origin_point).normalized() * max_radius
+
+		global_position = final_pos
+		slave.global_position = final_pos
+
+		# 4. EVALUATE TARGETED ROTATIONAL CONSTRAINTS
+		var rot_parent = rotation_constraint_parent if rotation_constraint_parent else slave_parent
+		var target_rotation = global_rotation
+		
+		if follow_parent_rotation and rot_parent:
+			target_rotation = rot_parent.global_rotation + deg_to_rad(rotation_offset_deg)
+		else:
+			target_rotation = deg_to_rad(rotation_offset_deg)
+		
+		if use_rotation_limit:
+			var base_rot = rot_parent.global_rotation if rot_parent else 0.0
+			var local_angle = wrapf(rad_to_deg(target_rotation - base_rot), -180, 180)
+			local_angle = clamp(local_angle, min_rotation_deg, max_rotation_deg)
+			target_rotation = base_rot + deg_to_rad(local_angle)
+			
+		var is_flipped = pivot and pivot.scale.x < 0
+		if invert_rotation_on_flip and is_flipped: 
+			target_rotation += deg_to_rad(180)
+
+		slave.global_rotation = target_rotation
+		global_rotation = slave.global_rotation
+
+	else:
+		# --- MODE B: PHYSICS PUSHING STATE BACK TO DEVELOPER MARKER ---
+		# Keep the marker snapped to the physical ragdoll piece while it swings around
+		global_position = slave.global_position
+		global_rotation = slave.global_rotation
 
 func _input(event: InputEvent) -> void:
 	if not is_dev_mode: return
@@ -177,14 +249,11 @@ func _input(event: InputEvent) -> void:
 			
 			if distance <= inner_radius:
 				_mouse_start_pos = mouse_pos
-				
-				# 🆕 Check if 'R' is held to swap to rotation mode safely
 				if Input.is_key_pressed(KEY_R) and can_rotate and outer_rotation_ring.visible:
 					_is_prepare_drag_rotation = true
 				else:
 					_drag_offset = mouse_pos - global_position 
 					_is_prepare_drag_position = true
-					
 				get_viewport().set_input_as_handled()
 				
 			elif distance > inner_radius and distance <= outer_radius:
@@ -204,8 +273,6 @@ func _input(event: InputEvent) -> void:
 				_show_unsaved_state()
 				drag_ended.emit(self)
 
-# --- STATE MANAGEMENT ---
-
 func _capture_original_state():
 	if not has_unsaved_changes:
 		original_position = global_position
@@ -222,17 +289,8 @@ func _reset_marker_ui():
 	if inner_circle_selected: inner_circle_selected.modulate = Color.WHITE
 	if outer_rotation_ring: outer_rotation_ring.modulate = Color.WHITE
 
-func _on_save_pressed():
-	save_requested.emit(self) 
-	_reset_marker_ui()
-
-func _on_revert_pressed():
-	revert_to_original()
-	
 func revert_to_original() -> void:
 	if not has_unsaved_changes: return 
-	
 	global_position = original_position
 	global_rotation = original_rotation
-	
 	_reset_marker_ui()

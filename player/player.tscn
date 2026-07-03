@@ -1622,7 +1622,6 @@ rotation = 1.5707964
 shape = SubResource("CapsuleShape2D_j55il")
 
 [node name="Thigh_Back_Sprite2" type="Sprite2D" parent="PlayerBody/Ragdoll/Leg_Back/Thigh_Back_Physics" unique_id=2089244299]
-visible = false
 modulate = Color(0.69135684, 0.6913568, 0.69135684, 1)
 rotation = -1.5707961
 scale = Vector2(0.39998212, 0.39998212)
@@ -1728,7 +1727,6 @@ rotation = -1.5707964
 shape = SubResource("CapsuleShape2D_fjxoa")
 
 [node name="Thigh_Front_Sprite2" type="Sprite2D" parent="PlayerBody/Ragdoll/Leg_Front/Thigh_Front_Physics" unique_id=1775071556]
-visible = false
 z_index = 2
 rotation = 1.5707964
 scale = Vector2(0.39998212, 0.39998212)
@@ -1890,7 +1888,7 @@ collision_mask = 33024
 mass = 5.0
 angular_damp = 5.0
 
-[node name="Sternum_Abdoment_Pin_2" type="PinJoint2D" parent="PlayerBody/Ragdoll/Torso/Torso2_Physics" unique_id=234211932]
+[node name="Neck_Torso_Pin_2" type="PinJoint2D" parent="PlayerBody/Ragdoll/Torso/Torso2_Physics" unique_id=234211932]
 node_a = NodePath("../../../Head/Neck_Physics")
 node_b = NodePath("..")
 angular_limit_enabled = true
@@ -1901,13 +1899,13 @@ angular_limit_upper = 2.0943952
 position = Vector2(0, 30)
 shape = SubResource("CapsuleShape2D_mmwog")
 
-[node name="Abdomen_Root_Pin2" type="PinJoint2D" parent="PlayerBody/Ragdoll/Torso/Torso2_Physics" unique_id=227268781]
+[node name="Abdomen_Torso_Pin" type="PinJoint2D" parent="PlayerBody/Ragdoll/Torso/Torso2_Physics" unique_id=227268781]
 position = Vector2(0, 58)
 node_a = NodePath("../../Abdomen2_Physics")
 node_b = NodePath("..")
 angular_limit_enabled = true
-angular_limit_lower = -3.1415927
-angular_limit_upper = 3.1415927
+angular_limit_lower = -0.5235988
+angular_limit_upper = 0.5235988
 
 [node name="Torso3" type="Sprite2D" parent="PlayerBody/Ragdoll/Torso/Torso2_Physics" unique_id=764230273]
 z_index = 2
@@ -1983,12 +1981,11 @@ physics_body = NodePath("../../../../Ragdoll/Root")
 bone_groups = 64
 metadata/_custom_type_script = "uid://cns3xkrq4cwa4"
 
-[node name="Abdomen" type="Bone2D" parent="PlayerBody/FacingPivot/Armature/Skeleton2D/Pelvis" unique_id=961447841 node_paths=PackedStringArray("physics_body", "position_body")]
+[node name="Abdomen" type="Bone2D" parent="PlayerBody/FacingPivot/Armature/Skeleton2D/Pelvis" unique_id=961447841 node_paths=PackedStringArray("position_body")]
 position = Vector2(0, -18.999634)
 rotation = -1.5707964
 rest = Transform2D(-4.371139e-08, -1, 1, -4.371139e-08, 0, -18.999634)
 script = ExtResource("32_gswnw")
-physics_body = NodePath("")
 position_body = NodePath("../../../../../Ragdoll/Root")
 rotation_compensation = 270.0
 bone_groups = 16
@@ -2004,13 +2001,11 @@ offset = Vector2(33.24241, -14.755905)
 region_enabled = true
 region_rect = Rect2(508, 547, 140, 151)
 
-[node name="Torso" type="Bone2D" parent="PlayerBody/FacingPivot/Armature/Skeleton2D/Pelvis/Abdomen" unique_id=982948741 node_paths=PackedStringArray("physics_body", "position_body")]
+[node name="Torso" type="Bone2D" parent="PlayerBody/FacingPivot/Armature/Skeleton2D/Pelvis/Abdomen" unique_id=982948741]
 position = Vector2(26.999756, 0)
 rotation = 1.5707964
 rest = Transform2D(-4.371139e-08, 1, -1, -4.371139e-08, 26.999756, 0)
 script = ExtResource("32_gswnw")
-physics_body = NodePath("")
-position_body = NodePath("")
 inverted_scale_x_rotation_compensation = 180.0
 bone_groups = 256
 metadata/_custom_type_script = "uid://cns3xkrq4cwa4"
@@ -2347,9 +2342,10 @@ rotation = 1.4617479
 slave = NodePath("../../../Ragdoll/Arm_Front/Hand_Front_Physics")
 slave_parent = NodePath("../../../Ragdoll/Arm_Front/Forearm_Front_Physics")
 sibling = NodePath("../HandBack")
-can_rotate = true
-follow_parent_rotation = true
 pivot = NodePath("../..")
+can_rotate = true
+global_x = true
+global_y = true
 
 [node name="HandBack" parent="PlayerBody/FacingPivot/PoseController" unique_id=1872066078 node_paths=PackedStringArray("slave", "slave_parent", "sibling", "pivot") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
 position = Vector2(60.90216, -2.053894)
@@ -2357,9 +2353,10 @@ rotation = -2.4603875
 slave = NodePath("../../../Ragdoll/Arm_Back/Hand_Back_Physics")
 slave_parent = NodePath("../../../Ragdoll/Arm_Back/Forearm_Back_Physics")
 sibling = NodePath("../HandFront")
-can_rotate = true
-follow_parent_rotation = true
 pivot = NodePath("../..")
+can_rotate = true
+global_x = true
+global_y = true
 
 [node name="FootBack" parent="PlayerBody/FacingPivot/PoseController" unique_id=1591964902 node_paths=PackedStringArray("slave", "slave_parent", "sibling", "pivot") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
 position = Vector2(-97.14282, 53.07141)
@@ -2367,9 +2364,10 @@ rotation = 1.5707964
 slave = NodePath("../../../Ragdoll/Leg_Back/Foot_Back_Physics")
 slave_parent = NodePath("../../../Ragdoll/Leg_Back/Calf_Back_Physics")
 sibling = NodePath("../FootFront")
-can_rotate = true
-follow_parent_rotation = true
 pivot = NodePath("../..")
+can_rotate = true
+global_x = true
+global_y = true
 
 [node name="FootFront" parent="PlayerBody/FacingPivot/PoseController" unique_id=960569227 node_paths=PackedStringArray("slave", "slave_parent", "sibling") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
 position = Vector2(88.57141, 139.7857)
@@ -2378,70 +2376,79 @@ slave = NodePath("../../../Ragdoll/Leg_Front/Foot_Front_Physics")
 slave_parent = NodePath("../../../Ragdoll/Leg_Front/Calf_Front_Physics")
 sibling = NodePath("../FootBack")
 can_rotate = true
+global_x = true
+global_y = true
 
 [node name="Neck" parent="PlayerBody/FacingPivot/PoseController" unique_id=1488133409 node_paths=PackedStringArray("slave", "pivot") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
 position = Vector2(8.726257, -94.85774)
 slave = NodePath("../../../Ragdoll/Head/Neck_Physics")
 pivot = NodePath("../..")
 invert_rotation_on_flip = true
+global_x = true
+global_y = true
 
 [node name="Head" parent="PlayerBody/FacingPivot/PoseController" unique_id=1906863 node_paths=PackedStringArray("slave", "slave_parent", "pivot") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
 position = Vector2(8.353577, -93.02951)
 rotation = -0.0034784384
 slave = NodePath("../../../Ragdoll/Head/Head_Physics")
-slave_parent = NodePath("")
-can_rotate = true
-follow_parent_rotation = true
+slave_parent = NodePath("../../../Ragdoll/Head/Neck_Physics")
 pivot = NodePath("../..")
+can_rotate = true
+global_x = true
+global_y = true
 
 [node name="Torso" parent="PlayerBody/FacingPivot/PoseController" unique_id=1164425788 node_paths=PackedStringArray("slave", "pivot") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
 position = Vector2(0, -116)
 rotation = -0.0034784384
-slave = NodePath("")
-can_rotate = true
-is_controlled = false
+slave = NodePath("../../../Ragdoll/Torso/Torso2_Physics")
 pivot = NodePath("../..")
 invert_rotation_on_flip = true
+global_x = true
+global_y = true
 
 [node name="Adbomen" parent="PlayerBody/FacingPivot/PoseController" unique_id=881103751 node_paths=PackedStringArray("slave", "pivot") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
 position = Vector2(0, -116)
 rotation = -0.0034784384
-slave = NodePath("")
-can_rotate = true
-is_controlled = false
+slave = NodePath("../../../Ragdoll/Torso/Abdomen2_Physics")
 pivot = NodePath("../..")
 invert_rotation_on_flip = true
+global_x = true
+global_y = true
 
-[node name="Sternum" parent="PlayerBody/FacingPivot/PoseController" unique_id=226669695 node_paths=PackedStringArray("slave", "pivot") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
+[node name="Sternum" parent="PlayerBody/FacingPivot/PoseController" unique_id=226669695 node_paths=PackedStringArray("pivot") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
 position = Vector2(0, -116)
 rotation = -0.0034784384
-slave = NodePath("")
 pivot = NodePath("../..")
+global_x = true
+global_y = true
 
 [node name="HipBack" parent="PlayerBody/FacingPivot/PoseController" unique_id=1321901073 node_paths=PackedStringArray("slave", "pivot") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
 position = Vector2(0, -116)
 rotation = -0.0034784384
 slave = NodePath("../../../Ragdoll/Leg_Back/Hip_Back_Physics")
-can_rotate = true
-is_controlled = false
 pivot = NodePath("../..")
 invert_rotation_on_flip = true
+can_rotate = true
+global_x = true
+global_y = true
 
 [node name="HipFront" parent="PlayerBody/FacingPivot/PoseController" unique_id=2121689421 node_paths=PackedStringArray("slave", "pivot") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
 position = Vector2(0, -116)
 rotation = -0.0034784384
 slave = NodePath("../../../Ragdoll/Leg_Front/Hip_Front_Physics")
-can_rotate = true
-is_controlled = false
 pivot = NodePath("../..")
 invert_rotation_on_flip = true
+can_rotate = true
+global_x = true
+global_y = true
 
 [node name="Root" parent="PlayerBody/FacingPivot/PoseController" unique_id=219274694 node_paths=PackedStringArray("slave", "pivot") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
 position = Vector2(-5.7142334, 18.571426)
 slave = NodePath("../../../Ragdoll/Root")
-can_rotate = true
 pivot = NodePath("../..")
-use_lock_x = true
+can_rotate = true
+global_x = true
+global_y = true
 
 [node name="AnimationTree" type="AnimationTree" parent="PlayerBody" unique_id=1787523656]
 tree_root = SubResource("AnimationNodeBlendTree_dx5ib")

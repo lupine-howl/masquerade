@@ -148,47 +148,58 @@ func _steps_to_time(steps: int) -> float:
 @onready var part_table: Tree = %PartTable
 
 func _setup_part_table(markers: Array[PoseMarker]) -> void:
-	part_table.columns = 5
+	part_table.columns = 7
 	part_table.hide_root = true
 	
 	part_table.set_column_custom_minimum_width(0, 100)
 	part_table.set_column_expand(0, true) 
 
 	var root = part_table.create_item()
-	part_table.set_column_title(0, "")
-	part_table.set_column_title(1, "✧") 
-	part_table.set_column_title(2, "⬩➤") 
-	part_table.set_column_title(3, "ꗃx") 
-	part_table.set_column_title(4, "ꗃy") 
+	part_table.set_column_title(0, "Part")
+	part_table.set_column_title(1, "X") 
+	part_table.set_column_title(2, "🔒X") 
+	part_table.set_column_title(3, "🌍X") 
+	part_table.set_column_title(4, "Y") 
+	part_table.set_column_title(5, "🔒Y") 
+	part_table.set_column_title(6, "🌍Y") 
 	part_table.column_titles_visible = true
 	
 	part_table.item_selected.connect(_on_table_part_selected)
-	part_table.multi_selected.connect(_on_table_part_selected) # 🆕 Add this!
+	part_table.multi_selected.connect(_on_table_part_selected)
 	part_table.item_edited.connect(_on_table_cell_edited)
 	
 	for marker in markers:
 		var row = part_table.create_item(root)
 		row.set_metadata(0, marker) 
 		
+		# Col 0: Title Text
 		row.set_text(0, marker.name)
 		row.set_selectable(0, true)
 		
-		_create_tree_checkbox(row, 1, marker.is_controlled)
-		_create_tree_checkbox(row, 2, marker.follow_parent_rotation)
+		# Col 1: X Offset Value
+		row.set_cell_mode(1, TreeItem.CELL_MODE_STRING)
+		row.set_text(1, str(snapped(marker.offset_x, 0.1)))
+		row.set_editable(1, true)
 		
-		var lock_x = marker.get("lock_x") if "lock_x" in marker else false
-		var lock_y = marker.get("lock_y") if "lock_y" in marker else false
-	
-		# 🆕 Cols 3-4: Lock X/Y (String Values)
-		# Shows the number if locked, or an empty string if unlocked
-		row.set_cell_mode(3, TreeItem.CELL_MODE_STRING)
-		row.set_text(3, str(marker.lock_x_val) if marker.use_lock_x else "")
-		row.set_editable(3, true)
+		# Col 2: Lock X (Determine if min and max are explicitly clamped together)
+		var is_locked_x = marker.use_min_max_x and is_equal_approx(marker.min_x, marker.max_x)
+		_create_tree_checkbox(row, 2, is_locked_x)
 		
+		# Col 3: Global X
+		_create_tree_checkbox(row, 3, marker.global_x)
+		
+		# Col 4: Y Offset Value
 		row.set_cell_mode(4, TreeItem.CELL_MODE_STRING)
-		row.set_text(4, str(marker.lock_y_val) if marker.use_lock_y else "")
+		row.set_text(4, str(snapped(marker.offset_y, 0.1)))
 		row.set_editable(4, true)
-				
+		
+		# Col 5: Lock Y
+		var is_locked_y = marker.use_min_max_y and is_equal_approx(marker.min_y, marker.max_y)
+		_create_tree_checkbox(row, 5, is_locked_y)
+		
+		# Col 6: Global Y
+		_create_tree_checkbox(row, 6, marker.global_y)
+						
 func _create_tree_checkbox(item: TreeItem, column: int, checked: bool) -> void:
 	item.set_cell_mode(column, TreeItem.CELL_MODE_CHECK)
 	item.set_checked(column, checked)
@@ -271,7 +282,7 @@ func _process_queued_tree_selection() -> void:
 			%PartLabel.text = "None"
 			
 	_updating_from_ui = false # Release UI Lock
-									
+
 func _on_table_cell_edited() -> void:
 	var edited_item = part_table.get_edited()
 	var col = part_table.get_edited_column()
@@ -282,34 +293,48 @@ func _on_table_cell_edited() -> void:
 	
 	match col:
 		1: 
-			marker.is_controlled = edited_item.is_checked(col)
-			if marker.is_controlled: marker.take_control()
-			else: marker.release_control()
-		2: marker.follow_parent_rotation = edited_item.is_checked(col)
-		3: 
+			# User typed an X Offset
 			var val_str = edited_item.get_text(col).strip_edges()
-			if val_str == "":
-				marker.use_lock_x = false
-			elif val_str.is_valid_float():
-				marker.use_lock_x = true
-				marker.lock_x_val = val_str.to_float()
-				marker.global_position.x = marker.lock_x_val
+			if val_str.is_valid_float():
+				marker.offset_x = val_str.to_float()
 			else:
-				# Revert text if the user typed random letters
-				edited_item.set_text(col, str(marker.lock_x_val) if marker.use_lock_x else "")
-				
+				edited_item.set_text(col, str(snapped(marker.offset_x, 0.1)))
+		2: 
+			# User toggled Lock X
+			var is_locked = edited_item.is_checked(col)
+			if is_locked:
+				marker.use_min_max_x = true
+				marker.min_x = marker.global_position.x
+				marker.max_x = marker.global_position.x
+			else:
+				marker.use_min_max_x = false
+		3:
+			# User toggled Global X
+			marker.global_x = edited_item.is_checked(col)
 		4: 
+			# User typed a Y Offset
 			var val_str = edited_item.get_text(col).strip_edges()
-			if val_str == "":
-				marker.use_lock_y = false
-			elif val_str.is_valid_float():
-				marker.use_lock_y = true
-				marker.lock_y_val = val_str.to_float()
-				marker.global_position.y = marker.lock_y_val
+			if val_str.is_valid_float():
+				marker.offset_y = val_str.to_float()
 			else:
-				# Revert text if the user typed random letters
-				edited_item.set_text(col, str(marker.lock_y_val) if marker.use_lock_y else "")
-# 🆕 UPDATED: Iterates array for swapping
+				edited_item.set_text(col, str(snapped(marker.offset_y, 0.1)))
+		5: 
+			# User toggled Lock Y
+			var is_locked = edited_item.is_checked(col)
+			if is_locked:
+				marker.use_min_max_y = true
+				marker.min_y = marker.global_position.y
+				marker.max_y = marker.global_position.y
+			else:
+				marker.use_min_max_y = false
+		6:
+			# User toggled Global Y
+			marker.global_y = edited_item.is_checked(col)
+			
+	# If auto-record is on, save the changes immediately
+	if record_check.button_pressed and pose_controller:
+		_on_marker_save_requested(marker)
+		
 func _on_swap_sibling_pressed():
 	if not pose_controller or pose_controller.active_markers.is_empty(): return
 	for m in pose_controller.active_markers:
@@ -358,10 +383,11 @@ func _update_bone_info_checkboxes(marker: PoseMarker):
 func _process(_delta: float) -> void:
 	if not timeline or not timeline.anim_player: return
 	
-	# 🆕 Read ONLY the primary marker for UI visual updates
+	# Read ONLY the primary marker for UI visual updates
 	var primary_marker = pose_controller.get_primary_marker() if pose_controller else null
 	var is_posing = posing_check.button_pressed
 
+	# --- 1. TIMELINE SYNCHRONIZATION ---
 	if timeline.anim_player.is_playing():
 		var playing_anim = timeline.anim_player.current_animation
 		if not is_posing and playing_anim != "":
@@ -374,6 +400,7 @@ func _process(_delta: float) -> void:
 						_build_step_grid(current_anim_len)
 					break
 		
+		# Keep step sequencer visually in sync with raw playback time
 		var playing_step = timeline.get_current_playback_step()
 		var max_steps = max(0, step_grid.get_child_count() - 1)
 		playing_step = clampi(playing_step, 0, max_steps)
@@ -384,15 +411,28 @@ func _process(_delta: float) -> void:
 			if not is_posing:
 				_update_bone_info_checkboxes(primary_marker)
 
-	# Read Realtime Physics Data for HUD
+	# --- 2. LIVE HUD DATA READOUTS ---
 	if primary_marker and primary_marker.slave:
 		var pos = primary_marker.global_position
 		pos_label.text = "    ⚲    Position: (%d, %d)" % [round(pos.x), round(pos.y)]
 		rot_label.text = "    ↻    Rotation: %0.1f°" % rad_to_deg(primary_marker.global_rotation)
+		
+		# 🆕 Live update the table text fields so mouse dragging is reflected in the UI instantly
+		if not _updating_from_ui and part_table:
+			var current_item = part_table.get_root().get_first_child()
+			
+			# Find the row corresponding to the primary marker
+			while current_item:
+				if current_item.get_metadata(0) == primary_marker:
+					# Update Col 1 (X) and Col 4 (Y) with the exact underlying offset variables
+					current_item.set_text(1, str(snapped(primary_marker.offset_x, 0.1)))
+					current_item.set_text(4, str(snapped(primary_marker.offset_y, 0.1)))
+					break
+				current_item = current_item.get_next()
 	else:
 		pos_label.text = "    ⚲    Position: --"
 		rot_label.text = "    ↻    Rotation: --"
-
+		
 # --- UI TOGGLES ---
 
 func _on_controlled_toggled(toggled_on: bool) -> void:

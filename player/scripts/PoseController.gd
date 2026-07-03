@@ -11,7 +11,7 @@ var all_markers: Array[PoseMarker] = []
 @export var player: CharacterBody2D 
 @export var pose_hud: PoseHUD
 
-# 🆕 Helper to act as the "lead" marker for UI tracking
+# Helper to act as the "lead" marker for UI tracking
 func get_primary_marker() -> PoseMarker:
 	return active_markers.back() if not active_markers.is_empty() else null
 
@@ -25,7 +25,7 @@ func _ready() -> void:
 			child.deselected.connect(_on_marker_deselected)
 			child.drag_ended.connect(_on_marker_drag_ended)
 			
-			# 🆕 Connect multi-drag synchronization signals
+			# Connect multi-drag synchronization signals
 			child.dragged_position.connect(_on_marker_dragged_position.bind(child))
 			child.dragged_rotation.connect(_on_marker_dragged_rotation.bind(child))
 			
@@ -91,7 +91,7 @@ func _input(event: InputEvent) -> void:
 			get_viewport().set_input_as_handled()
 			return
 			
-		# 🆕 ARROW KEY NUDGING 
+		# ARROW KEY NUDGING 
 		elif event.keycode in [KEY_RIGHT, KEY_LEFT, KEY_UP, KEY_DOWN]:
 			var is_posing = pose_hud.posing_check.button_pressed if pose_hud else false
 			
@@ -107,12 +107,9 @@ func _input(event: InputEvent) -> void:
 					KEY_RIGHT: motion.x = nudge_amt
 					
 				for m in active_markers:
-					# 🆕 Calculate desired position, but enforce locks before moving
-					var new_pos = m.global_position + motion
-					if m.use_lock_x: new_pos.x = m.lock_x_val
-					if m.use_lock_y: new_pos.y = m.lock_y_val
-					
-					m.global_position = new_pos
+					# 🆕 Directly apply motion to the offsets (the marker's physics process handles constraints natively!)
+					m.offset_x += motion.x
+					m.offset_y += motion.y
 					
 					if pose_hud and pose_hud.record_check.button_pressed:
 						pose_hud._on_marker_save_requested(m)				
@@ -139,20 +136,25 @@ func _input(event: InputEvent) -> void:
 			get_viewport().set_input_as_handled()
 			return
 
-# --- 3. KEYFRAME & SELECTION HOTKEYS ---
+	# --- 3. KEYFRAME & SELECTION HOTKEYS ---
 
 	# 'K' key to manually commit a keyframe
 	if event is InputEventKey and event.physical_keycode == KEY_K and event.pressed and not event.echo:
 		if active_markers.is_empty():
-			# 🆕 Global Key All: If nothing is selected, K keys the entire body!
+			# Global Key All: If nothing is selected, K keys the entire body!
 			if pose_hud and pose_hud.has_method("_on_key_all_pressed"):
 				pose_hud._on_key_all_pressed()
 		else:
-			# 🆕 Targeted Key: Bypasses the "Auto-Record" checkbox completely
+			# Targeted Key: Bypasses the "Auto-Record" checkbox completely
 			for m in active_markers:
-				timeline.key_property(current_anim, m, ":position", m.position)
+				# 🆕 Key the custom offsets and configuration variables as the source of truth!
+				timeline.key_property(current_anim, m, ":offset_x", m.offset_x)
+				timeline.key_property(current_anim, m, ":offset_y", m.offset_y)
+				timeline.key_property(current_anim, m, ":global_x", m.global_x)
+				timeline.key_property(current_anim, m, ":global_y", m.global_y)
+				
 				if not m.follow_parent_rotation:
-					timeline.key_property(current_anim, m, ":rotation", m.rotation)
+					timeline.key_property(current_anim, m, ":rotation_offset_deg", m.rotation_offset_deg)
 					
 				if m.has_method("_reset_marker_ui"):
 					m._reset_marker_ui()
@@ -171,20 +173,23 @@ func _input(event: InputEvent) -> void:
 			if m.has_method("revert_to_original"):
 				m.revert_to_original()
 		get_viewport().set_input_as_handled()
-# --- 🆕 MULTI-DRAG SYNC ---
+
+# --- MULTI-DRAG SYNC ---
 func _on_marker_dragged_position(delta: Vector2, source_marker: PoseMarker) -> void:
 	for m in active_markers:
 		if m != source_marker:
-			m.global_position += delta
+			# 🆕 Adjust the offsets directly across the entire selected group
+			m.offset_x += delta.x
+			m.offset_y += delta.y
 			m._capture_original_state()
 
 func _on_marker_dragged_rotation(delta_angle: float, source_marker: PoseMarker) -> void:
 	for m in active_markers:
 		if m != source_marker:
-			m.global_rotation += delta_angle
+			m.rotation_offset_deg += rad_to_deg(delta_angle)
 			m._capture_original_state()
 
-# --- 🆕 SELECTION LOGIC ---
+# --- SELECTION LOGIC ---
 func _on_marker_selected(marker: PoseMarker) -> void:
 	# Safely check global keyboard state for Ctrl (Win/Linux) or Cmd (Mac)
 	var is_ctrl_pressed = Input.is_key_pressed(KEY_CTRL) or Input.is_key_pressed(KEY_META)
@@ -254,9 +259,22 @@ func toggle_freeze(freeze: bool) -> void:
 			
 func swap_with_sibling(marker: PoseMarker):
 	if not marker.sibling: return
-	var original_sibling_pos = marker.sibling.global_position
-	var original_sibling_rot = marker.sibling.global_rotation
-	marker.sibling.global_rotation = marker.global_rotation
-	marker.sibling.global_position = marker.global_position
-	marker.global_position = original_sibling_pos
-	marker.global_rotation = original_sibling_rot
+	
+	# 🆕 Swap all the custom target variables instead of the final physical output
+	var orig_off_x = marker.sibling.offset_x
+	var orig_off_y = marker.sibling.offset_y
+	var orig_rot = marker.sibling.rotation_offset_deg
+	var orig_gx = marker.sibling.global_x
+	var orig_gy = marker.sibling.global_y
+	
+	marker.sibling.offset_x = marker.offset_x
+	marker.sibling.offset_y = marker.offset_y
+	marker.sibling.rotation_offset_deg = marker.rotation_offset_deg
+	marker.sibling.global_x = marker.global_x
+	marker.sibling.global_y = marker.global_y
+	
+	marker.offset_x = orig_off_x
+	marker.offset_y = orig_off_y
+	marker.rotation_offset_deg = orig_rot
+	marker.global_x = orig_gx
+	marker.global_y = orig_gy
