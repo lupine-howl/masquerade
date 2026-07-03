@@ -17,9 +17,12 @@
 [ext_resource type="Script" uid="uid://k0kq4vlcd64f" path="res://player/scripts/pose/PosePartPanel.gd" id="11_part"]
 [ext_resource type="Script" uid="uid://ptpbj4ebn1b0" path="res://player/scripts/pose/PoseTimelinePanel.gd" id="11_timeline"]
 [ext_resource type="Animation" uid="uid://45eb4xgs6pds" path="res://player/animations/RESET.res" id="17_2uvqg"]
-[ext_resource type="Animation" uid="uid://25s2yqtk5opx" path="res://player/animations/idle.res" id="17_r7pn3"]
-[ext_resource type="Animation" uid="uid://b3g43ovf0nv1d" path="res://player/animations/run.res" id="18_b8hi5"]
+[ext_resource type="Animation" uid="uid://cxmvwuh2i5rbj" path="res://player/animations/idle.res" id="17_r7pn3"]
+[ext_resource type="Animation" uid="uid://xgbckhii27nl" path="res://player/animations/dead.res" id="23_55jnj"]
 [ext_resource type="Texture2D" uid="uid://b1govaot86lmk" path="res://light-mask.png" id="24_g4c7l"]
+[ext_resource type="Animation" uid="uid://cqtp8oe1pw078" path="res://player/animations/jump.res" id="25_dx5ib"]
+[ext_resource type="Animation" uid="uid://c7ns1w5tepyfr" path="res://player/animations/jump_launch.res" id="26_a2xo5"]
+[ext_resource type="Animation" uid="uid://venbox3v4qrp" path="res://player/animations/run2.res" id="27_55jnj"]
 [ext_resource type="Script" uid="uid://b8j54hiva7jef" path="res://player/DebugHUD.gd" id="28_rptt4"]
 [ext_resource type="Texture2D" uid="uid://cmvjnsywbvyar" path="res://player/assets/character.png" id="30_b8hi5"]
 [ext_resource type="Script" uid="uid://bo3h510q3ok2g" path="res://player/scripts/Ragdoll.gd" id="30_fjxoa"]
@@ -876,24 +879,16 @@ resource_name = "hanging"
 loop_mode = 1
 step = 0.02
 
-[sub_resource type="Animation" id="Animation_5ejfk"]
-resource_name = "jump"
-length = 0.6
-loop_mode = 1
-step = 0.02
-
-[sub_resource type="Animation" id="Animation_uw77l"]
-resource_name = "jump_launch"
-
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_1s1yo"]
 _data = {
 &"RESET": ExtResource("17_2uvqg"),
+&"dead": ExtResource("23_55jnj"),
 &"fall": SubResource("Animation_1so5t"),
 &"hanging": SubResource("Animation_237xx"),
 &"idle": ExtResource("17_r7pn3"),
-&"jump": SubResource("Animation_5ejfk"),
-&"jump_launch": SubResource("Animation_uw77l"),
-&"run": ExtResource("18_b8hi5")
+&"jump": ExtResource("25_dx5ib"),
+&"jump_launch": ExtResource("26_a2xo5"),
+&"run": ExtResource("27_55jnj")
 }
 
 [node name="Player" type="Node2D" unique_id=1696343506]
@@ -1484,7 +1479,7 @@ script = ExtResource("1_rgyib")
 SPEED = 600.0
 LADDER_CLIMB_SPEED = 400.0
 WALL_CLIMB_SPEED = 400.0
-JUMP_VELOCITY = -1000.0
+JUMP_VELOCITY = -2000.0
 DOUBLE_JUMP_VELOCITY = -1000.0
 ragdoll = NodePath("Ragdoll")
 metadata/_edit_group_ = true
@@ -1520,12 +1515,12 @@ rotation = 1.4617479
 slave = NodePath("../../../Ragdoll/Arm_Front/Hand_Front_Physics")
 sibling = NodePath("../HandBack")
 pivot = NodePath("../..")
+is_controlled = false
 use_radius_limit = true
 max_radius = 115.0
 radius_constraint_parent = NodePath("../../../Ragdoll/Arm_Front/Shoulder_Front_Physics")
 use_follow_rotation = true
 follow_rotation_target = NodePath("../../../Ragdoll/Arm_Front/Forearm_Front_Physics")
-follow_rotation_offset_deg = -0.04229936152988897
 
 [node name="HandBack" parent="PlayerBody/FacingPivot/PoseController" unique_id=1872066078 node_paths=PackedStringArray("slave", "sibling", "pivot", "radius_constraint_parent", "follow_rotation_target") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
 position = Vector2(60.90216, -2.053894)
@@ -1533,6 +1528,7 @@ rotation = 1.3872819
 slave = NodePath("../../../Ragdoll/Arm_Back/Hand_Back_Physics")
 sibling = NodePath("../HandFront")
 pivot = NodePath("../..")
+is_controlled = false
 use_radius_limit = true
 max_radius = 115.0
 radius_constraint_parent = NodePath("../../../Ragdoll/Arm_Back/Shoulder_Back_Physics")
@@ -1545,6 +1541,7 @@ rotation = 1.5707964
 slave = NodePath("../../../Ragdoll/Leg_Back/Foot_Back_Physics")
 sibling = NodePath("../FootFront")
 pivot = NodePath("../..")
+is_controlled = false
 constrain_rotation_when_uncontrolled = true
 use_radius_limit = true
 max_radius = 170.0
@@ -1565,7 +1562,6 @@ constrain_rotation_when_uncontrolled = true
 use_radius_limit = true
 max_radius = 170.0
 radius_constraint_parent = NodePath("../../../Ragdoll/Root")
-use_follow_rotation = true
 follow_rotation_target = NodePath("../../../Ragdoll/Leg_Front/Calf_Front_Physics")
 use_ground_lock = true
 ground_lock_upper = NodePath("../GroundLockUpper")
@@ -1586,7 +1582,6 @@ slave = NodePath("../../../Ragdoll/Head/Head_Physics")
 pivot = NodePath("../..")
 invert_rotation_on_flip = true
 can_rotate = true
-is_controlled = false
 constrain_rotation_when_uncontrolled = true
 use_radius_limit = true
 max_radius = 120.0
@@ -1597,35 +1592,34 @@ look_at_target = NodePath("../Eyeline")
 look_at_offset_deg = -1.3748347974884092
 
 [node name="GroundLockUpper" parent="PlayerBody/FacingPivot/PoseController" unique_id=1906512465 groups=["anim_markers"] instance=ExtResource("9_s7qer")]
-position = Vector2(245, 183)
+position = Vector2(250, 130)
 rotation = -0.0034784384
 
 [node name="Ground" parent="PlayerBody/FacingPivot/PoseController" unique_id=1906512464 groups=["anim_markers"] instance=ExtResource("9_s7qer")]
-position = Vector2(251, 231)
+position = Vector2(250, 170)
 rotation = -0.0034784384
 
 [node name="Eyeline" parent="PlayerBody/FacingPivot/PoseController" unique_id=112503581 groups=["anim_markers"] instance=ExtResource("9_s7qer")]
-position = Vector2(250.76924, -106.15384)
-rotation = -0.0034784384
+position = Vector2(195, -120)
 
 [node name="Torso" parent="PlayerBody/FacingPivot/PoseController" unique_id=1164425788 node_paths=PackedStringArray("slave", "pivot") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
 visible = false
-position = Vector2(63.37236, -78.1832)
-rotation = 0.3799728
+position = Vector2(8.588722, -104.21014)
+rotation = 0.06072967
 slave = NodePath("../../../Ragdoll/Torso/Torso2_Physics")
 pivot = NodePath("../..")
 is_controlled = false
 
 [node name="UpperAdbomen" parent="PlayerBody/FacingPivot/PoseController" unique_id=881103751 node_paths=PackedStringArray("slave", "pivot") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
-position = Vector2(43.153667, -22.938751)
-rotation = 0.17020127
+position = Vector2(5.598625, -45.308563)
+rotation = -0.34961668
 slave = NodePath("../../../Ragdoll/Torso/UpperAbdomen_Physics")
 pivot = NodePath("../..")
 invert_rotation_on_flip = true
 is_controlled = false
 
 [node name="LowerAbdomen" parent="PlayerBody/FacingPivot/PoseController" unique_id=972622081 node_paths=PackedStringArray("slave", "pivot") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
-position = Vector2(43.153667, -22.938751)
+position = Vector2(32.52295, -17.77225)
 rotation = 0.17020127
 slave = NodePath("../../../Ragdoll/Torso/LowerAbdomen_Physics")
 pivot = NodePath("../..")
@@ -1636,8 +1630,8 @@ is_controlled = false
 position = Vector2(-5.7142334, 18.571426)
 slave = NodePath("../../../Ragdoll/Root")
 pivot = NodePath("../..")
-invert_rotation_on_flip = true
 can_rotate = true
+is_controlled = false
 use_radius_limit = true
 max_radius = 120.0
 radius_constraint_parent = NodePath("../../../Ragdoll/Head/Head_Physics")
@@ -1772,7 +1766,7 @@ metadata/_custom_type_script = "uid://cns3xkrq4cwa4"
 [node name="Head" type="Sprite2D" parent="PlayerBody/FacingPivot/Armature/Skeleton2D/Pelvis/Abdomen/Torso/Shoulders/Neck/Head" unique_id=255580531]
 z_index = 1
 position = Vector2(7.00021, 5.998169)
-scale = Vector2(0.35, 0.35)
+scale = Vector2(0.32, 0.32)
 texture = ExtResource("30_b8hi5")
 offset = Vector2(20.000586, -73.204865)
 region_enabled = true
@@ -1902,6 +1896,7 @@ region_enabled = true
 region_rect = Rect2(53, 780, 108, 134)
 
 [node name="Jetpack" type="Sprite2D" parent="PlayerBody/FacingPivot/Armature/Skeleton2D/Pelvis/Abdomen/Torso" unique_id=688744130]
+visible = false
 z_index = 1
 scale = Vector2(0.4, 0.4)
 texture = ExtResource("30_b8hi5")
@@ -2035,6 +2030,7 @@ position = Vector2(88.46463, -133.27112)
 position = Vector2(-62.911102, -142.74261)
 
 [node name="Ragdoll" type="Node2D" parent="PlayerBody" unique_id=35418647 node_paths=PackedStringArray("skeleton_node", "pivot")]
+visible = false
 z_index = 4
 script = ExtResource("30_fjxoa")
 skeleton_node = NodePath("../FacingPivot/Armature/Skeleton2D")
@@ -2672,7 +2668,6 @@ parameters/ClimbScale/scale = 1.0
 [node name="PlayerAnimator" type="AnimationPlayer" parent="PlayerBody" unique_id=384783702]
 libraries/ = SubResource("AnimationLibrary_1s1yo")
 autoplay = &"run"
-speed_scale = 1.4
 
 [node name="StateMachine" type="Node" parent="PlayerBody" unique_id=1888989459 node_paths=PackedStringArray("initial_state")]
 script = ExtResource("33_jd2rm")

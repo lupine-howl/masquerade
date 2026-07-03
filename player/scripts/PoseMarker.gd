@@ -179,7 +179,7 @@ func _handle_drag_input() -> void:
 			follow_rotation_offset_deg = new_offset
 		else:
 			var target_rot := global_position.angle_to_point(mouse_pos)
-			delta_rot = target_rot - _get_authored_world_rotation()
+			delta_rot = target_rot - _get_pose_world_rotation()
 			if delta_rot != 0.0:
 				rotation += delta_rot
 		if delta_rot != 0.0:
@@ -265,20 +265,14 @@ func _should_compensate_slave_rotation() -> bool:
 		return false
 	if use_follow_rotation:
 		return false
-	# Look-at solves in world space; ragdoll needs an extra half-turn when mirrored.
-	# Free rotation uses authored local chain rotation, which is already flip-safe.
-	return use_look_at
+	return true
 
-func _get_authored_world_rotation() -> float:
-	if not pivot or not is_instance_valid(pivot) or not pivot.is_ancestor_of(self):
-		return global_rotation
-	var pose_parent := get_parent() as Node2D
-	if not pose_parent:
-		return global_rotation
-	var anchor := pivot.get_parent() as Node2D
-	var anchor_rot := anchor.global_rotation if anchor else 0.0
-	# Sum local rotations only — avoid scale.x flip corrupting global_rotation.
-	return anchor_rot + pivot.rotation + pose_parent.rotation + rotation
+## World rotation used to drive the ragdoll slave.
+func _get_pose_world_rotation() -> float:
+	# Under FacingPivot, read decomposed global rotation. Summing locals ignores
+	# scale.x mirror, and assigning global_position each frame can shift local
+	# rotation while global_rotation stays stable.
+	return global_rotation
 
 func _uses_authored_world_rotation() -> bool:
 	if use_look_at and look_at_target and is_instance_valid(look_at_target):
@@ -291,16 +285,7 @@ func _uses_authored_world_rotation() -> bool:
 func _sync_marker_rotation_from_slave() -> void:
 	if not slave:
 		return
-	var pose_rot := _from_slave_rotation(slave.global_rotation)
-	if _uses_authored_world_rotation():
-		var pose_parent := get_parent() as Node2D
-		if not pose_parent:
-			return
-		var anchor := pivot.get_parent() as Node2D
-		var anchor_rot := anchor.global_rotation if anchor else 0.0
-		rotation = pose_rot - anchor_rot - pivot.rotation - pose_parent.rotation
-	else:
-		global_rotation = pose_rot
+	global_rotation = _from_slave_rotation(slave.global_rotation)
 
 func _sync_marker_rotation_from_pose(pose_rot: float) -> void:
 	# Writing global_rotation under a flipped parent corrupts local rotation when
@@ -322,11 +307,11 @@ func _resolve_ungrounded_rotation() -> float:
 		if global_position.distance_squared_to(aim_point) > 0.01:
 			target = global_position.angle_to_point(aim_point) + deg_to_rad(_effective_look_at_offset_deg())
 		else:
-			target = _get_authored_world_rotation()
+			target = _get_pose_world_rotation()
 	elif use_follow_rotation and follow_rotation_target and is_instance_valid(follow_rotation_target):
 		target = follow_rotation_target.global_rotation + deg_to_rad(follow_rotation_offset_deg)
 	else:
-		target = _get_authored_world_rotation()
+		target = _get_pose_world_rotation()
 	if use_rotation_limit:
 		var base := rot_base.global_rotation if rot_base else 0.0
 		var local: float = clamp(wrapf(rad_to_deg(target - base), -180.0, 180.0), min_rotation_deg, max_rotation_deg)
@@ -368,14 +353,14 @@ func sync_constraint_offsets_from_rotation() -> void:
 	_sync_constraint_offsets_from_rotation()
 
 func _sync_constraint_offsets_from_rotation() -> void:
-	var authored_rot := _get_authored_world_rotation()
+	var pose_rot := _get_pose_world_rotation()
 	if use_follow_rotation and follow_rotation_target and is_instance_valid(follow_rotation_target):
-		follow_rotation_offset_deg = rad_to_deg(wrapf(authored_rot - follow_rotation_target.global_rotation, -PI, PI))
+		follow_rotation_offset_deg = rad_to_deg(wrapf(pose_rot - follow_rotation_target.global_rotation, -PI, PI))
 	if use_look_at and look_at_target and is_instance_valid(look_at_target):
 		var aim_point := look_at_target.global_position
 		if global_position.distance_squared_to(aim_point) > 0.01:
 			var base_aim := global_position.angle_to_point(aim_point)
-			look_at_offset_deg = rad_to_deg(wrapf(authored_rot - base_aim, -PI, PI))
+			look_at_offset_deg = rad_to_deg(wrapf(pose_rot - base_aim, -PI, PI))
 
 func _input(event: InputEvent) -> void:
 	if not is_dev_mode:

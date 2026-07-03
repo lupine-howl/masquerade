@@ -2,7 +2,7 @@ extends PlayerState
 
 func enter() -> void:
 	# Default to idle with a quick 0.1s blend when we land
-	player.animator.play("idle", 0.5)
+	player.animator.play("idle", 0)
 
 func physics_update(delta: float) -> void:
 	var direction := Input.get_axis("ui_left", "ui_right")
@@ -10,11 +10,11 @@ func physics_update(delta: float) -> void:
 
 	# --- ANIMATION & RAGDOLL LOGIC (Context-Driven Enum Paradigm) ---
 	if direction != 0:
-		player.animator.play("run", 0.5)
+		player.animator.play("run", 0)
 	elif y_dir > 0:
 		player.animator.play("hanging")
 	else:
-		player.animator.play("idle", 0.5)
+		player.animator.play("idle", 0)
 
 	# 1. Handle Facing Direction
 	if direction != 0:
