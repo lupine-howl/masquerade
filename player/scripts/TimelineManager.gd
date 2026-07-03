@@ -82,6 +82,30 @@ func key_property(anim_name: String, target_node: Node, property_suffix: String,
 	
 	animation.track_insert_key(track_idx, current_step * step_duration, value)
 
+## Keys world position and rotation offset for a marker at the current step.
+func key_marker_pose(anim_name: String, marker: PoseMarker) -> void:
+	if not marker:
+		return
+	key_property(anim_name, marker, ":global_position", marker.global_position)
+	key_property(anim_name, marker, ":use_look_at", marker.use_look_at)
+	key_property(anim_name, marker, ":use_follow_rotation", marker.use_follow_rotation)
+	if marker.use_look_at and not marker._is_ground_fully_locked():
+		key_property(anim_name, marker, ":look_at_offset_deg", marker.look_at_offset_deg)
+	elif marker.use_follow_rotation:
+		key_property(anim_name, marker, ":follow_rotation_offset_deg", marker.follow_rotation_offset_deg)
+	elif not marker._is_ground_fully_locked():
+		key_property(anim_name, marker, ":global_rotation", marker.global_rotation)
+
+func remove_marker_pose_keys(anim_name: String, marker: PoseMarker) -> void:
+	if not marker:
+		return
+	remove_keyframe(anim_name, marker, ":global_position")
+	remove_keyframe(anim_name, marker, ":global_rotation")
+	remove_keyframe(anim_name, marker, ":use_look_at")
+	remove_keyframe(anim_name, marker, ":use_follow_rotation")
+	remove_keyframe(anim_name, marker, ":look_at_offset_deg")
+	remove_keyframe(anim_name, marker, ":follow_rotation_offset_deg")
+
 func remove_keyframe(anim_name: String, target_node: Node, property_suffix: String) -> void:
 	if not anim_player or not anim_player.has_animation(anim_name) or not target_node: return
 	

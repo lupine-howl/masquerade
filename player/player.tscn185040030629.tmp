@@ -1017,125 +1017,7 @@ layout_mode = 2
 text = "⌫"
 flat = true
 
-[node name="PositionRow" type="HBoxContainer" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer2/Panel/PartInfo/VBoxContainer" unique_id=884210301]
-layout_mode = 2
-
-[node name="PositionLabel" type="Label" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer2/Panel/PartInfo/VBoxContainer/PositionRow" unique_id=884210302]
-custom_minimum_size = Vector2(130, 0)
-layout_mode = 2
-theme_override_font_sizes/font_size = 11
-text = "   Position X/Y"
-
-[node name="PosXSpin" type="SpinBox" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer2/Panel/PartInfo/VBoxContainer/PositionRow" unique_id=884210303]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(56, 0)
-layout_mode = 2
-min_value = -10000.0
-max_value = 10000.0
-step = 0.1
-alignment = 1
-
-[node name="PosYSpin" type="SpinBox" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer2/Panel/PartInfo/VBoxContainer/PositionRow" unique_id=884210304]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(56, 0)
-layout_mode = 2
-min_value = -10000.0
-max_value = 10000.0
-step = 0.1
-alignment = 1
-
-[node name="RotOffsetRow" type="HBoxContainer" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer2/Panel/PartInfo/VBoxContainer" unique_id=884210305]
-unique_name_in_owner = true
-layout_mode = 2
-
-[node name="RotOffsetLabel" type="Label" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer2/Panel/PartInfo/VBoxContainer/RotOffsetRow" unique_id=884210306]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(130, 0)
-layout_mode = 2
-theme_override_font_sizes/font_size = 11
-text = "   Rot Offset°"
-
-[node name="RotOffsetSpin" type="SpinBox" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer2/Panel/PartInfo/VBoxContainer/RotOffsetRow" unique_id=884210307]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(56, 0)
-layout_mode = 2
-min_value = -360.0
-max_value = 360.0
-step = 0.1
-alignment = 1
-
-[node name="FollowRotRow" type="HBoxContainer" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer2/Panel/PartInfo/VBoxContainer" unique_id=884210319]
-layout_mode = 2
-
-[node name="FollowRotCheck" type="CheckBox" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer2/Panel/PartInfo/VBoxContainer/FollowRotRow" unique_id=884210320]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(130, 0)
-layout_mode = 2
-focus_mode = 0
-theme_override_font_sizes/font_size = 11
-text = "Follow Rotation"
-
-[node name="FollowRotTargetRow" type="HBoxContainer" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer2/Panel/PartInfo/VBoxContainer" unique_id=884210321]
-layout_mode = 2
-
-[node name="FollowRotTargetLabel" type="Label" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer2/Panel/PartInfo/VBoxContainer/FollowRotTargetRow" unique_id=884210322]
-custom_minimum_size = Vector2(130, 0)
-layout_mode = 2
-theme_override_font_sizes/font_size = 11
-text = "   Follow Target"
-
-[node name="FollowRotTargetOption" type="OptionButton" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer2/Panel/PartInfo/VBoxContainer/FollowRotTargetRow" unique_id=884210323]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 11
-
-[node name="LookAtRow" type="HBoxContainer" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer2/Panel/PartInfo/VBoxContainer" unique_id=884210314]
-layout_mode = 2
-
-[node name="LookAtCheck" type="CheckBox" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer2/Panel/PartInfo/VBoxContainer/LookAtRow" unique_id=884210315]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(130, 0)
-layout_mode = 2
-focus_mode = 0
-theme_override_font_sizes/font_size = 11
-text = "Look At"
-
-[node name="LookAtTargetRow" type="HBoxContainer" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer2/Panel/PartInfo/VBoxContainer" unique_id=884210316]
-layout_mode = 2
-
-[node name="LookAtTargetLabel" type="Label" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer2/Panel/PartInfo/VBoxContainer/LookAtTargetRow" unique_id=884210317]
-custom_minimum_size = Vector2(130, 0)
-layout_mode = 2
-theme_override_font_sizes/font_size = 11
-text = "   Target"
-
-[node name="LookAtTargetOption" type="OptionButton" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer2/Panel/PartInfo/VBoxContainer/LookAtTargetRow" unique_id=884210318]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 11
-
-[node name="LockRow" type="HBoxContainer" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer2/Panel/PartInfo/VBoxContainer" unique_id=884210311]
-layout_mode = 2
-
-[node name="LockXCheck" type="CheckBox" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer2/Panel/PartInfo/VBoxContainer/LockRow" unique_id=884210312]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(130, 0)
-layout_mode = 2
-focus_mode = 0
-theme_override_font_sizes/font_size = 11
-text = "Lock X"
-
-[node name="LockYCheck" type="CheckBox" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer2/Panel/PartInfo/VBoxContainer/LockRow" unique_id=884210313]
-unique_name_in_owner = true
-layout_mode = 2
-focus_mode = 0
-theme_override_font_sizes/font_size = 11
-text = "Lock Y"
-
 [node name="HBoxContainer3" type="HBoxContainer" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer2/Panel/PartInfo/VBoxContainer" unique_id=1050171573]
-visible = false
 layout_mode = 2
 
 [node name="ControlledCheck" type="CheckBox" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer2/Panel/PartInfo/VBoxContainer/HBoxContainer3" unique_id=2120697499]
@@ -1154,7 +1036,6 @@ text = "ꄗ"
 flat = true
 
 [node name="HBoxContainer4" type="HBoxContainer" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer2/Panel/PartInfo/VBoxContainer" unique_id=1829357124]
-visible = false
 layout_mode = 2
 
 [node name="FollowRotationCheck" type="CheckBox" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer2/Panel/PartInfo/VBoxContainer/HBoxContainer4" unique_id=667256226]
@@ -1173,7 +1054,6 @@ text = "ꄗ"
 flat = true
 
 [node name="HBoxContainer5" type="HBoxContainer" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer2/Panel/PartInfo/VBoxContainer" unique_id=1739731199]
-visible = false
 layout_mode = 2
 theme_override_constants/separation = -10
 
@@ -1223,8 +1103,7 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_5ejfk")
 layout_mode = 2
 size_flags_horizontal = 8
 
-[node name="PoseAnimBrowser" type="MarginContainer" parent="PoseHUD/PanelContainer3/VBoxContainer" unique_id=519141308]
-unique_name_in_owner = true
+[node name="MarginContainer" type="MarginContainer" parent="PoseHUD/PanelContainer3/VBoxContainer" unique_id=519141308]
 custom_minimum_size = Vector2(210, 0)
 layout_mode = 2
 size_flags_horizontal = 8
@@ -1235,7 +1114,7 @@ theme_override_constants/margin_right = 5
 theme_override_constants/margin_bottom = 5
 script = ExtResource("11_anim")
 
-[node name="AnimTable" type="Tree" parent="PoseHUD/PanelContainer3/VBoxContainer/PoseAnimBrowser" unique_id=1285730883]
+[node name="AnimTable" type="Tree" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainer" unique_id=1285730883]
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
@@ -1245,22 +1124,24 @@ column_titles_visible = true
 scroll_horizontal_enabled = false
 scroll_vertical_enabled = false
 
-[node name="MarginContainer" type="MarginContainer" parent="PoseHUD/PanelContainer3/VBoxContainer" unique_id=1072512761]
+[node name="AnimBrower" type="MarginContainer" parent="PoseHUD/PanelContainer3/VBoxContainer" unique_id=1072512761]
+unique_name_in_owner = true
+visible = false
 layout_mode = 2
 theme_override_constants/margin_left = 5
 theme_override_constants/margin_top = 0
 theme_override_constants/margin_right = 5
 theme_override_constants/margin_bottom = 5
 
-[node name="Panel" type="PanelContainer" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainer" unique_id=1500868625]
+[node name="Panel" type="PanelContainer" parent="PoseHUD/PanelContainer3/VBoxContainer/AnimBrower" unique_id=1500868625]
 layout_mode = 2
 
-[node name="Animation" type="VBoxContainer" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainer/Panel" unique_id=1103519101]
+[node name="Animation" type="VBoxContainer" parent="PoseHUD/PanelContainer3/VBoxContainer/AnimBrower/Panel" unique_id=1103519101]
 visible = false
 layout_mode = 2
 size_flags_horizontal = 0
 
-[node name="AnimDropdown" type="OptionButton" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainer/Panel/Animation" unique_id=711204534]
+[node name="AnimDropdown" type="OptionButton" parent="PoseHUD/PanelContainer3/VBoxContainer/AnimBrower/Panel/Animation" unique_id=711204534]
 unique_name_in_owner = true
 visible = false
 custom_minimum_size = Vector2(186, 0)
@@ -1269,16 +1150,16 @@ focus_mode = 0
 theme_override_font_sizes/font_size = 11
 flat = true
 
-[node name="SpeedContainer" type="HBoxContainer" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainer/Panel/Animation" unique_id=1063331086]
+[node name="SpeedContainer" type="HBoxContainer" parent="PoseHUD/PanelContainer3/VBoxContainer/AnimBrower/Panel/Animation" unique_id=1063331086]
 layout_mode = 2
 
-[node name="SpeedLabel" type="Label" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainer/Panel/Animation/SpeedContainer" unique_id=1902751416]
+[node name="SpeedLabel" type="Label" parent="PoseHUD/PanelContainer3/VBoxContainer/AnimBrower/Panel/Animation/SpeedContainer" unique_id=1902751416]
 custom_minimum_size = Vector2(94, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 11
 text = "Speed"
 
-[node name="SpeedSpinBox" type="SpinBox" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainer/Panel/Animation/SpeedContainer" unique_id=862609696]
+[node name="SpeedSpinBox" type="SpinBox" parent="PoseHUD/PanelContainer3/VBoxContainer/AnimBrower/Panel/Animation/SpeedContainer" unique_id=862609696]
 unique_name_in_owner = true
 layout_mode = 2
 min_value = 0.1
@@ -1287,16 +1168,16 @@ step = 0.1
 value = 1.0
 alignment = 1
 
-[node name="DurationContainer" type="HBoxContainer" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainer/Panel/Animation" unique_id=679858342]
+[node name="DurationContainer" type="HBoxContainer" parent="PoseHUD/PanelContainer3/VBoxContainer/AnimBrower/Panel/Animation" unique_id=679858342]
 layout_mode = 2
 
-[node name="SpeedLabel" type="Label" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainer/Panel/Animation/DurationContainer" unique_id=252504703]
+[node name="SpeedLabel" type="Label" parent="PoseHUD/PanelContainer3/VBoxContainer/AnimBrower/Panel/Animation/DurationContainer" unique_id=252504703]
 custom_minimum_size = Vector2(94, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 11
 text = "Duration"
 
-[node name="DurationSpinBox" type="SpinBox" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainer/Panel/Animation/DurationContainer" unique_id=2072087584]
+[node name="DurationSpinBox" type="SpinBox" parent="PoseHUD/PanelContainer3/VBoxContainer/AnimBrower/Panel/Animation/DurationContainer" unique_id=2072087584]
 unique_name_in_owner = true
 layout_mode = 2
 min_value = 0.1
@@ -1305,7 +1186,7 @@ step = 0.1
 value = 0.7999999999999999
 alignment = 1
 
-[node name="VBoxContainer" type="VBoxContainer" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainer/Panel/Animation" unique_id=947378667]
+[node name="VBoxContainer" type="VBoxContainer" parent="PoseHUD/PanelContainer3/VBoxContainer/AnimBrower/Panel/Animation" unique_id=947378667]
 layout_mode = 2
 
 [node name="MarginContainer2" type="MarginContainer" parent="PoseHUD/PanelContainer3/VBoxContainer" unique_id=1972137434]
@@ -1476,6 +1357,7 @@ LADDER_CLIMB_SPEED = 400.0
 WALL_CLIMB_SPEED = 400.0
 JUMP_VELOCITY = -1000.0
 DOUBLE_JUMP_VELOCITY = -1000.0
+is_posing = false
 ragdoll = NodePath("Ragdoll")
 metadata/_edit_group_ = true
 
@@ -1942,10 +1824,10 @@ shape = SubResource("CircleShape2D_gswnw")
 
 [node name="Head2" type="Sprite2D" parent="PlayerBody/Ragdoll/Head/Head_Physics" unique_id=2017609032]
 z_index = 1
-position = Vector2(9.536743e-07, -16.000008)
+position = Vector2(-1.879561e-06, -15.998001)
 scale = Vector2(0.35, 0.35)
 texture = ExtResource("30_b8hi5")
-offset = Vector2(40.00058, -10.346344)
+offset = Vector2(20.00059, -27.494934)
 region_enabled = true
 region_rect = Rect2(404, 42.000004, 227.19995, 208.79999)
 
@@ -2466,124 +2348,119 @@ script = ExtResource("9_g4c7l")
 player = NodePath("../..")
 pose_hud = NodePath("../../../PoseHUD")
 
-[node name="HandFront" parent="PlayerBody/FacingPivot/PoseController" unique_id=2036979389 node_paths=PackedStringArray("slave", "sibling", "pivot", "radius_constraint_parent", "follow_rotation_target") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
+[node name="HandFront" parent="PlayerBody/FacingPivot/PoseController" unique_id=2036979389 node_paths=PackedStringArray("slave", "slave_parent", "sibling", "pivot") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
 position = Vector2(-52.47058, 17.904587)
 rotation = 1.4617479
 slave = NodePath("../../../Ragdoll/Arm_Front/Hand_Front_Physics")
+slave_parent = NodePath("../../../Ragdoll/Arm_Front/Forearm_Front_Physics")
 sibling = NodePath("../HandBack")
 pivot = NodePath("../..")
 can_rotate = true
-use_radius_limit = true
-max_radius = 115.0
-radius_constraint_parent = NodePath("../../../Ragdoll/Arm_Front/Shoulder_Front_Physics")
-use_follow_rotation = true
-follow_rotation_target = NodePath("../../../Ragdoll/Arm_Front/Forearm_Front_Physics")
+global_x = true
+global_y = true
 
-[node name="HandBack" parent="PlayerBody/FacingPivot/PoseController" unique_id=1872066078 node_paths=PackedStringArray("slave", "sibling", "pivot", "radius_constraint_parent", "follow_rotation_target") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
+[node name="HandBack" parent="PlayerBody/FacingPivot/PoseController" unique_id=1872066078 node_paths=PackedStringArray("slave", "slave_parent", "sibling", "pivot") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
 position = Vector2(60.90216, -2.053894)
 rotation = -2.4603875
 slave = NodePath("../../../Ragdoll/Arm_Back/Hand_Back_Physics")
+slave_parent = NodePath("../../../Ragdoll/Arm_Back/Forearm_Back_Physics")
 sibling = NodePath("../HandFront")
 pivot = NodePath("../..")
 can_rotate = true
-use_radius_limit = true
-max_radius = 115.0
-radius_constraint_parent = NodePath("../../../Ragdoll/Arm_Back/Shoulder_Back_Physics")
-use_follow_rotation = true
-follow_rotation_target = NodePath("../../../Ragdoll/Arm_Back/Forearm_Back_Physics")
+global_x = true
+global_y = true
 
-[node name="FootBack" parent="PlayerBody/FacingPivot/PoseController" unique_id=1591964902 node_paths=PackedStringArray("slave", "sibling", "pivot", "radius_constraint_parent", "follow_rotation_target", "ground_lock_upper", "ground_lock_lower") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
+[node name="FootBack" parent="PlayerBody/FacingPivot/PoseController" unique_id=1591964902 node_paths=PackedStringArray("slave", "slave_parent", "sibling", "pivot") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
 position = Vector2(-97.14282, 53.07141)
 rotation = 1.5707964
 slave = NodePath("../../../Ragdoll/Leg_Back/Foot_Back_Physics")
+slave_parent = NodePath("../../../Ragdoll/Leg_Back/Calf_Back_Physics")
 sibling = NodePath("../FootFront")
 pivot = NodePath("../..")
 can_rotate = true
-use_radius_limit = true
-max_radius = 170.0
-radius_constraint_parent = NodePath("../../../Ragdoll/Root")
-use_follow_rotation = true
-follow_rotation_target = NodePath("../../../Ragdoll/Leg_Back/Calf_Back_Physics")
-use_ground_lock = true
-ground_lock_upper = NodePath("../GroundLockUpper")
-ground_lock_lower = NodePath("../Ground")
-ground_lock_rotation_deg = 90.0
+global_x = true
+global_y = true
 
-[node name="FootFront" parent="PlayerBody/FacingPivot/PoseController" unique_id=960569227 node_paths=PackedStringArray("slave", "sibling", "radius_constraint_parent", "follow_rotation_target", "ground_lock_upper", "ground_lock_lower") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
+[node name="FootFront" parent="PlayerBody/FacingPivot/PoseController" unique_id=960569227 node_paths=PackedStringArray("slave", "slave_parent", "sibling") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
 position = Vector2(88.57141, 139.7857)
 rotation = -2.4535134
 slave = NodePath("../../../Ragdoll/Leg_Front/Foot_Front_Physics")
+slave_parent = NodePath("../../../Ragdoll/Leg_Front/Calf_Front_Physics")
 sibling = NodePath("../FootBack")
 can_rotate = true
-use_radius_limit = true
-max_radius = 170.0
-radius_constraint_parent = NodePath("../../../Ragdoll/Root")
-use_follow_rotation = true
-follow_rotation_target = NodePath("../../../Ragdoll/Leg_Front/Calf_Front_Physics")
-use_ground_lock = true
-ground_lock_upper = NodePath("../GroundLockUpper")
-ground_lock_lower = NodePath("../Ground")
-ground_lock_rotation_deg = -90.0
+global_x = true
+global_y = true
 
 [node name="Neck" parent="PlayerBody/FacingPivot/PoseController" unique_id=1488133409 node_paths=PackedStringArray("slave", "pivot") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
 position = Vector2(8.726257, -94.85774)
 slave = NodePath("../../../Ragdoll/Head/Neck_Physics")
 pivot = NodePath("../..")
 invert_rotation_on_flip = true
-is_controlled = false
-max_radius = 0.0
+global_x = true
+global_y = true
 
-[node name="Head" parent="PlayerBody/FacingPivot/PoseController" unique_id=1906863 node_paths=PackedStringArray("slave", "pivot", "radius_constraint_parent", "radius_drag_partner", "look_at_target") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
+[node name="Head" parent="PlayerBody/FacingPivot/PoseController" unique_id=1906863 node_paths=PackedStringArray("slave", "slave_parent", "pivot") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
 position = Vector2(8.353577, -93.02951)
 rotation = -0.0034784384
 slave = NodePath("../../../Ragdoll/Head/Head_Physics")
+slave_parent = NodePath("../../../Ragdoll/Head/Neck_Physics")
 pivot = NodePath("../..")
 can_rotate = true
-use_radius_limit = true
-max_radius = 120.0
-radius_constraint_parent = NodePath("../../../Ragdoll/Root")
-radius_drag_partner = NodePath("../Root")
-use_look_at = true
-look_at_target = NodePath("../Eyeline")
-
-[node name="GroundLockUpper" parent="PlayerBody/FacingPivot/PoseController" unique_id=1906512465 groups=["anim_markers"] instance=ExtResource("9_s7qer")]
-position = Vector2(250, 130)
-rotation = -0.0034784384
-
-[node name="Ground" parent="PlayerBody/FacingPivot/PoseController" unique_id=1906512464 groups=["anim_markers"] instance=ExtResource("9_s7qer")]
-position = Vector2(250, 170)
-rotation = -0.0034784384
-
-[node name="Eyeline" parent="PlayerBody/FacingPivot/PoseController" unique_id=112503581 groups=["anim_markers"] instance=ExtResource("9_s7qer")]
-position = Vector2(250, -110)
-rotation = -0.0034784384
+global_x = true
+global_y = true
 
 [node name="Torso" parent="PlayerBody/FacingPivot/PoseController" unique_id=1164425788 node_paths=PackedStringArray("slave", "pivot") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
-position = Vector2(0, -105.00001)
+position = Vector2(0, -116)
 rotation = -0.0034784384
 slave = NodePath("../../../Ragdoll/Torso/Torso2_Physics")
 pivot = NodePath("../..")
 invert_rotation_on_flip = true
-is_controlled = false
+global_x = true
+global_y = true
 
 [node name="Adbomen" parent="PlayerBody/FacingPivot/PoseController" unique_id=881103751 node_paths=PackedStringArray("slave", "pivot") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
-position = Vector2(0, -45.000008)
+position = Vector2(0, -116)
 rotation = -0.0034784384
 slave = NodePath("../../../Ragdoll/Torso/Abdomen2_Physics")
 pivot = NodePath("../..")
 invert_rotation_on_flip = true
-is_controlled = false
+global_x = true
+global_y = true
 
-[node name="Root" parent="PlayerBody/FacingPivot/PoseController" unique_id=219274694 node_paths=PackedStringArray("slave", "pivot", "radius_constraint_parent", "radius_drag_partner") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
-position = Vector2(-5.7142334, 18.571426)
-slave = NodePath("../../../Ragdoll/Root")
+[node name="Sternum" parent="PlayerBody/FacingPivot/PoseController" unique_id=226669695 node_paths=PackedStringArray("pivot") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
+position = Vector2(0, -116)
+rotation = -0.0034784384
+pivot = NodePath("../..")
+global_x = true
+global_y = true
+
+[node name="HipBack" parent="PlayerBody/FacingPivot/PoseController" unique_id=1321901073 node_paths=PackedStringArray("slave", "pivot") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
+position = Vector2(0, -116)
+rotation = -0.0034784384
+slave = NodePath("../../../Ragdoll/Leg_Back/Hip_Back_Physics")
 pivot = NodePath("../..")
 invert_rotation_on_flip = true
 can_rotate = true
-use_radius_limit = true
-max_radius = 120.0
-radius_constraint_parent = NodePath("../../../Ragdoll/Head/Head_Physics")
-radius_drag_partner = NodePath("../Head")
+global_x = true
+global_y = true
+
+[node name="HipFront" parent="PlayerBody/FacingPivot/PoseController" unique_id=2121689421 node_paths=PackedStringArray("slave", "pivot") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
+position = Vector2(0, -116)
+rotation = -0.0034784384
+slave = NodePath("../../../Ragdoll/Leg_Front/Hip_Front_Physics")
+pivot = NodePath("../..")
+invert_rotation_on_flip = true
+can_rotate = true
+global_x = true
+global_y = true
+
+[node name="Root" parent="PlayerBody/FacingPivot/PoseController" unique_id=219274694 node_paths=PackedStringArray("slave", "pivot") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
+position = Vector2(-5.7142334, 18.571426)
+slave = NodePath("../../../Ragdoll/Root")
+pivot = NodePath("../..")
+can_rotate = true
+global_x = true
+global_y = true
 
 [node name="AnimationTree" type="AnimationTree" parent="PlayerBody" unique_id=1787523656]
 tree_root = SubResource("AnimationNodeBlendTree_dx5ib")
