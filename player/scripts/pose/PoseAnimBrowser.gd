@@ -86,7 +86,7 @@ func _populate_anim_table() -> void:
 		row.set_metadata(0, anim_name)
 		row.set_text(0, anim_name)
 		row.set_selectable(0, true)
-		row.set_text(1, "1.0")
+		row.set_text(1, str(timeline.get_speed_scale(anim_name)))
 		row.set_editable(1, true)
 		row.set_text(2, str(time_to_steps(anim.length)))
 		row.set_editable(2, true)
@@ -119,8 +119,11 @@ func _on_anim_cell_edited() -> void:
 	match col:
 		1:
 			var speed_val := float(edited_item.get_text(col))
-			if timeline.anim_player:
-				timeline.anim_player.speed_scale = speed_val
+			timeline.key_speed_scale(anim_name, speed_val)
+			if anim_name == get_current_animation():
+				speed_box.set_value_no_signal(speed_val)
+				if timeline.anim_player:
+					timeline.anim_player.speed_scale = speed_val
 		2:
 			var target_steps := int(edited_item.get_text(col))
 			var next_time := steps_to_time(target_steps)
@@ -149,6 +152,9 @@ func _apply_animation_selection(index: int) -> void:
 		var anim := timeline.anim_player.get_animation(current_anim)
 		duration_box.set_value_no_signal(anim.length)
 		duration_changed.emit(anim.length)
+		var speed := timeline.get_speed_scale(current_anim)
+		speed_box.set_value_no_signal(speed)
+		timeline.anim_player.speed_scale = speed
 
 	animation_changed.emit(current_anim)
 
@@ -156,11 +162,11 @@ func _apply_animation_selection(index: int) -> void:
 		timeline.play(current_anim)
 
 func _on_speed_box_changed(val: float) -> void:
-	if timeline and timeline.anim_player:
-		timeline.anim_player.speed_scale = val
 	var anim := get_current_animation()
 	if anim != "" and timeline:
 		timeline.key_speed_scale(anim, val)
+	if timeline and timeline.anim_player:
+		timeline.anim_player.speed_scale = val
 	speed_changed.emit(val)
 
 func _on_duration_changed(new_duration: float) -> void:

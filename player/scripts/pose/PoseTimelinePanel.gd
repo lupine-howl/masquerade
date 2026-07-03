@@ -91,7 +91,7 @@ func update_grid_visuals() -> void:
 		var dot = step_rect.get_child(0) if step_rect.get_child_count() > 0 else null
 
 		if i == timeline.current_step:
-			var physical_time := timeline.anim_player.current_animation_position if timeline.anim_player else 0.0
+			var physical_time := timeline.get_playback_time()
 			var physical_step := int(round(physical_time / timeline.step_duration))
 			step_rect.color = Color(0.3, 0.6, 1.0) if timeline.current_step == physical_step else Color(0.6, 0.3, 0.8)
 		else:
@@ -114,7 +114,7 @@ func update_grid_visuals() -> void:
 	visuals_refreshed.emit()
 
 func sync_playback_step(is_posing: bool) -> void:
-	if not timeline or not timeline.anim_player or not timeline.anim_player.is_playing():
+	if not timeline or not timeline.anim_player or not timeline.is_playback_active():
 		return
 
 	var playing_step := timeline.get_current_playback_step()
@@ -139,10 +139,13 @@ func _on_step_clicked(event: InputEvent, step_index: int) -> void:
 	if pose_controller and pose_controller.player and not pose_controller.player.is_posing:
 		return
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+		var anim_name: String = _get_anim_name.call() if not _get_anim_name.is_null() else ""
 		if event.is_command_or_control_pressed():
 			timeline.current_step = step_index
+			if anim_name != "":
+				timeline.seek_step(step_index, anim_name)
 		else:
-			timeline.seek_step(step_index)
+			timeline.seek_step(step_index, anim_name)
 		update_grid_visuals()
 		step_interacted.emit(step_index)
 
@@ -156,11 +159,13 @@ func _on_play_pressed() -> void:
 
 func _on_stop_pressed() -> void:
 	if timeline:
-		timeline.stop()
+		timeline.pause()
+		update_grid_visuals()
 
 func _on_rewind_pressed() -> void:
 	if timeline:
-		timeline.seek_step(0)
+		var anim_name: String = _get_anim_name.call() if not _get_anim_name.is_null() else ""
+		timeline.seek_step(0, anim_name)
 	update_grid_visuals()
 
 func _on_export_pressed() -> void:

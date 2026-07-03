@@ -5,21 +5,62 @@ extends Node
 @export var step_duration: float = 0.1
 
 var current_step: int = 0
+var _playback_active: bool = false
 
 # Clipboard storage container for the copied frame payload
 # Format: [{"path": NodePath, "value": Variant, "interpolation": int}]
 var _clipboard_step_data: Array = []
 
 func play(anim_name: String) -> void:
-	if anim_player: anim_player.play(anim_name)
+	if not anim_player:
+		return
+	_playback_active = true
+	anim_player.speed_scale = get_speed_scale(anim_name)
+	anim_player.play(anim_name)
+
+func pause() -> void:
+	if not anim_player:
+		return
+	_playback_active = false
+	anim_player.pause()
 
 func stop() -> void:
-	if anim_player: anim_player.stop()
+	if not anim_player:
+		return
+	_playback_active = false
+	anim_player.stop()
 
-func seek_step(step: int) -> void:
+func is_playback_active() -> bool:
+	return _playback_active
+
+func seek_step(step: int, anim_name: String = "", resume: bool = false) -> void:
 	current_step = step
-	if anim_player:
-		anim_player.seek(current_step * step_duration, true)
+	if not anim_player:
+		return
+	var resolved: String = anim_name if anim_name != "" else String(anim_player.current_animation)
+	if resolved == "" or not anim_player.has_animation(resolved):
+		return
+	var time := current_step * step_duration
+	var should_resume := resume or _playback_active
+
+	anim_player.speed_scale = get_speed_scale(resolved)
+	if String(anim_player.current_animation) != resolved:
+		anim_player.play(resolved)
+	anim_player.seek(time, true)
+	if should_resume:
+		if not anim_player.is_playing():
+			anim_player.play(resolved)
+			anim_player.seek(time, true)
+	else:
+		anim_player.pause()
+		_playback_active = false
+
+func get_playback_time() -> float:
+	if not anim_player:
+		return current_step * step_duration
+	if anim_player.current_animation != "":
+		return anim_player.current_animation_position
+	return current_step * step_duration
 
 func get_animations() -> PackedStringArray:
 	return anim_player.get_animation_list() if anim_player else PackedStringArray()
@@ -33,7 +74,7 @@ func clear_animation(anim_name: String) -> void:
 		anim_player.get_animation(anim_name).clear()
 
 func get_current_playback_step() -> int:
-	if not anim_player or not anim_player.is_playing(): 
+	if not anim_player or not _playback_active or anim_player.current_animation == "":
 		return current_step
 	return int(round(anim_player.current_animation_position / step_duration))
 
@@ -252,27 +293,61 @@ func delete_step_keyframes(anim_name: String, step_index: int, filter_path: Stri
 			if abs(key_time - target_time) <= time_tolerance:
 				animation.track_remove_key(track_idx, key_idx)
 				
-## Keyframes the playback speed scale of the AnimationPlayer itself
+## Keyframes playback speed on frame 1 (step 0) of the given animation.
 func key_speed_scale(anim_name: String, speed_value: float) -> void:
-	if not anim_player or not anim_player.has_animation(anim_name): return
-	
-	var animation = anim_player.get_animation(anim_name)
-	var root_node = anim_player.get_node(anim_player.root_node)
-	
-	# Get the relative path from the root node back to the AnimationPlayer
-	var player_path = str(root_node.get_path_to(anim_player)) + ":speed_scale"
-	
-	var track_idx = animation.find_track(player_path, Animation.TYPE_VALUE)
+	if not anim_player or not anim_player.has_animation(anim_name):
+		return
 
-	# Create the track targeting the player if it doesn't exist
+	var animation := anim_player.get_animation(anim_name)
+	var track_idx := _find_speed_scale_track(animation)
 	if track_idx == -1:
 		track_idx = animation.add_track(Animation.TYPE_VALUE)
-		animation.track_set_path(track_idx, player_path)
-		# Speed updates usually look best with NEAREST or LINEAR interpolation
+		animation.track_set_path(track_idx, _speed_scale_track_path())
 		animation.track_set_interpolation_type(track_idx, Animation.INTERPOLATION_NEAREST)
-	
-	animation.track_insert_key(track_idx, 0.0, speed_value)
-	print("Keyed speed_scale: ", speed_value, " at step ", current_step)
+
+	var key_time := 0.0
+	var key_idx := animation.track_find_key(track_idx, key_time, Animation.FIND_MODE_NEAREST)
+	if key_idx != -1 and abs(animation.track_get_key_time(track_idx, key_idx) - key_time) <= 0.01:
+		animation.track_set_key_value(track_idx, key_idx, speed_value)
+	else:
+		animation.track_insert_key(track_idx, key_time, speed_value)
+
+	_persist_animation(anim_name)
+
+func get_speed_scale(anim_name: String) -> float:
+	if not anim_player or not anim_player.has_animation(anim_name):
+		return 1.0
+	if anim_player is PlayerAnimator:
+		return (anim_player as PlayerAnimator).read_speed_scale_key(anim_name)
+	var animation := anim_player.get_animation(anim_name)
+	var track_idx := _find_speed_scale_track(animation)
+	if track_idx == -1:
+		return 1.0
+	var key_idx := animation.track_find_key(track_idx, 0.0, Animation.FIND_MODE_NEAREST)
+	if key_idx == -1 or abs(animation.track_get_key_time(track_idx, key_idx)) > 0.01:
+		return 1.0
+	return float(animation.track_get_key_value(track_idx, key_idx))
+
+func _speed_scale_track_path() -> NodePath:
+	if not anim_player:
+		return NodePath()
+	var root_node := anim_player.get_node(anim_player.root_node)
+	return NodePath(str(root_node.get_path_to(anim_player)) + ":speed_scale")
+
+func _find_speed_scale_track(animation: Animation) -> int:
+	var track_idx := animation.find_track(_speed_scale_track_path(), Animation.TYPE_VALUE)
+	if track_idx != -1:
+		return track_idx
+	for i in animation.get_track_count():
+		if str(animation.track_get_path(i)).ends_with(":speed_scale"):
+			return i
+	return -1
+
+func _persist_animation(anim_name: String) -> void:
+	var anim_resource: Animation = anim_player.get_animation(anim_name)
+	var path := anim_resource.resource_path
+	if path != "" and not path.begins_with("local://"):
+		ResourceSaver.save(anim_resource, path)
 
 ## Pastes the clipboard payload onto the target step. 
 ## If override_target_path is provided, redirects the tracks to target that node instead.

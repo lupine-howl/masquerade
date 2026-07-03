@@ -100,7 +100,7 @@ func _input(event: InputEvent) -> void:
 			var total_steps := pose_hud.get_step_count()
 			if total_steps == 0:
 				return
-			timeline.seek_step(clampi(timeline.current_step + 1, 0, total_steps - 1))
+			timeline.seek_step(clampi(timeline.current_step + 1, 0, total_steps - 1), current_anim)
 			pose_hud.on_step_navigated()
 			get_viewport().set_input_as_handled()
 			return
@@ -109,7 +109,7 @@ func _input(event: InputEvent) -> void:
 			var total_steps := pose_hud.get_step_count()
 			if total_steps == 0:
 				return
-			timeline.seek_step(clampi(timeline.current_step - 1, 0, total_steps - 1))
+			timeline.seek_step(clampi(timeline.current_step - 1, 0, total_steps - 1), current_anim)
 			pose_hud.on_step_navigated()
 			get_viewport().set_input_as_handled()
 			return

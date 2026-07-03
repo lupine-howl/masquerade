@@ -11,8 +11,8 @@ func enter() -> void:
 	player.global_position.y = wall_intersection_pt.y + 150.0
 	
 	# Listen for the exact moment the animation finishes
-	if not player.animator.anim_player.animation_finished.is_connected(_on_animation_finished):
-		player.animator.anim_player.animation_finished.connect(_on_animation_finished)
+	if not player.animator.animation_finished.is_connected(_on_animation_finished):
+		player.animator.animation_finished.connect(_on_animation_finished)
 
 func physics_update(_delta: float) -> void:
 	# Keep the player perfectly still while the ledge climb animation plays.
@@ -20,8 +20,8 @@ func physics_update(_delta: float) -> void:
 
 func exit() -> void:
 	# Always clean up signals when leaving a state to prevent memory leaks or ghost calls
-	if player.animator.anim_player.animation_finished.is_connected(_on_animation_finished):
-		player.animator.anim_player.animation_finished.disconnect(_on_animation_finished)
+	if player.animator.animation_finished.is_connected(_on_animation_finished):
+		player.animator.animation_finished.disconnect(_on_animation_finished)
 
 func _on_animation_finished(anim_name: String) -> void:
 	if anim_name == "ledge_climb":

@@ -11,6 +11,9 @@ signal playback_started
 @onready var timeline_panel: PoseTimelinePanel = $PanelContainer3/VBoxContainer/MarginContainer2/Panel/PoseTimelinePanel
 @onready var mode_bar: PoseModeBar = $PanelContainer3/VBoxContainer/PoseModeBar
 
+var _last_sync_anim: String = ""
+var _last_sync_grid_len: float = -1.0
+
 func _ready() -> void:
 	_setup_panels()
 	_wire_signals()
@@ -103,7 +106,10 @@ func _process(_delta: float) -> void:
 			anim_browser.select_animation_by_name(playing_anim)
 			var current_anim_len := timeline.anim_player.get_animation(playing_anim).length
 			anim_browser.sync_duration_ui(current_anim_len)
-			timeline_panel.build_step_grid(current_anim_len)
+			if playing_anim != _last_sync_anim or not is_equal_approx(current_anim_len, _last_sync_grid_len):
+				timeline_panel.build_step_grid(current_anim_len)
+				_last_sync_anim = playing_anim
+				_last_sync_grid_len = current_anim_len
 
 		timeline_panel.sync_playback_step(posing)
 		if not posing:
@@ -122,11 +128,13 @@ func _on_active_marker_changed(_primary_marker: PoseMarker) -> void:
 func _on_animation_changed(anim_name: String) -> void:
 	if anim_name == "" or not timeline or not timeline.anim_player:
 		return
+	_last_sync_anim = ""
+	_last_sync_grid_len = -1.0
 	var anim := timeline.anim_player.get_animation(anim_name)
 	timeline_panel.build_step_grid(anim.length)
 	refresh_timeline_visuals()
 	if not timeline.anim_player.is_playing():
-		timeline.seek_step(0)
+		timeline.seek_step(0, anim_name)
 		refresh_timeline_visuals()
 
 func _on_duration_changed(duration: float) -> void:
