@@ -79,32 +79,107 @@ func key_property(anim_name: String, target_node: Node, property_suffix: String,
 		
 	if typeof(value) == TYPE_VECTOR2 or typeof(value) == TYPE_FLOAT:
 		animation.track_set_interpolation_type(track_idx, Animation.INTERPOLATION_LINEAR)
+	elif typeof(value) == TYPE_BOOL:
+		animation.track_set_interpolation_type(track_idx, Animation.INTERPOLATION_NEAREST)
 	
 	animation.track_insert_key(track_idx, current_step * step_duration, value)
 
-## Keys world position and rotation offset for a marker at the current step.
+## Ensures is_controlled has a step-0 baseline; keys the current step when control differs from that baseline.
+func ensure_marker_control_keyed(anim_name: String, marker: PoseMarker) -> void:
+	if not marker:
+		return
+	var value := marker.is_controlled
+	if not _has_exact_key_at_step(anim_name, marker, ":is_controlled", 0):
+		_insert_key_at_step(anim_name, marker, ":is_controlled", value, 0)
+	elif _get_exact_key_value_at_step(anim_name, marker, ":is_controlled", 0) != value:
+		_insert_key_at_step(anim_name, marker, ":is_controlled", value, current_step)
+
+## Keys local position and constraint mode; rotation is driven by constraints at runtime.
 func key_marker_pose(anim_name: String, marker: PoseMarker) -> void:
 	if not marker:
 		return
-	key_property(anim_name, marker, ":global_position", marker.global_position)
+	ensure_marker_control_keyed(anim_name, marker)
+	_remove_legacy_global_pose_tracks(anim_name, marker)
+	_remove_legacy_rotation_pose_tracks(anim_name, marker)
+	key_property(anim_name, marker, ":position", marker.position)
 	key_property(anim_name, marker, ":use_look_at", marker.use_look_at)
 	key_property(anim_name, marker, ":use_follow_rotation", marker.use_follow_rotation)
-	if marker.use_look_at and not marker._is_ground_fully_locked():
-		key_property(anim_name, marker, ":look_at_offset_deg", marker.look_at_offset_deg)
-	elif marker.use_follow_rotation:
-		key_property(anim_name, marker, ":follow_rotation_offset_deg", marker.follow_rotation_offset_deg)
-	elif not marker._is_ground_fully_locked():
-		key_property(anim_name, marker, ":global_rotation", marker.global_rotation)
 
 func remove_marker_pose_keys(anim_name: String, marker: PoseMarker) -> void:
 	if not marker:
 		return
+	remove_keyframe(anim_name, marker, ":position")
+	remove_keyframe(anim_name, marker, ":rotation")
 	remove_keyframe(anim_name, marker, ":global_position")
 	remove_keyframe(anim_name, marker, ":global_rotation")
 	remove_keyframe(anim_name, marker, ":use_look_at")
 	remove_keyframe(anim_name, marker, ":use_follow_rotation")
 	remove_keyframe(anim_name, marker, ":look_at_offset_deg")
 	remove_keyframe(anim_name, marker, ":follow_rotation_offset_deg")
+
+func _remove_legacy_global_pose_tracks(anim_name: String, marker: PoseMarker) -> void:
+	if not anim_player or not anim_player.has_animation(anim_name) or not marker:
+		return
+	var animation := anim_player.get_animation(anim_name)
+	var root_node := anim_player.get_node(anim_player.root_node)
+	var base_path := str(root_node.get_path_to(marker))
+	for legacy_suffix in [":global_position", ":global_rotation"]:
+		var track_idx := animation.find_track(base_path + legacy_suffix, Animation.TYPE_VALUE)
+		if track_idx != -1:
+			animation.remove_track(track_idx)
+
+func _remove_legacy_rotation_pose_tracks(anim_name: String, marker: PoseMarker) -> void:
+	if not anim_player or not anim_player.has_animation(anim_name) or not marker:
+		return
+	var animation := anim_player.get_animation(anim_name)
+	var root_node := anim_player.get_node(anim_player.root_node)
+	var base_path := str(root_node.get_path_to(marker))
+	for legacy_suffix in [":rotation", ":look_at_offset_deg", ":follow_rotation_offset_deg"]:
+		var track_idx := animation.find_track(base_path + legacy_suffix, Animation.TYPE_VALUE)
+		if track_idx != -1:
+			animation.remove_track(track_idx)
+
+func _insert_key_at_step(
+	anim_name: String,
+	target_node: Node,
+	property_suffix: String,
+	value: Variant,
+	step: int
+) -> void:
+	var previous_step := current_step
+	current_step = step
+	key_property(anim_name, target_node, property_suffix, value)
+	current_step = previous_step
+
+func _has_exact_key_at_step(
+	anim_name: String,
+	target_node: Node,
+	property_suffix: String,
+	step: int
+) -> bool:
+	return _get_exact_key_value_at_step(anim_name, target_node, property_suffix, step) != null
+
+func _get_exact_key_value_at_step(
+	anim_name: String,
+	target_node: Node,
+	property_suffix: String,
+	step: int
+) -> Variant:
+	if not anim_player or not anim_player.has_animation(anim_name) or not target_node:
+		return null
+	var animation := anim_player.get_animation(anim_name)
+	var root_node := anim_player.get_node(anim_player.root_node)
+	var track_path := str(root_node.get_path_to(target_node)) + property_suffix
+	var track_idx := animation.find_track(track_path, Animation.TYPE_VALUE)
+	if track_idx == -1:
+		return null
+	var target_time := step * step_duration
+	var key_idx := animation.track_find_key(track_idx, target_time, Animation.FIND_MODE_NEAREST)
+	if key_idx == -1:
+		return null
+	if abs(animation.track_get_key_time(track_idx, key_idx) - target_time) > 0.01:
+		return null
+	return animation.track_get_key_value(track_idx, key_idx)
 
 func remove_keyframe(anim_name: String, target_node: Node, property_suffix: String) -> void:
 	if not anim_player or not anim_player.has_animation(anim_name) or not target_node: return

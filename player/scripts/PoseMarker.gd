@@ -11,6 +11,7 @@ signal dragged_rotation(delta_angle: float)
 @export var sibling: PoseMarker
 @export var pivot: Node2D
 @export var invert_rotation_on_flip: bool
+@export var flip_rotation_compensation_deg: float = 180.0
 
 @export_category("Dimensions")
 @export var inner_radius: float = 16.0
@@ -21,6 +22,7 @@ signal dragged_rotation(delta_angle: float)
 @export var drag_threshold: float = 3.0
 @export var can_rotate: bool = false
 @export var is_controlled: bool = true
+@export var constrain_rotation_when_uncontrolled: bool = false
 
 @export_category("X-Axis Constraint")
 @export var use_min_max_x: bool = false
@@ -95,7 +97,7 @@ func _ready() -> void:
 		collision_shape.shape.radius = outer_radius
 	if slave:
 		global_position = slave.global_position
-		global_rotation = slave.global_rotation
+		_sync_marker_rotation_from_slave()
 		_sync_constraint_offsets_from_rotation()
 	set_active(false)
 	if is_controlled:
@@ -116,7 +118,7 @@ func take_control() -> void:
 	slave.linear_velocity = Vector2.ZERO
 	slave.angular_velocity = 0.0
 	global_position = slave.global_position
-	global_rotation = slave.global_rotation
+	_sync_marker_rotation_from_slave()
 
 func release_control() -> void:
 	is_controlled = false
@@ -177,9 +179,9 @@ func _handle_drag_input() -> void:
 			follow_rotation_offset_deg = new_offset
 		else:
 			var target_rot := global_position.angle_to_point(mouse_pos)
-			delta_rot = target_rot - global_rotation
+			delta_rot = target_rot - _get_authored_world_rotation()
 			if delta_rot != 0.0:
-				global_rotation = target_rot
+				rotation += delta_rot
 		if delta_rot != 0.0:
 			dragged_rotation.emit(delta_rot)
 
@@ -191,12 +193,18 @@ func _physics_process(_delta: float) -> void:
 		var pos := _apply_position_constraints(global_position)
 		global_position = pos
 		slave.global_position = pos
-		var rot := _solve_rotation()
-		slave.global_rotation = rot
-		global_rotation = rot
+		var pose_rot := _solve_rotation()
+		slave.global_rotation = _to_slave_rotation(pose_rot)
+		_sync_marker_rotation_from_pose(pose_rot)
 	else:
 		global_position = slave.global_position
-		global_rotation = slave.global_rotation
+		if constrain_rotation_when_uncontrolled and _has_active_rotation_constraints():
+			var pose_rot := _solve_rotation()
+			slave.global_rotation = _to_slave_rotation(pose_rot)
+			slave.angular_velocity = 0.0
+			_sync_marker_rotation_from_pose(pose_rot)
+		else:
+			global_rotation = _from_slave_rotation(slave.global_rotation)
 
 func _apply_position_constraints(pos: Vector2) -> Vector2:
 	var result := pos
@@ -236,9 +244,75 @@ func _solve_rotation() -> float:
 	var blend := _ground_lock_blend()
 	if blend > 0.0:
 		target = lerp_angle(target, deg_to_rad(ground_lock_rotation_deg), blend)
-	if invert_rotation_on_flip and pivot and pivot.scale.x < 0:
-		target += PI
 	return target
+
+func _is_facing_flipped() -> bool:
+	return pivot != null and is_instance_valid(pivot) and pivot.scale.x < 0
+
+## Pose-space → ragdoll world rotation (flip correction applied once at the slave boundary).
+func _to_slave_rotation(pose_rotation: float) -> float:
+	if not _should_compensate_slave_rotation():
+		return pose_rotation
+	return pose_rotation + deg_to_rad(flip_rotation_compensation_deg)
+
+func _from_slave_rotation(slave_rotation: float) -> float:
+	if not _should_compensate_slave_rotation():
+		return slave_rotation
+	return slave_rotation - deg_to_rad(flip_rotation_compensation_deg)
+
+func _should_compensate_slave_rotation() -> bool:
+	if not invert_rotation_on_flip or not _is_facing_flipped():
+		return false
+	if use_follow_rotation:
+		return false
+	# Look-at solves in world space; ragdoll needs an extra half-turn when mirrored.
+	# Free rotation uses authored local chain rotation, which is already flip-safe.
+	return use_look_at
+
+func _get_authored_world_rotation() -> float:
+	if not pivot or not is_instance_valid(pivot) or not pivot.is_ancestor_of(self):
+		return global_rotation
+	var pose_parent := get_parent() as Node2D
+	if not pose_parent:
+		return global_rotation
+	var anchor := pivot.get_parent() as Node2D
+	var anchor_rot := anchor.global_rotation if anchor else 0.0
+	# Sum local rotations only — avoid scale.x flip corrupting global_rotation.
+	return anchor_rot + pivot.rotation + pose_parent.rotation + rotation
+
+func _uses_authored_world_rotation() -> bool:
+	if use_look_at and look_at_target and is_instance_valid(look_at_target):
+		if global_position.distance_squared_to(look_at_target.global_position) > 0.01:
+			return false
+	if use_follow_rotation and follow_rotation_target and is_instance_valid(follow_rotation_target):
+		return false
+	return pivot != null and is_instance_valid(pivot) and pivot.is_ancestor_of(self)
+
+func _sync_marker_rotation_from_slave() -> void:
+	if not slave:
+		return
+	var pose_rot := _from_slave_rotation(slave.global_rotation)
+	if _uses_authored_world_rotation():
+		var pose_parent := get_parent() as Node2D
+		if not pose_parent:
+			return
+		var anchor := pivot.get_parent() as Node2D
+		var anchor_rot := anchor.global_rotation if anchor else 0.0
+		rotation = pose_rot - anchor_rot - pivot.rotation - pose_parent.rotation
+	else:
+		global_rotation = pose_rot
+
+func _sync_marker_rotation_from_pose(pose_rot: float) -> void:
+	# Writing global_rotation under a flipped parent corrupts local rotation when
+	# the solve reads that local chain back on the next frame.
+	if _uses_authored_world_rotation():
+		return
+	global_rotation = pose_rot
+
+func _effective_look_at_offset_deg() -> float:
+	if invert_rotation_on_flip and _is_facing_flipped():
+		return -look_at_offset_deg
+	return look_at_offset_deg
 
 func _resolve_ungrounded_rotation() -> float:
 	var rot_base := _rotation_limit_base()
@@ -246,18 +320,21 @@ func _resolve_ungrounded_rotation() -> float:
 	if use_look_at and look_at_target and is_instance_valid(look_at_target):
 		var aim_point := look_at_target.global_position
 		if global_position.distance_squared_to(aim_point) > 0.01:
-			target = global_position.angle_to_point(aim_point) + deg_to_rad(look_at_offset_deg)
+			target = global_position.angle_to_point(aim_point) + deg_to_rad(_effective_look_at_offset_deg())
 		else:
-			target = global_rotation
+			target = _get_authored_world_rotation()
 	elif use_follow_rotation and follow_rotation_target and is_instance_valid(follow_rotation_target):
 		target = follow_rotation_target.global_rotation + deg_to_rad(follow_rotation_offset_deg)
 	else:
-		target = global_rotation
+		target = _get_authored_world_rotation()
 	if use_rotation_limit:
 		var base := rot_base.global_rotation if rot_base else 0.0
 		var local: float = clamp(wrapf(rad_to_deg(target - base), -180.0, 180.0), min_rotation_deg, max_rotation_deg)
 		target = base + deg_to_rad(local)
 	return target
+
+func _has_active_rotation_constraints() -> bool:
+	return use_look_at or use_ground_lock or use_follow_rotation or use_rotation_limit
 
 func _ground_lock_blend() -> float:
 	if not use_ground_lock:
@@ -291,13 +368,14 @@ func sync_constraint_offsets_from_rotation() -> void:
 	_sync_constraint_offsets_from_rotation()
 
 func _sync_constraint_offsets_from_rotation() -> void:
+	var authored_rot := _get_authored_world_rotation()
 	if use_follow_rotation and follow_rotation_target and is_instance_valid(follow_rotation_target):
-		follow_rotation_offset_deg = rad_to_deg(wrapf(global_rotation - follow_rotation_target.global_rotation, -PI, PI))
+		follow_rotation_offset_deg = rad_to_deg(wrapf(authored_rot - follow_rotation_target.global_rotation, -PI, PI))
 	if use_look_at and look_at_target and is_instance_valid(look_at_target):
 		var aim_point := look_at_target.global_position
 		if global_position.distance_squared_to(aim_point) > 0.01:
 			var base_aim := global_position.angle_to_point(aim_point)
-			look_at_offset_deg = rad_to_deg(wrapf(global_rotation - base_aim, -PI, PI))
+			look_at_offset_deg = rad_to_deg(wrapf(authored_rot - base_aim, -PI, PI))
 
 func _input(event: InputEvent) -> void:
 	if not is_dev_mode:
@@ -334,7 +412,7 @@ func _capture_original_state() -> void:
 	if has_unsaved_changes:
 		return
 	original_position = global_position
-	original_rotation = global_rotation
+	original_rotation = rotation if _uses_authored_world_rotation() else global_rotation
 	has_unsaved_changes = true
 
 func _show_unsaved_state() -> void:
@@ -355,5 +433,8 @@ func revert_to_original() -> void:
 	if not has_unsaved_changes:
 		return
 	global_position = original_position
-	global_rotation = original_rotation
+	if _uses_authored_world_rotation():
+		rotation = original_rotation
+	else:
+		global_rotation = original_rotation
 	_reset_marker_ui()

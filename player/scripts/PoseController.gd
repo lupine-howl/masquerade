@@ -209,27 +209,10 @@ func swap_with_sibling(marker: PoseMarker) -> void:
 	if not marker.sibling:
 		return
 	var sib := marker.sibling
-	var orig_pos := sib.global_position
-	var orig_rot := sib.global_rotation
-	var orig_use_look := sib.use_look_at
-	var orig_look_target := sib.look_at_target
-	var orig_look_offset := sib.look_at_offset_deg
-	var orig_use_follow := sib.use_follow_rotation
-	var orig_follow_target := sib.follow_rotation_target
-	var orig_follow_offset := sib.follow_rotation_offset_deg
-	sib.global_position = marker.global_position
-	sib.global_rotation = marker.global_rotation
-	sib.use_look_at = marker.use_look_at
-	sib.look_at_target = marker.look_at_target
-	sib.look_at_offset_deg = marker.look_at_offset_deg
-	sib.use_follow_rotation = marker.use_follow_rotation
-	sib.follow_rotation_target = marker.follow_rotation_target
-	sib.follow_rotation_offset_deg = marker.follow_rotation_offset_deg
-	marker.global_position = orig_pos
-	marker.global_rotation = orig_rot
-	marker.use_look_at = orig_use_look
-	marker.look_at_target = orig_look_target
-	marker.look_at_offset_deg = orig_look_offset
-	marker.use_follow_rotation = orig_use_follow
-	marker.follow_rotation_target = orig_follow_target
-	marker.follow_rotation_offset_deg = orig_follow_offset
+	var orig_pos := marker.position
+	marker.position = sib.position
+	sib.position = orig_pos
+	if marker.slave:
+		marker.slave.global_position = marker.global_position
+	if sib.slave:
+		sib.slave.global_position = sib.global_position

@@ -167,8 +167,8 @@ func _sync_table_animation_columns() -> void:
 func _sync_detail_from_marker(marker: PoseMarker) -> void:
 	_updating_detail = true
 	if marker:
-		pos_x_spin.set_value_no_signal(marker.global_position.x)
-		pos_y_spin.set_value_no_signal(marker.global_position.y)
+		pos_x_spin.set_value_no_signal(marker.position.x)
+		pos_y_spin.set_value_no_signal(marker.position.y)
 		follow_rot_check.set_pressed_no_signal(marker.use_follow_rotation)
 		follow_rot_target_option.disabled = not marker.use_follow_rotation
 		_populate_constraint_target_option(follow_rot_target_option, marker, marker.follow_rotation_target)
@@ -194,8 +194,8 @@ func _sync_detail_from_marker(marker: PoseMarker) -> void:
 
 func _sync_detail_position(marker: PoseMarker) -> void:
 	_updating_detail = true
-	pos_x_spin.set_value_no_signal(marker.global_position.x)
-	pos_y_spin.set_value_no_signal(marker.global_position.y)
+	pos_x_spin.set_value_no_signal(marker.position.x)
+	pos_y_spin.set_value_no_signal(marker.position.y)
 	_sync_rot_offset_ui(marker)
 	_updating_detail = false
 
@@ -286,10 +286,6 @@ func _on_table_cell_edited() -> void:
 				if marker.follow_rotation_target:
 					marker.sync_constraint_offsets_from_rotation()
 			_auto_key_property(marker, ":use_follow_rotation", marker.use_follow_rotation)
-			if marker.use_follow_rotation:
-				_auto_key_property(marker, ":follow_rotation_offset_deg", marker.follow_rotation_offset_deg)
-			elif not marker.use_look_at:
-				_auto_key_property(marker, ":global_rotation", marker.global_rotation)
 	if pose_controller and marker in pose_controller.active_markers:
 		_sync_detail_from_marker(pose_controller.get_primary_marker())
 
@@ -297,14 +293,14 @@ func _on_pos_x_changed(value: float) -> void:
 	if _updating_detail:
 		return
 	for marker in _get_active_markers():
-		marker.global_position.x = value
+		marker.position.x = value
 		request_auto_key(marker)
 
 func _on_pos_y_changed(value: float) -> void:
 	if _updating_detail:
 		return
 	for marker in _get_active_markers():
-		marker.global_position.y = value
+		marker.position.y = value
 		request_auto_key(marker)
 
 func _on_rot_offset_changed(value: float) -> void:
@@ -315,7 +311,6 @@ func _on_rot_offset_changed(value: float) -> void:
 			marker.look_at_offset_deg = value
 		elif marker.use_follow_rotation:
 			marker.follow_rotation_offset_deg = value
-		request_auto_key(marker)
 
 func _on_follow_rot_toggled(enabled: bool) -> void:
 	if _updating_detail:
@@ -329,10 +324,6 @@ func _on_follow_rot_toggled(enabled: bool) -> void:
 			if marker.follow_rotation_target:
 				marker.sync_constraint_offsets_from_rotation()
 		_auto_key_property(marker, ":use_follow_rotation", marker.use_follow_rotation)
-		if enabled:
-			_auto_key_property(marker, ":follow_rotation_offset_deg", marker.follow_rotation_offset_deg)
-		elif not marker.use_look_at:
-			_auto_key_property(marker, ":global_rotation", marker.global_rotation)
 	_sync_detail_from_marker(pose_controller.get_primary_marker() if pose_controller else null)
 
 func _on_follow_rot_target_selected(index: int) -> void:
@@ -363,10 +354,6 @@ func _on_look_at_toggled(enabled: bool) -> void:
 			if marker.look_at_target:
 				marker.sync_constraint_offsets_from_rotation()
 		_auto_key_property(marker, ":use_look_at", marker.use_look_at)
-		if enabled:
-			_auto_key_property(marker, ":look_at_offset_deg", marker.look_at_offset_deg)
-		elif not marker.use_follow_rotation:
-			_auto_key_property(marker, ":global_rotation", marker.global_rotation)
 	_sync_detail_from_marker(pose_controller.get_primary_marker() if pose_controller else null)
 
 func _on_look_at_target_selected(index: int) -> void:
@@ -414,7 +401,9 @@ func _on_swap_sibling_pressed() -> void:
 func _auto_key_property(marker: PoseMarker, property_suffix: String, value: Variant) -> void:
 	if _is_auto_recording.is_null() or not _is_auto_recording.call() or not timeline or _get_anim_name.is_null():
 		return
-	timeline.key_property(_get_anim_name.call(), marker, property_suffix, value)
+	var anim_name: String = _get_anim_name.call()
+	timeline.ensure_marker_control_keyed(anim_name, marker)
+	timeline.key_property(anim_name, marker, property_suffix, value)
 	_refresh_visuals()
 
 func _key_marker_pose(marker: PoseMarker) -> void:
