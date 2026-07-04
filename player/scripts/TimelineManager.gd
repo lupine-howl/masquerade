@@ -81,49 +81,73 @@ func get_current_playback_step() -> int:
 # --- KEYFRAME MATH & SMART DELTA-KEYING ---
 
 func key_property(anim_name: String, target_node: Node, property_suffix: String, value: Variant) -> void:
-	if not anim_player or not anim_player.has_animation(anim_name) or not target_node: return
-	
-	var animation = anim_player.get_animation(anim_name)
-	var root_node = anim_player.get_node(anim_player.root_node)
-	var track_path = str(root_node.get_path_to(target_node)) + property_suffix
-	
-	var track_idx = animation.find_track(track_path, Animation.TYPE_VALUE)
-	
-	# RESOURCE DELTA CHECK
-	if track_idx != -1 and animation.track_get_key_count(track_idx) > 0:
-		var target_time = current_step * step_duration
-		
-		# Find the closest keyframe index at or near this step's time
-		var key_idx = animation.track_find_key(track_idx, target_time, Animation.FIND_MODE_NEAREST)
-		
-		if key_idx != -1:
-			# If the closest key returned is actually placed AHEAD of our current step time,
-			# drop back an index to see what the value was BEFORE this moment on the timeline
-			var key_time = animation.track_get_key_time(track_idx, key_idx)
-			if key_time > target_time and key_idx > 0:
-				key_idx -= 1
-				
-			var last_keyed_value = animation.track_get_key_value(track_idx, key_idx)
-			
-			# Precision approximation comparisons for math vectors/floats
-			if typeof(value) == TYPE_FLOAT and abs(value - last_keyed_value) < 0.001:
-				return
-			elif typeof(value) == TYPE_VECTOR2 and value.is_equal_approx(last_keyed_value):
-				return
-			elif value == last_keyed_value:
-				return
+	if not anim_player or not anim_player.has_animation(anim_name) or not target_node:
+		return
 
-	# If it doesn't exist yet, append the track type dynamically
+	var animation := anim_player.get_animation(anim_name)
+	var root_node := anim_player.get_node(anim_player.root_node)
+	var track_path := str(root_node.get_path_to(target_node)) + property_suffix
+	var target_time := current_step * step_duration
+
+	var track_idx := animation.find_track(track_path, Animation.TYPE_VALUE)
+	if track_idx != -1:
+		var prior_value: Variant = _get_prior_key_value(animation, track_idx, target_time)
+		if prior_value != null and _values_equal(value, prior_value):
+			_remove_exact_key_at_time(animation, track_idx, target_time)
+			return
+
+		var existing_idx := _find_exact_key_index(animation, track_idx, target_time)
+		if existing_idx != -1:
+			animation.track_set_key_value(track_idx, existing_idx, value)
+			return
+
 	if track_idx == -1:
 		track_idx = animation.add_track(Animation.TYPE_VALUE)
 		animation.track_set_path(track_idx, track_path)
-		
+
 	if typeof(value) == TYPE_VECTOR2 or typeof(value) == TYPE_FLOAT:
 		animation.track_set_interpolation_type(track_idx, Animation.INTERPOLATION_LINEAR)
 	elif typeof(value) == TYPE_BOOL:
 		animation.track_set_interpolation_type(track_idx, Animation.INTERPOLATION_NEAREST)
-	
-	animation.track_insert_key(track_idx, current_step * step_duration, value)
+
+	animation.track_insert_key(track_idx, target_time, value)
+
+func _values_equal(a: Variant, b: Variant) -> bool:
+	if typeof(a) == TYPE_FLOAT and typeof(b) == TYPE_FLOAT:
+		return abs(a - b) < 0.001
+	if typeof(a) == TYPE_VECTOR2 and typeof(b) == TYPE_VECTOR2:
+		return a.is_equal_approx(b)
+	return a == b
+
+func _get_prior_key_value(animation: Animation, track_idx: int, target_time: float) -> Variant:
+	if animation.track_get_key_count(track_idx) == 0:
+		return null
+	var key_idx := animation.track_find_key(track_idx, target_time, Animation.FIND_MODE_NEAREST)
+	if key_idx == -1:
+		return null
+	var key_time := animation.track_get_key_time(track_idx, key_idx)
+	if key_time > target_time + 0.01:
+		if key_idx == 0:
+			return null
+		key_idx -= 1
+	elif abs(key_time - target_time) <= 0.01:
+		if key_idx == 0:
+			return null
+		key_idx -= 1
+	return animation.track_get_key_value(track_idx, key_idx)
+
+func _find_exact_key_index(animation: Animation, track_idx: int, target_time: float) -> int:
+	var key_idx := animation.track_find_key(track_idx, target_time, Animation.FIND_MODE_NEAREST)
+	if key_idx == -1:
+		return -1
+	if abs(animation.track_get_key_time(track_idx, key_idx) - target_time) <= 0.01:
+		return key_idx
+	return -1
+
+func _remove_exact_key_at_time(animation: Animation, track_idx: int, target_time: float) -> void:
+	var key_idx := _find_exact_key_index(animation, track_idx, target_time)
+	if key_idx != -1:
+		animation.track_remove_key(track_idx, key_idx)
 
 ## Ensures is_controlled has a step-0 baseline; keys the current step when control differs from that baseline.
 func ensure_marker_control_keyed(anim_name: String, marker: PoseMarker) -> void:
@@ -134,6 +158,14 @@ func ensure_marker_control_keyed(anim_name: String, marker: PoseMarker) -> void:
 		_insert_key_at_step(anim_name, marker, ":is_controlled", value, 0)
 	elif _get_exact_key_value_at_step(anim_name, marker, ":is_controlled", 0) != value:
 		_insert_key_at_step(anim_name, marker, ":is_controlled", value, current_step)
+
+## Keys is_controlled at the current step when toggled; step 0 keeps the pre-toggle value if unset.
+func key_marker_controlled(anim_name: String, marker: PoseMarker, previous_value: bool) -> void:
+	if not marker:
+		return
+	if not _has_exact_key_at_step(anim_name, marker, ":is_controlled", 0):
+		_insert_key_at_step(anim_name, marker, ":is_controlled", previous_value, 0)
+	key_property(anim_name, marker, ":is_controlled", marker.is_controlled)
 
 ## Keys local position and constraint mode; rotation is driven by constraints at runtime.
 func key_marker_pose(anim_name: String, marker: PoseMarker) -> void:

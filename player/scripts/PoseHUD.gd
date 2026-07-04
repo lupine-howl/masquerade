@@ -93,6 +93,12 @@ func on_step_navigated() -> void:
 	refresh_timeline_visuals()
 	update_marker_inspector(pose_controller.get_primary_marker() if pose_controller else null)
 
+func reapply_current_step() -> void:
+	var anim_name := get_current_animation()
+	if timeline and anim_name != "":
+		timeline.seek_step(timeline.current_step, anim_name)
+	on_step_navigated()
+
 func _process(_delta: float) -> void:
 	if not timeline or not timeline.anim_player:
 		return

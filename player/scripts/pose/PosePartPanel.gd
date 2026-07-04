@@ -3,7 +3,7 @@ extends PanelContainer
 
 signal inspector_updated(marker: PoseMarker)
 
-enum PartColumn { PART = 0, CONTROLLED = 1, FOLLOW_ROT = 2 }
+enum PartColumn { PART = 0, CONTROLLED = 1 }
 
 @onready var part_table: Tree = %PartTable
 @onready var part_label: Label = %PartLabel
@@ -61,18 +61,17 @@ func _ready() -> void:
 	%BtnResetPos.pressed.connect(_on_reset_position_pressed)
 	%BtnResetRot.pressed.connect(_on_reset_rotation_pressed)
 	%BtnSwapSibling.pressed.connect(_on_swap_sibling_pressed)
+	%BtnSwapAllSiblings.pressed.connect(_on_swap_all_siblings_pressed)
 
 func setup_part_table(markers: Array[PoseMarker]) -> void:
-	part_table.columns = 3
+	part_table.columns = 2
 	part_table.hide_root = true
 	part_table.set_column_custom_minimum_width(PartColumn.PART, 100)
 	part_table.set_column_expand(PartColumn.PART, true)
 	part_table.set_column_custom_minimum_width(PartColumn.CONTROLLED, 28)
-	part_table.set_column_custom_minimum_width(PartColumn.FOLLOW_ROT, 28)
 	var root := part_table.create_item()
 	part_table.set_column_title(PartColumn.PART, "Part")
 	part_table.set_column_title(PartColumn.CONTROLLED, "Ctl")
-	part_table.set_column_title(PartColumn.FOLLOW_ROT, "Follow")
 	part_table.column_titles_visible = true
 	part_table.item_selected.connect(_on_table_part_selected)
 	part_table.multi_selected.connect(_on_table_part_selected)
@@ -86,7 +85,6 @@ func _add_marker_row(root: TreeItem, marker: PoseMarker) -> void:
 	row.set_text(PartColumn.PART, marker.name)
 	row.set_selectable(PartColumn.PART, true)
 	_set_tree_checkbox(row, PartColumn.CONTROLLED, marker.is_controlled)
-	_set_tree_checkbox(row, PartColumn.FOLLOW_ROT, marker.use_follow_rotation)
 
 func sync_selection_from_controller() -> void:
 	if _updating_from_ui or not part_table:
@@ -161,7 +159,6 @@ func _sync_table_animation_columns() -> void:
 		var marker := item.get_metadata(PartColumn.PART) as PoseMarker
 		if marker:
 			item.set_checked(PartColumn.CONTROLLED, marker.is_controlled)
-			item.set_checked(PartColumn.FOLLOW_ROT, marker.use_follow_rotation)
 		item = item.get_next()
 
 func _sync_detail_from_marker(marker: PoseMarker) -> void:
@@ -272,20 +269,12 @@ func _on_table_cell_edited() -> void:
 		return
 	match col:
 		PartColumn.CONTROLLED:
+			var was_controlled := marker.is_controlled
 			if edited_item.is_checked(col):
 				marker.take_control()
 			else:
 				marker.release_control()
-			_auto_key_property(marker, ":is_controlled", marker.is_controlled)
-		PartColumn.FOLLOW_ROT:
-			marker.use_follow_rotation = edited_item.is_checked(col)
-			if marker.use_follow_rotation:
-				marker.use_look_at = false
-				if not marker.follow_rotation_target:
-					marker.follow_rotation_target = _default_follow_target(marker)
-				if marker.follow_rotation_target:
-					marker.sync_constraint_offsets_from_rotation()
-			_auto_key_property(marker, ":use_follow_rotation", marker.use_follow_rotation)
+			_auto_key_controlled(marker, was_controlled)
 	if pose_controller and marker in pose_controller.active_markers:
 		_sync_detail_from_marker(pose_controller.get_primary_marker())
 
@@ -319,10 +308,9 @@ func _on_follow_rot_toggled(enabled: bool) -> void:
 		marker.use_follow_rotation = enabled
 		if enabled:
 			marker.use_look_at = false
+			marker.follow_rotation_offset_deg = 0.0
 			if not marker.follow_rotation_target:
 				marker.follow_rotation_target = _default_follow_target(marker)
-			if marker.follow_rotation_target:
-				marker.sync_constraint_offsets_from_rotation()
 		_auto_key_property(marker, ":use_follow_rotation", marker.use_follow_rotation)
 	_sync_detail_from_marker(pose_controller.get_primary_marker() if pose_controller else null)
 
@@ -397,6 +385,19 @@ func _on_swap_sibling_pressed() -> void:
 	for m in pose_controller.active_markers:
 		pose_controller.swap_with_sibling(m)
 	refresh_inspector(pose_controller.get_primary_marker())
+
+func _on_swap_all_siblings_pressed() -> void:
+	if not pose_controller:
+		return
+	pose_controller.swap_all_siblings()
+	refresh_inspector(pose_controller.get_primary_marker())
+
+func _auto_key_controlled(marker: PoseMarker, previous_value: bool) -> void:
+	if _is_auto_recording.is_null() or not _is_auto_recording.call() or not timeline or _get_anim_name.is_null():
+		return
+	var anim_name: String = _get_anim_name.call()
+	timeline.key_marker_controlled(anim_name, marker, previous_value)
+	_refresh_visuals()
 
 func _auto_key_property(marker: PoseMarker, property_suffix: String, value: Variant) -> void:
 	if _is_auto_recording.is_null() or not _is_auto_recording.call() or not timeline or _get_anim_name.is_null():

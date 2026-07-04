@@ -54,7 +54,7 @@ func _input(event: InputEvent) -> void:
 			KEY_X:
 				timeline.copy_step_to_clipboard(current_anim, current_step, filter_path)
 				timeline.delete_step_keyframes(current_anim, current_step, filter_path)
-				pose_hud.refresh_timeline_visuals()
+				pose_hud.reapply_current_step()
 				get_viewport().set_input_as_handled()
 				return
 			KEY_V:
@@ -63,20 +63,20 @@ func _input(event: InputEvent) -> void:
 					var root_node := timeline.anim_player.get_node(timeline.anim_player.root_node)
 					filter_path = str(root_node.get_path_to(primary_marker))
 				timeline.paste_clipboard_to_step(current_anim, current_step, filter_path)
-				pose_hud.refresh_timeline_visuals()
+				pose_hud.reapply_current_step()
 				get_viewport().set_input_as_handled()
 				return
 			KEY_DELETE, KEY_BACKSPACE:
 				if shift_pressed:
 					timeline.delete_step_keyframes(current_anim, current_step, filter_path)
-					pose_hud.refresh_timeline_visuals()
+					pose_hud.reapply_current_step()
 					get_viewport().set_input_as_handled()
 					return
 
 	if event is InputEventKey and event.pressed and not modifier_pressed:
 		if event.keycode == KEY_DELETE or event.keycode == KEY_BACKSPACE:
 			timeline.delete_step_keyframes(current_anim, current_step)
-			pose_hud.refresh_timeline_visuals()
+			pose_hud.reapply_current_step()
 			get_viewport().set_input_as_handled()
 			return
 
@@ -115,13 +115,10 @@ func _input(event: InputEvent) -> void:
 			return
 
 	if event is InputEventKey and event.physical_keycode == KEY_K and event.pressed and not event.echo:
-		if active_markers.is_empty():
-			pose_hud.key_all_markers()
-		else:
-			for m in active_markers:
-				timeline.key_marker_pose(current_anim, m)
-				m._reset_marker_ui()
-			pose_hud.refresh_timeline_visuals()
+		pose_hud.key_all_markers()
+		for m in all_markers:
+			m._reset_marker_ui()
+		pose_hud.refresh_timeline_visuals()
 		get_viewport().set_input_as_handled()
 		return
 
@@ -216,3 +213,15 @@ func swap_with_sibling(marker: PoseMarker) -> void:
 		marker.slave.global_position = marker.global_position
 	if sib.slave:
 		sib.slave.global_position = sib.global_position
+
+func swap_all_siblings() -> void:
+	var swapped: Dictionary = {}
+	for marker in all_markers:
+		if not marker.sibling or swapped.has(marker):
+			continue
+		var sib: PoseMarker = marker.sibling
+		if swapped.has(sib):
+			continue
+		swap_with_sibling(marker)
+		swapped[marker] = true
+		swapped[sib] = true

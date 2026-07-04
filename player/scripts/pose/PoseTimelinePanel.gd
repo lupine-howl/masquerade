@@ -25,7 +25,7 @@ func setup(p_timeline: TimelineManager, p_controller: PoseController, get_anim_n
 	_get_anim_name = get_anim_name
 
 func _ready() -> void:
-	record_check.button_pressed = true
+	record_check.button_pressed = false
 	btn_play.pressed.connect(_on_play_pressed)
 	btn_stop.pressed.connect(_on_stop_pressed)
 	btn_rewind.pressed.connect(_on_rewind_pressed)
