@@ -12,6 +12,7 @@ signal speed_changed(speed: float)
 @onready var anim_title: Label = %AnimTitle
 
 var timeline: TimelineManager
+var _display_sync_only: bool = false
 
 func setup(p_timeline: TimelineManager) -> void:
 	timeline = p_timeline
@@ -52,6 +53,23 @@ func select_animation_by_name(anim_name: String) -> void:
 				anim_dropdown.select(i)
 				_apply_animation_selection(i)
 			break
+
+## Updates browser UI to match playback without touching the AnimationPlayer.
+func sync_display_to_animation(anim_name: String) -> void:
+	if anim_name == "" or not timeline or not timeline.anim_player:
+		return
+	for i in range(anim_dropdown.item_count):
+		if anim_dropdown.get_item_text(i) == anim_name:
+			_display_sync_only = true
+			if anim_dropdown.selected != i:
+				anim_dropdown.select(i)
+			_display_sync_only = false
+			break
+	anim_title.text = anim_name.get_basename()
+	if timeline.anim_player.has_animation(anim_name):
+		var anim := timeline.anim_player.get_animation(anim_name)
+		duration_box.set_value_no_signal(anim.length)
+		speed_box.set_value_no_signal(timeline.get_speed_scale(anim_name))
 
 func sync_duration_ui(duration: float) -> void:
 	duration_box.set_value_no_signal(duration)
@@ -136,6 +154,8 @@ func _on_anim_cell_edited() -> void:
 			anim.loop_mode = Animation.LOOP_LINEAR if should_loop else Animation.LOOP_NONE
 
 func _on_dropdown_changed(index: int) -> void:
+	if _display_sync_only:
+		return
 	_apply_animation_selection(index)
 
 func _apply_animation_selection(index: int) -> void:

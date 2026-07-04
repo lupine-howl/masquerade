@@ -103,29 +103,28 @@ func _process(_delta: float) -> void:
 	if not timeline or not timeline.anim_player:
 		return
 
+	if not is_posing():
+		return
+
 	var primary := pose_controller.get_primary_marker() if pose_controller else null
-	var posing := is_posing()
 
 	if timeline.anim_player.is_playing():
-		var playing_anim := timeline.anim_player.current_animation
-		if not posing and playing_anim != "":
-			anim_browser.select_animation_by_name(playing_anim)
+		var playing_anim := String(timeline.anim_player.current_animation)
+		if playing_anim != "":
+			anim_browser.sync_display_to_animation(playing_anim)
 			var current_anim_len := timeline.anim_player.get_animation(playing_anim).length
-			anim_browser.sync_duration_ui(current_anim_len)
 			if playing_anim != _last_sync_anim or not is_equal_approx(current_anim_len, _last_sync_grid_len):
 				timeline_panel.build_step_grid(current_anim_len)
 				_last_sync_anim = playing_anim
 				_last_sync_grid_len = current_anim_len
 
-		timeline_panel.sync_playback_step(posing)
-		if not posing:
-			update_marker_inspector(primary)
+		timeline_panel.sync_playback_step(true)
 
 	if part_panel:
 		part_panel.update_live_readouts(primary)
 
 func _on_active_marker_changed(_primary_marker: PoseMarker) -> void:
-	if timeline and timeline.anim_player and timeline.anim_player.is_playing():
+	if is_posing() and timeline and timeline.anim_player and timeline.anim_player.is_playing():
 		timeline.stop()
 	if part_panel:
 		part_panel.sync_selection_from_controller()
@@ -139,7 +138,7 @@ func _on_animation_changed(anim_name: String) -> void:
 	var anim := timeline.anim_player.get_animation(anim_name)
 	timeline_panel.build_step_grid(anim.length)
 	refresh_timeline_visuals()
-	if not timeline.anim_player.is_playing():
+	if is_posing() and not timeline.anim_player.is_playing():
 		timeline.seek_step(0, anim_name)
 		refresh_timeline_visuals()
 
@@ -162,3 +161,11 @@ func _apply_posing_mode(posing: bool) -> void:
 		if not posing:
 			timeline_panel.set_recording(false)
 		timeline_panel.set_playback_controls_visible(posing)
+	if posing and timeline and timeline.anim_player:
+		var playing_anim := String(timeline.anim_player.current_animation)
+		if playing_anim != "":
+			anim_browser.sync_display_to_animation(playing_anim)
+			var anim := timeline.anim_player.get_animation(playing_anim)
+			timeline_panel.build_step_grid(anim.length)
+			_last_sync_anim = playing_anim
+			_last_sync_grid_len = anim.length

@@ -62,6 +62,8 @@ func _ready() -> void:
 	%BtnResetRot.pressed.connect(_on_reset_rotation_pressed)
 	%BtnSwapSibling.pressed.connect(_on_swap_sibling_pressed)
 	%BtnSwapAllSiblings.pressed.connect(_on_swap_all_siblings_pressed)
+	%BtnNormHoriz.pressed.connect(_on_normalize_horizontal_pressed)
+	%BtnNormVert.pressed.connect(_on_normalize_vertical_pressed)
 
 func setup_part_table(markers: Array[PoseMarker]) -> void:
 	part_table.columns = 2
@@ -113,13 +115,13 @@ func refresh_inspector(marker: PoseMarker) -> void:
 func update_live_readouts(primary_marker: PoseMarker) -> void:
 	if primary_marker and primary_marker.slave:
 		var pos := primary_marker.global_position
-		pos_label.text = "    ⚲    Position: (%d, %d)" % [round(pos.x), round(pos.y)]
-		rot_label.text = "    ↻    Rotation: %0.1f°" % rad_to_deg(primary_marker.global_rotation)
+		pos_label.text = "World (%d, %d)" % [round(pos.x), round(pos.y)]
+		rot_label.text = "Rot %0.1f°" % rad_to_deg(primary_marker.global_rotation)
 		if not _updating_detail:
 			_sync_detail_position(primary_marker)
 	else:
-		pos_label.text = "    ⚲    Position: --"
-		rot_label.text = "    ↻    Rotation: --"
+		pos_label.text = "World (--, --)"
+		rot_label.text = "Rot --"
 
 func request_auto_key(marker: PoseMarker) -> void:
 	if _is_auto_recording.is_null() or not _is_auto_recording.call():
@@ -391,6 +393,29 @@ func _on_swap_all_siblings_pressed() -> void:
 		return
 	pose_controller.swap_all_siblings()
 	refresh_inspector(pose_controller.get_primary_marker())
+
+func _on_normalize_horizontal_pressed() -> void:
+	_normalize_axis("x")
+
+func _on_normalize_vertical_pressed() -> void:
+	_normalize_axis("y")
+
+func _normalize_axis(axis: String) -> void:
+	if not pose_controller:
+		return
+	var primary := pose_controller.get_primary_marker()
+	if not primary:
+		return
+	var delta := -primary.position.x if axis == "x" else -primary.position.y
+	if is_zero_approx(delta):
+		return
+	for marker in _get_active_markers():
+		if axis == "x":
+			marker.position.x += delta
+		else:
+			marker.position.y += delta
+		request_auto_key(marker)
+	refresh_inspector(primary)
 
 func _auto_key_controlled(marker: PoseMarker, previous_value: bool) -> void:
 	if _is_auto_recording.is_null() or not _is_auto_recording.call() or not timeline or _get_anim_name.is_null():

@@ -22,8 +22,8 @@
 [ext_resource type="Texture2D" uid="uid://b1govaot86lmk" path="res://light-mask.png" id="24_g4c7l"]
 [ext_resource type="Animation" uid="uid://bs4nvhwbcil7e" path="res://player/animations/jump.res" id="25_dx5ib"]
 [ext_resource type="Animation" uid="uid://dp163hwdgpshs" path="res://player/animations/jump_launch.res" id="26_a2xo5"]
-[ext_resource type="Animation" uid="uid://e4u6j3p2gkm8" path="res://player/animations/jump_land.res" id="26_art4l"]
-[ext_resource type="Animation" uid="uid://jjmvja7iv0r7" path="res://player/animations/run2.res" id="27_55jnj"]
+[ext_resource type="Animation" uid="uid://c2fbpymvdy16j" path="res://player/animations/jump_land.res" id="26_art4l"]
+[ext_resource type="Animation" uid="uid://bdugvja82frd4" path="res://player/animations/run2.res" id="27_55jnj"]
 [ext_resource type="Script" uid="uid://b8j54hiva7jef" path="res://player/DebugHUD.gd" id="28_rptt4"]
 [ext_resource type="Animation" uid="uid://dft5ccc1qkm73" path="res://player/animations/run_start.res" id="29_fjxoa"]
 [ext_resource type="Texture2D" uid="uid://cmvjnsywbvyar" path="res://player/assets/character.png" id="30_b8hi5"]
@@ -916,17 +916,19 @@ anim_player = NodePath("../../PlayerBody/PlayerAnimator")
 
 [node name="PosePartPanel" type="PanelContainer" parent="PoseHUD" unique_id=1757806156]
 unique_name_in_owner = true
-offset_right = 40.0
-offset_bottom = 40.0
+custom_minimum_size = Vector2(100, 320)
+offset_right = 260.0
+offset_bottom = 360.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_1s1yo")
 script = ExtResource("11_part")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="PoseHUD/PosePartPanel" unique_id=2093546065]
 layout_mode = 2
-size_flags_horizontal = 4
+size_flags_horizontal = 3
 
 [node name="MarginContainer" type="MarginContainer" parent="PoseHUD/PosePartPanel/VBoxContainer" unique_id=549058022]
 layout_mode = 2
+size_flags_horizontal = 3
 theme_override_constants/margin_left = 5
 theme_override_constants/margin_top = 5
 theme_override_constants/margin_right = 5
@@ -934,18 +936,19 @@ theme_override_constants/margin_bottom = 5
 
 [node name="PartTable" type="Tree" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer" unique_id=936658464]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 370)
 layout_mode = 2
-size_flags_horizontal = 4
+size_flags_horizontal = 3
 focus_mode = 0
 theme_override_font_sizes/font_size = 12
 theme_override_font_sizes/title_button_font_size = 12
 column_titles_visible = true
 select_mode = 2
 scroll_horizontal_enabled = false
-scroll_vertical_enabled = false
 
 [node name="MarginContainer2" type="MarginContainer" parent="PoseHUD/PosePartPanel/VBoxContainer" unique_id=1568537160]
 layout_mode = 2
+size_flags_horizontal = 3
 theme_override_constants/margin_left = 5
 theme_override_constants/margin_top = 0
 theme_override_constants/margin_right = 5
@@ -964,6 +967,7 @@ layout_mode = 2
 [node name="PartLabel" type="Label" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer2/Panel/PartInfo/HBoxContainer" unique_id=899506662]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 3
 text = "Selected Part"
 
 [node name="BtnKeyAll" type="Button" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer2/Panel/PartInfo/HBoxContainer" unique_id=1429492521]
@@ -980,63 +984,33 @@ text = "Parent: None"
 
 [node name="VBoxContainer" type="VBoxContainer" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer2/Panel/PartInfo" unique_id=318349264]
 layout_mode = 2
-theme_override_constants/separation = -12
+theme_override_constants/separation = 6
 
-[node name="HBoxContainer" type="HBoxContainer" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer2/Panel/PartInfo/VBoxContainer" unique_id=1887199590]
+[node name="ReadoutRow" type="HBoxContainer" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer2/Panel/PartInfo/VBoxContainer" unique_id=1887199590]
 layout_mode = 2
 
-[node name="PosLabel" type="Label" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer2/Panel/PartInfo/VBoxContainer/HBoxContainer" unique_id=1213107119]
+[node name="PosLabel" type="Label" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer2/Panel/PartInfo/VBoxContainer/ReadoutRow" unique_id=1213107119]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(130, 0)
 layout_mode = 2
-theme_override_constants/line_spacing = 7
+size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 11
-text = "   ⚲    Position: -"
+text = "World (--, --)"
 
-[node name="BtnKeyPos" type="Button" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer2/Panel/PartInfo/VBoxContainer/HBoxContainer" unique_id=166894965]
+[node name="RotLabel" type="Label" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer2/Panel/PartInfo/VBoxContainer/ReadoutRow" unique_id=170487125]
 unique_name_in_owner = true
 layout_mode = 2
-focus_mode = 0
-text = "ꄗ"
-flat = true
-
-[node name="BtnResetPos" type="Button" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer2/Panel/PartInfo/VBoxContainer/HBoxContainer" unique_id=904668090]
-unique_name_in_owner = true
-layout_mode = 2
-text = "⌫"
-flat = true
-
-[node name="HBoxContainer2" type="HBoxContainer" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer2/Panel/PartInfo/VBoxContainer" unique_id=986254600]
-layout_mode = 2
-
-[node name="RotLabel" type="Label" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer2/Panel/PartInfo/VBoxContainer/HBoxContainer2" unique_id=170487125]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(130, 0)
-layout_mode = 2
+size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 11
-text = "   ↻   Rotation: -"
-
-[node name="BtnKeyRot" type="Button" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer2/Panel/PartInfo/VBoxContainer/HBoxContainer2" unique_id=351596138]
-unique_name_in_owner = true
-layout_mode = 2
-focus_mode = 0
-text = "ꄗ"
-flat = true
-
-[node name="BtnResetRot" type="Button" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer2/Panel/PartInfo/VBoxContainer/HBoxContainer2" unique_id=536351532]
-unique_name_in_owner = true
-layout_mode = 2
-text = "⌫"
-flat = true
+text = "Rot --"
 
 [node name="PositionRow" type="HBoxContainer" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer2/Panel/PartInfo/VBoxContainer" unique_id=884210301]
 layout_mode = 2
 
 [node name="PositionLabel" type="Label" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer2/Panel/PartInfo/VBoxContainer/PositionRow" unique_id=884210302]
-custom_minimum_size = Vector2(130, 0)
+custom_minimum_size = Vector2(72, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 11
-text = "   Position X/Y"
+text = "Local X/Y"
 
 [node name="PosXSpin" type="SpinBox" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer2/Panel/PartInfo/VBoxContainer/PositionRow" unique_id=884210303]
 unique_name_in_owner = true
@@ -1056,16 +1030,45 @@ max_value = 10000.0
 step = 0.1
 alignment = 1
 
+[node name="BtnKeyPos" type="Button" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer2/Panel/PartInfo/VBoxContainer/PositionRow" unique_id=166894965]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Keyframe position"
+focus_mode = 0
+text = "ꄗ"
+flat = true
+
+[node name="BtnResetPos" type="Button" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer2/Panel/PartInfo/VBoxContainer/PositionRow" unique_id=904668090]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Clear position keys"
+text = "⌫"
+flat = true
+
+[node name="BtnNormHoriz" type="Button" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer2/Panel/PartInfo/VBoxContainer/PositionRow" unique_id=884210330]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Move primary to X=0; shift selection with it"
+text = "Norm X"
+flat = true
+
+[node name="BtnNormVert" type="Button" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer2/Panel/PartInfo/VBoxContainer/PositionRow" unique_id=884210331]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Move primary to Y=0; shift selection with it"
+text = "Norm Y"
+flat = true
+
 [node name="RotOffsetRow" type="HBoxContainer" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer2/Panel/PartInfo/VBoxContainer" unique_id=884210305]
 unique_name_in_owner = true
 layout_mode = 2
 
 [node name="RotOffsetLabel" type="Label" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer2/Panel/PartInfo/VBoxContainer/RotOffsetRow" unique_id=884210306]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(130, 0)
+custom_minimum_size = Vector2(72, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 11
-text = "   Rot Offset°"
+text = "Rot Offset°"
 
 [node name="RotOffsetSpin" type="SpinBox" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer2/Panel/PartInfo/VBoxContainer/RotOffsetRow" unique_id=884210307]
 unique_name_in_owner = true
@@ -1076,12 +1079,27 @@ max_value = 360.0
 step = 0.1
 alignment = 1
 
+[node name="BtnKeyRot" type="Button" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer2/Panel/PartInfo/VBoxContainer/RotOffsetRow" unique_id=351596138]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Keyframe rotation"
+focus_mode = 0
+text = "ꄗ"
+flat = true
+
+[node name="BtnResetRot" type="Button" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer2/Panel/PartInfo/VBoxContainer/RotOffsetRow" unique_id=536351532]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Clear rotation keys"
+text = "⌫"
+flat = true
+
 [node name="FollowRotRow" type="HBoxContainer" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer2/Panel/PartInfo/VBoxContainer" unique_id=884210319]
 layout_mode = 2
 
 [node name="FollowRotCheck" type="CheckBox" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer2/Panel/PartInfo/VBoxContainer/FollowRotRow" unique_id=884210320]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(130, 0)
+custom_minimum_size = Vector2(72, 0)
 layout_mode = 2
 focus_mode = 0
 theme_override_font_sizes/font_size = 11
@@ -1091,10 +1109,10 @@ text = "Follow Parent"
 layout_mode = 2
 
 [node name="FollowRotTargetLabel" type="Label" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer2/Panel/PartInfo/VBoxContainer/FollowRotTargetRow" unique_id=884210322]
-custom_minimum_size = Vector2(130, 0)
+custom_minimum_size = Vector2(72, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 11
-text = "   Follow Target"
+text = "Follow Target"
 
 [node name="FollowRotTargetOption" type="OptionButton" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer2/Panel/PartInfo/VBoxContainer/FollowRotTargetRow" unique_id=884210323]
 unique_name_in_owner = true
@@ -1107,7 +1125,7 @@ layout_mode = 2
 
 [node name="LookAtCheck" type="CheckBox" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer2/Panel/PartInfo/VBoxContainer/LookAtRow" unique_id=884210315]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(130, 0)
+custom_minimum_size = Vector2(72, 0)
 layout_mode = 2
 focus_mode = 0
 theme_override_font_sizes/font_size = 11
@@ -1117,10 +1135,10 @@ text = "Look At"
 layout_mode = 2
 
 [node name="LookAtTargetLabel" type="Label" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer2/Panel/PartInfo/VBoxContainer/LookAtTargetRow" unique_id=884210317]
-custom_minimum_size = Vector2(130, 0)
+custom_minimum_size = Vector2(72, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 11
-text = "   Target"
+text = "Target"
 
 [node name="LookAtTargetOption" type="OptionButton" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer2/Panel/PartInfo/VBoxContainer/LookAtTargetRow" unique_id=884210318]
 unique_name_in_owner = true
@@ -1133,7 +1151,6 @@ layout_mode = 2
 
 [node name="LockXCheck" type="CheckBox" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer2/Panel/PartInfo/VBoxContainer/LockRow" unique_id=884210312]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(130, 0)
 layout_mode = 2
 focus_mode = 0
 theme_override_font_sizes/font_size = 11
@@ -1208,10 +1225,10 @@ flat = true
 layout_mode = 2
 
 [node name="Label" type="Label" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer2/Panel/PartInfo/VBoxContainer/HBoxContainer6" unique_id=376703073]
-custom_minimum_size = Vector2(130, 0)
 layout_mode = 2
+size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 11
-text = "        Swap with sibling"
+text = "Swap with sibling"
 
 [node name="BtnSwapSibling" type="Button" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer2/Panel/PartInfo/VBoxContainer/HBoxContainer6" unique_id=62341365]
 unique_name_in_owner = true
@@ -1499,6 +1516,15 @@ DOUBLE_JUMP_VELOCITY = -1000.0
 ragdoll = NodePath("Ragdoll")
 metadata/_edit_group_ = true
 
+[node name="PlayerCrosshair" type="Node2D" parent="PlayerBody" unique_id=226915139]
+position = Vector2(-1, -1)
+script = ExtResource("32_1s1yo")
+color = Color(1, 0, 1, 1)
+secondary_color = Color(1, 0, 0, 0)
+crosshair_length = 6400.0
+show_grid = false
+grid_spacing = 64.0
+
 [node name="RainbowModulate" type="Node" parent="PlayerBody" unique_id=804857668]
 script = ExtResource("1_2uvqg")
 rainbow_speed = 0.01
@@ -1512,7 +1538,6 @@ rotation_smoothing_speed = 20.0
 script = ExtResource("6_knn7v")
 
 [node name="MasterCollisionShape" type="CollisionShape2D" parent="PlayerBody" unique_id=49677294]
-visible = false
 scale = Vector2(0.99998474, 0.99998474)
 shape = SubResource("CapsuleShape2D_whnp6")
 
@@ -1574,7 +1599,6 @@ constrain_rotation_when_uncontrolled = true
 use_radius_limit = true
 max_radius = 170.0
 radius_constraint_parent = NodePath("../../../Ragdoll/Root")
-use_follow_rotation = true
 follow_rotation_target = NodePath("../../../Ragdoll/Leg_Front/Calf_Front_Physics")
 use_ground_lock = true
 ground_lock_upper = NodePath("../GroundLockUpper")
@@ -1611,24 +1635,24 @@ position = Vector2(250, 130)
 position = Vector2(250, 170)
 
 [node name="Eyeline" parent="PlayerBody/FacingPivot/PoseController" unique_id=112503581 groups=["anim_markers"] instance=ExtResource("9_s7qer")]
-position = Vector2(210.38464, -100)
+position = Vector2(221, 45)
 
 [node name="Torso" parent="PlayerBody/FacingPivot/PoseController" unique_id=1164425788 node_paths=PackedStringArray("slave", "pivot") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
 visible = false
-position = Vector2(52.72107, -93.24507)
+position = Vector2(117.937294, 29.145329)
 slave = NodePath("../../../Ragdoll/Torso/Torso2_Physics")
 pivot = NodePath("../..")
 is_controlled = false
 
 [node name="UpperAdbomen" parent="PlayerBody/FacingPivot/PoseController" unique_id=881103751 node_paths=PackedStringArray("slave", "pivot") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
-position = Vector2(28.058105, -39.281494)
+position = Vector2(57.059097, 23.40366)
 slave = NodePath("../../../Ragdoll/Torso/UpperAbdomen_Physics")
 pivot = NodePath("../..")
 invert_rotation_on_flip = true
 is_controlled = false
 
 [node name="LowerAbdomen" parent="PlayerBody/FacingPivot/PoseController" unique_id=972622081 node_paths=PackedStringArray("slave", "pivot") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
-position = Vector2(23.320923, -17.457726)
+position = Vector2(34.055733, 36.072376)
 rotation = 0.17020127
 slave = NodePath("../../../Ragdoll/Torso/LowerAbdomen_Physics")
 pivot = NodePath("../..")
@@ -2685,15 +2709,15 @@ parameters/ClimbScale/scale = 1.0
 deterministic = true
 libraries/ = SubResource("AnimationLibrary_1s1yo")
 autoplay = &"run"
+speed_scale = 4.0
 script = ExtResource("46_animator")
 
 [node name="StateMachine" type="Node" parent="PlayerBody" unique_id=1888989459 node_paths=PackedStringArray("initial_state")]
 script = ExtResource("33_jd2rm")
 initial_state = NodePath("Ground")
 
-[node name="Ground" type="Node" parent="PlayerBody/StateMachine" unique_id=444066525 node_paths=PackedStringArray("animator")]
+[node name="Ground" type="Node" parent="PlayerBody/StateMachine" unique_id=444066525]
 script = ExtResource("34_q28gw")
-animator = NodePath("../../PlayerAnimator")
 
 [node name="Air" type="Node" parent="PlayerBody/StateMachine" unique_id=1140614466]
 script = ExtResource("35_q28gw")
@@ -2727,5 +2751,4 @@ visible = false
 script = ExtResource("28_rptt4")
 
 [node name="Icon" type="Sprite2D" parent="." unique_id=1346814728]
-position = Vector2(-78, -107)
 texture = ExtResource("43_fjxoa")
