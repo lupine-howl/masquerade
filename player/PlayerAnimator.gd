@@ -1,6 +1,8 @@
 extends AnimationPlayer
 class_name PlayerAnimator
 
+var current_anim: String
+
 func _ready() -> void:
 	animation_started.connect(_on_animation_started)
 

@@ -83,11 +83,22 @@ func _ready() -> void:
 	state_machine.init(self)
 	state_machine.transition_to("ground")
 
+var t = 0
 func _physics_process(delta: float) -> void:
-
+	t += delta
 	if is_posing:
 		# Keep velocity at zero so the player doesn't slide away
 		velocity = Vector2.ZERO 
+		var direction := Input.get_axis("ui_left", "ui_right")
+		var y_dir := Input.get_axis("ui_up", "ui_down")
+
+		# --- ANIMATION & RAGDOLL LOGIC (Context-Driven Enum Paradigm) ---
+		if direction != 0:
+			animator.play("run", 1)
+		elif y_dir > 0:
+			animator.play("hanging")
+		else:
+			animator.play("idle", 1)
 		return
 
 	if velocity.y > 10000: die()
