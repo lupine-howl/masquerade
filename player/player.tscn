@@ -20,12 +20,12 @@
 [ext_resource type="Animation" uid="uid://ii2pxjqq836j" path="res://player/animations/idle.res" id="17_r7pn3"]
 [ext_resource type="Animation" uid="uid://xgbckhii27nl" path="res://player/animations/dead.res" id="23_55jnj"]
 [ext_resource type="Texture2D" uid="uid://b1govaot86lmk" path="res://light-mask.png" id="24_g4c7l"]
-[ext_resource type="Animation" path="res://player/animations/jump.res" id="25_dx5ib"]
-[ext_resource type="Animation" path="res://player/animations/jump_launch.res" id="26_a2xo5"]
-[ext_resource type="Animation" path="res://player/animations/jump_land.res" id="26_art4l"]
+[ext_resource type="Animation" uid="uid://bs4nvhwbcil7e" path="res://player/animations/jump.res" id="25_dx5ib"]
+[ext_resource type="Animation" uid="uid://dp163hwdgpshs" path="res://player/animations/jump_launch.res" id="26_a2xo5"]
+[ext_resource type="Animation" uid="uid://e4u6j3p2gkm8" path="res://player/animations/jump_land.res" id="26_art4l"]
 [ext_resource type="Animation" uid="uid://cx1d5gu2kh4tt" path="res://player/animations/run2.res" id="27_55jnj"]
 [ext_resource type="Script" uid="uid://b8j54hiva7jef" path="res://player/DebugHUD.gd" id="28_rptt4"]
-[ext_resource type="Animation" path="res://player/animations/run_start.res" id="29_fjxoa"]
+[ext_resource type="Animation" uid="uid://dft5ccc1qkm73" path="res://player/animations/run_start.res" id="29_fjxoa"]
 [ext_resource type="Texture2D" uid="uid://cmvjnsywbvyar" path="res://player/assets/character.png" id="30_b8hi5"]
 [ext_resource type="Script" uid="uid://bo3h510q3ok2g" path="res://player/scripts/Ragdoll.gd" id="30_fjxoa"]
 [ext_resource type="Script" uid="uid://c1upbm8vmye35" path="res://player/scripts/OriginCrosshair.gd" id="32_1s1yo"]
@@ -2111,7 +2111,8 @@ angular_damp = 5.0
 node_a = NodePath("../../UpperArm_Back_Physics")
 node_b = NodePath("..")
 angular_limit_enabled = true
-angular_limit_lower = -3.1415927
+angular_limit_lower = -1.9198622
+angular_limit_upper = -0.17453292
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerBody/Ragdoll/Arm_Back/Forearm_Back_Physics" unique_id=657228048]
 position = Vector2(-29, 0)
@@ -2222,7 +2223,8 @@ shape = SubResource("CapsuleShape2D_5ejfk")
 node_a = NodePath("../../UpperArm_Front_Physics")
 node_b = NodePath("..")
 angular_limit_enabled = true
-angular_limit_lower = -3.1415927
+angular_limit_lower = -1.9198622
+angular_limit_upper = -0.17453292
 
 [node name="Forearm_Front_Sprite2" type="Sprite2D" parent="PlayerBody/Ragdoll/Arm_Front/Forearm_Front_Physics" unique_id=1324628751]
 visible = false
