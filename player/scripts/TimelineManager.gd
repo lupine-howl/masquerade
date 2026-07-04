@@ -1,15 +1,23 @@
 class_name TimelineManager
 extends Node
 
+signal playback_paused
+
 @export var anim_player: AnimationPlayer
 @export var step_duration: float = 0.1
 
 var current_step: int = 0
+var selected_steps: Array[int] = []
+var step_selection_anchor: int = 0
 var _playback_active: bool = false
 
 # Clipboard storage container for the copied frame payload
 # Format: [{"path": NodePath, "value": Variant, "interpolation": int}]
 var _clipboard_step_data: Array = []
+
+func _ready() -> void:
+	if anim_player and not anim_player.animation_finished.is_connected(_on_animation_finished):
+		anim_player.animation_finished.connect(_on_animation_finished)
 
 func play(anim_name: String) -> void:
 	if not anim_player:
@@ -23,12 +31,14 @@ func pause() -> void:
 		return
 	_playback_active = false
 	anim_player.pause()
+	playback_paused.emit()
 
 func stop() -> void:
 	if not anim_player:
 		return
 	_playback_active = false
 	anim_player.stop()
+	playback_paused.emit()
 
 func is_playback_active() -> bool:
 	return _playback_active
@@ -78,9 +88,58 @@ func get_current_playback_step() -> int:
 		return current_step
 	return int(round(anim_player.current_animation_position / step_duration))
 
+func set_step_selection(steps: Array[int]) -> void:
+	selected_steps = steps.duplicate()
+	selected_steps.sort()
+	if selected_steps.is_empty():
+		selected_steps = [current_step]
+
+func toggle_step_selected(step: int) -> void:
+	if step in selected_steps:
+		selected_steps.erase(step)
+	else:
+		selected_steps.append(step)
+	if selected_steps.is_empty():
+		selected_steps = [step]
+	selected_steps.sort()
+
+func select_step_range(from_step: int, to_step: int) -> void:
+	var lo := mini(from_step, to_step)
+	var hi := maxi(from_step, to_step)
+	selected_steps.clear()
+	for i in range(lo, hi + 1):
+		selected_steps.append(i)
+
+func is_step_selected(step: int) -> bool:
+	if selected_steps.is_empty():
+		return step == current_step
+	return step in selected_steps
+
+func get_key_target_steps() -> Array[int]:
+	if selected_steps.is_empty():
+		return [current_step]
+	return selected_steps.duplicate()
+
+func _on_animation_finished(anim_name: StringName) -> void:
+	if not _playback_active or not anim_player:
+		return
+	var name_str := String(anim_name)
+	if not anim_player.has_animation(name_str):
+		return
+	var anim := anim_player.get_animation(name_str)
+	if anim.loop_mode == Animation.LOOP_NONE:
+		pause()
+
 # --- KEYFRAME MATH & SMART DELTA-KEYING ---
 
 func key_property(anim_name: String, target_node: Node, property_suffix: String, value: Variant) -> void:
+	var previous_step := current_step
+	for step in get_key_target_steps():
+		current_step = step
+		_key_property_at_current_step(anim_name, target_node, property_suffix, value)
+	current_step = previous_step
+
+func _key_property_at_current_step(anim_name: String, target_node: Node, property_suffix: String, value: Variant) -> void:
 	if not anim_player or not anim_player.has_animation(anim_name) or not target_node:
 		return
 
@@ -159,13 +218,17 @@ func ensure_marker_control_keyed(anim_name: String, marker: PoseMarker) -> void:
 	elif _get_exact_key_value_at_step(anim_name, marker, ":is_controlled", 0) != value:
 		_insert_key_at_step(anim_name, marker, ":is_controlled", value, current_step)
 
-## Keys is_controlled at the current step when toggled; step 0 keeps the pre-toggle value if unset.
+## Keys is_controlled at target steps when toggled; step 0 keeps the pre-toggle value if unset.
 func key_marker_controlled(anim_name: String, marker: PoseMarker, previous_value: bool) -> void:
 	if not marker:
 		return
 	if not _has_exact_key_at_step(anim_name, marker, ":is_controlled", 0):
 		_insert_key_at_step(anim_name, marker, ":is_controlled", previous_value, 0)
-	key_property(anim_name, marker, ":is_controlled", marker.is_controlled)
+	var previous_step := current_step
+	for step in get_key_target_steps():
+		current_step = step
+		_key_property_at_current_step(anim_name, marker, ":is_controlled", marker.is_controlled)
+	current_step = previous_step
 
 ## Keys local position and constraint mode; rotation is driven by constraints at runtime.
 func key_marker_pose(anim_name: String, marker: PoseMarker) -> void:
@@ -174,9 +237,13 @@ func key_marker_pose(anim_name: String, marker: PoseMarker) -> void:
 	ensure_marker_control_keyed(anim_name, marker)
 	_remove_legacy_global_pose_tracks(anim_name, marker)
 	_remove_legacy_rotation_pose_tracks(anim_name, marker)
-	key_property(anim_name, marker, ":position", marker.position)
-	key_property(anim_name, marker, ":use_look_at", marker.use_look_at)
-	key_property(anim_name, marker, ":use_follow_rotation", marker.use_follow_rotation)
+	var previous_step := current_step
+	for step in get_key_target_steps():
+		current_step = step
+		_key_property_at_current_step(anim_name, marker, ":position", marker.position)
+		_key_property_at_current_step(anim_name, marker, ":use_look_at", marker.use_look_at)
+		_key_property_at_current_step(anim_name, marker, ":use_follow_rotation", marker.use_follow_rotation)
+	current_step = previous_step
 
 func remove_marker_pose_keys(anim_name: String, marker: PoseMarker) -> void:
 	if not marker:
@@ -221,7 +288,7 @@ func _insert_key_at_step(
 ) -> void:
 	var previous_step := current_step
 	current_step = step
-	key_property(anim_name, target_node, property_suffix, value)
+	_key_property_at_current_step(anim_name, target_node, property_suffix, value)
 	current_step = previous_step
 
 func _has_exact_key_at_step(

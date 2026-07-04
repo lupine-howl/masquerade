@@ -23,6 +23,8 @@ func setup(p_timeline: TimelineManager, p_controller: PoseController, get_anim_n
 	timeline = p_timeline
 	pose_controller = p_controller
 	_get_anim_name = get_anim_name
+	if timeline and not timeline.playback_paused.is_connected(update_grid_visuals):
+		timeline.playback_paused.connect(update_grid_visuals)
 
 func _ready() -> void:
 	record_check.button_pressed = false
@@ -75,6 +77,18 @@ func build_step_grid(duration: float) -> void:
 		step_rect.gui_input.connect(_on_step_clicked.bind(i))
 		step_grid.add_child(step_rect)
 
+	if timeline:
+		var max_step := maxi(0, num_steps - 1)
+		timeline.current_step = clampi(timeline.current_step, 0, max_step)
+		var valid_steps: Array[int] = []
+		for step in timeline.selected_steps:
+			if step <= max_step:
+				valid_steps.append(step)
+		if valid_steps.is_empty():
+			timeline.set_step_selection([timeline.current_step])
+		else:
+			timeline.selected_steps = valid_steps
+
 	update_grid_visuals()
 
 func update_grid_visuals() -> void:
@@ -90,10 +104,14 @@ func update_grid_visuals() -> void:
 		var step_rect: ColorRect = step_grid.get_child(i)
 		var dot = step_rect.get_child(0) if step_rect.get_child_count() > 0 else null
 
-		if i == timeline.current_step:
+		var is_current := i == timeline.current_step
+		var is_selected := timeline.is_step_selected(i)
+		if is_current:
 			var physical_time := timeline.get_playback_time()
 			var physical_step := int(round(physical_time / timeline.step_duration))
 			step_rect.color = Color(0.3, 0.6, 1.0) if timeline.current_step == physical_step else Color(0.6, 0.3, 0.8)
+		elif is_selected:
+			step_rect.color = Color(0.45, 0.42, 0.25)
 		else:
 			step_rect.color = step_rect.get_meta("base_color", Color(0.2, 0.2, 0.2))
 
@@ -140,11 +158,20 @@ func _on_step_clicked(event: InputEvent, step_index: int) -> void:
 		return
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 		var anim_name: String = _get_anim_name.call() if not _get_anim_name.is_null() else ""
-		if event.is_command_or_control_pressed():
-			timeline.current_step = step_index
-			if anim_name != "":
-				timeline.seek_step(step_index, anim_name)
+		var shift_pressed: bool = event.shift_pressed
+		var ctrl_pressed: bool = event.is_command_or_control_pressed()
+
+		if shift_pressed and not ctrl_pressed:
+			timeline.select_step_range(timeline.step_selection_anchor, step_index)
+		elif ctrl_pressed:
+			timeline.toggle_step_selected(step_index)
+			timeline.step_selection_anchor = step_index
 		else:
+			timeline.set_step_selection([step_index])
+			timeline.step_selection_anchor = step_index
+
+		timeline.current_step = step_index
+		if anim_name != "":
 			timeline.seek_step(step_index, anim_name)
 		update_grid_visuals()
 		step_interacted.emit(step_index)

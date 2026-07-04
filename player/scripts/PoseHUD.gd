@@ -136,6 +136,9 @@ func _on_animation_changed(anim_name: String) -> void:
 	_last_sync_anim = ""
 	_last_sync_grid_len = -1.0
 	var anim := timeline.anim_player.get_animation(anim_name)
+	timeline.current_step = 0
+	timeline.set_step_selection([0])
+	timeline.step_selection_anchor = 0
 	timeline_panel.build_step_grid(anim.length)
 	refresh_timeline_visuals()
 	if is_posing() and not timeline.anim_player.is_playing():

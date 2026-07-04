@@ -47,6 +47,12 @@ func _input(event: InputEvent) -> void:
 			filter_path = str(root_node.get_path_to(primary_marker))
 
 		match event.keycode:
+			KEY_Z:
+				if not shift_pressed and not active_markers.is_empty():
+					for m in active_markers:
+						m.revert_to_original()
+					get_viewport().set_input_as_handled()
+				return
 			KEY_C:
 				timeline.copy_step_to_clipboard(current_anim, current_step, filter_path)
 				get_viewport().set_input_as_handled()
@@ -100,7 +106,10 @@ func _input(event: InputEvent) -> void:
 			var total_steps := pose_hud.get_step_count()
 			if total_steps == 0:
 				return
-			timeline.seek_step(clampi(timeline.current_step + 1, 0, total_steps - 1), current_anim)
+			var next_step := clampi(timeline.current_step + 1, 0, total_steps - 1)
+			timeline.set_step_selection([next_step])
+			timeline.step_selection_anchor = next_step
+			timeline.seek_step(next_step, current_anim)
 			pose_hud.on_step_navigated()
 			get_viewport().set_input_as_handled()
 			return
@@ -109,7 +118,10 @@ func _input(event: InputEvent) -> void:
 			var total_steps := pose_hud.get_step_count()
 			if total_steps == 0:
 				return
-			timeline.seek_step(clampi(timeline.current_step - 1, 0, total_steps - 1), current_anim)
+			var prev_step := clampi(timeline.current_step - 1, 0, total_steps - 1)
+			timeline.set_step_selection([prev_step])
+			timeline.step_selection_anchor = prev_step
+			timeline.seek_step(prev_step, current_anim)
 			pose_hud.on_step_navigated()
 			get_viewport().set_input_as_handled()
 			return
