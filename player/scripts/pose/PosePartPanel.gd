@@ -285,6 +285,7 @@ func _on_pos_x_changed(value: float) -> void:
 		return
 	for marker in _get_active_markers():
 		marker.position.x = value
+		marker.constrain_global_position(marker.global_position)
 		request_auto_key(marker)
 
 func _on_pos_y_changed(value: float) -> void:
@@ -292,6 +293,7 @@ func _on_pos_y_changed(value: float) -> void:
 		return
 	for marker in _get_active_markers():
 		marker.position.y = value
+		marker.constrain_global_position(marker.global_position)
 		request_auto_key(marker)
 
 func _on_rot_offset_changed(value: float) -> void:

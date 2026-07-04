@@ -7,64 +7,64 @@ signal drag_ended(marker: PoseMarker)
 signal dragged_position(delta: Vector2)
 signal dragged_rotation(delta_angle: float)
 
-@export var slave: RigidBody2D
-@export var sibling: PoseMarker
-@export var pivot: Node2D
-@export var invert_rotation_on_flip: bool
-@export var flip_rotation_compensation_deg: float = 180.0
+@export var slave: RigidBody2D ## RigidBody2D driven by this marker when controlled. The marker snaps to the slave when uncontrolled.
+@export var sibling: PoseMarker ## Optional paired marker used by sibling-swap posing tools.
+@export var pivot: Node2D ## Facing pivot (usually the sprite root). Used for flip detection and authored rotation under a mirrored hierarchy.
+@export var invert_rotation_on_flip: bool ## When the facing pivot is flipped (scale.x < 0), apply flip_rotation_compensation_deg to the slave so limb rotation stays visually correct.
+@export var flip_rotation_compensation_deg: float = 180.0 ## Extra rotation (degrees) added to the slave when invert_rotation_on_flip applies. Typically 180 for mirrored limbs.
 
 @export_category("Dimensions")
-@export var inner_radius: float = 16.0
-@export var outer_radius: float = 24.0
+@export var inner_radius: float = 16.0 ## Hit radius for selecting and dragging position (pixels, in marker local space before scale).
+@export var outer_radius: float = 24.0 ## Hit radius for the rotation ring and outer selection area. Also sets the Area2D collision shape at runtime.
 
 @export_category("Settings")
-@export var is_dev_mode: bool = true
-@export var drag_threshold: float = 3.0
-@export var can_rotate: bool = false
-@export var is_controlled: bool = true
-@export var constrain_rotation_when_uncontrolled: bool = false
+@export var is_dev_mode: bool = true ## When false, mouse input and on-screen gizmo visuals are disabled (for gameplay builds).
+@export var drag_threshold: float = 3.0 ## Pixels the mouse must move before a click becomes a drag, avoiding accidental moves.
+@export var can_rotate: bool = false ## Shows the rotation ring and allows R+drag or outer-ring drag to edit rotation in pose mode.
+@export var is_controlled: bool = true ## When true, the marker drives the slave (slave is frozen). When false, the slave drives the marker (physics/ragdoll).
+@export var constrain_rotation_when_uncontrolled: bool = false ## While uncontrolled, still solve look-at / follow / ground-lock / rotation-limit and write rotation to the slave instead of copying slave rotation.
 
 @export_category("X-Axis Constraint")
-@export var use_min_max_x: bool = false
-@export var min_x: float = -100.0
-@export var max_x: float = 100.0
-@export var x_constraint_parent: RigidBody2D
+@export var use_min_max_x: bool = false ## Clamp world X while the marker is controlled (and during drag before physics sync).
+@export var min_x: float = -100.0 ## Minimum allowed X, relative to x_constraint_parent world X. Ignored when use_min_max_x is false.
+@export var max_x: float = 100.0 ## Maximum allowed X, relative to x_constraint_parent world X. Ignored when use_min_max_x is false.
+@export var x_constraint_parent: Node2D ## World X reference for min_x/max_x. Leave empty to use world origin (X = 0). Typically assign a torso or root body so limits move with the character.
 
 @export_category("Y-Axis Constraint")
-@export var use_min_max_y: bool = false
-@export var min_y: float = -100.0
-@export var max_y: float = 100.0
-@export var y_constraint_parent: RigidBody2D
+@export var use_min_max_y: bool = false ## Clamp world Y while the marker is controlled.
+@export var min_y: float = -100.0 ## Minimum allowed Y, relative to y_constraint_parent world Y. Ignored when use_min_max_y is false.
+@export var max_y: float = 100.0 ## Maximum allowed Y, relative to y_constraint_parent world Y (Godot Y+ is down). Applied after radius limit so this floor/ceiling always wins.
+@export var y_constraint_parent: Node2D ## World Y reference for min_y/max_y. Leave empty to use world origin (Y = 0). Assign a node at ground level, or leave empty for a fixed world-Y floor/ceiling.
 
 @export_category("Radius Constraint")
-@export var use_radius_limit: bool = false
-@export var max_radius: float = 50.0
-@export var radius_is_global: bool = false
-@export var radius_constraint_parent: Node2D
-@export var radius_drag_partner: PoseMarker
+@export var use_radius_limit: bool = false ## Keep the marker within max_radius of the radius origin.
+@export var max_radius: float = 50.0 ## Maximum distance from the radius origin (pixels in world space).
+@export var radius_is_global: bool = false ## When true, the origin is always world (0, 0). When false, uses radius_constraint_parent global position, or (0, 0) if that is also empty.
+@export var radius_constraint_parent: Node2D ## Center of the radius limit in world space. Leave empty (with radius_is_global false) to anchor at world origin. Often the parent limb or torso.
+@export var radius_drag_partner: PoseMarker ## Optional second marker on the same radius. When this marker hits the limit while dragging, the partner is pushed to the opposite point on the circle (useful for paired hands/feet).
 
 @export_category("Rotation Constraint")
-@export var use_rotation_limit: bool = false
-@export var min_rotation_deg: float = -45.0
-@export var max_rotation_deg: float = 45.0
-@export var rotation_constraint_parent: RigidBody2D
+@export var use_rotation_limit: bool = false ## Clamp solved rotation to a local angle range relative to rotation_constraint_parent (or follow target if parent is empty).
+@export var min_rotation_deg: float = -45.0 ## Minimum local rotation in degrees, relative to the rotation base node.
+@export var max_rotation_deg: float = 45.0 ## Maximum local rotation in degrees, relative to the rotation base node.
+@export var rotation_constraint_parent: RigidBody2D ## Rotation base for min/max limits. Leave empty to use follow_rotation_target if set, otherwise world rotation 0° (global east).
 
 @export_category("Follow Rotation")
-@export var use_follow_rotation: bool = false
-@export var follow_rotation_target: Node2D
-@export var follow_rotation_offset_deg: float = 0.0
+@export var use_follow_rotation: bool = false ## Match this marker's rotation to follow_rotation_target plus follow_rotation_offset_deg.
+@export var follow_rotation_target: Node2D ## Node whose global rotation is the base. Dragging with R adjusts the offset while keeping the aim direction relative to this target.
+@export var follow_rotation_offset_deg: float = 0.0 ## Added on top of the target's global rotation. Updated automatically when dragging rotation in follow mode.
 
 @export_category("Look At")
-@export var use_look_at: bool = false
-@export var look_at_target: Node2D
-@export var look_at_offset_deg: float = 0.0
+@export var use_look_at: bool = false ## Point toward look_at_target plus look_at_offset_deg. Dragging with R adjusts the offset relative to the aim line.
+@export var look_at_target: Node2D ## World point or node to aim at. If missing or coincident with this marker, current rotation is kept.
+@export var look_at_offset_deg: float = 0.0 ## Extra degrees added after aiming at the target. Mirrored when invert_rotation_on_flip applies.
 
 @export_category("Ground Lock")
-@export var use_ground_lock: bool = false
-@export var ground_lock_upper: Node2D
-@export var ground_lock_lower: Node2D
-@export var ground_lock_rotation_deg: float = 0.0
-@export var ground_lock_falloff: float = 32.0
+@export var use_ground_lock: bool = false ## Blend rotation toward ground_lock_rotation_deg as the marker moves down between ground_lock_upper and ground_lock_lower.
+@export var ground_lock_upper: Node2D ## Y threshold where ground lock begins (0% blend). Leave empty to use lower.y minus ground_lock_falloff.
+@export var ground_lock_lower: Node2D ## Y threshold where ground lock is fully applied (100% blend). Required for ground lock to run.
+@export var ground_lock_rotation_deg: float = 0.0 ## Rotation (degrees, world space) used when fully grounded.
+@export var ground_lock_falloff: float = 32.0 ## Vertical distance (pixels) above ground_lock_lower used when ground_lock_upper is not set.
 
 var is_dragging_position: bool = false
 var is_dragging_rotation: bool = false
@@ -91,6 +91,7 @@ var has_unsaved_changes: bool = false
 @onready var rotation_indicator_selected: Panel = $InnerMoveCircleSelected/RotationIndicator
 
 func _ready() -> void:
+	process_priority = 100
 	area_2d.mouse_entered.connect(func(): mouse_over = true)
 	area_2d.mouse_exited.connect(func(): mouse_over = false)
 	if collision_shape and collision_shape.shape is CircleShape2D:
@@ -133,6 +134,8 @@ func _process(_delta: float) -> void:
 		return
 	_update_visuals()
 	_handle_drag_input()
+	if is_controlled and slave:
+		constrain_global_position(global_position)
 
 func _update_visuals() -> void:
 	inner_circle_uncontrolled.visible = not is_controlled
@@ -155,9 +158,13 @@ func _handle_drag_input() -> void:
 			is_dragging_rotation = true
 	if is_dragging_position:
 		var target_pos := mouse_pos - _drag_offset
-		var delta_pos := target_pos - global_position
+		var old_pos := global_position
+		var constrained := _apply_position_constraints(target_pos)
+		global_position = constrained
+		if slave and is_controlled:
+			slave.global_position = constrained
+		var delta_pos := constrained - old_pos
 		if delta_pos != Vector2.ZERO:
-			global_position = target_pos
 			dragged_position.emit(delta_pos)
 	elif is_dragging_rotation:
 		var delta_rot := 0.0
@@ -190,9 +197,7 @@ func _physics_process(_delta: float) -> void:
 		return
 	_sync_slave_freeze()
 	if is_controlled:
-		var pos := _apply_position_constraints(global_position)
-		global_position = pos
-		slave.global_position = pos
+		constrain_global_position(global_position)
 		var pose_rot := _solve_rotation()
 		slave.global_rotation = _to_slave_rotation(pose_rot)
 		_sync_marker_rotation_from_pose(pose_rot)
@@ -206,14 +211,15 @@ func _physics_process(_delta: float) -> void:
 		else:
 			global_rotation = _from_slave_rotation(slave.global_rotation)
 
+func constrain_global_position(pos: Vector2) -> Vector2:
+	var result := _apply_position_constraints(pos)
+	global_position = result
+	if slave and is_controlled:
+		slave.global_position = result
+	return result
+
 func _apply_position_constraints(pos: Vector2) -> Vector2:
 	var result := pos
-	if use_min_max_x:
-		var ref_x := x_constraint_parent.global_position.x if x_constraint_parent else 0.0
-		result.x = clamp(result.x, ref_x + min_x, ref_x + max_x)
-	if use_min_max_y:
-		var ref_y := y_constraint_parent.global_position.y if y_constraint_parent else 0.0
-		result.y = clamp(result.y, ref_y + min_y, ref_y + max_y)
 	if use_radius_limit:
 		var origin := _radius_constraint_origin()
 		if result.distance_to(origin) > max_radius:
@@ -221,6 +227,12 @@ func _apply_position_constraints(pos: Vector2) -> Vector2:
 				pass
 			else:
 				result = origin + (result - origin).normalized() * max_radius
+	if use_min_max_x:
+		var ref_x := x_constraint_parent.global_position.x if x_constraint_parent else 0.0
+		result.x = clamp(result.x, ref_x + min_x, ref_x + max_x)
+	if use_min_max_y:
+		var ref_y := y_constraint_parent.global_position.y if y_constraint_parent else 0.0
+		result.y = clamp(result.y, ref_y + min_y, ref_y + max_y)
 	return result
 
 func _radius_constraint_origin() -> Vector2:
@@ -234,9 +246,7 @@ func _move_radius_drag_partner(driver_pos: Vector2, anchor: Vector2) -> bool:
 	if not radius_drag_partner.is_controlled or radius_drag_partner.is_dragging_position:
 		return false
 	var partner_pos := driver_pos + (anchor - driver_pos).normalized() * max_radius
-	radius_drag_partner.global_position = partner_pos
-	if radius_drag_partner.slave:
-		radius_drag_partner.slave.global_position = partner_pos
+	radius_drag_partner.constrain_global_position(partner_pos)
 	return true
 
 func _solve_rotation() -> float:

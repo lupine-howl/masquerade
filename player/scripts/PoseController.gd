@@ -133,7 +133,7 @@ func _input(event: InputEvent) -> void:
 func _on_marker_dragged_position(delta: Vector2, source_marker: PoseMarker) -> void:
 	for m in active_markers:
 		if m != source_marker:
-			m.global_position += delta
+			m.constrain_global_position(m.global_position + delta)
 			m._capture_original_state()
 
 func _on_marker_dragged_rotation(delta_angle: float, source_marker: PoseMarker) -> void:
