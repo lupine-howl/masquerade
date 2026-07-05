@@ -9,7 +9,6 @@ signal visuals_refreshed
 @onready var btn_play: Button = %BtnPlay
 @onready var btn_stop: Button = %BtnStop
 @onready var btn_rewind: Button = %BtnRewind
-@onready var btn_export: Button = %BtnExportAnimation
 @onready var btn_reset: Button = %BtnReset
 @onready var record_check: CheckBox = %RecordCheck
 @onready var playback_controls: Control = %PlaybackControls
@@ -31,7 +30,6 @@ func _ready() -> void:
 	btn_play.pressed.connect(_on_play_pressed)
 	btn_stop.pressed.connect(_on_stop_pressed)
 	btn_rewind.pressed.connect(_on_rewind_pressed)
-	btn_export.pressed.connect(_on_export_pressed)
 	btn_reset.pressed.connect(_on_reset_pressed)
 
 func is_recording() -> bool:
@@ -194,13 +192,6 @@ func _on_rewind_pressed() -> void:
 		var anim_name: String = _get_anim_name.call() if not _get_anim_name.is_null() else ""
 		timeline.seek_step(0, anim_name)
 	update_grid_visuals()
-
-func _on_export_pressed() -> void:
-	if _get_anim_name.is_null() or not timeline:
-		return
-	var anim_name: String = _get_anim_name.call()
-	if anim_name != "":
-		timeline.save_animation_to_disk(anim_name)
 
 func _on_reset_pressed() -> void:
 	if _get_anim_name.is_null() or not timeline:

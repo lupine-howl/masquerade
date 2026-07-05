@@ -9,7 +9,6 @@ signal speed_changed(speed: float)
 @onready var anim_dropdown: OptionButton = %AnimDropdown
 @onready var speed_box: SpinBox = %SpeedSpinBox
 @onready var duration_box: SpinBox = %DurationSpinBox
-@onready var anim_title: Label = %AnimTitle
 
 var timeline: TimelineManager
 var _display_sync_only: bool = false
@@ -125,7 +124,6 @@ func sync_display_to_animation(anim_name: String) -> void:
 				anim_dropdown.select(i)
 			_display_sync_only = false
 			break
-	anim_title.text = anim_name.get_basename()
 	if timeline.anim_player.has_animation(anim_name):
 		var anim := timeline.anim_player.get_animation(anim_name)
 		duration_box.set_value_no_signal(anim.length)
@@ -220,7 +218,6 @@ func _on_dropdown_changed(index: int) -> void:
 
 func _apply_animation_selection(index: int) -> void:
 	var current_anim := anim_dropdown.get_item_text(index)
-	anim_title.text = current_anim.get_basename()
 
 	var was_playing := false
 	if timeline and timeline.anim_player:

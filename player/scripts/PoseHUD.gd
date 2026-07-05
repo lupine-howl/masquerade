@@ -49,8 +49,9 @@ func _setup_panels() -> void:
 	if assistant_panel and pose_controller:
 		var on_markers_changed := func() -> void:
 			if part_panel:
-				part_panel.refresh_controlled_column()
 				part_panel.refresh_inspector(pose_controller.get_primary_marker())
+			if assistant_panel:
+				assistant_panel.sync_ragdoll_toggles()
 		assistant_panel.setup(
 			pose_controller,
 			timeline,
@@ -143,6 +144,8 @@ func _process(_delta: float) -> void:
 		var playing_anim := String(timeline.anim_player.current_animation)
 		if playing_anim != "" and (not anim_browser or not anim_browser.is_preview_active()):
 			anim_browser.sync_display_to_animation(playing_anim)
+			if assistant_panel:
+				assistant_panel.sync_timing_ui()
 			var current_anim_len := timeline.anim_player.get_animation(playing_anim).length
 			if playing_anim != _last_sync_anim or not is_equal_approx(current_anim_len, _last_sync_grid_len):
 				timeline_panel.build_step_grid(current_anim_len)
@@ -174,6 +177,7 @@ func _on_animation_changed(anim_name: String) -> void:
 	refresh_timeline_visuals()
 	if assistant_panel:
 		assistant_panel.sync_timing_ui()
+		assistant_panel.sync_ragdoll_toggles()
 	if timeline.anim_player.is_playing():
 		timeline.stop()
 	timeline.seek_step(0, anim_name)
@@ -185,6 +189,7 @@ func _on_duration_changed(duration: float) -> void:
 	refresh_timeline_visuals()
 	if assistant_panel:
 		assistant_panel.sync_timing_ui()
+		assistant_panel.sync_ragdoll_toggles()
 	if anim_browser:
 		anim_browser.sync_timing_ui_for_current_animation()
 

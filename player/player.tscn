@@ -46,10 +46,18 @@
 [ext_resource type="Script" uid="uid://vd62fxarftgp" path="res://player/PlayerAnimator.gd" id="46_animator"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1s1yo"]
-bg_color = Color(0.6, 0.6, 0.6, 0)
+bg_color = Color(0.2, 0.2, 0.22, 0.9)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5ejfk"]
-bg_color = Color(0.6, 0.6, 0.6, 0)
+bg_color = Color(0.2, 0.2, 0.22, 0.9)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_whnp6"]
 radius = 80.0
@@ -925,35 +933,33 @@ anim_player = NodePath("../../PlayerBody/PlayerAnimator")
 
 [node name="PosePartPanel" type="PanelContainer" parent="PoseHUD" unique_id=1757806156]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(100, 320)
-offset_right = 260.0
-offset_bottom = 360.0
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = -340.0
+offset_right = 440.0
+offset_bottom = -8.0
+grow_vertical = 0
 theme_override_styles/panel = SubResource("StyleBoxFlat_1s1yo")
 script = ExtResource("11_part")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="PoseHUD/PosePartPanel" unique_id=2093546065]
 layout_mode = 2
 size_flags_horizontal = 3
+theme_override_constants/separation = 0
 
-[node name="MarginContainer" type="MarginContainer" parent="PoseHUD/PosePartPanel/VBoxContainer" unique_id=549058022]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_constants/margin_left = 5
-theme_override_constants/margin_top = 5
-theme_override_constants/margin_right = 5
-theme_override_constants/margin_bottom = 5
-
-[node name="PartTable" type="Tree" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer" unique_id=936658464]
+[node name="TabStripPanel" type="PanelContainer" parent="PoseHUD/PosePartPanel/VBoxContainer" unique_id=549058022]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 370)
 layout_mode = 2
 size_flags_horizontal = 3
-focus_mode = 0
-theme_override_font_sizes/font_size = 12
-theme_override_font_sizes/title_button_font_size = 12
-column_titles_visible = true
-select_mode = 2
-scroll_horizontal_enabled = false
+
+[node name="PartStrip" type="HBoxContainer" parent="PoseHUD/PosePartPanel/VBoxContainer/TabStripPanel" unique_id=936658464]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 26)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 2
 
 [node name="MarginContainer2" type="MarginContainer" parent="PoseHUD/PosePartPanel/VBoxContainer" unique_id=1568537160]
 layout_mode = 2
@@ -978,6 +984,20 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Selected Part"
+
+[node name="ControlledCheck" type="CheckBox" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer2/Panel/PartInfo/HBoxContainer" unique_id=2120697499]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 0
+theme_override_font_sizes/font_size = 11
+text = "Controlled"
+
+[node name="BtnKeyControlled" type="Button" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer2/Panel/PartInfo/HBoxContainer" unique_id=1921767595]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 0
+text = "ꄗ"
+flat = true
 
 [node name="ParentLabel" type="Label" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer2/Panel/PartInfo" unique_id=2145445949]
 visible = false
@@ -1181,25 +1201,6 @@ focus_mode = 0
 theme_override_font_sizes/font_size = 11
 text = "Lock Y"
 
-[node name="HBoxContainer3" type="HBoxContainer" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer2/Panel/PartInfo/VBoxContainer" unique_id=1050171573]
-visible = false
-layout_mode = 2
-
-[node name="ControlledCheck" type="CheckBox" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer2/Panel/PartInfo/VBoxContainer/HBoxContainer3" unique_id=2120697499]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(130, 0)
-layout_mode = 2
-focus_mode = 0
-theme_override_font_sizes/font_size = 11
-text = "Controlled"
-
-[node name="BtnKeyControlled" type="Button" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer2/Panel/PartInfo/VBoxContainer/HBoxContainer3" unique_id=1921767595]
-unique_name_in_owner = true
-layout_mode = 2
-focus_mode = 0
-text = "ꄗ"
-flat = true
-
 [node name="HBoxContainer4" type="HBoxContainer" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer2/Panel/PartInfo/VBoxContainer" unique_id=1829357124]
 visible = false
 layout_mode = 2
@@ -1256,12 +1257,17 @@ text = "⇆"
 flat = true
 
 [node name="PanelContainer3" type="PanelContainer" parent="PoseHUD" unique_id=574195588]
-anchors_preset = 1
+anchors_preset = 3
 anchor_left = 1.0
+anchor_top = 1.0
 anchor_right = 1.0
-offset_left = -210.0
-offset_bottom = 350.0
+anchor_bottom = 1.0
+offset_left = -296.0
+offset_top = -400.0
+offset_right = -8.0
+offset_bottom = -8.0
 grow_horizontal = 0
+grow_vertical = 0
 size_flags_horizontal = 8
 size_flags_vertical = 0
 theme_override_styles/panel = SubResource("StyleBoxFlat_5ejfk")
@@ -1270,8 +1276,26 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_5ejfk")
 layout_mode = 2
 size_flags_horizontal = 8
 
+[node name="PoseModeBar" type="VBoxContainer" parent="PoseHUD/PanelContainer3/VBoxContainer" unique_id=2012058645]
+unique_name_in_owner = true
+layout_direction = 3
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+mouse_filter = 2
+script = ExtResource("11_mode")
+
+[node name="PosingCheck" type="CheckBox" parent="PoseHUD/PanelContainer3/VBoxContainer/PoseModeBar" unique_id=1482292167]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 0
+theme_override_font_sizes/font_size = 10
+theme_override_icons/checked = ExtResource("5_rptt4")
+theme_override_icons/unchecked = ExtResource("4_uw77l")
+
 [node name="PoseAnimBrowser" type="MarginContainer" parent="PoseHUD/PanelContainer3/VBoxContainer" unique_id=519141308]
 unique_name_in_owner = true
+visible = false
 custom_minimum_size = Vector2(210, 0)
 layout_mode = 2
 size_flags_horizontal = 8
@@ -1293,6 +1317,7 @@ scroll_horizontal_enabled = false
 scroll_vertical_enabled = false
 
 [node name="MarginContainer" type="MarginContainer" parent="PoseHUD/PanelContainer3/VBoxContainer" unique_id=1072512761]
+visible = false
 layout_mode = 2
 theme_override_constants/margin_left = 5
 theme_override_constants/margin_top = 0
@@ -1306,15 +1331,6 @@ layout_mode = 2
 visible = false
 layout_mode = 2
 size_flags_horizontal = 0
-
-[node name="AnimDropdown" type="OptionButton" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainer/Panel/Animation" unique_id=711204534]
-unique_name_in_owner = true
-visible = false
-custom_minimum_size = Vector2(186, 0)
-layout_mode = 2
-focus_mode = 0
-theme_override_font_sizes/font_size = 11
-flat = true
 
 [node name="SpeedContainer" type="HBoxContainer" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainer/Panel/Animation" unique_id=1063331086]
 layout_mode = 2
@@ -1370,6 +1386,72 @@ unique_name_in_owner = true
 layout_mode = 2
 script = ExtResource("11_assist")
 
+[node name="HeaderRow" type="HBoxContainer" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainerAssistant/Panel/PoseAssistantPanel" unique_id=-447676221]
+layout_mode = 2
+
+[node name="AnimDropdown" type="OptionButton" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainerAssistant/Panel/PoseAssistantPanel/HeaderRow" unique_id=711204534]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+theme_override_font_sizes/font_size = 11
+flat = true
+
+[node name="BtnExportAnimation" type="Button" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainerAssistant/Panel/PoseAssistantPanel/HeaderRow" unique_id=373318321]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Save animation to disk"
+focus_mode = 0
+theme_override_font_sizes/font_size = 11
+text = "➜]"
+flat = true
+
+[node name="LoopCheck" type="CheckBox" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainerAssistant/Panel/PoseAssistantPanel/HeaderRow" unique_id=-447676220]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 0
+theme_override_font_sizes/font_size = 11
+text = "Loop"
+
+[node name="RagdollRow" type="HBoxContainer" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainerAssistant/Panel/PoseAssistantPanel" unique_id=-447676219]
+layout_mode = 2
+
+[node name="CtrlAllCheck" type="CheckBox" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainerAssistant/Panel/PoseAssistantPanel/RagdollRow" unique_id=-447676218]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 0
+theme_override_font_sizes/font_size = 10
+text = "Ctrl All"
+
+[node name="CtrlArmsCheck" type="CheckBox" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainerAssistant/Panel/PoseAssistantPanel/RagdollRow" unique_id=-447676217]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 0
+theme_override_font_sizes/font_size = 10
+text = "Ctrl Arms"
+
+[node name="CtrlLegsCheck" type="CheckBox" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainerAssistant/Panel/PoseAssistantPanel/RagdollRow" unique_id=-447676216]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 0
+theme_override_font_sizes/font_size = 10
+text = "Ctrl Legs"
+
+[node name="CtrlHeadCheck" type="CheckBox" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainerAssistant/Panel/PoseAssistantPanel/RagdollRow" unique_id=-447676215]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 0
+theme_override_font_sizes/font_size = 10
+text = "Ctrl Head"
+
+[node name="CtrlRootCheck" type="CheckBox" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainerAssistant/Panel/PoseAssistantPanel/RagdollRow" unique_id=-447676213]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 0
+theme_override_font_sizes/font_size = 10
+text = "Ctrl Root"
+
 [node name="ActionsRow" type="HBoxContainer" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainerAssistant/Panel/PoseAssistantPanel" unique_id=-447676235]
 layout_mode = 2
 
@@ -1398,6 +1480,13 @@ layout_mode = 2
 focus_mode = 0
 theme_override_font_sizes/font_size = 11
 text = "Hang"
+
+[node name="BtnFall" type="Button" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainerAssistant/Panel/PoseAssistantPanel/ActionsRow" unique_id=-447676212]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 0
+theme_override_font_sizes/font_size = 11
+text = "Fall"
 
 [node name="BtnClear" type="Button" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainerAssistant/Panel/PoseAssistantPanel/ActionsRow" unique_id=-447676232]
 unique_name_in_owner = true
@@ -1484,22 +1573,6 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 0
 script = ExtResource("11_timeline")
-
-[node name="HBoxContainer" type="HBoxContainer" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainer2/Panel/PoseTimelinePanel" unique_id=1910024116]
-layout_mode = 2
-
-[node name="AnimTitle" type="Label" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainer2/Panel/PoseTimelinePanel/HBoxContainer" unique_id=571298585]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(158, 0)
-layout_mode = 2
-text = "Animation"
-
-[node name="BtnExportAnimation" type="Button" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainer2/Panel/PoseTimelinePanel/HBoxContainer" unique_id=373318321]
-unique_name_in_owner = true
-layout_mode = 2
-theme_override_font_sizes/font_size = 12
-text = "➜]"
-flat = true
 
 [node name="PlaybackControls" type="HBoxContainer" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainer2/Panel/PoseTimelinePanel" unique_id=1337660025]
 unique_name_in_owner = true
@@ -1607,23 +1680,6 @@ offset_top = 8.0
 offset_right = 24.0
 offset_bottom = 24.0
 mouse_filter = 2
-
-[node name="PoseModeBar" type="VBoxContainer" parent="PoseHUD/PanelContainer3/VBoxContainer" unique_id=2012058645]
-unique_name_in_owner = true
-layout_direction = 3
-layout_mode = 2
-size_flags_horizontal = 8
-size_flags_vertical = 0
-mouse_filter = 2
-script = ExtResource("11_mode")
-
-[node name="PosingCheck" type="CheckBox" parent="PoseHUD/PanelContainer3/VBoxContainer/PoseModeBar" unique_id=1482292167]
-unique_name_in_owner = true
-layout_mode = 2
-focus_mode = 0
-theme_override_font_sizes/font_size = 10
-theme_override_icons/checked = ExtResource("5_rptt4")
-theme_override_icons/unchecked = ExtResource("4_uw77l")
 
 [node name="PlayerBody" type="CharacterBody2D" parent="." unique_id=411922790 node_paths=PackedStringArray("ragdoll") groups=["player"]]
 position = Vector2(1, 1)

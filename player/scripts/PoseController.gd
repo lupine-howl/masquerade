@@ -218,6 +218,106 @@ func toggle_controlled(is_controlled: bool) -> void:
 		else:
 			m.release_control()
 
+func is_crown_marker(marker: PoseMarker) -> bool:
+	return marker and marker.name == "Crown"
+
+func is_root_marker(marker: PoseMarker) -> bool:
+	return marker and marker.name == "Root"
+
+func get_marker_by_name(marker_name: String) -> PoseMarker:
+	for m in all_markers:
+		if m.name == marker_name:
+			return m
+	return null
+
+func is_head_mode() -> bool:
+	var head := get_marker_by_name("Head")
+	return head and head.is_controlled
+
+func set_head_mode() -> void:
+	var head := get_marker_by_name("Head")
+	var crown := get_marker_by_name("Crown")
+	if head:
+		head.take_control()
+	if crown:
+		crown.release_control()
+
+func set_crown_mode() -> void:
+	var head := get_marker_by_name("Head")
+	var crown := get_marker_by_name("Crown")
+	if crown:
+		crown.take_control()
+	if head:
+		head.release_control()
+
+func release_head_and_crown() -> void:
+	var head := get_marker_by_name("Head")
+	var crown := get_marker_by_name("Crown")
+	if head:
+		head.release_control()
+	if crown:
+		crown.release_control()
+
+func get_markers_in_control_group(group: String) -> Array[PoseMarker]:
+	var result: Array[PoseMarker] = []
+	for m in all_markers:
+		if m.hide_in_pose_ui:
+			continue
+		match group:
+			"all":
+				if not is_crown_marker(m) and m.name != "Head":
+					result.append(m)
+			"root":
+				if is_root_marker(m):
+					result.append(m)
+			"arms":
+				if m.name.contains("Hand"):
+					result.append(m)
+			"legs":
+				if m.name.contains("Foot"):
+					result.append(m)
+			"head":
+				if m.name == "Head":
+					result.append(m)
+	return result
+
+func is_group_controlled(group: String) -> bool:
+	if group == "head":
+		return is_head_mode()
+	var markers := get_markers_in_control_group(group)
+	if markers.is_empty():
+		return false
+	for m in markers:
+		if not m.is_controlled:
+			return false
+	if group == "all":
+		return is_head_mode()
+	return true
+
+func set_group_controlled(group: String, controlled: bool) -> void:
+	match group:
+		"all":
+			for m in get_markers_in_control_group("all"):
+				if controlled:
+					m.take_control()
+				else:
+					m.release_control()
+			if controlled:
+				set_head_mode()
+			else:
+				release_head_and_crown()
+		"head":
+			if controlled:
+				set_head_mode()
+			else:
+				set_crown_mode()
+		_:
+			for m in get_markers_in_control_group(group):
+				if controlled:
+					m.take_control()
+				else:
+					m.release_control()
+
 func set_hang_mode(hang_marker: PoseMarker) -> void:
 	if not hang_marker:
 		return
@@ -226,6 +326,10 @@ func set_hang_mode(hang_marker: PoseMarker) -> void:
 			m.take_control()
 		else:
 			m.release_control()
+
+func release_all_control() -> void:
+	for m in all_markers:
+		m.release_control()
 
 func toggle_follow_rotation(follow: bool) -> void:
 	for m in active_markers:

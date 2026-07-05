@@ -3,10 +3,9 @@ extends PanelContainer
 
 signal inspector_updated(marker: PoseMarker)
 
-enum PartColumn { PART = 0, CONTROLLED = 1 }
-
-@onready var part_table: Tree = %PartTable
+@onready var part_strip: HBoxContainer = %PartStrip
 @onready var part_label: Label = %PartLabel
+@onready var controlled_check: CheckBox = %ControlledCheck
 @onready var pos_label: Label = %PosLabel
 @onready var rot_label: Label = %RotLabel
 @onready var pos_x_spin: SpinBox = %PosXSpin
@@ -27,10 +26,17 @@ var _get_anim_name: Callable
 var _is_auto_recording: Callable
 var _on_visuals_refresh: Callable
 
+var _part_buttons: Dictionary = {}
+var _marker_order: Array[PoseMarker] = []
 var _updating_from_controller: bool = false
 var _updating_from_ui: bool = false
 var _updating_detail: bool = false
-var _tree_selection_queued: bool = false
+
+const PANEL_BG := Color(0.2, 0.2, 0.22, 0.9)
+const TAB_STRIP_BG := Color(0.12, 0.12, 0.14, 0.92)
+const TAB_ACTIVE_BG := PANEL_BG
+const TAB_INACTIVE_BG := Color(0.14, 0.14, 0.16, 0.72)
+const TAB_HOVER_BG := Color(0.17, 0.17, 0.19, 0.82)
 
 func setup(
 	p_controller: PoseController,
@@ -55,8 +61,10 @@ func _ready() -> void:
 	follow_rot_target_option.item_selected.connect(_on_follow_rot_target_selected)
 	look_at_check.toggled.connect(_on_look_at_toggled)
 	look_at_target_option.item_selected.connect(_on_look_at_target_selected)
+	controlled_check.toggled.connect(_on_controlled_toggled)
 	%BtnKeyPos.pressed.connect(_on_key_position_pressed)
 	%BtnKeyRot.pressed.connect(_on_key_rotation_pressed)
+	%BtnKeyControlled.pressed.connect(_on_key_controlled_pressed)
 	%BtnResetPos.pressed.connect(_on_reset_position_pressed)
 	%BtnResetRot.pressed.connect(_on_reset_rotation_pressed)
 	%BtnSwapSibling.pressed.connect(_on_swap_sibling_pressed)
@@ -64,53 +72,108 @@ func _ready() -> void:
 	%BtnNormVert.pressed.connect(_on_normalize_vertical_pressed)
 	%BtnZeroPos.pressed.connect(_on_zero_position_pressed)
 	%BtnZeroRot.pressed.connect(_on_zero_rotation_pressed)
+	_style_details_panel()
+	_style_details_wrapper()
+	_style_outer_panel()
+	_style_tab_strip()
+
+func _style_tab_strip() -> void:
+	var strip_panel := get_node_or_null("VBoxContainer/TabStripPanel") as PanelContainer
+	if not strip_panel:
+		return
+	var style := StyleBoxFlat.new()
+	style.bg_color = TAB_STRIP_BG
+	style.content_margin_left = 5
+	style.content_margin_right = 5
+	style.content_margin_top = 5
+	style.content_margin_bottom = 0
+	style.corner_radius_top_left = 4
+	style.corner_radius_top_right = 4
+	strip_panel.add_theme_stylebox_override("panel", style)
+
+func _style_details_panel() -> void:
+	var details := get_node_or_null("VBoxContainer/MarginContainer2/Panel") as PanelContainer
+	if not details:
+		return
+	var style := StyleBoxFlat.new()
+	style.bg_color = PANEL_BG
+	style.set_content_margin_all(4)
+	style.corner_radius_bottom_left = 4
+	style.corner_radius_bottom_right = 4
+	details.add_theme_stylebox_override("panel", style)
+
+func _style_details_wrapper() -> void:
+	var wrapper := get_node_or_null("VBoxContainer/MarginContainer2") as MarginContainer
+	if wrapper:
+		wrapper.add_theme_constant_override("margin_left", 5)
+		wrapper.add_theme_constant_override("margin_top", 0)
+		wrapper.add_theme_constant_override("margin_right", 5)
+		wrapper.add_theme_constant_override("margin_bottom", 5)
+
+func _style_outer_panel() -> void:
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color(0, 0, 0, 0)
+	add_theme_stylebox_override("panel", style)
 
 func setup_part_table(markers: Array[PoseMarker]) -> void:
-	part_table.columns = 2
-	part_table.hide_root = true
-	part_table.set_column_custom_minimum_width(PartColumn.PART, 100)
-	part_table.set_column_expand(PartColumn.PART, true)
-	part_table.set_column_custom_minimum_width(PartColumn.CONTROLLED, 28)
-	var root := part_table.create_item()
-	part_table.set_column_title(PartColumn.PART, "Part")
-	part_table.set_column_title(PartColumn.CONTROLLED, "Ctl")
-	part_table.column_titles_visible = true
-	part_table.item_selected.connect(_on_table_part_selected)
-	part_table.multi_selected.connect(_on_table_part_selected)
-	part_table.item_edited.connect(_on_table_cell_edited)
+	for child in part_strip.get_children():
+		child.queue_free()
+	_part_buttons.clear()
+	_marker_order.clear()
 	for marker in markers:
-		_add_marker_row(root, marker)
+		if marker.hide_in_pose_ui:
+			continue
+		_marker_order.append(marker)
+		var btn := Button.new()
+		btn.text = marker.name
+		btn.focus_mode = Control.FOCUS_NONE
+		btn.custom_minimum_size = Vector2(52, 26)
+		btn.add_theme_font_size_override("font_size", 10)
+		btn.set_meta("marker", marker)
+		btn.gui_input.connect(_on_part_button_gui_input.bind(marker))
+		_apply_tab_style(btn, false)
+		part_strip.add_child(btn)
+		_part_buttons[marker] = btn
+	sync_selection_from_controller()
 
-func _add_marker_row(root: TreeItem, marker: PoseMarker) -> void:
-	if marker.hide_in_pose_ui:
-		return
-	var row := part_table.create_item(root)
-	row.set_metadata(PartColumn.PART, marker)
-	row.set_text(PartColumn.PART, marker.name)
-	row.set_selectable(PartColumn.PART, true)
-	_set_tree_checkbox(row, PartColumn.CONTROLLED, marker.is_controlled)
+func _apply_tab_style(btn: Button, selected: bool) -> void:
+	var bg := TAB_ACTIVE_BG if selected else TAB_INACTIVE_BG
+	var style := StyleBoxFlat.new()
+	style.bg_color = bg
+	style.content_margin_left = 6
+	style.content_margin_right = 6
+	style.content_margin_top = 4
+	style.content_margin_bottom = 4 if selected else 4
+	style.corner_radius_top_left = 4
+	style.corner_radius_top_right = 4
+	style.corner_radius_bottom_left = 0 if selected else 4
+	style.corner_radius_bottom_right = 0 if selected else 4
+	if not selected:
+		style.border_width_bottom = 1
+		style.border_color = Color(0.08, 0.08, 0.1, 0.8)
+	var hover_style := style.duplicate() as StyleBoxFlat
+	hover_style.bg_color = TAB_ACTIVE_BG if selected else TAB_HOVER_BG
+	btn.add_theme_stylebox_override("normal", style)
+	btn.add_theme_stylebox_override("hover", hover_style)
+	btn.add_theme_stylebox_override("pressed", style)
+	btn.add_theme_stylebox_override("focus", style)
+	btn.add_theme_stylebox_override("disabled", style)
+	btn.add_theme_color_override("font_color", Color(0.95, 0.95, 0.95))
+	btn.add_theme_color_override("font_hover_color", Color.WHITE)
+	btn.add_theme_color_override("font_pressed_color", Color(0.95, 0.95, 0.95))
+	btn.add_theme_color_override("font_focus_color", Color.WHITE)
+	if selected:
+		btn.add_theme_color_override("font_color", Color.WHITE)
 
 func refresh_controlled_column() -> void:
-	if not part_table:
-		return
-	var item := part_table.get_root().get_first_child()
-	while item:
-		var marker := item.get_metadata(PartColumn.PART) as PoseMarker
-		if marker:
-			_set_tree_checkbox(item, PartColumn.CONTROLLED, marker.is_controlled)
-		item = item.get_next()
+	pass
 
 func sync_selection_from_controller() -> void:
-	if _updating_from_ui or not part_table:
-		return
 	_updating_from_controller = true
-	part_table.deselect_all()
-	var item := part_table.get_root().get_first_child()
-	while item:
-		var marker := item.get_metadata(PartColumn.PART) as PoseMarker
-		if pose_controller and marker in pose_controller.active_markers:
-			item.select(PartColumn.PART)
-		item = item.get_next()
+	for marker in _part_buttons:
+		var btn: Button = _part_buttons[marker]
+		var selected: bool = pose_controller and marker in pose_controller.active_markers
+		_apply_tab_style(btn, selected)
 	_updating_from_controller = false
 	var primary := pose_controller.get_primary_marker() if pose_controller else null
 	_update_part_label(primary)
@@ -120,7 +183,6 @@ func update_inspector_checkboxes(marker: PoseMarker) -> void:
 	refresh_inspector(marker)
 
 func refresh_inspector(marker: PoseMarker) -> void:
-	_sync_table_animation_columns()
 	_sync_detail_from_marker(marker)
 	inspector_updated.emit(marker)
 
@@ -154,30 +216,44 @@ func _get_active_markers() -> Array[PoseMarker]:
 	var primary := pose_controller.get_primary_marker() if pose_controller else null
 	return [primary] if primary else []
 
-func _set_tree_checkbox(item: TreeItem, column: int, checked: bool) -> void:
-	item.set_cell_mode(column, TreeItem.CELL_MODE_CHECK)
-	item.set_checked(column, checked)
-	item.set_editable(column, true)
-
-func _is_locked_x(marker: PoseMarker) -> bool:
-	return marker.use_min_max_x and is_equal_approx(marker.min_x, marker.max_x)
-
-func _is_locked_y(marker: PoseMarker) -> bool:
-	return marker.use_min_max_y and is_equal_approx(marker.min_y, marker.max_y)
-
-func _sync_table_animation_columns() -> void:
-	if _updating_from_ui or not part_table:
+func _on_part_button_gui_input(event: InputEvent, marker: PoseMarker) -> void:
+	if _updating_from_controller or not pose_controller:
 		return
-	var item := part_table.get_root().get_first_child()
-	while item:
-		var marker := item.get_metadata(PartColumn.PART) as PoseMarker
-		if marker:
-			item.set_checked(PartColumn.CONTROLLED, marker.is_controlled)
-		item = item.get_next()
+	if not event is InputEventMouseButton:
+		return
+	var mouse_event := event as InputEventMouseButton
+	if mouse_event.button_index != MOUSE_BUTTON_LEFT or not mouse_event.pressed:
+		return
+	_handle_part_selection(marker, mouse_event.shift_pressed, mouse_event.is_command_or_control_pressed())
+	get_viewport().set_input_as_handled()
+
+func _handle_part_selection(marker: PoseMarker, shift_pressed: bool, ctrl_pressed: bool) -> void:
+	_updating_from_ui = true
+	if shift_pressed and not ctrl_pressed and not pose_controller.active_markers.is_empty():
+		var anchor := pose_controller.active_markers[0]
+		var from_i := _marker_order.find(anchor)
+		var to_i := _marker_order.find(marker)
+		if from_i >= 0 and to_i >= 0:
+			var lo := mini(from_i, to_i)
+			var hi := maxi(from_i, to_i)
+			var range_markers: Array[PoseMarker] = []
+			for i in range(lo, hi + 1):
+				range_markers.append(_marker_order[i])
+			pose_controller.set_active_markers(range_markers)
+	elif ctrl_pressed:
+		if marker in pose_controller.active_markers:
+			pose_controller.remove_marker_from_selection(marker)
+		else:
+			pose_controller.add_markers_to_selection([marker])
+	else:
+		pose_controller.set_active_markers([marker])
+	_updating_from_ui = false
+	sync_selection_from_controller()
 
 func _sync_detail_from_marker(marker: PoseMarker) -> void:
 	_updating_detail = true
 	if marker:
+		controlled_check.set_pressed_no_signal(marker.is_controlled)
 		pos_x_spin.set_value_no_signal(marker.position.x)
 		pos_y_spin.set_value_no_signal(marker.position.y)
 		follow_rot_check.set_pressed_no_signal(marker.use_follow_rotation)
@@ -190,6 +266,7 @@ func _sync_detail_from_marker(marker: PoseMarker) -> void:
 		lock_x_check.set_pressed_no_signal(_is_locked_x(marker))
 		lock_y_check.set_pressed_no_signal(_is_locked_y(marker))
 	else:
+		controlled_check.set_pressed_no_signal(false)
 		pos_x_spin.set_value_no_signal(0.0)
 		pos_y_spin.set_value_no_signal(0.0)
 		follow_rot_check.set_pressed_no_signal(false)
@@ -202,6 +279,12 @@ func _sync_detail_from_marker(marker: PoseMarker) -> void:
 		lock_x_check.set_pressed_no_signal(false)
 		lock_y_check.set_pressed_no_signal(false)
 	_updating_detail = false
+
+func _is_locked_x(marker: PoseMarker) -> bool:
+	return marker.use_min_max_x and is_equal_approx(marker.min_x, marker.max_x)
+
+func _is_locked_y(marker: PoseMarker) -> bool:
+	return marker.use_min_max_y and is_equal_approx(marker.min_y, marker.max_y)
 
 func _sync_detail_position(marker: PoseMarker) -> void:
 	_updating_detail = true
@@ -242,55 +325,41 @@ func _populate_constraint_target_option(option: OptionButton, marker: PoseMarker
 		selected_idx = idx
 	option.select(selected_idx)
 
-func _on_table_part_selected(_item: TreeItem = null, _column: int = 0, _selected: bool = false) -> void:
-	if _updating_from_controller or _tree_selection_queued:
-		return
-	_tree_selection_queued = true
-	call_deferred("_process_queued_tree_selection")
-
-func _process_queued_tree_selection() -> void:
-	_tree_selection_queued = false
-	_updating_from_ui = true
-	var selected: Array[PoseMarker] = []
-	var item := part_table.get_next_selected(null)
-	while item:
-		var marker := item.get_metadata(PartColumn.PART) as PoseMarker
-		if marker:
-			selected.append(marker)
-		item = part_table.get_next_selected(item)
-	if pose_controller:
-		pose_controller.set_active_markers(selected)
-		var primary := pose_controller.get_primary_marker()
-		_update_part_label(primary)
-		_sync_detail_from_marker(primary)
-	_updating_from_ui = false
-
 func _update_part_label(primary: PoseMarker) -> void:
-	if not primary:
+	if not pose_controller or pose_controller.active_markers.is_empty():
 		part_label.text = "None"
-	elif primary.slave:
-		part_label.text = primary.slave.name
-	else:
-		part_label.text = primary.name
+		return
+	if pose_controller.active_markers.size() == 1:
+		var marker := pose_controller.active_markers[0]
+		part_label.text = marker.slave.name if marker.slave else marker.name
+		return
+	var label_name: String = "Selection"
+	if primary:
+		label_name = primary.slave.name if primary.slave else primary.name
+	part_label.text = "%s +%d" % [label_name, pose_controller.active_markers.size() - 1]
 
-func _on_table_cell_edited() -> void:
-	var edited_item := part_table.get_edited()
-	var col := part_table.get_edited_column()
-	if not edited_item:
+func _on_controlled_toggled(checked: bool) -> void:
+	if _updating_detail:
 		return
-	var marker := edited_item.get_metadata(PartColumn.PART) as PoseMarker
-	if not marker:
+	for marker in _get_active_markers():
+		var was_controlled := marker.is_controlled
+		if checked:
+			marker.take_control()
+		else:
+			marker.release_control()
+		_auto_key_controlled(marker, was_controlled)
+	refresh_inspector(pose_controller.get_primary_marker() if pose_controller else null)
+	if pose_controller and pose_controller.pose_hud and pose_controller.pose_hud.assistant_panel:
+		pose_controller.pose_hud.assistant_panel.sync_ragdoll_toggles()
+
+func _on_key_controlled_pressed() -> void:
+	if not pose_controller or not timeline or _get_anim_name.is_null():
 		return
-	match col:
-		PartColumn.CONTROLLED:
-			var was_controlled := marker.is_controlled
-			if edited_item.is_checked(col):
-				marker.take_control()
-			else:
-				marker.release_control()
-			_auto_key_controlled(marker, was_controlled)
-	if pose_controller and marker in pose_controller.active_markers:
-		_sync_detail_from_marker(pose_controller.get_primary_marker())
+	var anim_name: String = _get_anim_name.call()
+	for marker in _get_active_markers():
+		timeline.ensure_marker_control_keyed(anim_name, marker)
+		timeline.key_property(anim_name, marker, ":is_controlled", marker.is_controlled)
+	_refresh_visuals()
 
 func _on_pos_x_changed(value: float) -> void:
 	if _updating_detail:
