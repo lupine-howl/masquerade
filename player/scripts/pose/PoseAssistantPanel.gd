@@ -36,6 +36,10 @@ var _on_swap_all_siblings: Callable
 var _on_norm_horiz: Callable
 var _syncing_timing: bool = false
 var _syncing_ragdoll: bool = false
+var _ctrl_checks: Dictionary = {}
+var _grounded_checks: Array[CheckBox] = []
+var _loop_checks: Array[CheckBox] = []
+var _export_buttons: Array[Button] = []
 
 func setup(
 	pose_controller: PoseController,
@@ -61,14 +65,14 @@ func setup(
 	sync_ragdoll_toggles()
 
 func _ready() -> void:
-	btn_export.pressed.connect(_on_export_pressed)
-	loop_check.toggled.connect(_on_loop_toggled)
-	ctrl_all_check.toggled.connect(_on_ctrl_all_toggled)
-	ctrl_arms_check.toggled.connect(_on_ctrl_arms_toggled)
-	ctrl_legs_check.toggled.connect(_on_ctrl_legs_toggled)
-	ctrl_head_check.toggled.connect(_on_ctrl_head_toggled)
-	ctrl_root_check.toggled.connect(_on_ctrl_root_toggled)
-	grounded_check.toggled.connect(_on_grounded_toggled)
+	_register_ctrl_check("all", ctrl_all_check)
+	_register_ctrl_check("arms", ctrl_arms_check)
+	_register_ctrl_check("legs", ctrl_legs_check)
+	_register_ctrl_check("head", ctrl_head_check)
+	_register_ctrl_check("root", ctrl_root_check)
+	_register_grounded_check(grounded_check)
+	_register_export_button(btn_export)
+	_register_loop_check(loop_check)
 	btn_reset.pressed.connect(_on_reset_pressed)
 	btn_norm_horiz.pressed.connect(_on_norm_horiz_pressed)
 	btn_hang.pressed.connect(_on_hang_pressed)
@@ -76,6 +80,63 @@ func _ready() -> void:
 	btn_clear.pressed.connect(_on_clear_pressed)
 	btn_swap_all_siblings.pressed.connect(_on_swap_all_siblings_pressed)
 	btn_create.pressed.connect(_on_create_pressed)
+
+func register_timeline_mirrors(
+	ctrl_all: CheckBox,
+	ctrl_arms: CheckBox,
+	ctrl_legs: CheckBox,
+	ctrl_head: CheckBox,
+	ctrl_root: CheckBox,
+	grounded: CheckBox,
+	btn_export_mirror: Button,
+	loop_check_mirror: CheckBox,
+	btn_pose_reset: Button,
+	btn_norm: Button,
+	btn_hang_action: Button,
+	btn_fall_action: Button,
+	btn_clear_action: Button,
+	btn_swap_all: Button
+) -> void:
+	_register_ctrl_check("all", ctrl_all)
+	_register_ctrl_check("arms", ctrl_arms)
+	_register_ctrl_check("legs", ctrl_legs)
+	_register_ctrl_check("head", ctrl_head)
+	_register_ctrl_check("root", ctrl_root)
+	_register_grounded_check(grounded)
+	_register_export_button(btn_export_mirror)
+	_register_loop_check(loop_check_mirror)
+	btn_pose_reset.pressed.connect(_on_reset_pressed)
+	btn_norm.pressed.connect(_on_norm_horiz_pressed)
+	btn_hang_action.pressed.connect(_on_hang_pressed)
+	btn_fall_action.pressed.connect(_on_fall_pressed)
+	btn_clear_action.pressed.connect(_on_clear_pressed)
+	btn_swap_all.pressed.connect(_on_swap_all_siblings_pressed)
+
+func _register_ctrl_check(group: String, check: CheckBox) -> void:
+	if not _ctrl_checks.has(group):
+		_ctrl_checks[group] = []
+	if check in _ctrl_checks[group]:
+		return
+	_ctrl_checks[group].append(check)
+	check.toggled.connect(func(enabled: bool) -> void: _on_ctrl_group_toggled(group, enabled))
+
+func _register_grounded_check(check: CheckBox) -> void:
+	if check in _grounded_checks:
+		return
+	_grounded_checks.append(check)
+	check.toggled.connect(_on_grounded_toggled)
+
+func _register_export_button(btn: Button) -> void:
+	if btn in _export_buttons:
+		return
+	_export_buttons.append(btn)
+	btn.pressed.connect(_on_export_pressed)
+
+func _register_loop_check(check: CheckBox) -> void:
+	if check in _loop_checks:
+		return
+	_loop_checks.append(check)
+	check.toggled.connect(_on_loop_toggled)
 
 func is_grounded() -> bool:
 	return grounded_check.button_pressed
@@ -90,19 +151,23 @@ func sync_title_ui() -> void:
 	if not _timeline.anim_player.has_animation(anim_name):
 		return
 	var anim := _timeline.anim_player.get_animation(anim_name)
+	var loop_enabled := anim.loop_mode != Animation.LOOP_NONE
 	_syncing_timing = true
-	loop_check.set_pressed_no_signal(anim.loop_mode != Animation.LOOP_NONE)
+	for check in _loop_checks:
+		check.set_pressed_no_signal(loop_enabled)
 	_syncing_timing = false
 
 func sync_ragdoll_toggles() -> void:
 	if not _pose_controller:
 		return
 	_syncing_ragdoll = true
-	ctrl_all_check.set_pressed_no_signal(_pose_controller.is_group_controlled("all"))
-	ctrl_arms_check.set_pressed_no_signal(_pose_controller.is_group_controlled("arms"))
-	ctrl_legs_check.set_pressed_no_signal(_pose_controller.is_group_controlled("legs"))
-	ctrl_head_check.set_pressed_no_signal(_pose_controller.is_group_controlled("head"))
-	ctrl_root_check.set_pressed_no_signal(_pose_controller.is_group_controlled("root"))
+	for group in _ctrl_checks:
+		var enabled := _pose_controller.is_group_controlled(group)
+		for check: CheckBox in _ctrl_checks[group]:
+			check.set_pressed_no_signal(enabled)
+	var grounded_enabled := _pose_controller.is_pose_grounded()
+	for check in _grounded_checks:
+		check.set_pressed_no_signal(grounded_enabled)
 	_syncing_ragdoll = false
 
 func _notify_markers_changed() -> void:
@@ -136,35 +201,15 @@ func _on_loop_toggled(enabled: bool) -> void:
 		return
 	var anim := _timeline.anim_player.get_animation(anim_name)
 	anim.loop_mode = Animation.LOOP_LINEAR if enabled else Animation.LOOP_NONE
+	_syncing_timing = true
+	for check in _loop_checks:
+		check.set_pressed_no_signal(enabled)
+	_syncing_timing = false
 
-func _on_ctrl_all_toggled(enabled: bool) -> void:
+func _on_ctrl_group_toggled(group: String, enabled: bool) -> void:
 	if _syncing_ragdoll or not _pose_controller:
 		return
-	_pose_controller.set_group_controlled("all", enabled)
-	_notify_markers_changed()
-
-func _on_ctrl_arms_toggled(enabled: bool) -> void:
-	if _syncing_ragdoll or not _pose_controller:
-		return
-	_pose_controller.set_group_controlled("arms", enabled)
-	_notify_markers_changed()
-
-func _on_ctrl_legs_toggled(enabled: bool) -> void:
-	if _syncing_ragdoll or not _pose_controller:
-		return
-	_pose_controller.set_group_controlled("legs", enabled)
-	_notify_markers_changed()
-
-func _on_ctrl_head_toggled(enabled: bool) -> void:
-	if _syncing_ragdoll or not _pose_controller:
-		return
-	_pose_controller.set_group_controlled("head", enabled)
-	_notify_markers_changed()
-
-func _on_ctrl_root_toggled(enabled: bool) -> void:
-	if _syncing_ragdoll or not _pose_controller:
-		return
-	_pose_controller.set_group_controlled("root", enabled)
+	_pose_controller.set_group_controlled(group, enabled)
 	_notify_markers_changed()
 
 func _on_grounded_toggled(enabled: bool) -> void:

@@ -46,6 +46,16 @@ static func apply_content_panel(panel: PanelContainer, tabs_on_left: bool = true
 		style.corner_radius_bottom_left = 4
 	panel.add_theme_stylebox_override("panel", style)
 
+static func apply_dock_panel(panel: PanelContainer) -> void:
+	var style := StyleBoxFlat.new()
+	style.bg_color = PANEL_BG
+	style.set_content_margin_all(6)
+	style.corner_radius_top_left = 4
+	style.corner_radius_top_right = 4
+	style.corner_radius_bottom_left = 4
+	style.corner_radius_bottom_right = 4
+	panel.add_theme_stylebox_override("panel", style)
+
 static func apply_tab_button(btn: Button, selected: bool, tabs_on_right: bool = false) -> void:
 	var bg := TAB_ACTIVE_BG if selected else TAB_INACTIVE_BG
 	var style := StyleBoxFlat.new()

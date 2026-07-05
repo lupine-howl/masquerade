@@ -70,6 +70,9 @@ func _on_anim_player_finished(anim_name: StringName) -> void:
 	if timeline:
 		timeline.seek_step(_preview_return_step, _preview_return_anim)
 
+func get_animation_names() -> Array[String]:
+	return _anim_order.duplicate()
+
 func get_current_animation() -> String:
 	return _current_anim
 

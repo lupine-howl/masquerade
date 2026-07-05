@@ -8,8 +8,9 @@ signal playback_started
 
 @onready var part_panel: PosePartPanel = $PoseDockRow/PoseDock/DockVBox/PosePartPanel
 @onready var anim_browser: PoseAnimBrowser = $PoseDockRow/PoseDock/DockVBox/AnimSection/PoseAnimBrowser
-@onready var timeline_panel: PoseTimelinePanel = $PoseDockRow/PoseDock/DockVBox/AnimSection/AnimMainColumn/AnimVBox/MarginContainer2/PoseTimelinePanel
-@onready var assistant_panel: PoseAssistantPanel = $PoseDockRow/PoseDock/DockVBox/AnimSection/AnimMainColumn/AnimVBox/MarginContainerAssistant/PoseAssistantPanel
+@onready var timeline_panel: PoseTimelinePanel = $PoseTimelineDock/MarginContainer/PoseTimelinePanel
+@onready var timeline_dock: PanelContainer = $PoseTimelineDock
+@onready var assistant_panel: PoseAssistantPanel = $PoseDockRow/PoseDock/DockVBox/AnimSection/AnimMainColumn/MarginContainer2/PoseAssistantPanel
 @onready var toolbar: PoseToolBar = $PoseToolBar
 @onready var mode_bar: PoseModeBar = $PoseToolBar/ToolVBox/PoseModeBar
 
@@ -25,6 +26,7 @@ func _ready() -> void:
 		pose_controller.marker_list_ready.connect(part_panel.setup_part_table)
 
 	anim_browser.populate_animations()
+	_refresh_anim_selector()
 	if timeline and anim_browser.get_current_animation() != "":
 		_on_animation_changed(anim_browser.get_current_animation())
 		timeline.stop()
@@ -63,6 +65,22 @@ func _setup_panels() -> void:
 			func(): swap_all_siblings(),
 			func(): part_panel.normalize_horizontal()
 		)
+		assistant_panel.register_timeline_mirrors(
+			timeline_panel.tl_ctrl_all,
+			timeline_panel.tl_ctrl_arms,
+			timeline_panel.tl_ctrl_legs,
+			timeline_panel.tl_ctrl_head,
+			timeline_panel.tl_ctrl_root,
+			timeline_panel.tl_grounded,
+			timeline_panel.tl_btn_export,
+			timeline_panel.tl_loop_check,
+			timeline_panel.tl_btn_pose_reset,
+			timeline_panel.tl_btn_norm_horiz,
+			timeline_panel.tl_btn_hang,
+			timeline_panel.tl_btn_fall,
+			timeline_panel.tl_btn_clear,
+			timeline_panel.tl_btn_swap_all
+		)
 
 func _wire_signals() -> void:
 	anim_browser.animation_changed.connect(_on_animation_changed)
@@ -73,17 +91,16 @@ func _wire_signals() -> void:
 	timeline_panel.step_interacted.connect(_on_step_interacted)
 	timeline_panel.duration_changed.connect(_on_duration_changed)
 	timeline_panel.speed_changed.connect(func(_s): refresh_timeline_visuals())
+	timeline_panel.animation_selected.connect(_on_timeline_anim_selected)
+	timeline_panel.key_all_pressed.connect(func(): key_all_markers())
 
 	mode_bar.posing_toggled.connect(_on_posing_toggled)
-
-	if toolbar:
-		toolbar.key_all_pressed.connect(func(): key_all_markers())
 
 	if assistant_panel:
 		assistant_panel.animation_created.connect(_on_animation_changed)
 
 	if timeline_panel and mode_bar:
-		timeline_panel.set_playback_controls_visible(mode_bar.is_posing())
+		_set_timeline_dock_visible(mode_bar.is_posing())
 
 	call_deferred("_apply_posing_mode", mode_bar.is_posing())
 
@@ -144,6 +161,8 @@ func _process(_delta: float) -> void:
 		var playing_anim := String(timeline.anim_player.current_animation)
 		if playing_anim != "" and (not anim_browser or not anim_browser.is_preview_active()):
 			anim_browser.sync_display_to_animation(playing_anim)
+			if timeline_panel:
+				timeline_panel.sync_anim_selector(playing_anim)
 			if assistant_panel:
 				assistant_panel.sync_title_ui()
 			if timeline_panel:
@@ -169,6 +188,11 @@ func _on_active_marker_changed(_primary_marker: PoseMarker) -> void:
 func _on_animation_changed(anim_name: String) -> void:
 	if anim_name == "" or not timeline or not timeline.anim_player:
 		return
+	if timeline_panel:
+		if timeline_panel.needs_anim_selector_refresh(anim_browser.get_animation_names()):
+			_refresh_anim_selector(anim_name)
+		else:
+			timeline_panel.sync_anim_selector(anim_name)
 	_last_sync_anim = ""
 	_last_sync_grid_len = -1.0
 	var anim := timeline.anim_player.get_animation(anim_name)
@@ -203,6 +227,20 @@ func _on_step_interacted(_step: int) -> void:
 func _on_posing_toggled(posing: bool) -> void:
 	_apply_posing_mode(posing)
 
+func _on_timeline_anim_selected(anim_name: String) -> void:
+	if anim_browser:
+		anim_browser.select_animation_by_name(anim_name)
+
+func _refresh_anim_selector(select_name: String = "") -> void:
+	if not timeline_panel or not anim_browser:
+		return
+	var current := select_name if select_name != "" else anim_browser.get_current_animation()
+	timeline_panel.populate_anim_selector(anim_browser.get_animation_names(), current)
+
+func _set_timeline_dock_visible(show_dock: bool) -> void:
+	if timeline_dock:
+		timeline_dock.visible = show_dock
+
 func _apply_posing_mode(posing: bool) -> void:
 	if pose_controller and pose_controller.player:
 		pose_controller.player.is_posing = posing
@@ -211,7 +249,7 @@ func _apply_posing_mode(posing: bool) -> void:
 	if timeline_panel:
 		if not posing:
 			timeline_panel.set_recording(false)
-		timeline_panel.set_playback_controls_visible(posing)
+	_set_timeline_dock_visible(posing)
 	if posing and timeline and timeline.anim_player:
 		var playing_anim := String(timeline.anim_player.current_animation)
 		if playing_anim != "":

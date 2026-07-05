@@ -1,10 +1,10 @@
 extends PlayerState
 
 const ANIM_BLENDS := {
-	"idle": 0.5,
-	"run": 0.35,
-	"hanging": 0.2,
-	"jump_land": 0.2,
+	"idle": 0.1,
+	"run": 0.1,
+	"hanging": 0.1,
+	"jump_land": 0.1,
 }
 const LAND_POSE_TIME := 0.15
 
