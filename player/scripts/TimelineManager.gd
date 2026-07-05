@@ -83,6 +83,22 @@ func clear_animation(anim_name: String) -> void:
 	if anim_player and anim_player.has_animation(anim_name):
 		anim_player.get_animation(anim_name).clear()
 
+func create_animation(anim_name: String, length: float = -1.0) -> bool:
+	if not anim_player or anim_name == "" or anim_player.has_animation(anim_name):
+		return false
+	var lib := anim_player.get_animation_library("")
+	if not lib:
+		return false
+	var resolved_length := length if length > 0.0 else step_duration * 8.0
+	var anim := Animation.new()
+	anim.length = resolved_length
+	anim.step = step_duration
+	lib.add_animation(anim_name, anim)
+	var path := "res://player/animations/%s.res" % anim_name
+	anim.resource_path = path
+	_persist_animation(anim_name)
+	return true
+
 func get_current_playback_step() -> int:
 	if not anim_player or not _playback_active or anim_player.current_animation == "":
 		return current_step

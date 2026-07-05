@@ -13,15 +13,75 @@ signal speed_changed(speed: float)
 
 var timeline: TimelineManager
 var _display_sync_only: bool = false
+var _preview_active: bool = false
+var _preview_anim_name: String = ""
+var _preview_return_anim: String = ""
+var _preview_return_step: int = 0
 
 func setup(p_timeline: TimelineManager) -> void:
 	timeline = p_timeline
 	_setup_animation_table()
+	if timeline and timeline.anim_player and not timeline.anim_player.animation_finished.is_connected(_on_anim_player_finished):
+		timeline.anim_player.animation_finished.connect(_on_anim_player_finished)
 
 func _ready() -> void:
 	speed_box.value_changed.connect(_on_speed_box_changed)
 	duration_box.value_changed.connect(_on_duration_changed)
 	anim_dropdown.item_selected.connect(_on_dropdown_changed)
+
+func is_preview_active() -> bool:
+	return _preview_active
+
+func play_preview_animation(preview_name: String) -> void:
+	if not timeline or not timeline.anim_player or not timeline.anim_player.has_animation(preview_name):
+		return
+	_preview_return_anim = get_current_animation()
+	_preview_return_step = timeline.current_step
+	_preview_anim_name = preview_name
+	_preview_active = true
+	timeline.stop()
+	timeline.anim_player.play(preview_name)
+
+func refresh_animation_list(select_name: String = "") -> void:
+	populate_animations()
+	if select_name != "":
+		select_animation_by_name(select_name)
+
+func apply_steps_to_current_animation(steps: int) -> void:
+	var anim_name := get_current_animation()
+	if anim_name == "" or not timeline:
+		return
+	var next_time := steps_to_time(steps)
+	timeline.set_length(anim_name, next_time)
+	duration_box.set_value_no_signal(next_time)
+	duration_changed.emit(next_time)
+
+func apply_speed_to_current_animation(speed: float) -> void:
+	var anim_name := get_current_animation()
+	if anim_name == "" or not timeline:
+		return
+	timeline.key_speed_scale(anim_name, speed)
+	if timeline.anim_player:
+		timeline.anim_player.speed_scale = speed
+	speed_box.set_value_no_signal(speed)
+	speed_changed.emit(speed)
+
+func sync_timing_ui_for_current_animation() -> void:
+	var anim_name := get_current_animation()
+	if anim_name == "" or not timeline or not timeline.anim_player:
+		return
+	if not timeline.anim_player.has_animation(anim_name):
+		return
+	var anim := timeline.anim_player.get_animation(anim_name)
+	duration_box.set_value_no_signal(anim.length)
+	speed_box.set_value_no_signal(timeline.get_speed_scale(anim_name))
+
+func _on_anim_player_finished(anim_name: StringName) -> void:
+	if not _preview_active or String(anim_name) != _preview_anim_name:
+		return
+	_preview_active = false
+	if timeline:
+		timeline.seek_step(_preview_return_step, _preview_return_anim)
 
 func get_current_animation() -> String:
 	return anim_dropdown.get_item_text(anim_dropdown.selected) if anim_dropdown.item_count > 0 else ""

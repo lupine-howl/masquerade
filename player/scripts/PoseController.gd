@@ -218,6 +218,15 @@ func toggle_controlled(is_controlled: bool) -> void:
 		else:
 			m.release_control()
 
+func set_hang_mode(hang_marker: PoseMarker) -> void:
+	if not hang_marker:
+		return
+	for m in all_markers:
+		if m == hang_marker:
+			m.take_control()
+		else:
+			m.release_control()
+
 func toggle_follow_rotation(follow: bool) -> void:
 	for m in active_markers:
 		m.use_follow_rotation = follow

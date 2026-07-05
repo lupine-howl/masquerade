@@ -47,17 +47,37 @@ func _setup_panels() -> void:
 	anim_browser.setup(timeline)
 	timeline_panel.setup(timeline, pose_controller, get_anim)
 	if assistant_panel and pose_controller:
-		assistant_panel.setup(pose_controller)
+		var on_markers_changed := func() -> void:
+			if part_panel:
+				part_panel.refresh_controlled_column()
+				part_panel.refresh_inspector(pose_controller.get_primary_marker())
+		assistant_panel.setup(
+			pose_controller,
+			timeline,
+			anim_browser,
+			get_anim,
+			refresh_visuals,
+			on_markers_changed
+		)
 
 func _wire_signals() -> void:
 	anim_browser.animation_changed.connect(_on_animation_changed)
 	anim_browser.duration_changed.connect(_on_duration_changed)
-	anim_browser.speed_changed.connect(func(_s): refresh_timeline_visuals())
+	anim_browser.speed_changed.connect(func(_s):
+		refresh_timeline_visuals()
+		if assistant_panel:
+			assistant_panel.sync_timing_ui()
+	)
 
 	timeline_panel.playback_started.connect(playback_started.emit)
 	timeline_panel.step_interacted.connect(_on_step_interacted)
 
 	mode_bar.posing_toggled.connect(_on_posing_toggled)
+
+	if assistant_panel:
+		assistant_panel.duration_changed.connect(_on_duration_changed)
+		assistant_panel.speed_changed.connect(func(_s): refresh_timeline_visuals())
+		assistant_panel.animation_created.connect(_on_animation_changed)
 
 	if timeline_panel and mode_bar:
 		timeline_panel.set_playback_controls_visible(mode_bar.is_posing())
@@ -113,7 +133,7 @@ func _process(_delta: float) -> void:
 
 	if timeline.anim_player.is_playing():
 		var playing_anim := String(timeline.anim_player.current_animation)
-		if playing_anim != "":
+		if playing_anim != "" and (not anim_browser or not anim_browser.is_preview_active()):
 			anim_browser.sync_display_to_animation(playing_anim)
 			var current_anim_len := timeline.anim_player.get_animation(playing_anim).length
 			if playing_anim != _last_sync_anim or not is_equal_approx(current_anim_len, _last_sync_grid_len):
@@ -144,6 +164,8 @@ func _on_animation_changed(anim_name: String) -> void:
 	timeline.step_selection_anchor = 0
 	timeline_panel.build_step_grid(anim.length)
 	refresh_timeline_visuals()
+	if assistant_panel:
+		assistant_panel.sync_timing_ui()
 	if is_posing() and not timeline.anim_player.is_playing():
 		timeline.seek_step(0, anim_name)
 		refresh_timeline_visuals()
@@ -151,6 +173,10 @@ func _on_animation_changed(anim_name: String) -> void:
 func _on_duration_changed(duration: float) -> void:
 	timeline_panel.build_step_grid(duration)
 	refresh_timeline_visuals()
+	if assistant_panel:
+		assistant_panel.sync_timing_ui()
+	if anim_browser:
+		anim_browser.sync_timing_ui_for_current_animation()
 
 func _on_step_interacted(_step: int) -> void:
 	on_step_navigated()

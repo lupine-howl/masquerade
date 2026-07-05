@@ -92,6 +92,16 @@ func _add_marker_row(root: TreeItem, marker: PoseMarker) -> void:
 	row.set_selectable(PartColumn.PART, true)
 	_set_tree_checkbox(row, PartColumn.CONTROLLED, marker.is_controlled)
 
+func refresh_controlled_column() -> void:
+	if not part_table:
+		return
+	var item := part_table.get_root().get_first_child()
+	while item:
+		var marker := item.get_metadata(PartColumn.PART) as PoseMarker
+		if marker:
+			_set_tree_checkbox(item, PartColumn.CONTROLLED, marker.is_controlled)
+		item = item.get_next()
+
 func sync_selection_from_controller() -> void:
 	if _updating_from_ui or not part_table:
 		return
