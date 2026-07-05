@@ -23,6 +23,7 @@ signal dragged_rotation(delta_angle: float)
 @export var can_rotate: bool = false ## Shows the rotation ring and allows R+drag or outer-ring drag to edit rotation in pose mode.
 @export var is_controlled: bool = true ## When true, the marker drives the slave (slave is frozen). When false, the slave drives the marker (physics/ragdoll).
 @export var constrain_rotation_when_uncontrolled: bool = false ## While uncontrolled, still solve look-at / follow / ground-lock / rotation-limit and write rotation to the slave instead of copying slave rotation.
+@export var hide_in_pose_ui: bool = false ## Hide from the pose part list and on-screen gizmo. Marker still animates, constraints, and keys normally (for baking helpers).
 
 @export_category("X-Axis Constraint")
 @export var use_min_max_x: bool = false ## Clamp world X while the marker is controlled (and during drag before physics sync).
@@ -47,7 +48,7 @@ signal dragged_rotation(delta_angle: float)
 @export var radius_constraint_parent: Node2D ## Center of the radius limit in world space. Leave empty (with radius_is_global false) to anchor at world origin. Often the parent limb or torso.
 @export var radius_drag_partner: PoseMarker ## Optional second marker on the same radius. When this marker hits the limit while dragging, the partner is pushed to the opposite point on the circle (useful for paired hands/feet).
 @export var use_radius_angle_limit: bool = false ## Limit position to a world-angle arc around the radius origin (ignores parent rotation — good for eyeline targets).
-@export var min_radius_angle_deg: float = -90.0 ## Minimum world angle (degrees) from origin → marker. 0° = east/right in Godot.
+@export var min_radius_angle_deg: float = -90.0 ## Minimum world angle (degrees) from origin → marker. 0° = east/right in Godot. Sticks when crossed (supports ranges beyond ±180, e.g. -270 to 90).
 @export var max_radius_angle_deg: float = 90.0 ## Maximum world angle (degrees) from origin → marker.
 
 @export_category("Rotation Constraint")
@@ -79,6 +80,8 @@ var _drag_offset: Vector2 = Vector2.ZERO
 var original_position: Vector2
 var original_rotation: float
 var has_unsaved_changes: bool = false
+var _radius_angle_unwrapped_deg: float = 0.0
+var _radius_angle_state_valid: bool = false
 
 @onready var area_2d: Area2D = $Area2D
 @onready var collision_shape: CollisionShape2D = $Area2D/CollisionShape2D
@@ -105,6 +108,22 @@ func _ready() -> void:
 		take_control()
 	else:
 		release_control()
+	_apply_pose_ui_visibility()
+
+func is_interactive_in_pose_ui() -> bool:
+	return is_dev_mode and not hide_in_pose_ui
+
+func _apply_pose_ui_visibility() -> void:
+	var show_gizmo := is_interactive_in_pose_ui()
+	visible = show_gizmo
+	if area_2d:
+		area_2d.input_pickable = show_gizmo
+	if not show_gizmo:
+		set_active(false)
+		is_dragging_position = false
+		is_dragging_rotation = false
+		_prepare_drag_position = false
+		_prepare_drag_rotation = false
 
 func set_active(active: bool) -> void:
 	is_active = active
@@ -132,8 +151,9 @@ func _sync_slave_freeze() -> void:
 func _process(_delta: float) -> void:
 	if not is_dev_mode:
 		return
-	_update_visuals()
-	_handle_drag_input()
+	if is_interactive_in_pose_ui():
+		_update_visuals()
+		_handle_drag_input()
 	if is_controlled and slave:
 		constrain_global_position(global_position)
 	elif _uses_position_constraints():
@@ -246,9 +266,7 @@ func _apply_radius_constraints(pos: Vector2) -> Vector2:
 	var was_inside_min := dist < dist_min and dist_min > 0.0
 
 	if use_radius_angle_limit:
-		var angle_deg := rad_to_deg(angle_rad)
-		angle_deg = clampf(angle_deg, min_radius_angle_deg, max_radius_angle_deg)
-		angle_rad = deg_to_rad(angle_deg)
+		angle_rad = deg_to_rad(_clamp_radius_angle_deg(rad_to_deg(angle_rad)))
 
 	var clamped_dist := clampf(dist if dist > 0.001 else dist_min, dist_min, dist_max)
 	var result := origin + Vector2.from_angle(angle_rad) * clamped_dist
@@ -264,6 +282,34 @@ func _radius_constraint_origin() -> Vector2:
 	if radius_is_global or not radius_constraint_parent:
 		return Vector2.ZERO
 	return radius_constraint_parent.global_position
+
+func _unwrap_angle_toward(angle_deg: float, reference_deg: float) -> float:
+	var a := angle_deg
+	while a - reference_deg > 180.0:
+		a -= 360.0
+	while a - reference_deg < -180.0:
+		a += 360.0
+	return a
+
+func _ensure_radius_angle_state(raw_deg: float) -> void:
+	if _radius_angle_state_valid:
+		return
+	var lo := min_radius_angle_deg
+	var hi := max_radius_angle_deg
+	var mid := lo + (hi - lo) * 0.5
+	var unwrapped := _unwrap_angle_toward(raw_deg, mid)
+	_radius_angle_unwrapped_deg = clampf(unwrapped, lo, hi)
+	_radius_angle_state_valid = true
+
+func _clamp_radius_angle_deg(raw_deg: float) -> float:
+	var lo := min_radius_angle_deg
+	var hi := max_radius_angle_deg
+	_ensure_radius_angle_state(raw_deg)
+	var unwrapped := _unwrap_angle_toward(raw_deg, _radius_angle_unwrapped_deg)
+	unwrapped = clampf(unwrapped, lo, hi)
+	_radius_angle_unwrapped_deg = unwrapped
+	_radius_angle_state_valid = true
+	return unwrapped
 
 func _move_radius_drag_partner(driver_pos: Vector2, anchor: Vector2, ring_radius: float) -> bool:
 	if not radius_drag_partner or not is_instance_valid(radius_drag_partner):
@@ -400,7 +446,7 @@ func _sync_constraint_offsets_from_rotation() -> void:
 			look_at_offset_deg = rad_to_deg(wrapf(pose_rot - base_aim, -PI, PI))
 
 func _input(event: InputEvent) -> void:
-	if not is_dev_mode:
+	if not is_interactive_in_pose_ui():
 		return
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
 		var mouse_pos := get_global_mouse_position()
@@ -435,6 +481,11 @@ func _capture_original_state() -> void:
 		return
 	original_position = global_position
 	original_rotation = rotation if _uses_authored_world_rotation() else global_rotation
+	if use_radius_limit and use_radius_angle_limit:
+		var origin := _radius_constraint_origin()
+		var offset := global_position - origin
+		if offset.length_squared() > 0.001:
+			_ensure_radius_angle_state(rad_to_deg(offset.angle()))
 	has_unsaved_changes = true
 
 func _show_unsaved_state() -> void:
@@ -459,4 +510,5 @@ func revert_to_original() -> void:
 		rotation = original_rotation
 	else:
 		global_rotation = original_rotation
+	_radius_angle_state_valid = false
 	_reset_marker_ui()

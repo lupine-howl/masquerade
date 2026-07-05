@@ -160,6 +160,8 @@ func _on_marker_dragged_rotation(delta_angle: float, source_marker: PoseMarker) 
 			m._capture_original_state()
 
 func _on_marker_selected(marker: PoseMarker) -> void:
+	if marker.hide_in_pose_ui:
+		return
 	var is_ctrl_pressed := Input.is_key_pressed(KEY_CTRL) or Input.is_key_pressed(KEY_META)
 	if is_ctrl_pressed:
 		if marker in active_markers:
@@ -170,10 +172,14 @@ func _on_marker_selected(marker: PoseMarker) -> void:
 		set_active_markers([marker])
 
 func set_active_markers(markers: Array[PoseMarker]) -> void:
+	var visible_markers: Array[PoseMarker] = []
+	for m in markers:
+		if not m.hide_in_pose_ui:
+			visible_markers.append(m)
 	for m in active_markers:
-		if m not in markers:
+		if m not in visible_markers:
 			m.set_active(false)
-	active_markers = markers
+	active_markers = visible_markers
 	for m in active_markers:
 		m.set_active(true)
 	active_marker_changed.emit(get_primary_marker())

@@ -16,7 +16,7 @@
 [ext_resource type="Script" uid="uid://c6xtwc716dm8l" path="res://player/scripts/pose/PoseModeBar.gd" id="11_mode"]
 [ext_resource type="Script" uid="uid://k0kq4vlcd64f" path="res://player/scripts/pose/PosePartPanel.gd" id="11_part"]
 [ext_resource type="Script" uid="uid://ptpbj4ebn1b0" path="res://player/scripts/pose/PoseTimelinePanel.gd" id="11_timeline"]
-[ext_resource type="Animation" uid="uid://45eb4xgs6pds" path="res://player/animations/RESET.res" id="17_2uvqg"]
+[ext_resource type="Animation" uid="uid://dg5gr01s1iili" path="res://player/animations/RESET.res" id="17_2uvqg"]
 [ext_resource type="Animation" uid="uid://bo8nec67cgjmo" path="res://player/animations/idle.res" id="17_r7pn3"]
 [ext_resource type="Animation" uid="uid://xgbckhii27nl" path="res://player/animations/dead.res" id="23_55jnj"]
 [ext_resource type="Texture2D" uid="uid://b1govaot86lmk" path="res://light-mask.png" id="24_g4c7l"]
@@ -1004,12 +1004,28 @@ size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 11
 text = "World (--, --)"
 
+[node name="BtnZeroPos" type="Button" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer2/Panel/PartInfo/VBoxContainer/ReadoutRow" unique_id=884210340]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Reset local position to 0"
+focus_mode = 0
+text = "0"
+flat = true
+
 [node name="RotLabel" type="Label" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer2/Panel/PartInfo/VBoxContainer/ReadoutRow" unique_id=170487125]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 11
 text = "Rot --"
+
+[node name="BtnZeroRot" type="Button" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer2/Panel/PartInfo/VBoxContainer/ReadoutRow" unique_id=884210341]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Reset rotation to 0"
+focus_mode = 0
+text = "0"
+flat = true
 
 [node name="PositionRow" type="HBoxContainer" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer2/Panel/PartInfo/VBoxContainer" unique_id=884210301]
 layout_mode = 2
@@ -1557,6 +1573,88 @@ script = ExtResource("9_g4c7l")
 player = NodePath("../..")
 pose_hud = NodePath("../../../PoseHUD")
 
+[node name="Crown" parent="PlayerBody/FacingPivot/PoseController" unique_id=159275146 node_paths=PackedStringArray("slave", "pivot") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
+slave = NodePath("../../../Ragdoll/Head/Crown")
+pivot = NodePath("../..")
+is_controlled = false
+use_rotation_limit = true
+min_rotation_deg = 0.0
+max_rotation_deg = 0.0
+
+[node name="Head" parent="PlayerBody/FacingPivot/PoseController" unique_id=1906863 node_paths=PackedStringArray("slave", "pivot", "radius_constraint_parent", "radius_drag_partner", "look_at_target") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
+position = Vector2(8.353577, -93.02951)
+rotation = -0.0034784384
+slave = NodePath("../../../Ragdoll/Head/Head_Physics")
+pivot = NodePath("../..")
+invert_rotation_on_flip = true
+can_rotate = true
+is_controlled = false
+constrain_rotation_when_uncontrolled = true
+use_radius_limit = true
+min_radius = 115.0
+max_radius = 115.0
+radius_constraint_parent = NodePath("../../../Ragdoll/Root")
+radius_drag_partner = NodePath("../Root")
+use_radius_angle_limit = true
+min_radius_angle_deg = -210.0
+max_radius_angle_deg = 30.0
+look_at_target = NodePath("../Eyeline")
+
+[node name="Neck" parent="PlayerBody/FacingPivot/PoseController" unique_id=1488133409 node_paths=PackedStringArray("slave", "pivot", "radius_constraint_parent") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
+visible = false
+position = Vector2(8.726257, -94.85774)
+slave = NodePath("../../../Ragdoll/Head/Neck_Physics")
+pivot = NodePath("../..")
+invert_rotation_on_flip = true
+is_controlled = false
+hide_in_pose_ui = true
+use_radius_limit = true
+min_radius = 100.0
+max_radius = 100.0
+radius_constraint_parent = NodePath("../../../Ragdoll/Root")
+
+[node name="Torso" parent="PlayerBody/FacingPivot/PoseController" unique_id=1164425788 node_paths=PackedStringArray("slave", "pivot") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
+visible = false
+slave = NodePath("../../../Ragdoll/Torso/Torso2_Physics")
+pivot = NodePath("../..")
+is_controlled = false
+hide_in_pose_ui = true
+
+[node name="Root" parent="PlayerBody/FacingPivot/PoseController" unique_id=219274694 node_paths=PackedStringArray("slave", "pivot", "x_constraint_parent", "radius_constraint_parent", "radius_drag_partner") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
+position = Vector2(-5.7142334, 18.571426)
+slave = NodePath("../../../Ragdoll/Root")
+pivot = NodePath("../..")
+invert_rotation_on_flip = true
+can_rotate = true
+is_controlled = false
+use_min_max_x = true
+min_x = 10.0
+max_x = -10.0
+x_constraint_parent = NodePath("../../..")
+use_min_max_y = true
+min_y = -70.0
+max_y = 70.0
+use_radius_limit = true
+max_radius = 120.0
+radius_constraint_parent = NodePath("../../../Ragdoll/Head/Head_Physics")
+radius_drag_partner = NodePath("../Head")
+
+[node name="HandBack" parent="PlayerBody/FacingPivot/PoseController" unique_id=1872066078 node_paths=PackedStringArray("slave", "sibling", "pivot", "radius_constraint_parent", "follow_rotation_target") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
+position = Vector2(60.90216, -2.053894)
+rotation = 1.3872819
+scale = Vector2(0.99999994, 0.99999994)
+slave = NodePath("../../../Ragdoll/Arm_Back/Hand_Back_Physics")
+sibling = NodePath("../HandFront")
+pivot = NodePath("../..")
+is_controlled = false
+use_min_max_y = true
+min_y = -170.0
+max_y = 150.0
+use_radius_limit = true
+max_radius = 115.0
+radius_constraint_parent = NodePath("../../../Ragdoll/Arm_Back/Shoulder_Back_Physics")
+follow_rotation_target = NodePath("../../../Ragdoll/Arm_Back/Forearm_Back_Physics")
+
 [node name="HandFront" parent="PlayerBody/FacingPivot/PoseController" unique_id=2036979389 node_paths=PackedStringArray("slave", "sibling", "pivot", "radius_constraint_parent", "follow_rotation_target") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
 position = Vector2(-52.47058, 17.904587)
 rotation = 1.4617479
@@ -1571,21 +1669,6 @@ use_radius_limit = true
 max_radius = 115.0
 radius_constraint_parent = NodePath("../../../Ragdoll/Arm_Front/Shoulder_Front_Physics")
 follow_rotation_target = NodePath("../../../Ragdoll/Arm_Front/Forearm_Front_Physics")
-
-[node name="HandBack" parent="PlayerBody/FacingPivot/PoseController" unique_id=1872066078 node_paths=PackedStringArray("slave", "sibling", "pivot", "radius_constraint_parent", "follow_rotation_target") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
-position = Vector2(60.90216, -2.053894)
-rotation = 1.3872819
-slave = NodePath("../../../Ragdoll/Arm_Back/Hand_Back_Physics")
-sibling = NodePath("../HandFront")
-pivot = NodePath("../..")
-is_controlled = false
-use_min_max_y = true
-min_y = -170.0
-max_y = 150.0
-use_radius_limit = true
-max_radius = 115.0
-radius_constraint_parent = NodePath("../../../Ragdoll/Arm_Back/Shoulder_Back_Physics")
-follow_rotation_target = NodePath("../../../Ragdoll/Arm_Back/Forearm_Back_Physics")
 
 [node name="FootBack" parent="PlayerBody/FacingPivot/PoseController" unique_id=1591964902 node_paths=PackedStringArray("slave", "sibling", "pivot", "radius_constraint_parent", "follow_rotation_target") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
 position = Vector2(-97.14282, 53.07141)
@@ -1624,32 +1707,6 @@ max_radius = 170.0
 radius_constraint_parent = NodePath("../../../Ragdoll/Root")
 follow_rotation_target = NodePath("../../../Ragdoll/Leg_Front/Calf_Front_Physics")
 
-[node name="Neck" parent="PlayerBody/FacingPivot/PoseController" unique_id=1488133409 node_paths=PackedStringArray("slave", "pivot", "radius_constraint_parent") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
-position = Vector2(8.726257, -94.85774)
-slave = NodePath("../../../Ragdoll/Head/Neck_Physics")
-pivot = NodePath("../..")
-invert_rotation_on_flip = true
-is_controlled = false
-use_radius_limit = true
-min_radius = 100.0
-max_radius = 200.0
-radius_constraint_parent = NodePath("../../../Ragdoll/Root")
-
-[node name="Head" parent="PlayerBody/FacingPivot/PoseController" unique_id=1906863 node_paths=PackedStringArray("slave", "pivot", "radius_constraint_parent", "radius_drag_partner", "look_at_target") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
-position = Vector2(8.353577, -93.02951)
-rotation = -0.0034784384
-slave = NodePath("../../../Ragdoll/Head/Head_Physics")
-pivot = NodePath("../..")
-invert_rotation_on_flip = true
-can_rotate = true
-is_controlled = false
-constrain_rotation_when_uncontrolled = true
-use_radius_limit = true
-max_radius = 120.0
-radius_constraint_parent = NodePath("../../../Ragdoll/Root")
-radius_drag_partner = NodePath("../Root")
-look_at_target = NodePath("../Eyeline")
-
 [node name="Eyeline" parent="PlayerBody/FacingPivot/PoseController" unique_id=112503581 node_paths=PackedStringArray("radius_constraint_parent") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
 position = Vector2(221, 45)
 is_controlled = false
@@ -1658,42 +1715,23 @@ min_radius = 200.0
 max_radius = 200.0
 radius_constraint_parent = NodePath("../../../Ragdoll/Head/Head_Physics")
 use_radius_angle_limit = true
-max_radius_angle_deg = 20.0
-
-[node name="Torso" parent="PlayerBody/FacingPivot/PoseController" unique_id=1164425788 node_paths=PackedStringArray("slave", "pivot") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
-visible = false
-slave = NodePath("../../../Ragdoll/Torso/Torso2_Physics")
-pivot = NodePath("../..")
-is_controlled = false
 
 [node name="UpperAdbomen" parent="PlayerBody/FacingPivot/PoseController" unique_id=881103751 node_paths=PackedStringArray("slave", "pivot") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
+visible = false
 slave = NodePath("../../../Ragdoll/Torso/UpperAbdomen_Physics")
 pivot = NodePath("../..")
 invert_rotation_on_flip = true
 is_controlled = false
+hide_in_pose_ui = true
 
 [node name="LowerAbdomen" parent="PlayerBody/FacingPivot/PoseController" unique_id=972622081 node_paths=PackedStringArray("slave", "pivot") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
+visible = false
 rotation = 0.17020127
 slave = NodePath("../../../Ragdoll/Torso/LowerAbdomen_Physics")
 pivot = NodePath("../..")
 invert_rotation_on_flip = true
 is_controlled = false
-
-[node name="Root" parent="PlayerBody/FacingPivot/PoseController" unique_id=219274694 node_paths=PackedStringArray("slave", "pivot", "x_constraint_parent", "radius_constraint_parent", "radius_drag_partner") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
-position = Vector2(-5.7142334, 18.571426)
-slave = NodePath("../../../Ragdoll/Root")
-pivot = NodePath("../..")
-invert_rotation_on_flip = true
-can_rotate = true
-is_controlled = false
-use_min_max_x = true
-min_x = 10.0
-max_x = -10.0
-x_constraint_parent = NodePath("../../..")
-use_radius_limit = true
-max_radius = 120.0
-radius_constraint_parent = NodePath("../../../Ragdoll/Head/Head_Physics")
-radius_drag_partner = NodePath("../Head")
+hide_in_pose_ui = true
 
 [node name="Detection" type="Node2D" parent="PlayerBody/FacingPivot" unique_id=1054909727]
 
@@ -2088,7 +2126,6 @@ position = Vector2(88.46463, -133.27112)
 position = Vector2(-62.911102, -142.74261)
 
 [node name="Ragdoll" type="Node2D" parent="PlayerBody" unique_id=35418647 node_paths=PackedStringArray("skeleton_node", "pivot")]
-visible = false
 z_index = 4
 script = ExtResource("30_fjxoa")
 skeleton_node = NodePath("../FacingPivot/Armature/Skeleton2D")
@@ -2530,6 +2567,21 @@ region_rect = Rect2(647, 862, 151, 77)
 
 [node name="Head" type="Node2D" parent="PlayerBody/Ragdoll" unique_id=28840955]
 position = Vector2(0, -57)
+
+[node name="Crown" type="RigidBody2D" parent="PlayerBody/Ragdoll/Head" unique_id=1590126427]
+position = Vector2(9, -108)
+collision_layer = 512
+collision_mask = 768
+freeze = true
+angular_damp = 200.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerBody/Ragdoll/Head/Crown" unique_id=852604366]
+shape = SubResource("CircleShape2D_gswnw")
+
+[node name="Crown_Head_Pin" type="PinJoint2D" parent="PlayerBody/Ragdoll/Head/Crown" unique_id=651060136]
+node_a = NodePath("..")
+node_b = NodePath("../../Head_Physics")
+angular_limit_enabled = true
 
 [node name="Head_Physics" type="RigidBody2D" parent="PlayerBody/Ragdoll/Head" unique_id=199924245]
 position = Vector2(0, -60)

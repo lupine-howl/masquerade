@@ -64,6 +64,8 @@ func _ready() -> void:
 	%BtnSwapAllSiblings.pressed.connect(_on_swap_all_siblings_pressed)
 	%BtnNormHoriz.pressed.connect(_on_normalize_horizontal_pressed)
 	%BtnNormVert.pressed.connect(_on_normalize_vertical_pressed)
+	%BtnZeroPos.pressed.connect(_on_zero_position_pressed)
+	%BtnZeroRot.pressed.connect(_on_zero_rotation_pressed)
 
 func setup_part_table(markers: Array[PoseMarker]) -> void:
 	part_table.columns = 2
@@ -82,6 +84,8 @@ func setup_part_table(markers: Array[PoseMarker]) -> void:
 		_add_marker_row(root, marker)
 
 func _add_marker_row(root: TreeItem, marker: PoseMarker) -> void:
+	if marker.hide_in_pose_ui:
+		return
 	var row := part_table.create_item(root)
 	row.set_metadata(PartColumn.PART, marker)
 	row.set_text(PartColumn.PART, marker.name)
@@ -217,7 +221,7 @@ func _populate_constraint_target_option(option: OptionButton, marker: PoseMarker
 		return
 	var idx := 1
 	for m in pose_controller.all_markers:
-		if m == marker:
+		if m == marker or m.hide_in_pose_ui:
 			continue
 		option.add_item(m.name)
 		option.set_item_metadata(idx, m)
@@ -466,3 +470,26 @@ func _on_reset_position_pressed() -> void:
 
 func _on_reset_rotation_pressed() -> void:
 	_on_reset_position_pressed()
+
+func _on_zero_position_pressed() -> void:
+	for marker in _get_active_markers():
+		marker.position = Vector2.ZERO
+		marker.constrain_global_position(marker.global_position)
+		request_auto_key(marker)
+	refresh_inspector(pose_controller.get_primary_marker() if pose_controller else null)
+
+func _on_zero_rotation_pressed() -> void:
+	for marker in _get_active_markers():
+		if marker.use_look_at:
+			marker.look_at_offset_deg = 0.0
+		elif marker.use_follow_rotation:
+			marker.follow_rotation_offset_deg = 0.0
+		elif marker._uses_authored_world_rotation():
+			marker.rotation = 0.0
+		else:
+			marker.global_rotation = 0.0
+		if marker.slave and marker.is_controlled:
+			var pose_rot := marker._solve_rotation()
+			marker.slave.global_rotation = marker._to_slave_rotation(pose_rot)
+		request_auto_key(marker)
+	refresh_inspector(pose_controller.get_primary_marker() if pose_controller else null)
