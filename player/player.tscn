@@ -12,14 +12,14 @@
 [ext_resource type="Script" uid="uid://g8s4ffy7n2ju" path="res://player/scripts/PoseController.gd" id="9_g4c7l"]
 [ext_resource type="PackedScene" uid="uid://cs1txumcsbrpb" path="res://player/PoseMarker.tscn" id="9_s7qer"]
 [ext_resource type="Script" uid="uid://ck2uwbq4r4qf1" path="res://player/scripts/pose/PoseAnimBrowser.gd" id="11_anim"]
+[ext_resource type="Script" uid="uid://baaghp5bwpyb3" path="res://player/scripts/pose/PoseAnimColumn.gd" id="11_animcol"]
 [ext_resource type="Script" uid="uid://e2tdvkwasfjr" path="res://player/scripts/pose/PoseAssistantPanel.gd" id="11_assist"]
+[ext_resource type="Script" uid="uid://2acmk70jywnc" path="res://player/scripts/pose/PoseDock.gd" id="11_dock"]
 [ext_resource type="Script" uid="uid://bnhxy3tk85v7d" path="res://player/scripts/PoseHUD.gd" id="11_knn7v"]
 [ext_resource type="Script" uid="uid://c6xtwc716dm8l" path="res://player/scripts/pose/PoseModeBar.gd" id="11_mode"]
 [ext_resource type="Script" uid="uid://k0kq4vlcd64f" path="res://player/scripts/pose/PosePartPanel.gd" id="11_part"]
 [ext_resource type="Script" uid="uid://ptpbj4ebn1b0" path="res://player/scripts/pose/PoseTimelinePanel.gd" id="11_timeline"]
-[ext_resource type="Script" path="res://player/scripts/pose/PoseAnimColumn.gd" id="11_animcol"]
-[ext_resource type="Script" path="res://player/scripts/pose/PoseDock.gd" id="11_dock"]
-[ext_resource type="Script" path="res://player/scripts/pose/PoseToolBar.gd" id="11_toolbar"]
+[ext_resource type="Script" uid="uid://c23x0uci37vw3" path="res://player/scripts/pose/PoseToolBar.gd" id="11_toolbar"]
 [ext_resource type="Animation" path="res://player/animations/RESET.res" id="17_2uvqg"]
 [ext_resource type="Animation" uid="uid://bo8nec67cgjmo" path="res://player/animations/idle.res" id="17_r7pn3"]
 [ext_resource type="Animation" uid="uid://xgbckhii27nl" path="res://player/animations/dead.res" id="23_55jnj"]
@@ -47,20 +47,6 @@
 [ext_resource type="Texture2D" uid="uid://cnssw0xaid3pc" path="res://icon.svg" id="43_fjxoa"]
 [ext_resource type="Script" uid="uid://7ett2ig3wkug" path="res://player/scripts/HangingState.gd" id="45_xcnuv"]
 [ext_resource type="Script" uid="uid://vd62fxarftgp" path="res://player/PlayerAnimator.gd" id="46_animator"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1s1yo"]
-bg_color = Color(0.2, 0.2, 0.22, 0.9)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5ejfk"]
-bg_color = Color(0.2, 0.2, 0.22, 0.9)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_whnp6"]
 radius = 80.0
@@ -935,13 +921,8 @@ script = ExtResource("2_rptt4")
 anim_player = NodePath("../../PlayerBody/PlayerAnimator")
 
 [node name="PoseToolBar" type="PanelContainer" parent="PoseHUD" unique_id=2012058644]
-anchors_preset = 9
-anchor_bottom = 1.0
-offset_left = 8.0
-offset_top = 8.0
-offset_right = 44.0
-offset_bottom = -8.0
-grow_vertical = 2
+offset_right = 72.0
+offset_bottom = 107.0
 script = ExtResource("11_toolbar")
 
 [node name="ToolVBox" type="VBoxContainer" parent="PoseHUD/PoseToolBar" unique_id=2012058643]
@@ -962,26 +943,22 @@ theme_override_font_sizes/font_size = 10
 theme_override_icons/checked = ExtResource("5_rptt4")
 theme_override_icons/unchecked = ExtResource("4_uw77l")
 
-[node name="BtnKeyAll" type="Button" parent="PoseHUD/PoseToolBar/ToolVBox" unique_id=-447676223]
+[node name="BtnKeyAll" type="Button" parent="PoseHUD/PoseToolBar/ToolVBox/PoseModeBar" unique_id=-447676223]
 unique_name_in_owner = true
 layout_mode = 2
 tooltip_text = "Keyframe all parts"
 focus_mode = 0
+theme_override_font_sizes/font_size = 48
 text = "ꄗ"
 flat = true
 
 [node name="PoseDockRow" type="HBoxContainer" parent="PoseHUD" unique_id=519141306]
-anchors_preset = 11
+anchors_preset = 1
 anchor_left = 1.0
-anchor_top = 0.0
 anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -288.0
-offset_top = 8.0
-offset_right = -8.0
-offset_bottom = -8.0
+offset_left = -280.0
+offset_bottom = 519.0
 grow_horizontal = 0
-alignment = 0
 theme_override_constants/separation = 0
 
 [node name="PoseDock" type="PanelContainer" parent="PoseHUD/PoseDockRow" unique_id=574195588]
@@ -1541,6 +1518,9 @@ pose_hud = NodePath("../../../PoseHUD")
 position = Vector2(6.4238205, -167.61133)
 slave = NodePath("../../../Ragdoll/Head/Crown")
 pivot = NodePath("../..")
+use_min_max_y = true
+min_y = -200.0
+max_y = -100.0
 use_rotation_limit = true
 min_rotation_deg = 0.0
 max_rotation_deg = 0.0
