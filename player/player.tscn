@@ -979,13 +979,6 @@ layout_mode = 2
 size_flags_horizontal = 3
 text = "Selected Part"
 
-[node name="BtnKeyAll" type="Button" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer2/Panel/PartInfo/HBoxContainer" unique_id=1429492521]
-unique_name_in_owner = true
-layout_mode = 2
-theme_override_font_sizes/font_size = 16
-text = "ꄗ"
-flat = true
-
 [node name="ParentLabel" type="Label" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer2/Panel/PartInfo" unique_id=2145445949]
 visible = false
 layout_mode = 2
@@ -1262,14 +1255,6 @@ focus_mode = 0
 text = "⇆"
 flat = true
 
-[node name="BtnSwapAllSiblings" type="Button" parent="PoseHUD/PosePartPanel/VBoxContainer/MarginContainer2/Panel/PartInfo/VBoxContainer/HBoxContainer6" unique_id=62341366]
-unique_name_in_owner = true
-layout_mode = 2
-tooltip_text = "Swap all sibling pairs"
-focus_mode = 0
-text = "⇆ All"
-flat = true
-
 [node name="PanelContainer3" type="PanelContainer" parent="PoseHUD" unique_id=574195588]
 anchors_preset = 1
 anchor_left = 1.0
@@ -1420,6 +1405,21 @@ layout_mode = 2
 focus_mode = 0
 theme_override_font_sizes/font_size = 11
 text = "Clear"
+
+[node name="BtnKeyAll" type="Button" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainerAssistant/Panel/PoseAssistantPanel/ActionsRow" unique_id=-447676223]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 0
+theme_override_font_sizes/font_size = 11
+text = "Key All"
+
+[node name="BtnSwapAllSiblings" type="Button" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainerAssistant/Panel/PoseAssistantPanel/ActionsRow" unique_id=-447676222]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Swap all sibling pairs"
+focus_mode = 0
+theme_override_font_sizes/font_size = 11
+text = "⇆ All"
 
 [node name="CreateRow" type="HBoxContainer" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainerAssistant/Panel/PoseAssistantPanel" unique_id=-447676231]
 layout_mode = 2
@@ -1672,20 +1672,15 @@ script = ExtResource("9_g4c7l")
 player = NodePath("../..")
 pose_hud = NodePath("../../../PoseHUD")
 
-[node name="Crown" parent="PlayerBody/FacingPivot/PoseController" unique_id=159275146 node_paths=PackedStringArray("slave", "pivot", "radius_constraint_parent", "radius_drag_partner") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
+[node name="Crown" parent="PlayerBody/FacingPivot/PoseController" unique_id=159275146 node_paths=PackedStringArray("slave", "pivot") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
 position = Vector2(6.4238205, -167.61133)
 slave = NodePath("../../../Ragdoll/Head/Crown")
 pivot = NodePath("../..")
-use_radius_limit = true
-min_radius = 150.0
-max_radius = 150.0
-radius_constraint_parent = NodePath("../../../Ragdoll/Root")
-radius_drag_partner = NodePath("../Root")
 use_rotation_limit = true
 min_rotation_deg = 0.0
 max_rotation_deg = 0.0
 
-[node name="Head" parent="PlayerBody/FacingPivot/PoseController" unique_id=1906863 node_paths=PackedStringArray("slave", "pivot", "radius_constraint_parent", "look_at_target") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
+[node name="Head" parent="PlayerBody/FacingPivot/PoseController" unique_id=1906863 node_paths=PackedStringArray("slave", "pivot", "y_constraint_parent", "radius_constraint_parent", "look_at_target") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
 position = Vector2(-2.2906752, -112.39278)
 rotation = -0.0034784384
 slave = NodePath("../../../Ragdoll/Head/Head_Physics")
@@ -1694,6 +1689,9 @@ invert_rotation_on_flip = true
 can_rotate = true
 is_controlled = false
 constrain_rotation_when_uncontrolled = true
+min_y = 0.0
+max_y = 115.0
+y_constraint_parent = NodePath(".")
 use_radius_limit = true
 min_radius = 115.0
 max_radius = 115.0
@@ -1735,8 +1733,6 @@ use_min_max_x = true
 min_x = -20.0
 max_x = 20.0
 x_constraint_parent = NodePath("../../..")
-use_min_max_y = true
-min_y = -70.0
 radius_drag_partner = NodePath("../Head")
 
 [node name="HandBack" parent="PlayerBody/FacingPivot/PoseController" unique_id=1872066078 node_paths=PackedStringArray("slave", "sibling", "pivot", "radius_constraint_parent", "follow_rotation_target") groups=["anim_markers"] instance=ExtResource("9_s7qer")]

@@ -14,6 +14,8 @@ const RESET_ANIM_NAME := "RESET"
 @onready var btn_reset: Button = %BtnReset
 @onready var btn_hang: Button = %BtnHang
 @onready var btn_clear: Button = %BtnClear
+@onready var btn_key_all: Button = %BtnKeyAll
+@onready var btn_swap_all_siblings: Button = %BtnSwapAllSiblings
 @onready var new_anim_edit: LineEdit = %NewAnimEdit
 @onready var btn_create: Button = %BtnCreate
 @onready var steps_spin: SpinBox = %StepsSpin
@@ -25,6 +27,8 @@ var _anim_browser: PoseAnimBrowser
 var _get_current_animation: Callable
 var _on_refresh_visuals: Callable
 var _on_markers_changed: Callable
+var _on_key_all: Callable
+var _on_swap_all_siblings: Callable
 var _syncing_timing: bool = false
 
 func setup(
@@ -33,7 +37,9 @@ func setup(
 	anim_browser: PoseAnimBrowser,
 	get_current_animation: Callable,
 	on_refresh_visuals: Callable,
-	on_markers_changed: Callable = Callable()
+	on_markers_changed: Callable = Callable(),
+	on_key_all: Callable = Callable(),
+	on_swap_all_siblings: Callable = Callable()
 ) -> void:
 	_pose_controller = pose_controller
 	_timeline = p_timeline
@@ -41,6 +47,8 @@ func setup(
 	_get_current_animation = get_current_animation
 	_on_refresh_visuals = on_refresh_visuals
 	_on_markers_changed = on_markers_changed
+	_on_key_all = on_key_all
+	_on_swap_all_siblings = on_swap_all_siblings
 	if not hang_control_marker and pose_controller:
 		hang_control_marker = _find_marker_by_name("Crown")
 	sync_timing_ui()
@@ -50,6 +58,8 @@ func _ready() -> void:
 	btn_reset.pressed.connect(_on_reset_pressed)
 	btn_hang.pressed.connect(_on_hang_pressed)
 	btn_clear.pressed.connect(_on_clear_pressed)
+	btn_key_all.pressed.connect(_on_key_all_pressed)
+	btn_swap_all_siblings.pressed.connect(_on_swap_all_siblings_pressed)
 	btn_create.pressed.connect(_on_create_pressed)
 	steps_spin.value_changed.connect(_on_steps_changed)
 	speed_spin.value_changed.connect(_on_speed_changed)
@@ -114,6 +124,14 @@ func _on_clear_pressed() -> void:
 	_timeline.clear_animation(anim_name)
 	if not _on_refresh_visuals.is_null():
 		_on_refresh_visuals.call()
+
+func _on_key_all_pressed() -> void:
+	if not _on_key_all.is_null():
+		_on_key_all.call()
+
+func _on_swap_all_siblings_pressed() -> void:
+	if not _on_swap_all_siblings.is_null():
+		_on_swap_all_siblings.call()
 
 func _on_create_pressed() -> void:
 	if not _timeline:

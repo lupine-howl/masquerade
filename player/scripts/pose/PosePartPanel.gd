@@ -57,11 +57,9 @@ func _ready() -> void:
 	look_at_target_option.item_selected.connect(_on_look_at_target_selected)
 	%BtnKeyPos.pressed.connect(_on_key_position_pressed)
 	%BtnKeyRot.pressed.connect(_on_key_rotation_pressed)
-	%BtnKeyAll.pressed.connect(key_all_markers)
 	%BtnResetPos.pressed.connect(_on_reset_position_pressed)
 	%BtnResetRot.pressed.connect(_on_reset_rotation_pressed)
 	%BtnSwapSibling.pressed.connect(_on_swap_sibling_pressed)
-	%BtnSwapAllSiblings.pressed.connect(_on_swap_all_siblings_pressed)
 	%BtnNormHoriz.pressed.connect(_on_normalize_horizontal_pressed)
 	%BtnNormVert.pressed.connect(_on_normalize_vertical_pressed)
 	%BtnZeroPos.pressed.connect(_on_zero_position_pressed)
@@ -402,12 +400,6 @@ func _on_swap_sibling_pressed() -> void:
 		return
 	for m in pose_controller.active_markers:
 		pose_controller.swap_with_sibling(m)
-	refresh_inspector(pose_controller.get_primary_marker())
-
-func _on_swap_all_siblings_pressed() -> void:
-	if not pose_controller:
-		return
-	pose_controller.swap_all_siblings()
 	refresh_inspector(pose_controller.get_primary_marker())
 
 func _on_normalize_horizontal_pressed() -> void:

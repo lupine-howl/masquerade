@@ -57,7 +57,9 @@ func _setup_panels() -> void:
 			anim_browser,
 			get_anim,
 			refresh_visuals,
-			on_markers_changed
+			on_markers_changed,
+			func(): key_all_markers(),
+			func(): swap_all_siblings()
 		)
 
 func _wire_signals() -> void:
@@ -111,6 +113,12 @@ func request_auto_key(marker: PoseMarker) -> void:
 func key_all_markers() -> void:
 	if part_panel:
 		part_panel.key_all_markers()
+
+func swap_all_siblings() -> void:
+	if pose_controller:
+		pose_controller.swap_all_siblings()
+	if part_panel:
+		part_panel.refresh_inspector(pose_controller.get_primary_marker() if pose_controller else null)
 
 func on_step_navigated() -> void:
 	refresh_timeline_visuals()
