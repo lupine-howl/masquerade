@@ -174,9 +174,11 @@ func _on_animation_changed(anim_name: String) -> void:
 	refresh_timeline_visuals()
 	if assistant_panel:
 		assistant_panel.sync_timing_ui()
-	if is_posing() and not timeline.anim_player.is_playing():
-		timeline.seek_step(0, anim_name)
-		refresh_timeline_visuals()
+	if timeline.anim_player.is_playing():
+		timeline.stop()
+	timeline.seek_step(0, anim_name)
+	refresh_timeline_visuals()
+	on_step_navigated()
 
 func _on_duration_changed(duration: float) -> void:
 	timeline_panel.build_step_grid(duration)
