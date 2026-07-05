@@ -205,7 +205,7 @@ func _sync_detail_position(marker: PoseMarker) -> void:
 func _sync_rot_offset_ui(marker: PoseMarker) -> void:
 	var has_constraint := marker.use_look_at or marker.use_follow_rotation
 	rot_offset_row.visible = has_constraint
-	if marker.use_look_at and not marker._is_y_max_boundary_fully_rotated():
+	if marker.use_look_at and not marker._is_y_buffer_fully_rotated():
 		rot_offset_label.text = "   Aim Offset°"
 		rot_offset_spin.set_value_no_signal(marker.look_at_offset_deg)
 	elif marker.use_follow_rotation:

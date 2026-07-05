@@ -7,6 +7,8 @@ signal marker_list_ready(markers: Array[PoseMarker])
 var active_markers: Array[PoseMarker] = []
 var all_markers: Array[PoseMarker] = []
 
+var _pose_grounded: bool = false
+
 @export var player: CharacterBody2D
 @export var pose_hud: PoseHUD
 
@@ -243,3 +245,18 @@ func swap_all_siblings() -> void:
 		swap_with_sibling(marker)
 		swapped[marker] = true
 		swapped[sib] = true
+
+func is_pose_grounded() -> bool:
+	return _pose_grounded
+
+func set_pose_grounded(enabled: bool) -> void:
+	if _pose_grounded == enabled:
+		return
+	_pose_grounded = enabled
+	for m in all_markers:
+		if not m.y_use_buffer_rotation:
+			continue
+		m.y_hard_buffer = enabled
+	for m in all_markers:
+		if m.y_use_buffer_rotation:
+			m.constrain_global_position(m.global_position)

@@ -34,11 +34,12 @@ signal dragged_rotation(delta_angle: float)
 @export_category("Y-Axis Constraint")
 @export var use_min_max_y: bool = false ## Clamp world Y while the marker is controlled.
 @export var min_y: float = -100.0 ## Minimum allowed Y, relative to y_constraint_parent world Y. Ignored when use_min_max_y is false.
-@export var max_y: float = 100.0 ## Maximum allowed Y, relative to y_constraint_parent world Y (Godot Y+ is down). Applied after radius limit so this floor/ceiling always wins.
-@export var y_constraint_parent: Node2D ## World Y reference for min_y/max_y. Leave empty to use world origin (Y = 0). Assign a node at ground level, or leave empty for a fixed world-Y floor/ceiling.
-@export var y_rotate_at_max: bool = false ## Blend rotation toward y_max_boundary_rotation_deg as the marker approaches the max Y limit (floor).
-@export var y_max_boundary_rotation_deg: float = 0.0 ## World rotation (degrees) when fully at the max Y boundary — e.g. foot flat on the floor.
-@export var y_max_rotate_threshold: float = 20.0 ## Pixels above the max Y boundary where rotation blend begins; 0% at (boundary − threshold), 100% at boundary.
+@export var max_y: float = 100.0 ## Maximum allowed Y (floor when Y+ is down), relative to y_constraint_parent. Applied after radius limit.
+@export var max_y_buffer: float = 80.0 ## Y offset where buffer rotation begins (absolute, same space as min_y/max_y). 0% rotation here, 100% at max_y.
+@export var y_constraint_parent: Node2D ## World Y reference for min_y/max_y/max_y_buffer. Leave empty to use world origin (Y = 0).
+@export var y_use_buffer_rotation: bool = false ## Blend rotation from y_buffer_rotation_deg as Y moves from max_y_buffer toward max_y.
+@export var y_buffer_rotation_deg: float = 0.0 ## World rotation (degrees) when fully at max_y — e.g. foot flat on the floor.
+@export var y_hard_buffer: bool = false ## When true, Y cannot rise above max_y_buffer (buffer is the hard lower clamp bound). max_y stays the floor. When false, buffer only affects rotation.
 
 @export_category("Radius Constraint")
 @export var use_radius_limit: bool = false ## Keep the marker between min_radius and max_radius of the radius origin.
@@ -46,7 +47,7 @@ signal dragged_rotation(delta_angle: float)
 @export var max_radius: float = 50.0 ## Maximum distance from the radius origin (pixels in world space).
 @export var radius_is_global: bool = false ## When true, the origin is always world (0, 0). When false, uses radius_constraint_parent global position, or (0, 0) if that is also empty.
 @export var radius_constraint_parent: Node2D ## Center of the radius limit in world space. Leave empty (with radius_is_global false) to anchor at world origin. Often the parent limb or torso.
-@export var radius_drag_partner: PoseMarker ## Optional second marker on the same radius. When this marker hits the limit while dragging, the partner is pushed to the opposite point on the circle (useful for paired hands/feet).
+@export var radius_drag_partner: PoseMarker ## Optional marker coupled to this radius. When this marker hits the limit while dragging, the partner is translated with the drag instead of snapping to the opposite arc.
 @export var use_radius_angle_limit: bool = false ## Limit position to a world-angle arc around the radius origin (ignores parent rotation — good for eyeline targets).
 @export var min_radius_angle_deg: float = -90.0 ## Minimum world angle (degrees) from origin → marker. 0° = east/right in Godot. Sticks when crossed (supports ranges beyond ±180, e.g. -270 to 90).
 @export var max_radius_angle_deg: float = 90.0 ## Maximum world angle (degrees) from origin → marker.
@@ -181,7 +182,8 @@ func _handle_drag_input() -> void:
 	if is_dragging_position:
 		var target_pos := mouse_pos - _drag_offset
 		var old_pos := global_position
-		var constrained := _apply_position_constraints(target_pos)
+		var drag_delta := target_pos - old_pos
+		var constrained := _apply_position_constraints(target_pos, drag_delta)
 		global_position = constrained
 		if slave and is_controlled:
 			slave.global_position = constrained
@@ -190,7 +192,7 @@ func _handle_drag_input() -> void:
 			dragged_position.emit(delta_pos)
 	elif is_dragging_rotation:
 		var delta_rot := 0.0
-		if _is_y_max_boundary_fully_rotated():
+		if _is_y_buffer_fully_rotated():
 			pass
 		elif use_look_at and look_at_target and is_instance_valid(look_at_target):
 			var aim_point := look_at_target.global_position
@@ -233,29 +235,30 @@ func _physics_process(_delta: float) -> void:
 		else:
 			global_rotation = _from_slave_rotation(slave.global_rotation)
 
-func constrain_global_position(pos: Vector2) -> Vector2:
-	var result := _apply_position_constraints(pos)
+func constrain_global_position(pos: Vector2, drag_delta: Vector2 = Vector2.ZERO) -> Vector2:
+	var result := _apply_position_constraints(pos, drag_delta)
 	global_position = result
 	if slave and is_controlled:
 		slave.global_position = result
 	return result
 
-func _apply_position_constraints(pos: Vector2) -> Vector2:
+func _apply_position_constraints(pos: Vector2, drag_delta: Vector2 = Vector2.ZERO) -> Vector2:
 	var result := pos
 	if use_radius_limit:
-		result = _apply_radius_constraints(result)
+		result = _apply_radius_constraints(result, drag_delta)
 	if use_min_max_x:
 		var ref_x := x_constraint_parent.global_position.x if x_constraint_parent else 0.0
 		result.x = clamp(result.x, ref_x + min_x, ref_x + max_x)
 	if use_min_max_y:
 		var ref_y := y_constraint_parent.global_position.y if y_constraint_parent else 0.0
-		result.y = clamp(result.y, ref_y + min_y, ref_y + max_y)
+		var clamp_min_y := max_y_buffer if y_hard_buffer else min_y
+		result.y = clamp(result.y, ref_y + clamp_min_y, ref_y + max_y)
 	return result
 
 func _uses_position_constraints() -> bool:
 	return use_radius_limit or use_min_max_x or use_min_max_y
 
-func _apply_radius_constraints(pos: Vector2) -> Vector2:
+func _apply_radius_constraints(pos: Vector2, drag_delta: Vector2 = Vector2.ZERO) -> Vector2:
 	var origin := _radius_constraint_origin()
 	var offset := pos - origin
 	var dist := offset.length()
@@ -271,10 +274,9 @@ func _apply_radius_constraints(pos: Vector2) -> Vector2:
 	var clamped_dist := clampf(dist if dist > 0.001 else dist_min, dist_min, dist_max)
 	var result := origin + Vector2.from_angle(angle_rad) * clamped_dist
 
-	if is_dragging_position and was_beyond_max and _move_radius_drag_partner(pos, origin, dist_max):
-		return pos
-	if is_dragging_position and was_inside_min and radius_drag_partner:
-		_move_radius_drag_partner(pos, origin, dist_min)
+	if is_dragging_position and drag_delta != Vector2.ZERO and radius_drag_partner:
+		if was_beyond_max or was_inside_min:
+			_move_radius_drag_partner(drag_delta)
 
 	return result
 
@@ -311,23 +313,23 @@ func _clamp_radius_angle_deg(raw_deg: float) -> float:
 	_radius_angle_state_valid = true
 	return unwrapped
 
-func _move_radius_drag_partner(driver_pos: Vector2, anchor: Vector2, ring_radius: float) -> bool:
-	if not radius_drag_partner or not is_instance_valid(radius_drag_partner):
-		return false
-	if not radius_drag_partner.is_controlled or radius_drag_partner.is_dragging_position:
-		return false
-	var direction := (driver_pos - anchor).normalized()
-	if direction.length_squared() < 0.001:
-		direction = Vector2.RIGHT
-	var partner_pos := anchor - direction * ring_radius
-	radius_drag_partner.constrain_global_position(partner_pos)
-	return true
+func _move_radius_drag_partner(drag_delta: Vector2) -> void:
+	var partner := radius_drag_partner
+	if not partner or not is_instance_valid(partner):
+		return
+	if partner.is_dragging_position:
+		return
+	var partner_pos := partner.global_position + drag_delta
+	var constrained := partner._apply_position_constraints(partner_pos)
+	partner.global_position = constrained
+	if partner.slave:
+		partner.slave.global_position = constrained
 
 func _solve_rotation() -> float:
 	var target := _resolve_free_rotation()
-	var blend := _y_max_boundary_rotation_blend()
+	var blend := _y_buffer_rotation_blend()
 	if blend > 0.0:
-		target = lerp_angle(target, deg_to_rad(y_max_boundary_rotation_deg), blend)
+		target = lerp_angle(target, deg_to_rad(y_buffer_rotation_deg), blend)
 	return target
 
 func _is_facing_flipped() -> bool:
@@ -403,27 +405,34 @@ func _resolve_free_rotation() -> float:
 	return target
 
 func _has_active_rotation_constraints() -> bool:
-	return use_look_at or y_rotate_at_max or use_follow_rotation or use_rotation_limit
+	return use_look_at or y_use_buffer_rotation or use_follow_rotation or use_rotation_limit
 
-func _y_max_boundary_y() -> float:
-	var ref_y := y_constraint_parent.global_position.y if y_constraint_parent else 0.0
-	return ref_y + max_y
+func _y_constraint_ref_y() -> float:
+	return y_constraint_parent.global_position.y if y_constraint_parent else 0.0
 
-func _y_max_boundary_rotation_blend() -> float:
-	if not use_min_max_y or not y_rotate_at_max:
+func _y_buffer_world_y() -> float:
+	return _y_constraint_ref_y() + max_y_buffer
+
+func _y_max_world_y() -> float:
+	return _y_constraint_ref_y() + max_y
+
+func _y_buffer_rotation_blend() -> float:
+	if not use_min_max_y or not y_use_buffer_rotation:
 		return 0.0
-	var threshold := maxf(y_max_rotate_threshold, 0.001)
-	var boundary_y := _y_max_boundary_y()
-	var start_y := boundary_y - threshold
+	var buffer_y := _y_buffer_world_y()
+	var max_limit_y := _y_max_world_y()
+	var span := max_limit_y - buffer_y
+	if span <= 0.001:
+		return 1.0 if global_position.y >= max_limit_y - 0.001 else 0.0
 	var y := global_position.y
-	if y <= start_y:
+	if y <= buffer_y:
 		return 0.0
-	if y >= boundary_y:
+	if y >= max_limit_y:
 		return 1.0
-	return (y - start_y) / (boundary_y - start_y)
+	return (y - buffer_y) / span
 
-func _is_y_max_boundary_fully_rotated() -> bool:
-	return _y_max_boundary_rotation_blend() >= 1.0
+func _is_y_buffer_fully_rotated() -> bool:
+	return _y_buffer_rotation_blend() >= 1.0
 
 func _rotation_limit_base() -> Node2D:
 	if rotation_constraint_parent:

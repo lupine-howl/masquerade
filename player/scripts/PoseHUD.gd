@@ -9,6 +9,7 @@ signal playback_started
 @onready var part_panel: PosePartPanel = $PosePartPanel
 @onready var anim_browser: PoseAnimBrowser = $PanelContainer3/VBoxContainer/PoseAnimBrowser
 @onready var timeline_panel: PoseTimelinePanel = $PanelContainer3/VBoxContainer/MarginContainer2/Panel/PoseTimelinePanel
+@onready var assistant_panel: PoseAssistantPanel = $PanelContainer3/VBoxContainer/MarginContainerAssistant/Panel/PoseAssistantPanel
 @onready var mode_bar: PoseModeBar = $PanelContainer3/VBoxContainer/PoseModeBar
 
 var _last_sync_anim: String = ""
@@ -45,6 +46,8 @@ func _setup_panels() -> void:
 	part_panel.setup(pose_controller, timeline, get_anim, is_recording, refresh_visuals)
 	anim_browser.setup(timeline)
 	timeline_panel.setup(timeline, pose_controller, get_anim)
+	if assistant_panel and pose_controller:
+		assistant_panel.setup(pose_controller)
 
 func _wire_signals() -> void:
 	anim_browser.animation_changed.connect(_on_animation_changed)
