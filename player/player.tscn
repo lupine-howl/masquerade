@@ -17,7 +17,10 @@
 [ext_resource type="Script" uid="uid://c6xtwc716dm8l" path="res://player/scripts/pose/PoseModeBar.gd" id="11_mode"]
 [ext_resource type="Script" uid="uid://k0kq4vlcd64f" path="res://player/scripts/pose/PosePartPanel.gd" id="11_part"]
 [ext_resource type="Script" uid="uid://ptpbj4ebn1b0" path="res://player/scripts/pose/PoseTimelinePanel.gd" id="11_timeline"]
-[ext_resource type="Animation" uid="uid://cep72ur6dnee2" path="res://player/animations/RESET.res" id="17_2uvqg"]
+[ext_resource type="Script" path="res://player/scripts/pose/PoseAnimColumn.gd" id="11_animcol"]
+[ext_resource type="Script" path="res://player/scripts/pose/PoseDock.gd" id="11_dock"]
+[ext_resource type="Script" path="res://player/scripts/pose/PoseToolBar.gd" id="11_toolbar"]
+[ext_resource type="Animation" path="res://player/animations/RESET.res" id="17_2uvqg"]
 [ext_resource type="Animation" uid="uid://bo8nec67cgjmo" path="res://player/animations/idle.res" id="17_r7pn3"]
 [ext_resource type="Animation" uid="uid://xgbckhii27nl" path="res://player/animations/dead.res" id="23_55jnj"]
 [ext_resource type="Texture2D" uid="uid://b1govaot86lmk" path="res://light-mask.png" id="24_g4c7l"]
@@ -931,25 +934,97 @@ timeline = NodePath("TimelineManager")
 script = ExtResource("2_rptt4")
 anim_player = NodePath("../../PlayerBody/PlayerAnimator")
 
-[node name="PosePartPanel" type="PanelContainer" parent="PoseHUD" unique_id=1757806156]
-unique_name_in_owner = true
-anchors_preset = 2
-anchor_top = 1.0
+[node name="PoseToolBar" type="PanelContainer" parent="PoseHUD" unique_id=2012058644]
+anchors_preset = 9
 anchor_bottom = 1.0
 offset_left = 8.0
-offset_top = -340.0
-offset_right = 440.0
+offset_top = 8.0
+offset_right = 44.0
 offset_bottom = -8.0
-grow_vertical = 0
-theme_override_styles/panel = SubResource("StyleBoxFlat_1s1yo")
+grow_vertical = 2
+script = ExtResource("11_toolbar")
+
+[node name="ToolVBox" type="VBoxContainer" parent="PoseHUD/PoseToolBar" unique_id=2012058643]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="PoseModeBar" type="VBoxContainer" parent="PoseHUD/PoseToolBar/ToolVBox" unique_id=2012058645]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 2
+script = ExtResource("11_mode")
+
+[node name="PosingCheck" type="CheckBox" parent="PoseHUD/PoseToolBar/ToolVBox/PoseModeBar" unique_id=1482292167]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 0
+theme_override_font_sizes/font_size = 10
+theme_override_icons/checked = ExtResource("5_rptt4")
+theme_override_icons/unchecked = ExtResource("4_uw77l")
+
+[node name="BtnKeyAll" type="Button" parent="PoseHUD/PoseToolBar/ToolVBox" unique_id=-447676223]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Keyframe all parts"
+focus_mode = 0
+text = "ꄗ"
+flat = true
+
+[node name="PoseDockRow" type="HBoxContainer" parent="PoseHUD" unique_id=519141306]
+anchors_preset = 11
+anchor_left = 1.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -288.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+grow_horizontal = 0
+alignment = 0
+theme_override_constants/separation = 0
+
+[node name="PoseDock" type="PanelContainer" parent="PoseHUD/PoseDockRow" unique_id=574195588]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("11_dock")
+
+[node name="DockVBox" type="VBoxContainer" parent="PoseHUD/PoseDockRow/PoseDock" unique_id=379605365]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 2
+
+[node name="PosePartPanel" type="PanelContainer" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox" unique_id=1757806156]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(280, 0)
+layout_mode = 2
+size_flags_vertical = 0
 script = ExtResource("11_part")
 
-[node name="ContentRow" type="HBoxContainer" parent="PoseHUD/PosePartPanel" unique_id=2093546065]
+[node name="ContentRow" type="HBoxContainer" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/PosePartPanel" unique_id=2093546065]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 0
 
-[node name="MarginContainer2" type="MarginContainer" parent="PoseHUD/PosePartPanel/ContentRow" unique_id=1568537160]
+[node name="TabStripPanel" type="PanelContainer" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/PosePartPanel/ContentRow" unique_id=549058022]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+
+[node name="PartStrip" type="VBoxContainer" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/PosePartPanel/ContentRow/TabStripPanel" unique_id=936658464]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_constants/separation = 2
+
+[node name="Panel" type="PanelContainer" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/PosePartPanel/ContentRow" unique_id=738839308]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+
+[node name="MarginContainer2" type="MarginContainer" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/PosePartPanel/ContentRow/Panel" unique_id=1568537160]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/margin_left = 5
@@ -957,71 +1032,57 @@ theme_override_constants/margin_top = 5
 theme_override_constants/margin_right = 0
 theme_override_constants/margin_bottom = 5
 
-[node name="Panel" type="PanelContainer" parent="PoseHUD/PosePartPanel/ContentRow/MarginContainer2" unique_id=738839308]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="PartInfo" type="VBoxContainer" parent="PoseHUD/PosePartPanel/ContentRow/MarginContainer2/Panel" unique_id=1793044008]
+[node name="PartInfo" type="VBoxContainer" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/PosePartPanel/ContentRow/Panel/MarginContainer2" unique_id=1793044008]
 layout_mode = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="PoseHUD/PosePartPanel/ContentRow/MarginContainer2/Panel/PartInfo" unique_id=2056782484]
+[node name="HBoxContainer" type="HBoxContainer" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/PosePartPanel/ContentRow/Panel/MarginContainer2/PartInfo" unique_id=2056782484]
 layout_mode = 2
 
-[node name="PartLabel" type="Label" parent="PoseHUD/PosePartPanel/ContentRow/MarginContainer2/Panel/PartInfo/HBoxContainer" unique_id=899506662]
+[node name="PartLabel" type="Label" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/PosePartPanel/ContentRow/Panel/MarginContainer2/PartInfo/HBoxContainer" unique_id=899506662]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Selected Part"
 
-[node name="ControlledCheck" type="CheckBox" parent="PoseHUD/PosePartPanel/ContentRow/MarginContainer2/Panel/PartInfo/HBoxContainer" unique_id=2120697499]
+[node name="ControlledCheck" type="CheckBox" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/PosePartPanel/ContentRow/Panel/MarginContainer2/PartInfo/HBoxContainer" unique_id=2120697499]
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
 theme_override_font_sizes/font_size = 11
 text = "Controlled"
 
-[node name="BtnKeyControlled" type="Button" parent="PoseHUD/PosePartPanel/ContentRow/MarginContainer2/Panel/PartInfo/HBoxContainer" unique_id=1921767595]
-unique_name_in_owner = true
-layout_mode = 2
-focus_mode = 0
-text = "ꄗ"
-flat = true
-
-[node name="ParentLabel" type="Label" parent="PoseHUD/PosePartPanel/ContentRow/MarginContainer2/Panel/PartInfo" unique_id=2145445949]
+[node name="ParentLabel" type="Label" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/PosePartPanel/ContentRow/Panel/MarginContainer2/PartInfo" unique_id=2145445949]
 visible = false
 layout_mode = 2
 text = "Parent: None"
 
-[node name="VBoxContainer" type="VBoxContainer" parent="PoseHUD/PosePartPanel/ContentRow/MarginContainer2/Panel/PartInfo" unique_id=318349264]
+[node name="VBoxContainer" type="VBoxContainer" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/PosePartPanel/ContentRow/Panel/MarginContainer2/PartInfo" unique_id=318349264]
 layout_mode = 2
-theme_override_constants/separation = 6
+theme_override_constants/separation = 4
 
-[node name="ReadoutRow" type="HBoxContainer" parent="PoseHUD/PosePartPanel/ContentRow/MarginContainer2/Panel/PartInfo/VBoxContainer" unique_id=1887199590]
-layout_mode = 2
-
-[node name="PosLabel" type="Label" parent="PoseHUD/PosePartPanel/ContentRow/MarginContainer2/Panel/PartInfo/VBoxContainer/ReadoutRow" unique_id=1213107119]
+[node name="PosLabel" type="Label" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/PosePartPanel/ContentRow/Panel/MarginContainer2/PartInfo/VBoxContainer" unique_id=1213107119]
 unique_name_in_owner = true
 layout_mode = 2
-size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 11
 text = "World (--, --)"
 
-[node name="BtnZeroPos" type="Button" parent="PoseHUD/PosePartPanel/ContentRow/MarginContainer2/Panel/PartInfo/VBoxContainer/ReadoutRow" unique_id=884210340]
+[node name="LocalPosLabel" type="Label" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/PosePartPanel/ContentRow/Panel/MarginContainer2/PartInfo/VBoxContainer" unique_id=884210332]
 unique_name_in_owner = true
 layout_mode = 2
-tooltip_text = "Reset local position to 0"
-focus_mode = 0
-text = "0"
-flat = true
+theme_override_font_sizes/font_size = 11
+text = "Local (--, --)"
 
-[node name="RotLabel" type="Label" parent="PoseHUD/PosePartPanel/ContentRow/MarginContainer2/Panel/PartInfo/VBoxContainer/ReadoutRow" unique_id=170487125]
+[node name="RotRow" type="HBoxContainer" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/PosePartPanel/ContentRow/Panel/MarginContainer2/PartInfo/VBoxContainer" unique_id=1887199590]
+layout_mode = 2
+
+[node name="RotLabel" type="Label" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/PosePartPanel/ContentRow/Panel/MarginContainer2/PartInfo/VBoxContainer/RotRow" unique_id=170487125]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 11
 text = "Rot --"
 
-[node name="BtnZeroRot" type="Button" parent="PoseHUD/PosePartPanel/ContentRow/MarginContainer2/Panel/PartInfo/VBoxContainer/ReadoutRow" unique_id=884210341]
+[node name="BtnZeroRot" type="Button" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/PosePartPanel/ContentRow/Panel/MarginContainer2/PartInfo/VBoxContainer/RotRow" unique_id=884210341]
 unique_name_in_owner = true
 layout_mode = 2
 tooltip_text = "Reset rotation to 0"
@@ -1029,74 +1090,18 @@ focus_mode = 0
 text = "0"
 flat = true
 
-[node name="PositionRow" type="HBoxContainer" parent="PoseHUD/PosePartPanel/ContentRow/MarginContainer2/Panel/PartInfo/VBoxContainer" unique_id=884210301]
-layout_mode = 2
-
-[node name="PositionLabel" type="Label" parent="PoseHUD/PosePartPanel/ContentRow/MarginContainer2/Panel/PartInfo/VBoxContainer/PositionRow" unique_id=884210302]
-custom_minimum_size = Vector2(72, 0)
-layout_mode = 2
-theme_override_font_sizes/font_size = 11
-text = "Local X/Y"
-
-[node name="PosXSpin" type="SpinBox" parent="PoseHUD/PosePartPanel/ContentRow/MarginContainer2/Panel/PartInfo/VBoxContainer/PositionRow" unique_id=884210303]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(56, 0)
-layout_mode = 2
-min_value = -10000.0
-max_value = 10000.0
-step = 0.1
-alignment = 1
-
-[node name="PosYSpin" type="SpinBox" parent="PoseHUD/PosePartPanel/ContentRow/MarginContainer2/Panel/PartInfo/VBoxContainer/PositionRow" unique_id=884210304]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(56, 0)
-layout_mode = 2
-min_value = -10000.0
-max_value = 10000.0
-step = 0.1
-alignment = 1
-
-[node name="BtnKeyPos" type="Button" parent="PoseHUD/PosePartPanel/ContentRow/MarginContainer2/Panel/PartInfo/VBoxContainer/PositionRow" unique_id=166894965]
-unique_name_in_owner = true
-layout_mode = 2
-tooltip_text = "Keyframe position"
-focus_mode = 0
-text = "ꄗ"
-flat = true
-
-[node name="BtnResetPos" type="Button" parent="PoseHUD/PosePartPanel/ContentRow/MarginContainer2/Panel/PartInfo/VBoxContainer/PositionRow" unique_id=904668090]
-unique_name_in_owner = true
-layout_mode = 2
-tooltip_text = "Clear position keys"
-text = "⌫"
-flat = true
-
-[node name="BtnNormHoriz" type="Button" parent="PoseHUD/PosePartPanel/ContentRow/MarginContainer2/Panel/PartInfo/VBoxContainer/PositionRow" unique_id=884210330]
-unique_name_in_owner = true
-layout_mode = 2
-tooltip_text = "Move primary to X=0; shift selection with it"
-text = "Norm X"
-flat = true
-
-[node name="BtnNormVert" type="Button" parent="PoseHUD/PosePartPanel/ContentRow/MarginContainer2/Panel/PartInfo/VBoxContainer/PositionRow" unique_id=884210331]
-unique_name_in_owner = true
-layout_mode = 2
-tooltip_text = "Move primary to Y=0; shift selection with it"
-text = "Norm Y"
-flat = true
-
-[node name="RotOffsetRow" type="HBoxContainer" parent="PoseHUD/PosePartPanel/ContentRow/MarginContainer2/Panel/PartInfo/VBoxContainer" unique_id=884210305]
+[node name="RotOffsetRow" type="HBoxContainer" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/PosePartPanel/ContentRow/Panel/MarginContainer2/PartInfo/VBoxContainer" unique_id=884210305]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="RotOffsetLabel" type="Label" parent="PoseHUD/PosePartPanel/ContentRow/MarginContainer2/Panel/PartInfo/VBoxContainer/RotOffsetRow" unique_id=884210306]
+[node name="RotOffsetLabel" type="Label" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/PosePartPanel/ContentRow/Panel/MarginContainer2/PartInfo/VBoxContainer/RotOffsetRow" unique_id=884210306]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(72, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 11
 text = "Rot Offset°"
 
-[node name="RotOffsetSpin" type="SpinBox" parent="PoseHUD/PosePartPanel/ContentRow/MarginContainer2/Panel/PartInfo/VBoxContainer/RotOffsetRow" unique_id=884210307]
+[node name="RotOffsetSpin" type="SpinBox" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/PosePartPanel/ContentRow/Panel/MarginContainer2/PartInfo/VBoxContainer/RotOffsetRow" unique_id=884210307]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(56, 0)
 layout_mode = 2
@@ -1105,300 +1110,109 @@ max_value = 360.0
 step = 0.1
 alignment = 1
 
-[node name="BtnKeyRot" type="Button" parent="PoseHUD/PosePartPanel/ContentRow/MarginContainer2/Panel/PartInfo/VBoxContainer/RotOffsetRow" unique_id=351596138]
-unique_name_in_owner = true
-layout_mode = 2
-tooltip_text = "Keyframe rotation"
-focus_mode = 0
-text = "ꄗ"
-flat = true
-
-[node name="BtnResetRot" type="Button" parent="PoseHUD/PosePartPanel/ContentRow/MarginContainer2/Panel/PartInfo/VBoxContainer/RotOffsetRow" unique_id=536351532]
-unique_name_in_owner = true
-layout_mode = 2
-tooltip_text = "Clear rotation keys"
-text = "⌫"
-flat = true
-
-[node name="FollowRotRow" type="HBoxContainer" parent="PoseHUD/PosePartPanel/ContentRow/MarginContainer2/Panel/PartInfo/VBoxContainer" unique_id=884210319]
+[node name="FollowRotRow" type="HBoxContainer" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/PosePartPanel/ContentRow/Panel/MarginContainer2/PartInfo/VBoxContainer" unique_id=884210319]
 layout_mode = 2
 
-[node name="FollowRotCheck" type="CheckBox" parent="PoseHUD/PosePartPanel/ContentRow/MarginContainer2/Panel/PartInfo/VBoxContainer/FollowRotRow" unique_id=884210320]
+[node name="FollowRotCheck" type="CheckBox" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/PosePartPanel/ContentRow/Panel/MarginContainer2/PartInfo/VBoxContainer/FollowRotRow" unique_id=884210320]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(72, 0)
 layout_mode = 2
 focus_mode = 0
 theme_override_font_sizes/font_size = 11
-text = "Follow Parent"
+text = "Follow"
 
-[node name="FollowRotTargetRow" type="HBoxContainer" parent="PoseHUD/PosePartPanel/ContentRow/MarginContainer2/Panel/PartInfo/VBoxContainer" unique_id=884210321]
-layout_mode = 2
-
-[node name="FollowRotTargetLabel" type="Label" parent="PoseHUD/PosePartPanel/ContentRow/MarginContainer2/Panel/PartInfo/VBoxContainer/FollowRotTargetRow" unique_id=884210322]
-custom_minimum_size = Vector2(72, 0)
-layout_mode = 2
-theme_override_font_sizes/font_size = 11
-text = "Follow Target"
-
-[node name="FollowRotTargetOption" type="OptionButton" parent="PoseHUD/PosePartPanel/ContentRow/MarginContainer2/Panel/PartInfo/VBoxContainer/FollowRotTargetRow" unique_id=884210323]
+[node name="FollowRotTargetOption" type="OptionButton" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/PosePartPanel/ContentRow/Panel/MarginContainer2/PartInfo/VBoxContainer/FollowRotRow" unique_id=884210323]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 11
 
-[node name="LookAtRow" type="HBoxContainer" parent="PoseHUD/PosePartPanel/ContentRow/MarginContainer2/Panel/PartInfo/VBoxContainer" unique_id=884210314]
+[node name="LookAtRow" type="HBoxContainer" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/PosePartPanel/ContentRow/Panel/MarginContainer2/PartInfo/VBoxContainer" unique_id=884210314]
 layout_mode = 2
 
-[node name="LookAtCheck" type="CheckBox" parent="PoseHUD/PosePartPanel/ContentRow/MarginContainer2/Panel/PartInfo/VBoxContainer/LookAtRow" unique_id=884210315]
+[node name="LookAtCheck" type="CheckBox" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/PosePartPanel/ContentRow/Panel/MarginContainer2/PartInfo/VBoxContainer/LookAtRow" unique_id=884210315]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(72, 0)
 layout_mode = 2
 focus_mode = 0
 theme_override_font_sizes/font_size = 11
 text = "Look At"
 
-[node name="LookAtTargetRow" type="HBoxContainer" parent="PoseHUD/PosePartPanel/ContentRow/MarginContainer2/Panel/PartInfo/VBoxContainer" unique_id=884210316]
-layout_mode = 2
-
-[node name="LookAtTargetLabel" type="Label" parent="PoseHUD/PosePartPanel/ContentRow/MarginContainer2/Panel/PartInfo/VBoxContainer/LookAtTargetRow" unique_id=884210317]
-custom_minimum_size = Vector2(72, 0)
-layout_mode = 2
-theme_override_font_sizes/font_size = 11
-text = "Target"
-
-[node name="LookAtTargetOption" type="OptionButton" parent="PoseHUD/PosePartPanel/ContentRow/MarginContainer2/Panel/PartInfo/VBoxContainer/LookAtTargetRow" unique_id=884210318]
+[node name="LookAtTargetOption" type="OptionButton" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/PosePartPanel/ContentRow/Panel/MarginContainer2/PartInfo/VBoxContainer/LookAtRow" unique_id=884210318]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 11
 
-[node name="LockRow" type="HBoxContainer" parent="PoseHUD/PosePartPanel/ContentRow/MarginContainer2/Panel/PartInfo/VBoxContainer" unique_id=884210311]
+[node name="HBoxContainer6" type="HBoxContainer" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/PosePartPanel/ContentRow/Panel/MarginContainer2/PartInfo/VBoxContainer" unique_id=784003356]
 layout_mode = 2
 
-[node name="LockXCheck" type="CheckBox" parent="PoseHUD/PosePartPanel/ContentRow/MarginContainer2/Panel/PartInfo/VBoxContainer/LockRow" unique_id=884210312]
-unique_name_in_owner = true
-layout_mode = 2
-focus_mode = 0
-theme_override_font_sizes/font_size = 11
-text = "Lock X"
-
-[node name="LockYCheck" type="CheckBox" parent="PoseHUD/PosePartPanel/ContentRow/MarginContainer2/Panel/PartInfo/VBoxContainer/LockRow" unique_id=884210313]
-unique_name_in_owner = true
-layout_mode = 2
-focus_mode = 0
-theme_override_font_sizes/font_size = 11
-text = "Lock Y"
-
-[node name="HBoxContainer4" type="HBoxContainer" parent="PoseHUD/PosePartPanel/ContentRow/MarginContainer2/Panel/PartInfo/VBoxContainer" unique_id=1829357124]
-visible = false
-layout_mode = 2
-
-[node name="FollowRotationCheck" type="CheckBox" parent="PoseHUD/PosePartPanel/ContentRow/MarginContainer2/Panel/PartInfo/VBoxContainer/HBoxContainer4" unique_id=667256226]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(130, 0)
-layout_mode = 2
-focus_mode = 0
-theme_override_font_sizes/font_size = 11
-text = "Auto Rotation"
-
-[node name="BtnKeyFollowRotation" type="Button" parent="PoseHUD/PosePartPanel/ContentRow/MarginContainer2/Panel/PartInfo/VBoxContainer/HBoxContainer4" unique_id=681964449]
-unique_name_in_owner = true
-layout_mode = 2
-focus_mode = 0
-text = "ꄗ"
-flat = true
-
-[node name="HBoxContainer5" type="HBoxContainer" parent="PoseHUD/PosePartPanel/ContentRow/MarginContainer2/Panel/PartInfo/VBoxContainer" unique_id=1739731199]
-visible = false
-layout_mode = 2
-theme_override_constants/separation = -10
-
-[node name="FreezeCheck" type="CheckBox" parent="PoseHUD/PosePartPanel/ContentRow/MarginContainer2/Panel/PartInfo/VBoxContainer/HBoxContainer5" unique_id=74725144]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(145, 0)
-layout_mode = 2
-focus_mode = 0
-theme_override_font_sizes/font_size = 11
-text = "Freeze"
-
-[node name="BtnKeyFreeze" type="Button" parent="PoseHUD/PosePartPanel/ContentRow/MarginContainer2/Panel/PartInfo/VBoxContainer/HBoxContainer5" unique_id=531517934]
-unique_name_in_owner = true
-layout_mode = 2
-focus_mode = 0
-text = "ꄗ"
-flat = true
-
-[node name="HBoxContainer6" type="HBoxContainer" parent="PoseHUD/PosePartPanel/ContentRow/MarginContainer2/Panel/PartInfo/VBoxContainer" unique_id=784003356]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="PoseHUD/PosePartPanel/ContentRow/MarginContainer2/Panel/PartInfo/VBoxContainer/HBoxContainer6" unique_id=376703073]
+[node name="Label" type="Label" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/PosePartPanel/ContentRow/Panel/MarginContainer2/PartInfo/VBoxContainer/HBoxContainer6" unique_id=376703073]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 11
 text = "Swap with sibling"
 
-[node name="BtnSwapSibling" type="Button" parent="PoseHUD/PosePartPanel/ContentRow/MarginContainer2/Panel/PartInfo/VBoxContainer/HBoxContainer6" unique_id=62341365]
+[node name="BtnSwapSibling" type="Button" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/PosePartPanel/ContentRow/Panel/MarginContainer2/PartInfo/VBoxContainer/HBoxContainer6" unique_id=62341365]
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
 text = "⇆"
 flat = true
 
-[node name="TabStripPanel" type="PanelContainer" parent="PoseHUD/PosePartPanel/ContentRow" unique_id=549058022]
+[node name="SectionSep" type="HSeparator" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox" unique_id=519141311]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="AnimSection" type="HBoxContainer" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox" unique_id=519141307]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 0
+
+[node name="PoseAnimBrowser" type="PanelContainer" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/AnimSection" unique_id=519141308]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 0
-size_flags_vertical = 3
+size_flags_vertical = 0
+script = ExtResource("11_anim")
 
-[node name="PartStrip" type="VBoxContainer" parent="PoseHUD/PosePartPanel/ContentRow/TabStripPanel" unique_id=936658464]
+[node name="AnimStrip" type="VBoxContainer" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/AnimSection/PoseAnimBrowser" unique_id=1285730884]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 0
 theme_override_constants/separation = 2
 
-[node name="PanelContainer3" type="PanelContainer" parent="PoseHUD" unique_id=574195588]
-anchors_preset = 3
-anchor_left = 1.0
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -296.0
-offset_top = -400.0
-offset_right = -8.0
-offset_bottom = -8.0
-grow_horizontal = 0
-grow_vertical = 0
-size_flags_horizontal = 8
-size_flags_vertical = 0
-theme_override_styles/panel = SubResource("StyleBoxFlat_5ejfk")
-
-[node name="VBoxContainer" type="VBoxContainer" parent="PoseHUD/PanelContainer3" unique_id=379605365]
+[node name="AnimMainColumn" type="PanelContainer" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/AnimSection" unique_id=519141309]
 layout_mode = 2
-size_flags_horizontal = 8
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("11_animcol")
 
-[node name="PoseModeBar" type="VBoxContainer" parent="PoseHUD/PanelContainer3/VBoxContainer" unique_id=2012058645]
-unique_name_in_owner = true
-layout_direction = 3
+[node name="AnimVBox" type="VBoxContainer" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/AnimSection/AnimMainColumn" unique_id=519141310]
 layout_mode = 2
-size_flags_horizontal = 8
-size_flags_vertical = 0
-mouse_filter = 2
-script = ExtResource("11_mode")
+size_flags_vertical = 3
 
-[node name="PosingCheck" type="CheckBox" parent="PoseHUD/PanelContainer3/VBoxContainer/PoseModeBar" unique_id=1482292167]
-unique_name_in_owner = true
+[node name="MarginContainerAssistant" type="MarginContainer" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/AnimSection/AnimMainColumn/AnimVBox" unique_id=-447676240]
 layout_mode = 2
-focus_mode = 0
-theme_override_font_sizes/font_size = 10
-theme_override_icons/checked = ExtResource("5_rptt4")
-theme_override_icons/unchecked = ExtResource("4_uw77l")
-
-[node name="PoseAnimBrowser" type="MarginContainer" parent="PoseHUD/PanelContainer3/VBoxContainer" unique_id=519141308]
-unique_name_in_owner = true
-visible = false
-custom_minimum_size = Vector2(210, 0)
-layout_mode = 2
-size_flags_horizontal = 8
-size_flags_vertical = 0
-theme_override_constants/margin_left = 5
+theme_override_constants/margin_left = 0
 theme_override_constants/margin_top = 5
 theme_override_constants/margin_right = 5
 theme_override_constants/margin_bottom = 5
-script = ExtResource("11_anim")
 
-[node name="AnimTable" type="Tree" parent="PoseHUD/PanelContainer3/VBoxContainer/PoseAnimBrowser" unique_id=1285730883]
-unique_name_in_owner = true
-layout_mode = 2
-focus_mode = 0
-theme_override_font_sizes/font_size = 12
-theme_override_font_sizes/title_button_font_size = 12
-column_titles_visible = true
-scroll_horizontal_enabled = false
-scroll_vertical_enabled = false
-
-[node name="MarginContainer" type="MarginContainer" parent="PoseHUD/PanelContainer3/VBoxContainer" unique_id=1072512761]
-visible = false
-layout_mode = 2
-theme_override_constants/margin_left = 5
-theme_override_constants/margin_top = 0
-theme_override_constants/margin_right = 5
-theme_override_constants/margin_bottom = 5
-
-[node name="Panel" type="PanelContainer" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainer" unique_id=1500868625]
-layout_mode = 2
-
-[node name="Animation" type="VBoxContainer" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainer/Panel" unique_id=1103519101]
-visible = false
-layout_mode = 2
-size_flags_horizontal = 0
-
-[node name="SpeedContainer" type="HBoxContainer" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainer/Panel/Animation" unique_id=1063331086]
-layout_mode = 2
-
-[node name="SpeedLabel" type="Label" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainer/Panel/Animation/SpeedContainer" unique_id=1902751416]
-custom_minimum_size = Vector2(94, 0)
-layout_mode = 2
-theme_override_font_sizes/font_size = 11
-text = "Speed"
-
-[node name="SpeedSpinBox" type="SpinBox" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainer/Panel/Animation/SpeedContainer" unique_id=862609696]
-unique_name_in_owner = true
-layout_mode = 2
-min_value = 0.1
-max_value = 5.0
-step = 0.1
-value = 1.0
-alignment = 1
-
-[node name="DurationContainer" type="HBoxContainer" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainer/Panel/Animation" unique_id=679858342]
-layout_mode = 2
-
-[node name="SpeedLabel" type="Label" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainer/Panel/Animation/DurationContainer" unique_id=252504703]
-custom_minimum_size = Vector2(94, 0)
-layout_mode = 2
-theme_override_font_sizes/font_size = 11
-text = "Duration"
-
-[node name="DurationSpinBox" type="SpinBox" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainer/Panel/Animation/DurationContainer" unique_id=2072087584]
-unique_name_in_owner = true
-layout_mode = 2
-min_value = 0.1
-max_value = 24.0
-step = 0.1
-value = 0.7999999999999999
-alignment = 1
-
-[node name="VBoxContainer" type="VBoxContainer" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainer/Panel/Animation" unique_id=947378667]
-layout_mode = 2
-
-[node name="MarginContainerAssistant" type="MarginContainer" parent="PoseHUD/PanelContainer3/VBoxContainer" unique_id=-447676240]
-layout_mode = 2
-theme_override_constants/margin_left = 5
-theme_override_constants/margin_top = 0
-theme_override_constants/margin_right = 5
-theme_override_constants/margin_bottom = 0
-
-[node name="Panel" type="PanelContainer" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainerAssistant" unique_id=-447676239]
-layout_mode = 2
-
-[node name="PoseAssistantPanel" type="VBoxContainer" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainerAssistant/Panel" unique_id=-447676238]
+[node name="PoseAssistantPanel" type="VBoxContainer" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/AnimSection/AnimMainColumn/AnimVBox/MarginContainerAssistant" unique_id=-447676238]
 unique_name_in_owner = true
 layout_mode = 2
 script = ExtResource("11_assist")
 
-[node name="HeaderRow" type="HBoxContainer" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainerAssistant/Panel/PoseAssistantPanel" unique_id=-447676221]
+[node name="HeaderRow" type="HBoxContainer" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/AnimSection/AnimMainColumn/AnimVBox/MarginContainerAssistant/PoseAssistantPanel" unique_id=-447676221]
 layout_mode = 2
 
-[node name="AnimDropdown" type="OptionButton" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainerAssistant/Panel/PoseAssistantPanel/HeaderRow" unique_id=711204534]
+[node name="AnimTitle" type="Label" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/AnimSection/AnimMainColumn/AnimVBox/MarginContainerAssistant/PoseAssistantPanel/HeaderRow" unique_id=711204534]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
 size_flags_horizontal = 3
-focus_mode = 0
-theme_override_font_sizes/font_size = 11
-flat = true
+text = "Animation"
 
-[node name="BtnExportAnimation" type="Button" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainerAssistant/Panel/PoseAssistantPanel/HeaderRow" unique_id=373318321]
+[node name="BtnExportAnimation" type="Button" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/AnimSection/AnimMainColumn/AnimVBox/MarginContainerAssistant/PoseAssistantPanel/HeaderRow" unique_id=373318321]
 unique_name_in_owner = true
 layout_mode = 2
 tooltip_text = "Save animation to disk"
@@ -1407,102 +1221,116 @@ theme_override_font_sizes/font_size = 11
 text = "➜]"
 flat = true
 
-[node name="LoopCheck" type="CheckBox" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainerAssistant/Panel/PoseAssistantPanel/HeaderRow" unique_id=-447676220]
+[node name="LoopCheck" type="CheckBox" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/AnimSection/AnimMainColumn/AnimVBox/MarginContainerAssistant/PoseAssistantPanel/HeaderRow" unique_id=-447676220]
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
 theme_override_font_sizes/font_size = 11
 text = "Loop"
 
-[node name="RagdollRow" type="HBoxContainer" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainerAssistant/Panel/PoseAssistantPanel" unique_id=-447676219]
+[node name="CreateRow" type="HBoxContainer" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/AnimSection/AnimMainColumn/AnimVBox/MarginContainerAssistant/PoseAssistantPanel" unique_id=-447676231]
 layout_mode = 2
 
-[node name="CtrlAllCheck" type="CheckBox" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainerAssistant/Panel/PoseAssistantPanel/RagdollRow" unique_id=-447676218]
+[node name="NewAnimEdit" type="LineEdit" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/AnimSection/AnimMainColumn/AnimVBox/MarginContainerAssistant/PoseAssistantPanel/CreateRow" unique_id=-447676230]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(80, 0)
+layout_mode = 2
+size_flags_horizontal = 2
+theme_override_font_sizes/font_size = 11
+placeholder_text = "animation name"
+
+[node name="BtnCreate" type="Button" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/AnimSection/AnimMainColumn/AnimVBox/MarginContainerAssistant/PoseAssistantPanel/CreateRow" unique_id=-447676229]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 0
+theme_override_font_sizes/font_size = 11
+text = "Create"
+
+[node name="RagdollRow" type="FlowContainer" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/AnimSection/AnimMainColumn/AnimVBox/MarginContainerAssistant/PoseAssistantPanel" unique_id=265582956]
+layout_mode = 2
+
+[node name="CtrlAllCheck" type="CheckBox" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/AnimSection/AnimMainColumn/AnimVBox/MarginContainerAssistant/PoseAssistantPanel/RagdollRow" unique_id=-447676218]
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
 theme_override_font_sizes/font_size = 10
 text = "Ctrl All"
 
-[node name="CtrlArmsCheck" type="CheckBox" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainerAssistant/Panel/PoseAssistantPanel/RagdollRow" unique_id=-447676217]
+[node name="CtrlArmsCheck" type="CheckBox" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/AnimSection/AnimMainColumn/AnimVBox/MarginContainerAssistant/PoseAssistantPanel/RagdollRow" unique_id=-447676217]
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
 theme_override_font_sizes/font_size = 10
 text = "Ctrl Arms"
 
-[node name="CtrlLegsCheck" type="CheckBox" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainerAssistant/Panel/PoseAssistantPanel/RagdollRow" unique_id=-447676216]
+[node name="CtrlLegsCheck" type="CheckBox" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/AnimSection/AnimMainColumn/AnimVBox/MarginContainerAssistant/PoseAssistantPanel/RagdollRow" unique_id=-447676216]
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
 theme_override_font_sizes/font_size = 10
 text = "Ctrl Legs"
 
-[node name="CtrlHeadCheck" type="CheckBox" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainerAssistant/Panel/PoseAssistantPanel/RagdollRow" unique_id=-447676215]
+[node name="CtrlHeadCheck" type="CheckBox" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/AnimSection/AnimMainColumn/AnimVBox/MarginContainerAssistant/PoseAssistantPanel/RagdollRow" unique_id=-447676215]
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
 theme_override_font_sizes/font_size = 10
 text = "Ctrl Head"
 
-[node name="CtrlRootCheck" type="CheckBox" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainerAssistant/Panel/PoseAssistantPanel/RagdollRow" unique_id=-447676213]
+[node name="CtrlRootCheck" type="CheckBox" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/AnimSection/AnimMainColumn/AnimVBox/MarginContainerAssistant/PoseAssistantPanel/RagdollRow" unique_id=-447676213]
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
 theme_override_font_sizes/font_size = 10
 text = "Ctrl Root"
 
-[node name="ActionsRow" type="HBoxContainer" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainerAssistant/Panel/PoseAssistantPanel" unique_id=-447676235]
-layout_mode = 2
-
-[node name="AssistantLabel" type="Label" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainerAssistant/Panel/PoseAssistantPanel/ActionsRow" unique_id=-447676237]
-layout_mode = 2
-theme_override_font_sizes/font_size = 11
-text = "Assist"
-
-[node name="GroundedCheck" type="CheckBox" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainerAssistant/Panel/PoseAssistantPanel/ActionsRow" unique_id=-447676236]
+[node name="GroundedCheck" type="CheckBox" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/AnimSection/AnimMainColumn/AnimVBox/MarginContainerAssistant/PoseAssistantPanel/RagdollRow" unique_id=-447676236]
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
-theme_override_font_sizes/font_size = 11
+theme_override_font_sizes/font_size = 10
 text = "Grounded"
 
-[node name="BtnReset" type="Button" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainerAssistant/Panel/PoseAssistantPanel/ActionsRow" unique_id=-447676234]
+[node name="ActionsRow" type="HBoxContainer" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/AnimSection/AnimMainColumn/AnimVBox/MarginContainerAssistant/PoseAssistantPanel" unique_id=-447676235]
+layout_mode = 2
+
+[node name="BtnReset" type="Button" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/AnimSection/AnimMainColumn/AnimVBox/MarginContainerAssistant/PoseAssistantPanel/ActionsRow" unique_id=-447676234]
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
 theme_override_font_sizes/font_size = 11
 text = "Reset"
 
-[node name="BtnHang" type="Button" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainerAssistant/Panel/PoseAssistantPanel/ActionsRow" unique_id=-447676233]
+[node name="BtnNormHoriz" type="Button" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/AnimSection/AnimMainColumn/AnimVBox/MarginContainerAssistant/PoseAssistantPanel/ActionsRow" unique_id=-447676211]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Normalize horizontal position"
+focus_mode = 0
+theme_override_font_sizes/font_size = 11
+text = "Norm X"
+
+[node name="BtnHang" type="Button" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/AnimSection/AnimMainColumn/AnimVBox/MarginContainerAssistant/PoseAssistantPanel/ActionsRow" unique_id=-447676233]
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
 theme_override_font_sizes/font_size = 11
 text = "Hang"
 
-[node name="BtnFall" type="Button" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainerAssistant/Panel/PoseAssistantPanel/ActionsRow" unique_id=-447676212]
+[node name="BtnFall" type="Button" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/AnimSection/AnimMainColumn/AnimVBox/MarginContainerAssistant/PoseAssistantPanel/ActionsRow" unique_id=-447676212]
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
 theme_override_font_sizes/font_size = 11
 text = "Fall"
 
-[node name="BtnClear" type="Button" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainerAssistant/Panel/PoseAssistantPanel/ActionsRow" unique_id=-447676232]
+[node name="BtnClear" type="Button" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/AnimSection/AnimMainColumn/AnimVBox/MarginContainerAssistant/PoseAssistantPanel/ActionsRow" unique_id=-447676232]
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
 theme_override_font_sizes/font_size = 11
 text = "Clear"
 
-[node name="BtnKeyAll" type="Button" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainerAssistant/Panel/PoseAssistantPanel/ActionsRow" unique_id=-447676223]
-unique_name_in_owner = true
-layout_mode = 2
-focus_mode = 0
-theme_override_font_sizes/font_size = 11
-text = "Key All"
-
-[node name="BtnSwapAllSiblings" type="Button" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainerAssistant/Panel/PoseAssistantPanel/ActionsRow" unique_id=-447676222]
+[node name="BtnSwapAllSiblings" type="Button" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/AnimSection/AnimMainColumn/AnimVBox/MarginContainerAssistant/PoseAssistantPanel/ActionsRow" unique_id=-447676222]
 unique_name_in_owner = true
 layout_mode = 2
 tooltip_text = "Swap all sibling pairs"
@@ -1510,33 +1338,30 @@ focus_mode = 0
 theme_override_font_sizes/font_size = 11
 text = "⇆ All"
 
-[node name="CreateRow" type="HBoxContainer" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainerAssistant/Panel/PoseAssistantPanel" unique_id=-447676231]
+[node name="MarginContainer2" type="MarginContainer" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/AnimSection/AnimMainColumn/AnimVBox" unique_id=1972137434]
 layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/margin_left = 0
+theme_override_constants/margin_top = 0
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
 
-[node name="NewAnimEdit" type="LineEdit" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainerAssistant/Panel/PoseAssistantPanel/CreateRow" unique_id=-447676230]
+[node name="PoseTimelinePanel" type="VBoxContainer" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/AnimSection/AnimMainColumn/AnimVBox/MarginContainer2" unique_id=339532123]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 11
-placeholder_text = "animation name"
+size_flags_vertical = 3
+script = ExtResource("11_timeline")
 
-[node name="BtnCreate" type="Button" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainerAssistant/Panel/PoseAssistantPanel/CreateRow" unique_id=-447676229]
-unique_name_in_owner = true
-layout_mode = 2
-focus_mode = 0
-theme_override_font_sizes/font_size = 11
-text = "Create"
-
-[node name="TimingRow" type="HBoxContainer" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainerAssistant/Panel/PoseAssistantPanel" unique_id=-447676228]
+[node name="TimingRow" type="HBoxContainer" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/AnimSection/AnimMainColumn/AnimVBox/MarginContainer2/PoseTimelinePanel" unique_id=-447676228]
 layout_mode = 2
 
-[node name="StepsLabel" type="Label" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainerAssistant/Panel/PoseAssistantPanel/TimingRow" unique_id=-447676227]
+[node name="StepsLabel" type="Label" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/AnimSection/AnimMainColumn/AnimVBox/MarginContainer2/PoseTimelinePanel/TimingRow" unique_id=-447676227]
 layout_mode = 2
 theme_override_font_sizes/font_size = 11
 text = "Steps"
 
-[node name="StepsSpin" type="SpinBox" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainerAssistant/Panel/PoseAssistantPanel/TimingRow" unique_id=-447676226]
+[node name="StepsSpin" type="SpinBox" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/AnimSection/AnimMainColumn/AnimVBox/MarginContainer2/PoseTimelinePanel/TimingRow" unique_id=-447676226]
 unique_name_in_owner = true
 layout_mode = 2
 min_value = 1.0
@@ -1544,12 +1369,12 @@ max_value = 999.0
 value = 8.0
 alignment = 1
 
-[node name="SpeedLabel" type="Label" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainerAssistant/Panel/PoseAssistantPanel/TimingRow" unique_id=-447676225]
+[node name="SpeedLabel" type="Label" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/AnimSection/AnimMainColumn/AnimVBox/MarginContainer2/PoseTimelinePanel/TimingRow" unique_id=-447676225]
 layout_mode = 2
 theme_override_font_sizes/font_size = 11
 text = "Speed"
 
-[node name="SpeedSpin" type="SpinBox" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainerAssistant/Panel/PoseAssistantPanel/TimingRow" unique_id=-447676224]
+[node name="SpeedSpin" type="SpinBox" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/AnimSection/AnimMainColumn/AnimVBox/MarginContainer2/PoseTimelinePanel/TimingRow" unique_id=-447676224]
 unique_name_in_owner = true
 layout_mode = 2
 min_value = 0.1
@@ -1558,49 +1383,33 @@ step = 0.1
 value = 1.0
 alignment = 1
 
-[node name="MarginContainer2" type="MarginContainer" parent="PoseHUD/PanelContainer3/VBoxContainer" unique_id=1972137434]
-layout_mode = 2
-theme_override_constants/margin_left = 5
-theme_override_constants/margin_top = 0
-theme_override_constants/margin_right = 5
-theme_override_constants/margin_bottom = 5
-
-[node name="Panel" type="PanelContainer" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainer2" unique_id=2129074030]
-layout_mode = 2
-
-[node name="PoseTimelinePanel" type="VBoxContainer" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainer2/Panel" unique_id=339532123]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 0
-script = ExtResource("11_timeline")
-
-[node name="PlaybackControls" type="HBoxContainer" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainer2/Panel/PoseTimelinePanel" unique_id=1337660025]
+[node name="PlaybackControls" type="HBoxContainer" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/AnimSection/AnimMainColumn/AnimVBox/MarginContainer2/PoseTimelinePanel" unique_id=1337660025]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 4
 
-[node name="BtnRewind" type="Button" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainer2/Panel/PoseTimelinePanel/PlaybackControls" unique_id=16692025]
+[node name="BtnRewind" type="Button" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/AnimSection/AnimMainColumn/AnimVBox/MarginContainer2/PoseTimelinePanel/PlaybackControls" unique_id=16692025]
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
 text = "◁"
 flat = true
 
-[node name="BtnStop" type="Button" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainer2/Panel/PoseTimelinePanel/PlaybackControls" unique_id=1325336453]
+[node name="BtnStop" type="Button" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/AnimSection/AnimMainColumn/AnimVBox/MarginContainer2/PoseTimelinePanel/PlaybackControls" unique_id=1325336453]
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
 text = " || "
 flat = true
 
-[node name="BtnPlay" type="Button" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainer2/Panel/PoseTimelinePanel/PlaybackControls" unique_id=140180053]
+[node name="BtnPlay" type="Button" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/AnimSection/AnimMainColumn/AnimVBox/MarginContainer2/PoseTimelinePanel/PlaybackControls" unique_id=140180053]
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
 text = "▷"
 flat = true
 
-[node name="RecordCheck" type="CheckBox" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainer2/Panel/PoseTimelinePanel/PlaybackControls" unique_id=1950183948]
+[node name="RecordCheck" type="CheckBox" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/AnimSection/AnimMainColumn/AnimVBox/MarginContainer2/PoseTimelinePanel/PlaybackControls" unique_id=1950183948]
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
@@ -1608,36 +1417,36 @@ theme_override_font_sizes/font_size = 10
 theme_override_icons/checked = ExtResource("2_knn7v")
 theme_override_icons/unchecked = ExtResource("2_g4c7l")
 
-[node name="BtnReset" type="Button" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainer2/Panel/PoseTimelinePanel/PlaybackControls" unique_id=200118915]
+[node name="BtnReset" type="Button" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/AnimSection/AnimMainColumn/AnimVBox/MarginContainer2/PoseTimelinePanel/PlaybackControls" unique_id=200118915]
 visible = false
 layout_mode = 2
 focus_mode = 0
 text = "↺"
 flat = true
 
-[node name="TimecodeLabel" type="Label" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainer2/Panel/PoseTimelinePanel/PlaybackControls" unique_id=1189055011]
+[node name="TimecodeLabel" type="Label" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/AnimSection/AnimMainColumn/AnimVBox/MarginContainer2/PoseTimelinePanel/PlaybackControls" unique_id=1189055011]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 11
 
-[node name="MarginContainer" type="MarginContainer" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainer2/Panel/PoseTimelinePanel" unique_id=29801079]
+[node name="MarginContainer" type="MarginContainer" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/AnimSection/AnimMainColumn/AnimVBox/MarginContainer2/PoseTimelinePanel" unique_id=29801079]
 layout_mode = 2
 theme_override_constants/margin_left = 5
 theme_override_constants/margin_top = 5
 theme_override_constants/margin_right = 5
 theme_override_constants/margin_bottom = 5
 
-[node name="StepGrid" type="GridContainer" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainer2/Panel/PoseTimelinePanel/MarginContainer" unique_id=2066120046]
+[node name="StepGrid" type="GridContainer" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/AnimSection/AnimMainColumn/AnimVBox/MarginContainer2/PoseTimelinePanel/MarginContainer" unique_id=2066120046]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 0
 columns = 8
 
-[node name="Step0" type="ColorRect" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainer2/Panel/PoseTimelinePanel/MarginContainer/StepGrid" unique_id=2020655983]
+[node name="Step0" type="ColorRect" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/AnimSection/AnimMainColumn/AnimVBox/MarginContainer2/PoseTimelinePanel/MarginContainer/StepGrid" unique_id=2020655983]
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
 
-[node name="Panel" type="ColorRect" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainer2/Panel/PoseTimelinePanel/MarginContainer/StepGrid/Step0" unique_id=1413474534]
+[node name="Panel" type="ColorRect" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/AnimSection/AnimMainColumn/AnimVBox/MarginContainer2/PoseTimelinePanel/MarginContainer/StepGrid/Step0" unique_id=1413474534]
 layout_mode = 0
 offset_left = 8.0
 offset_top = 8.0
@@ -1645,11 +1454,11 @@ offset_right = 24.0
 offset_bottom = 24.0
 mouse_filter = 2
 
-[node name="Step1" type="ColorRect" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainer2/Panel/PoseTimelinePanel/MarginContainer/StepGrid" unique_id=843406066]
+[node name="Step1" type="ColorRect" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/AnimSection/AnimMainColumn/AnimVBox/MarginContainer2/PoseTimelinePanel/MarginContainer/StepGrid" unique_id=843406066]
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
 
-[node name="Panel" type="ColorRect" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainer2/Panel/PoseTimelinePanel/MarginContainer/StepGrid/Step1" unique_id=889971453]
+[node name="Panel" type="ColorRect" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/AnimSection/AnimMainColumn/AnimVBox/MarginContainer2/PoseTimelinePanel/MarginContainer/StepGrid/Step1" unique_id=889971453]
 layout_mode = 0
 offset_left = 8.0
 offset_top = 8.0
@@ -1657,11 +1466,11 @@ offset_right = 24.0
 offset_bottom = 24.0
 mouse_filter = 2
 
-[node name="Step2" type="ColorRect" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainer2/Panel/PoseTimelinePanel/MarginContainer/StepGrid" unique_id=747667415]
+[node name="Step2" type="ColorRect" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/AnimSection/AnimMainColumn/AnimVBox/MarginContainer2/PoseTimelinePanel/MarginContainer/StepGrid" unique_id=747667415]
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
 
-[node name="Panel" type="ColorRect" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainer2/Panel/PoseTimelinePanel/MarginContainer/StepGrid/Step2" unique_id=1350028801]
+[node name="Panel" type="ColorRect" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/AnimSection/AnimMainColumn/AnimVBox/MarginContainer2/PoseTimelinePanel/MarginContainer/StepGrid/Step2" unique_id=1350028801]
 layout_mode = 0
 offset_left = 8.0
 offset_top = 8.0
@@ -1669,11 +1478,11 @@ offset_right = 24.0
 offset_bottom = 24.0
 mouse_filter = 2
 
-[node name="Step3" type="ColorRect" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainer2/Panel/PoseTimelinePanel/MarginContainer/StepGrid" unique_id=447809761]
+[node name="Step3" type="ColorRect" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/AnimSection/AnimMainColumn/AnimVBox/MarginContainer2/PoseTimelinePanel/MarginContainer/StepGrid" unique_id=447809761]
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
 
-[node name="Panel" type="ColorRect" parent="PoseHUD/PanelContainer3/VBoxContainer/MarginContainer2/Panel/PoseTimelinePanel/MarginContainer/StepGrid/Step3" unique_id=1920274475]
+[node name="Panel" type="ColorRect" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/AnimSection/AnimMainColumn/AnimVBox/MarginContainer2/PoseTimelinePanel/MarginContainer/StepGrid/Step3" unique_id=1920274475]
 layout_mode = 0
 offset_left = 8.0
 offset_top = 8.0
@@ -1737,7 +1546,7 @@ min_rotation_deg = 0.0
 max_rotation_deg = 0.0
 
 [node name="Head" parent="PlayerBody/FacingPivot/PoseController" unique_id=1906863 node_paths=PackedStringArray("slave", "pivot", "y_constraint_parent", "radius_constraint_parent", "look_at_target") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
-position = Vector2(-2.2906752, -112.39278)
+position = Vector2(-1.5863504, -111.98684)
 rotation = -0.0034784384
 slave = NodePath("../../../Ragdoll/Head/Head_Physics")
 pivot = NodePath("../..")
@@ -1759,7 +1568,7 @@ look_at_target = NodePath("../Eyeline")
 
 [node name="Neck" parent="PlayerBody/FacingPivot/PoseController" unique_id=1488133409 node_paths=PackedStringArray("slave", "pivot", "radius_constraint_parent") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
 visible = false
-position = Vector2(-2.5228095, -97.35199)
+position = Vector2(-1.2448568, -96.948456)
 slave = NodePath("../../../Ragdoll/Head/Neck_Physics")
 pivot = NodePath("../..")
 invert_rotation_on_flip = true
@@ -1772,14 +1581,14 @@ radius_constraint_parent = NodePath("../../../Ragdoll/Root")
 
 [node name="Torso" parent="PlayerBody/FacingPivot/PoseController" unique_id=1164425788 node_paths=PackedStringArray("slave", "pivot") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
 visible = false
-position = Vector2(-2.5956867, -101.03539)
+position = Vector2(-1.4547073, -100.74896)
 slave = NodePath("../../../Ragdoll/Torso/Torso2_Physics")
 pivot = NodePath("../..")
 is_controlled = false
 hide_in_pose_ui = true
 
 [node name="Root" parent="PlayerBody/FacingPivot/PoseController" unique_id=219274694 node_paths=PackedStringArray("slave", "pivot", "x_constraint_parent", "radius_drag_partner") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
-position = Vector2(4.001281, 2.4349663)
+position = Vector2(9.048902, 2.5203266)
 slave = NodePath("../../../Ragdoll/Root")
 pivot = NodePath("../..")
 invert_rotation_on_flip = true
@@ -1792,7 +1601,7 @@ x_constraint_parent = NodePath("../../..")
 radius_drag_partner = NodePath("../Head")
 
 [node name="HandBack" parent="PlayerBody/FacingPivot/PoseController" unique_id=1872066078 node_paths=PackedStringArray("slave", "sibling", "pivot", "radius_constraint_parent", "follow_rotation_target") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
-position = Vector2(16.47386, 29.57634)
+position = Vector2(-1.2014822, 31.84423)
 rotation = 1.3872819
 scale = Vector2(0.99999994, 0.99999994)
 slave = NodePath("../../../Ragdoll/Arm_Back/Hand_Back_Physics")
@@ -1809,7 +1618,7 @@ radius_constraint_parent = NodePath("../../../Ragdoll/Arm_Back/Shoulder_Back_Phy
 follow_rotation_target = NodePath("../../../Ragdoll/Arm_Back/Forearm_Back_Physics")
 
 [node name="HandFront" parent="PlayerBody/FacingPivot/PoseController" unique_id=2036979389 node_paths=PackedStringArray("slave", "sibling", "pivot", "radius_constraint_parent", "follow_rotation_target") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
-position = Vector2(-42.322186, 24.531448)
+position = Vector2(8.704117, 30.856613)
 rotation = 1.4617479
 slave = NodePath("../../../Ragdoll/Arm_Front/Hand_Front_Physics")
 sibling = NodePath("../HandBack")
@@ -1825,7 +1634,7 @@ radius_constraint_parent = NodePath("../../../Ragdoll/Arm_Front/Shoulder_Front_P
 follow_rotation_target = NodePath("../../../Ragdoll/Arm_Front/Forearm_Front_Physics")
 
 [node name="FootBack" parent="PlayerBody/FacingPivot/PoseController" unique_id=1591964902 node_paths=PackedStringArray("slave", "sibling", "pivot", "y_constraint_parent", "radius_constraint_parent", "radius_drag_partner", "follow_rotation_target") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
-position = Vector2(45.059723, 150.81151)
+position = Vector2(53.30852, 149.90614)
 rotation = 1.5707964
 slave = NodePath("../../../Ragdoll/Leg_Back/Foot_Back_Physics")
 sibling = NodePath("../FootFront")
@@ -1846,7 +1655,7 @@ radius_drag_partner = NodePath("../Root")
 follow_rotation_target = NodePath("../../../Ragdoll/Leg_Back/Calf_Back_Physics")
 
 [node name="FootFront" parent="PlayerBody/FacingPivot/PoseController" unique_id=960569227 node_paths=PackedStringArray("slave", "sibling", "y_constraint_parent", "radius_constraint_parent", "radius_drag_partner", "follow_rotation_target") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
-position = Vector2(-25.445114, 147.9742)
+position = Vector2(-22.884888, 147.95216)
 rotation = -2.4535134
 slave = NodePath("../../../Ragdoll/Leg_Front/Foot_Front_Physics")
 sibling = NodePath("../FootBack")
@@ -1866,7 +1675,7 @@ radius_drag_partner = NodePath("../Root")
 follow_rotation_target = NodePath("../../../Ragdoll/Leg_Front/Calf_Front_Physics")
 
 [node name="Eyeline" parent="PlayerBody/FacingPivot/PoseController" unique_id=112503581 node_paths=PackedStringArray("radius_constraint_parent") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
-position = Vector2(90.543144, 60.038017)
+position = Vector2(116.8524, 44.022934)
 is_controlled = false
 use_radius_limit = true
 min_radius = 200.0
@@ -1876,7 +1685,7 @@ use_radius_angle_limit = true
 
 [node name="UpperAdbomen" parent="PlayerBody/FacingPivot/PoseController" unique_id=881103751 node_paths=PackedStringArray("slave", "pivot") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
 visible = false
-position = Vector2(-7.395005, -42.26987)
+position = Vector2(-3.717711, -41.84568)
 slave = NodePath("../../../Ragdoll/Torso/UpperAbdomen_Physics")
 pivot = NodePath("../..")
 invert_rotation_on_flip = true
@@ -1885,7 +1694,7 @@ hide_in_pose_ui = true
 
 [node name="LowerAbdomen" parent="PlayerBody/FacingPivot/PoseController" unique_id=972622081 node_paths=PackedStringArray("slave", "pivot") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
 visible = false
-position = Vector2(-1.6701552, -21.836945)
+position = Vector2(2.7291117, -21.618553)
 rotation = 0.17020127
 slave = NodePath("../../../Ragdoll/Torso/LowerAbdomen_Physics")
 pivot = NodePath("../..")

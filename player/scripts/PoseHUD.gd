@@ -6,11 +6,12 @@ signal playback_started
 @export var pose_controller: PoseController
 @export var timeline: TimelineManager
 
-@onready var part_panel: PosePartPanel = $PosePartPanel
-@onready var anim_browser: PoseAnimBrowser = $PanelContainer3/VBoxContainer/PoseAnimBrowser
-@onready var timeline_panel: PoseTimelinePanel = $PanelContainer3/VBoxContainer/MarginContainer2/Panel/PoseTimelinePanel
-@onready var assistant_panel: PoseAssistantPanel = $PanelContainer3/VBoxContainer/MarginContainerAssistant/Panel/PoseAssistantPanel
-@onready var mode_bar: PoseModeBar = $PanelContainer3/VBoxContainer/PoseModeBar
+@onready var part_panel: PosePartPanel = $PoseDockRow/PoseDock/DockVBox/PosePartPanel
+@onready var anim_browser: PoseAnimBrowser = $PoseDockRow/PoseDock/DockVBox/AnimSection/PoseAnimBrowser
+@onready var timeline_panel: PoseTimelinePanel = $PoseDockRow/PoseDock/DockVBox/AnimSection/AnimMainColumn/AnimVBox/MarginContainer2/PoseTimelinePanel
+@onready var assistant_panel: PoseAssistantPanel = $PoseDockRow/PoseDock/DockVBox/AnimSection/AnimMainColumn/AnimVBox/MarginContainerAssistant/PoseAssistantPanel
+@onready var toolbar: PoseToolBar = $PoseToolBar
+@onready var mode_bar: PoseModeBar = $PoseToolBar/ToolVBox/PoseModeBar
 
 var _last_sync_anim: String = ""
 var _last_sync_grid_len: float = -1.0
@@ -30,7 +31,7 @@ func _ready() -> void:
 
 func _setup_panels() -> void:
 	if not part_panel:
-		push_error("PoseHUD: PosePartPanel not found at $PosePartPanel")
+		push_error("PoseHUD: PosePartPanel not found")
 		return
 	if not anim_browser:
 		push_error("PoseHUD: PoseAnimBrowser not found")
@@ -59,27 +60,26 @@ func _setup_panels() -> void:
 			get_anim,
 			refresh_visuals,
 			on_markers_changed,
-			func(): key_all_markers(),
-			func(): swap_all_siblings()
+			func(): swap_all_siblings(),
+			func(): part_panel.normalize_horizontal()
 		)
 
 func _wire_signals() -> void:
 	anim_browser.animation_changed.connect(_on_animation_changed)
 	anim_browser.duration_changed.connect(_on_duration_changed)
-	anim_browser.speed_changed.connect(func(_s):
-		refresh_timeline_visuals()
-		if assistant_panel:
-			assistant_panel.sync_timing_ui()
-	)
+	anim_browser.speed_changed.connect(func(_s): refresh_timeline_visuals())
 
 	timeline_panel.playback_started.connect(playback_started.emit)
 	timeline_panel.step_interacted.connect(_on_step_interacted)
+	timeline_panel.duration_changed.connect(_on_duration_changed)
+	timeline_panel.speed_changed.connect(func(_s): refresh_timeline_visuals())
 
 	mode_bar.posing_toggled.connect(_on_posing_toggled)
 
+	if toolbar:
+		toolbar.key_all_pressed.connect(func(): key_all_markers())
+
 	if assistant_panel:
-		assistant_panel.duration_changed.connect(_on_duration_changed)
-		assistant_panel.speed_changed.connect(func(_s): refresh_timeline_visuals())
 		assistant_panel.animation_created.connect(_on_animation_changed)
 
 	if timeline_panel and mode_bar:
@@ -145,7 +145,9 @@ func _process(_delta: float) -> void:
 		if playing_anim != "" and (not anim_browser or not anim_browser.is_preview_active()):
 			anim_browser.sync_display_to_animation(playing_anim)
 			if assistant_panel:
-				assistant_panel.sync_timing_ui()
+				assistant_panel.sync_title_ui()
+			if timeline_panel:
+				timeline_panel.sync_timing_ui(playing_anim)
 			var current_anim_len := timeline.anim_player.get_animation(playing_anim).length
 			if playing_anim != _last_sync_anim or not is_equal_approx(current_anim_len, _last_sync_grid_len):
 				timeline_panel.build_step_grid(current_anim_len)
@@ -176,8 +178,10 @@ func _on_animation_changed(anim_name: String) -> void:
 	timeline_panel.build_step_grid(anim.length)
 	refresh_timeline_visuals()
 	if assistant_panel:
-		assistant_panel.sync_timing_ui()
+		assistant_panel.sync_title_ui()
 		assistant_panel.sync_ragdoll_toggles()
+	if timeline_panel:
+		timeline_panel.sync_timing_ui(anim_name)
 	if timeline.anim_player.is_playing():
 		timeline.stop()
 	timeline.seek_step(0, anim_name)
@@ -188,10 +192,10 @@ func _on_duration_changed(duration: float) -> void:
 	timeline_panel.build_step_grid(duration)
 	refresh_timeline_visuals()
 	if assistant_panel:
-		assistant_panel.sync_timing_ui()
+		assistant_panel.sync_title_ui()
 		assistant_panel.sync_ragdoll_toggles()
-	if anim_browser:
-		anim_browser.sync_timing_ui_for_current_animation()
+	if timeline_panel:
+		timeline_panel.sync_timing_ui(get_current_animation())
 
 func _on_step_interacted(_step: int) -> void:
 	on_step_navigated()
@@ -214,5 +218,6 @@ func _apply_posing_mode(posing: bool) -> void:
 			anim_browser.sync_display_to_animation(playing_anim)
 			var anim := timeline.anim_player.get_animation(playing_anim)
 			timeline_panel.build_step_grid(anim.length)
+			timeline_panel.sync_timing_ui(playing_anim)
 			_last_sync_anim = playing_anim
 			_last_sync_grid_len = anim.length

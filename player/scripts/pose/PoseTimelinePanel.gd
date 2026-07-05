@@ -4,6 +4,8 @@ extends VBoxContainer
 signal playback_started
 signal step_interacted(step: int)
 signal visuals_refreshed
+signal duration_changed(duration: float)
+signal speed_changed(speed: float)
 
 @onready var step_grid: Control = %StepGrid
 @onready var btn_play: Button = %BtnPlay
@@ -13,10 +15,13 @@ signal visuals_refreshed
 @onready var record_check: CheckBox = %RecordCheck
 @onready var playback_controls: Control = %PlaybackControls
 @onready var timecode_label: Label = %TimecodeLabel
+@onready var steps_spin: SpinBox = %StepsSpin
+@onready var speed_spin: SpinBox = %SpeedSpin
 
 var timeline: TimelineManager
 var pose_controller: PoseController
 var _get_anim_name: Callable
+var _syncing_timing: bool = false
 
 func setup(p_timeline: TimelineManager, p_controller: PoseController, get_anim_name: Callable) -> void:
 	timeline = p_timeline
@@ -31,6 +36,8 @@ func _ready() -> void:
 	btn_stop.pressed.connect(_on_stop_pressed)
 	btn_rewind.pressed.connect(_on_rewind_pressed)
 	btn_reset.pressed.connect(_on_reset_pressed)
+	steps_spin.value_changed.connect(_on_steps_changed)
+	speed_spin.value_changed.connect(_on_speed_changed)
 
 func is_recording() -> bool:
 	return record_check.button_pressed
@@ -38,12 +45,34 @@ func is_recording() -> bool:
 func get_step_count() -> int:
 	return step_grid.get_child_count()
 
+func get_steps_value() -> int:
+	return int(steps_spin.value)
+
 func set_recording(enabled: bool) -> void:
 	record_check.button_pressed = enabled
 
 func set_playback_controls_visible(show_controls: bool) -> void:
 	if playback_controls:
 		playback_controls.visible = show_controls
+
+func sync_timing_ui(anim_name: String) -> void:
+	if anim_name == "" or not timeline or not timeline.anim_player:
+		return
+	if not timeline.anim_player.has_animation(anim_name):
+		return
+	var anim := timeline.anim_player.get_animation(anim_name)
+	_syncing_timing = true
+	steps_spin.set_value_no_signal(_time_to_steps(anim.length))
+	speed_spin.set_value_no_signal(timeline.get_speed_scale(anim_name))
+	_syncing_timing = false
+
+func _time_to_steps(duration_seconds: float) -> int:
+	if not timeline or timeline.step_duration <= 0.0:
+		return 0
+	return int(round(duration_seconds / timeline.step_duration))
+
+func _steps_to_time(steps: int) -> float:
+	return steps * timeline.step_duration if timeline else 0.0
 
 func build_step_grid(duration: float) -> void:
 	if not timeline:
@@ -150,6 +179,27 @@ func _update_timecode_label() -> void:
 	var whole_seconds := int(current_step_time)
 	var milliseconds := int((current_step_time - whole_seconds) * 100)
 	timecode_label.text = "%02d:%02d.%02d" % [whole_seconds / 60, whole_seconds % 60, milliseconds]
+
+func _on_steps_changed(steps: float) -> void:
+	if _syncing_timing or not timeline or _get_anim_name.is_null():
+		return
+	var anim_name: String = _get_anim_name.call()
+	if anim_name == "":
+		return
+	var next_time := _steps_to_time(int(steps))
+	timeline.set_length(anim_name, next_time)
+	duration_changed.emit(next_time)
+
+func _on_speed_changed(speed: float) -> void:
+	if _syncing_timing or not timeline or _get_anim_name.is_null():
+		return
+	var anim_name: String = _get_anim_name.call()
+	if anim_name == "":
+		return
+	timeline.key_speed_scale(anim_name, speed)
+	if timeline.anim_player:
+		timeline.anim_player.speed_scale = speed
+	speed_changed.emit(speed)
 
 func _on_step_clicked(event: InputEvent, step_index: int) -> void:
 	if pose_controller and pose_controller.player and not pose_controller.player.is_posing:
