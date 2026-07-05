@@ -3,7 +3,7 @@ extends PanelContainer
 
 signal inspector_updated(marker: PoseMarker)
 
-@onready var part_strip: HBoxContainer = %PartStrip
+@onready var part_strip: VBoxContainer = %PartStrip
 @onready var part_label: Label = %PartLabel
 @onready var controlled_check: CheckBox = %ControlledCheck
 @onready var pos_label: Label = %PosLabel
@@ -37,6 +37,9 @@ const TAB_STRIP_BG := Color(0.12, 0.12, 0.14, 0.92)
 const TAB_ACTIVE_BG := PANEL_BG
 const TAB_INACTIVE_BG := Color(0.14, 0.14, 0.16, 0.72)
 const TAB_HOVER_BG := Color(0.17, 0.17, 0.19, 0.82)
+const TAB_FONT_SIZE := 9
+const TAB_MIN_HEIGHT := 20
+const TAB_STRIP_WIDTH := 54
 
 func setup(
 	p_controller: PoseController,
@@ -78,36 +81,40 @@ func _ready() -> void:
 	_style_tab_strip()
 
 func _style_tab_strip() -> void:
-	var strip_panel := get_node_or_null("VBoxContainer/TabStripPanel") as PanelContainer
+	var strip_panel := get_node_or_null("ContentRow/TabStripPanel") as PanelContainer
 	if not strip_panel:
 		return
+	strip_panel.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 	var style := StyleBoxFlat.new()
 	style.bg_color = TAB_STRIP_BG
-	style.content_margin_left = 5
-	style.content_margin_right = 5
+	style.content_margin_left = 0
+	style.content_margin_right = 4
 	style.content_margin_top = 5
-	style.content_margin_bottom = 0
-	style.corner_radius_top_left = 4
+	style.content_margin_bottom = 5
 	style.corner_radius_top_right = 4
+	style.corner_radius_bottom_right = 4
 	strip_panel.add_theme_stylebox_override("panel", style)
+	part_strip.custom_minimum_size = Vector2(TAB_STRIP_WIDTH, 0)
+	part_strip.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 
 func _style_details_panel() -> void:
-	var details := get_node_or_null("VBoxContainer/MarginContainer2/Panel") as PanelContainer
+	var details := get_node_or_null("ContentRow/MarginContainer2/Panel") as PanelContainer
 	if not details:
 		return
 	var style := StyleBoxFlat.new()
 	style.bg_color = PANEL_BG
 	style.set_content_margin_all(4)
+	style.corner_radius_top_left = 4
 	style.corner_radius_bottom_left = 4
-	style.corner_radius_bottom_right = 4
 	details.add_theme_stylebox_override("panel", style)
 
 func _style_details_wrapper() -> void:
-	var wrapper := get_node_or_null("VBoxContainer/MarginContainer2") as MarginContainer
+	var wrapper := get_node_or_null("ContentRow/MarginContainer2") as MarginContainer
 	if wrapper:
+		wrapper.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		wrapper.add_theme_constant_override("margin_left", 5)
-		wrapper.add_theme_constant_override("margin_top", 0)
-		wrapper.add_theme_constant_override("margin_right", 5)
+		wrapper.add_theme_constant_override("margin_top", 5)
+		wrapper.add_theme_constant_override("margin_right", 0)
 		wrapper.add_theme_constant_override("margin_bottom", 5)
 
 func _style_outer_panel() -> void:
@@ -127,8 +134,11 @@ func setup_part_table(markers: Array[PoseMarker]) -> void:
 		var btn := Button.new()
 		btn.text = marker.name
 		btn.focus_mode = Control.FOCUS_NONE
-		btn.custom_minimum_size = Vector2(52, 26)
-		btn.add_theme_font_size_override("font_size", 10)
+		btn.custom_minimum_size = Vector2(TAB_STRIP_WIDTH, TAB_MIN_HEIGHT)
+		btn.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+		btn.add_theme_font_size_override("font_size", TAB_FONT_SIZE)
+		btn.clip_text = true
+		btn.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 		btn.set_meta("marker", marker)
 		btn.gui_input.connect(_on_part_button_gui_input.bind(marker))
 		_apply_tab_style(btn, false)
@@ -140,16 +150,16 @@ func _apply_tab_style(btn: Button, selected: bool) -> void:
 	var bg := TAB_ACTIVE_BG if selected else TAB_INACTIVE_BG
 	var style := StyleBoxFlat.new()
 	style.bg_color = bg
-	style.content_margin_left = 6
-	style.content_margin_right = 6
-	style.content_margin_top = 4
-	style.content_margin_bottom = 4 if selected else 4
-	style.corner_radius_top_left = 4
-	style.corner_radius_top_right = 4
-	style.corner_radius_bottom_left = 0 if selected else 4
-	style.corner_radius_bottom_right = 0 if selected else 4
+	style.content_margin_left = 4
+	style.content_margin_right = 4
+	style.content_margin_top = 2
+	style.content_margin_bottom = 2
+	style.corner_radius_top_left = 0 if selected else 3
+	style.corner_radius_bottom_left = 0 if selected else 3
+	style.corner_radius_top_right = 3
+	style.corner_radius_bottom_right = 3
 	if not selected:
-		style.border_width_bottom = 1
+		style.border_width_right = 1
 		style.border_color = Color(0.08, 0.08, 0.1, 0.8)
 	var hover_style := style.duplicate() as StyleBoxFlat
 	hover_style.bg_color = TAB_ACTIVE_BG if selected else TAB_HOVER_BG
