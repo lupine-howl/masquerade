@@ -884,6 +884,12 @@ resource_name = "hanging"
 loop_mode = 1
 step = 0.02
 
+[sub_resource type="Animation" id="Animation_gswnw"]
+resource_name = "ledge_climb"
+
+[sub_resource type="Animation" id="Animation_fjxoa"]
+resource_name = "wall_climb"
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_1s1yo"]
 _data = {
 &"RESET": ExtResource("17_2uvqg"),
@@ -894,8 +900,10 @@ _data = {
 &"jump": ExtResource("25_dx5ib"),
 &"jump_land": ExtResource("26_art4l"),
 &"jump_launch": ExtResource("26_a2xo5"),
+&"ledge_climb": SubResource("Animation_gswnw"),
 &"run": ExtResource("27_55jnj"),
-&"run_start": ExtResource("29_fjxoa")
+&"run_start": ExtResource("29_fjxoa"),
+&"wall_climb": SubResource("Animation_fjxoa")
 }
 
 [node name="Player" type="Node2D" unique_id=1696343506]
@@ -1555,13 +1563,13 @@ rotation = 1.4617479
 slave = NodePath("../../../Ragdoll/Arm_Front/Hand_Front_Physics")
 sibling = NodePath("../HandBack")
 pivot = NodePath("../..")
+is_controlled = false
 use_min_max_y = true
 min_y = -170.0
 max_y = 150.0
 use_radius_limit = true
 max_radius = 115.0
 radius_constraint_parent = NodePath("../../../Ragdoll/Arm_Front/Shoulder_Front_Physics")
-use_follow_rotation = true
 follow_rotation_target = NodePath("../../../Ragdoll/Arm_Front/Forearm_Front_Physics")
 
 [node name="HandBack" parent="PlayerBody/FacingPivot/PoseController" unique_id=1872066078 node_paths=PackedStringArray("slave", "sibling", "pivot", "radius_constraint_parent", "follow_rotation_target") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
@@ -1570,60 +1578,62 @@ rotation = 1.3872819
 slave = NodePath("../../../Ragdoll/Arm_Back/Hand_Back_Physics")
 sibling = NodePath("../HandFront")
 pivot = NodePath("../..")
+is_controlled = false
 use_min_max_y = true
 min_y = -170.0
 max_y = 150.0
 use_radius_limit = true
 max_radius = 115.0
 radius_constraint_parent = NodePath("../../../Ragdoll/Arm_Back/Shoulder_Back_Physics")
-use_follow_rotation = true
 follow_rotation_target = NodePath("../../../Ragdoll/Arm_Back/Forearm_Back_Physics")
 
-[node name="FootBack" parent="PlayerBody/FacingPivot/PoseController" unique_id=1591964902 node_paths=PackedStringArray("slave", "sibling", "pivot", "radius_constraint_parent", "follow_rotation_target", "ground_lock_upper", "ground_lock_lower") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
+[node name="FootBack" parent="PlayerBody/FacingPivot/PoseController" unique_id=1591964902 node_paths=PackedStringArray("slave", "sibling", "pivot", "radius_constraint_parent", "follow_rotation_target") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
 position = Vector2(-97.14282, 53.07141)
 rotation = 1.5707964
 slave = NodePath("../../../Ragdoll/Leg_Back/Foot_Back_Physics")
 sibling = NodePath("../FootFront")
 pivot = NodePath("../..")
+is_controlled = false
 constrain_rotation_when_uncontrolled = true
 use_min_max_y = true
 min_y = -150.0
 max_y = 150.0
+y_rotate_at_max = true
+y_max_boundary_rotation_deg = 90.0
+y_max_rotate_threshold = 40.0
 use_radius_limit = true
 max_radius = 170.0
 radius_constraint_parent = NodePath("../../../Ragdoll/Root")
-use_follow_rotation = true
 follow_rotation_target = NodePath("../../../Ragdoll/Leg_Back/Calf_Back_Physics")
-use_ground_lock = true
-ground_lock_upper = NodePath("../GroundLockUpper")
-ground_lock_lower = NodePath("../Ground")
-ground_lock_rotation_deg = 90.0
 
-[node name="FootFront" parent="PlayerBody/FacingPivot/PoseController" unique_id=960569227 node_paths=PackedStringArray("slave", "sibling", "radius_constraint_parent", "follow_rotation_target", "ground_lock_upper", "ground_lock_lower") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
+[node name="FootFront" parent="PlayerBody/FacingPivot/PoseController" unique_id=960569227 node_paths=PackedStringArray("slave", "sibling", "radius_constraint_parent", "follow_rotation_target") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
 position = Vector2(88.57141, 139.7857)
 rotation = -2.4535134
 slave = NodePath("../../../Ragdoll/Leg_Front/Foot_Front_Physics")
 sibling = NodePath("../FootBack")
+is_controlled = false
 constrain_rotation_when_uncontrolled = true
 use_min_max_y = true
 min_y = -150.0
 max_y = 150.0
+y_rotate_at_max = true
+y_max_boundary_rotation_deg = -90.0
+y_max_rotate_threshold = 40.0
 use_radius_limit = true
 max_radius = 170.0
 radius_constraint_parent = NodePath("../../../Ragdoll/Root")
 follow_rotation_target = NodePath("../../../Ragdoll/Leg_Front/Calf_Front_Physics")
-use_ground_lock = true
-ground_lock_upper = NodePath("../GroundLockUpper")
-ground_lock_lower = NodePath("../Ground")
-ground_lock_rotation_deg = -90.0
 
-[node name="Neck" parent="PlayerBody/FacingPivot/PoseController" unique_id=1488133409 node_paths=PackedStringArray("slave", "pivot") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
+[node name="Neck" parent="PlayerBody/FacingPivot/PoseController" unique_id=1488133409 node_paths=PackedStringArray("slave", "pivot", "radius_constraint_parent") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
 position = Vector2(8.726257, -94.85774)
 slave = NodePath("../../../Ragdoll/Head/Neck_Physics")
 pivot = NodePath("../..")
 invert_rotation_on_flip = true
 is_controlled = false
-max_radius = 0.0
+use_radius_limit = true
+min_radius = 100.0
+max_radius = 200.0
+radius_constraint_parent = NodePath("../../../Ragdoll/Root")
 
 [node name="Head" parent="PlayerBody/FacingPivot/PoseController" unique_id=1906863 node_paths=PackedStringArray("slave", "pivot", "radius_constraint_parent", "radius_drag_partner", "look_at_target") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
 position = Vector2(8.353577, -93.02951)
@@ -1632,39 +1642,37 @@ slave = NodePath("../../../Ragdoll/Head/Head_Physics")
 pivot = NodePath("../..")
 invert_rotation_on_flip = true
 can_rotate = true
+is_controlled = false
 constrain_rotation_when_uncontrolled = true
 use_radius_limit = true
 max_radius = 120.0
 radius_constraint_parent = NodePath("../../../Ragdoll/Root")
 radius_drag_partner = NodePath("../Root")
-use_look_at = true
 look_at_target = NodePath("../Eyeline")
 
-[node name="GroundLockUpper" parent="PlayerBody/FacingPivot/PoseController" unique_id=1906512465 groups=["anim_markers"] instance=ExtResource("9_s7qer")]
-position = Vector2(250, 130)
-
-[node name="Ground" parent="PlayerBody/FacingPivot/PoseController" unique_id=1906512464 groups=["anim_markers"] instance=ExtResource("9_s7qer")]
-position = Vector2(250, 170)
-
-[node name="Eyeline" parent="PlayerBody/FacingPivot/PoseController" unique_id=112503581 groups=["anim_markers"] instance=ExtResource("9_s7qer")]
+[node name="Eyeline" parent="PlayerBody/FacingPivot/PoseController" unique_id=112503581 node_paths=PackedStringArray("radius_constraint_parent") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
 position = Vector2(221, 45)
+is_controlled = false
+use_radius_limit = true
+min_radius = 200.0
+max_radius = 200.0
+radius_constraint_parent = NodePath("../../../Ragdoll/Head/Head_Physics")
+use_radius_angle_limit = true
+max_radius_angle_deg = 20.0
 
 [node name="Torso" parent="PlayerBody/FacingPivot/PoseController" unique_id=1164425788 node_paths=PackedStringArray("slave", "pivot") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
 visible = false
-position = Vector2(117.937294, 29.145329)
 slave = NodePath("../../../Ragdoll/Torso/Torso2_Physics")
 pivot = NodePath("../..")
 is_controlled = false
 
 [node name="UpperAdbomen" parent="PlayerBody/FacingPivot/PoseController" unique_id=881103751 node_paths=PackedStringArray("slave", "pivot") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
-position = Vector2(57.059097, 23.40366)
 slave = NodePath("../../../Ragdoll/Torso/UpperAbdomen_Physics")
 pivot = NodePath("../..")
 invert_rotation_on_flip = true
 is_controlled = false
 
 [node name="LowerAbdomen" parent="PlayerBody/FacingPivot/PoseController" unique_id=972622081 node_paths=PackedStringArray("slave", "pivot") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
-position = Vector2(34.055733, 36.072376)
 rotation = 0.17020127
 slave = NodePath("../../../Ragdoll/Torso/LowerAbdomen_Physics")
 pivot = NodePath("../..")
@@ -1677,6 +1685,7 @@ slave = NodePath("../../../Ragdoll/Root")
 pivot = NodePath("../..")
 invert_rotation_on_flip = true
 can_rotate = true
+is_controlled = false
 use_min_max_x = true
 min_x = 10.0
 max_x = -10.0
@@ -2725,7 +2734,7 @@ parameters/ClimbScale/scale = 1.0
 deterministic = true
 libraries/ = SubResource("AnimationLibrary_1s1yo")
 autoplay = &"run"
-speed_scale = 4.0
+speed_scale = 0.0
 script = ExtResource("46_animator")
 
 [node name="StateMachine" type="Node" parent="PlayerBody" unique_id=1888989459 node_paths=PackedStringArray("initial_state")]
@@ -2767,4 +2776,5 @@ visible = false
 script = ExtResource("28_rptt4")
 
 [node name="Icon" type="Sprite2D" parent="." unique_id=1346814728]
+visible = false
 texture = ExtResource("43_fjxoa")
