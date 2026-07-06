@@ -18,8 +18,14 @@ func enter() -> void:
 
 		if not player.animator.animation_finished.is_connected(_on_launch_animation_finished):
 			player.animator.animation_finished.connect(_on_launch_animation_finished)
+	elif player.velocity.y < 0.0:
+		# Jump velocity already applied (ground buffer, wall jump, etc.)
+		is_launching = false
+		player.animator.play("jump")
 	else:
-		_execute_true_launch()
+		# Fell or walked off a ledge — preserve downward motion, don't jump.
+		is_launching = false
+		player.animator.play("fall", 0.15)
 
 func exit() -> void:
 	if player.animator.animation_finished.is_connected(_on_launch_animation_finished):

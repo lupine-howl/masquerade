@@ -73,7 +73,7 @@ func physics_update(delta: float) -> void:
 		state_machine.transition_to("dash")
 	elif player.attack_timer > 0.0 and y_dir > 0 and not player.is_submerged:
 		state_machine.transition_to("roll")
-	elif player.jump_buffer_timer > 0:
+	elif player.jump_buffer_timer > 0 and (player.is_on_floor() or player.coyote_timer > 0):
 		player.jump_buffer_timer = 0
 		player.velocity.y = player.water_swim_velocity if player.is_submerged else player.JUMP_VELOCITY
 		state_machine.transition_to("air")

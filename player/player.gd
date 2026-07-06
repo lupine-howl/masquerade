@@ -63,6 +63,7 @@ const JUMP_BUFFER_TIME := 0.12
 @onready var wall_detector := $FacingPivot/Detection/WallDetector 
 @onready var ledge_detector := $FacingPivot/Detection/LedgeDetector
 @onready var hanging_detector := $FacingPivot/Detection/HangingDetector
+@onready var master_collision_shape := $MasterCollisionShape as CollisionShape2D
 
 
 # ---------------------------------------------------------
@@ -165,6 +166,32 @@ func get_state_name() -> String:
 	if state_machine and state_machine.current_state:
 		return state_machine.current_state.name.to_lower()
 	return ""
+
+## Capsule radius and height from MasterCollisionShape, including node scale.
+## Properties like radius/height live on the Shape2D resource (`shape`), not CollisionShape2D.
+func get_body_capsule_size() -> Vector2:
+	if master_collision_shape == null or not master_collision_shape.shape is CapsuleShape2D:
+		push_warning("Player: MasterCollisionShape missing or not a CapsuleShape2D")
+		return Vector2(80.0, 320.0)
+	var capsule := master_collision_shape.shape as CapsuleShape2D
+	var node_scale := master_collision_shape.scale
+	var uniform_scale := maxf(absf(node_scale.x), absf(node_scale.y))
+	return Vector2(capsule.radius * uniform_scale, capsule.height * uniform_scale)
+
+## Full capsule height in world units (shape height × collision-shape scale).
+func get_body_capsule_height() -> float:
+	return get_body_capsule_size().y
+
+## World-space Y of the lowest point on MasterCollisionShape.
+func get_body_capsule_bottom_y() -> float:
+	if master_collision_shape == null or not master_collision_shape.shape is CapsuleShape2D:
+		return global_position.y + get_body_capsule_height() * 0.5
+	var capsule := master_collision_shape.shape as CapsuleShape2D
+	var uniform_scale := maxf(
+		maxf(absf(master_collision_shape.scale.x), absf(master_collision_shape.scale.y)),
+		0.0001
+	)
+	return master_collision_shape.global_position.y + capsule.height * 0.5 * uniform_scale
 
 func _apply_gravity(delta: float) -> void:
 	if get_state_name() in ["ladderclimb", "wallclimb", "ledgeclimb", "dead", "hanging"]: 
