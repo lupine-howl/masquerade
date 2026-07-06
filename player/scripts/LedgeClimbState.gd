@@ -1,15 +1,31 @@
 extends PlayerState
 
-const GRAB_OFFSET_X := 40.0
-const CLIMB_FORWARD_OFFSET := 50.0
-const HEIGHT_OFFSET_Y := 20.0
+const GRAB_OFFSET_X := 80
 
-var _ledge_anchor: Node2D
-var _anchor_world_lock: Vector2
+## Seconds to slide up the wall (phase 1). Match this span in ledge_climb keys.
+@export var vertical_duration := 0.3
+## Seconds to step forward onto the ledge (phase 2).
+@export var forward_duration := 0.3
+## World pixels to rise during phase 1. 0 = one capsule height.
+@export var vertical_rise := 0.0
+## World pixels to move onto the platform during phase 2 (facing-aware).
+@export var forward_offset := 120.0
+## Extra Y applied to the final position (negative = higher).
+@export var end_height_adjust := 0.0
+## Stretch ledge_climb playback so clip length matches vertical + forward duration.
+@export var auto_match_anim_duration := true
+
+var _start_pos := Vector2.ZERO
+var _rise_pos := Vector2.ZERO
+var _end_pos := Vector2.ZERO
+var _elapsed := 0.0
+var _finalized := false
 
 func enter() -> void:
+	_finalized = false
+	_elapsed = 0.0
 	player.velocity = Vector2.ZERO
-	player.animator.play("ledge_climb", 0.0)
+	player.armature.position = Vector2.ZERO
 
 	var collision_shape: CollisionShape2D = player.master_collision_shape
 	if collision_shape:
@@ -23,56 +39,68 @@ func enter() -> void:
 	player.global_position.x = wall_pt.x - (player.facing * GRAB_OFFSET_X)
 	player.global_position.y = wall_pt.y + half_height - radius
 
-	_ledge_anchor = player.get_node_or_null("%LedgeAnchor") as Node2D
-	if _ledge_anchor:
-		_anchor_world_lock = _ledge_anchor.global_position
+	_setup_climb_path()
 
-	if not player.animator.animation_finished.is_connected(_on_animation_finished):
-		player.animator.animation_finished.connect(_on_animation_finished)
+	player.animator.play("ledge_climb", 0.0)
+	if auto_match_anim_duration:
+		call_deferred("_match_anim_speed_to_movement")
 
-func physics_update(_delta: float) -> void:
+func physics_update(delta: float) -> void:
 	player.velocity = Vector2.ZERO
-	_apply_ledge_anchor_root_motion()
-	_absorb_armature_root_offset()
+	if _finalized:
+		return
 
-func exit() -> void:
-	if player.animator.animation_finished.is_connected(_on_animation_finished):
-		player.animator.animation_finished.disconnect(_on_animation_finished)
-	if player.master_collision_shape:
-		player.master_collision_shape.disabled = false
-	_ledge_anchor = null
+	_elapsed += delta
+	var rise_time := maxf(vertical_duration, 0.0001)
+	var forward_time := maxf(forward_duration, 0.0001)
 
-func _on_animation_finished(anim_name: StringName) -> void:
-	if String(anim_name) == "ledge_climb":
+	if _elapsed <= rise_time:
+		var t := clampf(_elapsed / rise_time, 0.0, 1.0)
+		player.global_position = _start_pos.lerp(_rise_pos, t)
+	elif _elapsed <= rise_time + forward_time:
+		var t := clampf((_elapsed - rise_time) / forward_time, 0.0, 1.0)
+		player.global_position = _rise_pos.lerp(_end_pos, t)
+	else:
+		player.global_position = _end_pos
 		_finalize_climb()
 
-## Works when the clip keys LedgeAnchor or any armature child that should stay world-fixed.
-func _apply_ledge_anchor_root_motion() -> void:
-	if _ledge_anchor == null:
-		return
-	var drift := _ledge_anchor.global_position - _anchor_world_lock
-	if drift.is_zero_approx():
-		return
-	player.global_position -= drift
-
-## Fold animated armature.position into the body so the clip can drive root motion.
-func _absorb_armature_root_offset() -> void:
-	var offset: Vector2 = player.armature.position
-	if offset.is_zero_approx():
-		return
-	player.global_position += Vector2(offset.x * player.facing, offset.y)
+func exit() -> void:
+	if player.master_collision_shape:
+		player.master_collision_shape.disabled = false
 	player.armature.position = Vector2.ZERO
 
-func _finalize_climb() -> void:
-	_absorb_armature_root_offset()
-	player.global_position.x += CLIMB_FORWARD_OFFSET * player.facing
-	# Body stays at wall-grab height during the clip; lift by one capsule height so
-	# the collision volume clears the platform (HEIGHT_OFFSET_Y fine-tunes placement).
-	player.global_position.y -= player.get_body_capsule_height() - HEIGHT_OFFSET_Y
+func get_total_duration() -> float:
+	return vertical_duration + forward_duration
 
+## Normalized climb progress 0→1 for debugging or pose reference.
+func get_move_progress() -> float:
+	var total := get_total_duration()
+	if total <= 0.0:
+		return 1.0
+	return clampf(_elapsed / total, 0.0, 1.0)
+
+func _match_anim_speed_to_movement() -> void:
+	if not player.animator.has_animation("ledge_climb"):
+		return
+	var anim := player.animator.get_animation("ledge_climb")
+	var move_duration := get_total_duration()
+	if anim.length <= 0.0 or move_duration <= 0.0:
+		return
+	player.animator.speed_scale *= anim.length / move_duration
+
+func _setup_climb_path() -> void:
+	_start_pos = player.global_position
+	var rise := vertical_rise if vertical_rise > 0.0 else player.get_body_capsule_height() - 60.0
+	_rise_pos = _start_pos + Vector2(0.0, -rise)
+	_end_pos = _rise_pos + Vector2(forward_offset * player.facing, end_height_adjust)
+
+func _finalize_climb() -> void:
+	if _finalized:
+		return
+	_finalized = true
+	player.global_position = _end_pos
 	if player.animator.has_animation("idle"):
 		player.animator.play("idle", 0.0)
 	else:
 		player.animator.stop()
-
 	state_machine.transition_to("ground")
