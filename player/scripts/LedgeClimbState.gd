@@ -36,7 +36,7 @@ func enter() -> void:
 
 	var wall_pt: Vector2 = player.wall_detector.get_collision_point()
 	player.global_position.x = wall_pt.x - (player.facing * GRAB_OFFSET_X)
-	player.global_position.y = wall_pt.y + half_extent_y - radius
+	player.global_position.y = wall_pt.y
 
 	_start_pos = player.global_position
 
