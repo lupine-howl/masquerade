@@ -132,6 +132,23 @@ func key_all_markers() -> void:
 	if part_panel:
 		part_panel.key_all_markers()
 
+func key_path_guide(guide: PathGuideMarker) -> void:
+	if not timeline or not part_panel:
+		return
+	var anim_name := get_current_animation()
+	if anim_name == "":
+		return
+	timeline.key_path_guide_pose(anim_name, guide)
+	refresh_timeline_visuals()
+
+func prepare_path_guides_for_authoring() -> void:
+	if not pose_controller or not pose_controller.player:
+		return
+	for guide in PathGuideMarker.gather_under(pose_controller.player):
+		if guide.anchor:
+			guide.anchor.prepare_authoring_at(pose_controller.player.global_position)
+		guide.position = Vector2.ZERO
+
 func swap_all_siblings() -> void:
 	if pose_controller:
 		pose_controller.swap_all_siblings()
@@ -211,6 +228,8 @@ func _on_animation_changed(anim_name: String) -> void:
 	timeline.seek_step(0, anim_name)
 	refresh_timeline_visuals()
 	on_step_navigated()
+	if anim_name == "ledge_climb" and is_posing():
+		prepare_path_guides_for_authoring()
 
 func _on_duration_changed(duration: float) -> void:
 	timeline_panel.build_step_grid(duration)
@@ -259,3 +278,5 @@ func _apply_posing_mode(posing: bool) -> void:
 			timeline_panel.sync_timing_ui(playing_anim)
 			_last_sync_anim = playing_anim
 			_last_sync_grid_len = anim.length
+	if posing and get_current_animation() == "ledge_climb":
+		prepare_path_guides_for_authoring()

@@ -39,7 +39,7 @@
 [ext_resource type="Script" uid="uid://cns3xkrq4cwa4" path="res://player/scripts/SyncedBone2D.gd" id="32_gswnw"]
 [ext_resource type="Script" uid="uid://cu4xh4ryvnh24" path="res://player/scripts/PlayerStateMachine.gd" id="33_jd2rm"]
 [ext_resource type="Script" uid="uid://bc7ucmt1gfah4" path="res://player/scripts/GroundState.gd" id="34_q28gw"]
-[ext_resource type="Animation" uid="uid://dbnc2bmy2644u" path="res://ledge_climb.res" id="35_237xx"]
+[ext_resource type="Animation" uid="uid://dl75xecbre840" path="res://ledge_climb.res" id="35_237xx"]
 [ext_resource type="Script" uid="uid://bbr87tj0bptcu" path="res://player/scripts/AirState.gd" id="35_q28gw"]
 [ext_resource type="Script" uid="uid://kyiyjgxc6kth" path="res://player/scripts/DashState.gd" id="36_ge24q"]
 [ext_resource type="Script" uid="uid://ddqwus5kaxhr7" path="res://player/scripts/RollState.gd" id="37_pnw6m"]
@@ -52,7 +52,9 @@
 [ext_resource type="Texture2D" uid="uid://cnssw0xaid3pc" path="res://icon.svg" id="43_fjxoa"]
 [ext_resource type="Script" uid="uid://7ett2ig3wkug" path="res://player/scripts/HangingState.gd" id="45_xcnuv"]
 [ext_resource type="Script" uid="uid://vd62fxarftgp" path="res://player/PlayerAnimator.gd" id="46_animator"]
-[ext_resource type="Script" path="res://player/scripts/HardAngularLimitJoint2D.gd" id="47_hardpin"]
+[ext_resource type="Script" uid="uid://ur6st2bilayr" path="res://player/scripts/HardAngularLimitJoint2D.gd" id="47_hardpin"]
+[ext_resource type="Script" uid="uid://b2nohj542abak" path="res://player/scripts/PathAnchor.gd" id="48_pathanchor"]
+[ext_resource type="Script" uid="uid://b0j3ljvo8k1l0" path="res://player/scripts/PathGuideMarker.gd" id="49_pathguide"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mmwog"]
 bg_color = Color(0.6, 0.6, 0.6, 0)
@@ -942,7 +944,6 @@ theme_override_icons/unchecked = ExtResource("4_uw77l")
 flat = true
 
 [node name="PoseDockRow" type="HBoxContainer" parent="PoseHUD" unique_id=519141306]
-visible = false
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
@@ -2471,7 +2472,7 @@ node_a = NodePath("../../Thigh_Back_Physics")
 node_b = NodePath("..")
 angular_limit_enabled = true
 angular_limit_lower = 0.08726646
-angular_limit_upper = 1.7453293
+angular_limit_upper = 2.6179938
 script = ExtResource("47_hardpin")
 
 [node name="Calf_Back_Sprite2" type="Sprite2D" parent="PlayerBody/Ragdoll/Leg_Back/Calf_Back_Physics" unique_id=1453394783]
@@ -2574,7 +2575,7 @@ node_a = NodePath("../../Thigh_Front_Physics")
 node_b = NodePath("..")
 angular_limit_enabled = true
 angular_limit_lower = 0.08726646
-angular_limit_upper = 1.7453293
+angular_limit_upper = 2.443461
 script = ExtResource("47_hardpin")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerBody/Ragdoll/Leg_Front/Calf_Front_Physics" unique_id=160928634]
@@ -2780,6 +2781,18 @@ offset = Vector2(24.424694, -3.3658905)
 region_enabled = true
 region_rect = Rect2(508, 547, 140, 151)
 
+[node name="PathAnchors" type="Node2D" parent="PlayerBody" unique_id=1982736451]
+z_index = 20
+
+[node name="LedgeClimbAnchor" type="Node2D" parent="PlayerBody/PathAnchors" unique_id=1982736452]
+unique_name_in_owner = true
+script = ExtResource("48_pathanchor")
+
+[node name="LedgeClimbPath" type="Node2D" parent="PlayerBody/PathAnchors/LedgeClimbAnchor" unique_id=1982736453]
+unique_name_in_owner = true
+script = ExtResource("49_pathguide")
+role = 1
+
 [node name="AnimationTree" type="AnimationTree" parent="PlayerBody" unique_id=1787523656]
 tree_root = SubResource("AnimationNodeBlendTree_dx5ib")
 parameters/UpperState/conditions/is_attacking = false
@@ -2872,8 +2885,10 @@ script = ExtResource("40_dx5ib")
 [node name="WallClimb" type="Node" parent="PlayerBody/StateMachine" unique_id=1047708118]
 script = ExtResource("41_a2xo5")
 
-[node name="LedgeClimb" type="Node" parent="PlayerBody/StateMachine" unique_id=692231346]
+[node name="LedgeClimb" type="Node" parent="PlayerBody/StateMachine" unique_id=692231346 node_paths=PackedStringArray("path_guide")]
 script = ExtResource("42_art4l")
+use_path_guide = true
+path_guide = NodePath("../../PathAnchors/LedgeClimbAnchor/LedgeClimbPath")
 
 [node name="Dead" type="Node" parent="PlayerBody/StateMachine" unique_id=1530615474]
 script = ExtResource("42_fjxoa")

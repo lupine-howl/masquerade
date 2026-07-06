@@ -261,6 +261,16 @@ func key_marker_pose(anim_name: String, marker: PoseMarker) -> void:
 		_key_property_at_current_step(anim_name, marker, ":use_follow_rotation", marker.use_follow_rotation)
 	current_step = previous_step
 
+## Keys path offset relative to an optional PathAnchor (body trajectory for climbs, etc.).
+func key_path_guide_pose(anim_name: String, guide: PathGuideMarker) -> void:
+	if not guide:
+		return
+	var previous_step := current_step
+	for step in get_key_target_steps():
+		current_step = step
+		_key_property_at_current_step(anim_name, guide, ":position", guide.position)
+	current_step = previous_step
+
 func remove_marker_pose_keys(anim_name: String, marker: PoseMarker) -> void:
 	if not marker:
 		return
