@@ -31,13 +31,12 @@ func enter() -> void:
 	if collision_shape:
 		collision_shape.disabled = true
 
-	var capsule_size: Vector2 = player.get_body_capsule_size()
-	var radius: float = capsule_size.x
-	var half_height: float = capsule_size.y * 0.5
+	var radius: float = player.get_body_capsule_radius()
+	var half_extent_y: float = player.get_body_capsule_half_extent_y()
 
 	var wall_pt: Vector2 = player.wall_detector.get_collision_point()
 	player.global_position.x = wall_pt.x - (player.facing * GRAB_OFFSET_X)
-	player.global_position.y = wall_pt.y + half_height - radius
+	player.global_position.y = wall_pt.y + half_extent_y - radius
 
 	_start_pos = player.global_position
 
@@ -96,8 +95,7 @@ func _uses_path_guide() -> bool:
 func _begin_path_guide_climb() -> void:
 	_path_origin = _start_pos
 	if path_guide.anchor:
-		path_guide.anchor.release_lock()
-		path_guide.anchor.position = Vector2.ZERO
+		path_guide.anchor.lock_at(_path_origin)
 	path_guide.position = Vector2.ZERO
 	if not player.animator.animation_finished.is_connected(_on_animation_finished):
 		player.animator.animation_finished.connect(_on_animation_finished)

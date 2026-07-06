@@ -150,6 +150,8 @@ func _sync_slave_freeze() -> void:
 		slave.freeze = is_controlled
 
 func _process(_delta: float) -> void:
+	if _should_compensate_path_guide() and not is_dragging_position:
+		global_position -= _get_path_guide_compensation()
 	if not is_dev_mode:
 		return
 	if is_interactive_in_pose_ui():
@@ -215,6 +217,28 @@ func _handle_drag_input() -> void:
 				rotation += delta_rot
 		if delta_rot != 0.0:
 			dragged_rotation.emit(delta_rot)
+
+func _should_compensate_path_guide() -> bool:
+	var player := _find_player()
+	if player == null:
+		return false
+	if player.get_state_name() != "ledgeclimb":
+		return false
+	return PathGuideMarker.get_drive_body_guide(player) != null
+
+func _get_path_guide_compensation() -> Vector2:
+	var player := _find_player()
+	if player == null:
+		return Vector2.ZERO
+	return PathGuideMarker.get_path_compensation_offset(player)
+
+func _find_player() -> Player:
+	var node: Node = self
+	while node:
+		if node is Player:
+			return node as Player
+		node = node.get_parent()
+	return null
 
 func _physics_process(_delta: float) -> void:
 	if not slave:

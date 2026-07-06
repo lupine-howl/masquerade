@@ -167,31 +167,47 @@ func get_state_name() -> String:
 		return state_machine.current_state.name.to_lower()
 	return ""
 
-## Capsule radius and height from MasterCollisionShape, including node scale.
-## Properties like radius/height live on the Shape2D resource (`shape`), not CollisionShape2D.
+## Capsule radius and total height (cylinder + both caps) in world units.
 func get_body_capsule_size() -> Vector2:
-	if master_collision_shape == null or not master_collision_shape.shape is CapsuleShape2D:
-		push_warning("Player: MasterCollisionShape missing or not a CapsuleShape2D")
-		return Vector2(80.0, 320.0)
-	var capsule := master_collision_shape.shape as CapsuleShape2D
-	var node_scale := master_collision_shape.scale
-	var uniform_scale := maxf(absf(node_scale.x), absf(node_scale.y))
-	return Vector2(capsule.radius * uniform_scale, capsule.height * uniform_scale)
+	return Vector2(get_body_capsule_radius(), get_body_capsule_total_height())
 
-## Full capsule height in world units (shape height × collision-shape scale).
+func get_body_capsule_uniform_scale() -> float:
+	if master_collision_shape == null:
+		return 1.0
+	var node_scale := master_collision_shape.scale
+	return maxf(maxf(absf(node_scale.x), absf(node_scale.y)), 0.0001)
+
+func get_body_capsule_radius() -> float:
+	if master_collision_shape == null or not master_collision_shape.shape is CapsuleShape2D:
+		return 80.0
+	var capsule := master_collision_shape.shape as CapsuleShape2D
+	return capsule.radius * get_body_capsule_uniform_scale()
+
+func get_body_capsule_cylinder_height() -> float:
+	if master_collision_shape == null or not master_collision_shape.shape is CapsuleShape2D:
+		return 160.0
+	var capsule := master_collision_shape.shape as CapsuleShape2D
+	return capsule.mid_height * get_body_capsule_uniform_scale()
+
+## CapsuleShape2D.height is the full height including both semicircular ends.
+func get_body_capsule_total_height() -> float:
+	if master_collision_shape == null or not master_collision_shape.shape is CapsuleShape2D:
+		return 320.0
+	var capsule := master_collision_shape.shape as CapsuleShape2D
+	return capsule.height * get_body_capsule_uniform_scale()
+
+func get_body_capsule_half_extent_y() -> float:
+	return get_body_capsule_total_height() * 0.5
+
+## Full capsule height in world units (center to top or bottom cap).
 func get_body_capsule_height() -> float:
-	return get_body_capsule_size().y
+	return get_body_capsule_total_height()
 
 ## World-space Y of the lowest point on MasterCollisionShape.
 func get_body_capsule_bottom_y() -> float:
-	if master_collision_shape == null or not master_collision_shape.shape is CapsuleShape2D:
-		return global_position.y + get_body_capsule_height() * 0.5
-	var capsule := master_collision_shape.shape as CapsuleShape2D
-	var uniform_scale := maxf(
-		maxf(absf(master_collision_shape.scale.x), absf(master_collision_shape.scale.y)),
-		0.0001
-	)
-	return master_collision_shape.global_position.y + capsule.height * 0.5 * uniform_scale
+	if master_collision_shape == null:
+		return global_position.y + get_body_capsule_half_extent_y()
+	return master_collision_shape.global_position.y + get_body_capsule_half_extent_y()
 
 func _apply_gravity(delta: float) -> void:
 	if get_state_name() in ["ladderclimb", "wallclimb", "ledgeclimb", "dead", "hanging"]: 
