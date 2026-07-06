@@ -2788,9 +2788,12 @@ z_index = 20
 unique_name_in_owner = true
 script = ExtResource("48_pathanchor")
 
-[node name="LedgeClimbPath" type="Node2D" parent="PlayerBody/PathAnchors/LedgeClimbAnchor" unique_id=1982736453]
+[node name="LedgeClimbPath" type="Node2D" parent="PlayerBody/PathAnchors/LedgeClimbAnchor" unique_id=1982736453 node_paths=PackedStringArray("anchor", "follow", "player")]
 unique_name_in_owner = true
 script = ExtResource("49_pathguide")
+anchor = NodePath("..")
+follow = NodePath("../../../FacingPivot/PoseController/Root")
+player = NodePath("../../..")
 role = 1
 
 [node name="AnimationTree" type="AnimationTree" parent="PlayerBody" unique_id=1787523656]
@@ -2887,7 +2890,6 @@ script = ExtResource("41_a2xo5")
 
 [node name="LedgeClimb" type="Node" parent="PlayerBody/StateMachine" unique_id=692231346 node_paths=PackedStringArray("path_guide")]
 script = ExtResource("42_art4l")
-use_path_guide = true
 path_guide = NodePath("../../PathAnchors/LedgeClimbAnchor/LedgeClimbPath")
 
 [node name="Dead" type="Node" parent="PlayerBody/StateMachine" unique_id=1530615474]

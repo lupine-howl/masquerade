@@ -10,6 +10,8 @@ signal selected(guide: PathGuideMarker)
 signal drag_ended(guide: PathGuideMarker)
 
 @export var anchor: PathAnchor
+@export var follow: Node2D
+@export var player: Player
 @export var role: Role = Role.GUIDE_ONLY
 @export var is_dev_mode: bool = true
 @export var pick_radius: float = 20.0
@@ -73,6 +75,10 @@ static func gather_under(node: Node) -> Array[PathGuideMarker]:
 func _process(_delta: float) -> void:
 	visible = should_show_gizmo()
 	queue_redraw()
+	
+func _physics_process(delta: float) -> void:
+	if not player.is_posing: return
+	global_position = follow.global_position
 
 func _draw() -> void:
 	if not should_show_gizmo():
