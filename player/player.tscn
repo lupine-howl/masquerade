@@ -1561,7 +1561,7 @@ offset = Vector2(1130, 0)
 transform = Transform2D(1, 0, 0, 1, 1130, 0)
 script = ExtResource("28_rptt4")
 
-[node name="PlayerBody" type="CharacterBody2D" parent="." unique_id=411922790 node_paths=PackedStringArray("ragdoll") groups=["player"]]
+[node name="PlayerBody" type="CharacterBody2D" parent="." unique_id=411922790 node_paths=PackedStringArray("debug_hud", "ragdoll") groups=["player"]]
 position = Vector2(1, 1)
 collision_layer = 7
 collision_mask = 3
@@ -1572,6 +1572,7 @@ LADDER_CLIMB_SPEED = 400.0
 WALL_CLIMB_SPEED = 400.0
 JUMP_VELOCITY = -1000.0
 DOUBLE_JUMP_VELOCITY = -1000.0
+debug_hud = NodePath("../DebugHUD")
 ragdoll = NodePath("Ragdoll")
 metadata/_edit_group_ = true
 
@@ -2859,7 +2860,7 @@ parameters/ClimbScale/scale = 1.0
 deterministic = true
 libraries/ = SubResource("AnimationLibrary_1s1yo")
 autoplay = &"run"
-speed_scale = 0.0
+speed_scale = 1.5
 script = ExtResource("46_animator")
 
 [node name="StateMachine" type="Node" parent="PlayerBody" unique_id=1888989459 node_paths=PackedStringArray("initial_state")]

@@ -31,18 +31,13 @@ func enter() -> void:
 	if collision_shape:
 		collision_shape.disabled = true
 
-	var radius: float = player.get_body_capsule_radius()
-	var half_extent_y: float = player.get_body_capsule_half_extent_y()
-
-	var wall_pt: Vector2 = player.wall_detector.get_collision_point()
-	player.global_position.x = wall_pt.x - (player.facing * GRAB_OFFSET_X)
-	player.global_position.y = wall_pt.y
-
-	_start_pos = player.global_position
-
 	if _uses_path_guide():
 		_begin_path_guide_climb()
 	else:
+		var wall_pt: Vector2 = player.wall_detector.get_collision_point()
+		player.global_position.x = wall_pt.x - (player.facing * GRAB_OFFSET_X)
+		player.global_position.y = wall_pt.y
+		_start_pos = player.global_position
 		_setup_climb_lerp()
 		player.animator.play("ledge_climb", 0.0)
 		if auto_match_anim_duration:
@@ -93,14 +88,16 @@ func _uses_path_guide() -> bool:
 	)
 
 func _begin_path_guide_climb() -> void:
-	_path_origin = _start_pos
-	if path_guide.anchor:
-		path_guide.anchor.lock_at(_path_origin)
-	path_guide.position = Vector2.ZERO
 	if not player.animator.animation_finished.is_connected(_on_animation_finished):
 		player.animator.animation_finished.connect(_on_animation_finished)
 	player.animator.play("ledge_climb", 0.0)
 	player.animator.seek(0.0, true)
+	if path_guide.anchor:
+		_path_origin = path_guide.anchor.global_position
+		path_guide.anchor.lock_at(_path_origin)
+	else:
+		_path_origin = player.global_position
+	player.global_position = _path_origin + path_guide.get_climb_offset(player.facing)
 
 func _on_animation_finished(anim_name: StringName) -> void:
 	if String(anim_name) == "ledge_climb" and _uses_path_guide():
