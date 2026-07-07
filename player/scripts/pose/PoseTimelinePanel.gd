@@ -182,12 +182,12 @@ func sync_timing_ui(anim_name: String) -> void:
 func _time_to_steps(duration_seconds: float) -> int:
 	if not timeline or timeline.step_duration <= 0.0:
 		return 1
-	return maxi(1, int(round(duration_seconds / timeline.step_duration)) + 1)
+	return maxi(1, int(round(duration_seconds / timeline.step_duration)))
 
 func _steps_to_time(steps: int) -> float:
 	if not timeline:
 		return 0.0
-	return maxi(0, steps - 1) * timeline.step_duration
+	return maxi(1, steps) * timeline.step_duration
 
 func build_step_grid(duration: float) -> void:
 	if not timeline:

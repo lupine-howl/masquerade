@@ -193,7 +193,7 @@ func _notify_markers_changed() -> void:
 func _steps_to_time(steps: int) -> float:
 	if not _timeline:
 		return 0.0
-	return maxi(0, steps - 1) * _timeline.step_duration
+	return maxi(1, steps) * _timeline.step_duration
 
 func _find_marker_by_name(marker_name: String) -> PoseMarker:
 	if not _pose_controller:
