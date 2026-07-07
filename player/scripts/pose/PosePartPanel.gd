@@ -25,6 +25,16 @@ signal inspector_updated(marker: PoseMarker)
 @onready var sprite_scale_x: SpinBox = %SpriteScaleX
 @onready var sprite_scale_y: SpinBox = %SpriteScaleY
 @onready var sprite_rot_spin: SpinBox = %SpriteRotSpin
+@onready var accessory_section: VBoxContainer = %AccessorySection
+@onready var accessory_check: CheckBox = %AccessoryCheck
+@onready var accessory_preview_row: HBoxContainer = %AccessoryPreviewRow
+@onready var accessory_sprite_preview: TextureRect = %AccessorySpritePreview
+@onready var accessory_slot_controls: VBoxContainer = %AccessorySlotControls
+@onready var accessory_offset_x: SpinBox = %AccessoryOffsetX
+@onready var accessory_offset_y: SpinBox = %AccessoryOffsetY
+@onready var accessory_scale_x: SpinBox = %AccessoryScaleX
+@onready var accessory_scale_y: SpinBox = %AccessoryScaleY
+@onready var accessory_rot_spin: SpinBox = %AccessoryRotSpin
 
 var pose_controller: PoseController
 var timeline: TimelineManager
@@ -68,6 +78,13 @@ func _ready() -> void:
 	sprite_scale_x.value_changed.connect(_on_sprite_scale_changed)
 	sprite_scale_y.value_changed.connect(_on_sprite_scale_changed)
 	sprite_rot_spin.value_changed.connect(_on_sprite_rot_changed)
+	accessory_check.toggled.connect(_on_accessory_toggled)
+	accessory_sprite_preview.gui_input.connect(_on_accessory_preview_gui_input)
+	accessory_offset_x.value_changed.connect(_on_accessory_offset_changed)
+	accessory_offset_y.value_changed.connect(_on_accessory_offset_changed)
+	accessory_scale_x.value_changed.connect(_on_accessory_scale_changed)
+	accessory_scale_y.value_changed.connect(_on_accessory_scale_changed)
+	accessory_rot_spin.value_changed.connect(_on_accessory_rot_changed)
 	_style_details_panel()
 	_style_details_wrapper()
 	_style_outer_panel()
@@ -226,7 +243,7 @@ func _sync_detail_from_marker(marker: PoseMarker) -> void:
 		look_at_target_option.disabled = not marker.use_look_at
 		_populate_constraint_target_option(look_at_target_option, marker, marker.look_at_target)
 		_sync_rot_offset_ui(marker)
-		_sync_sprite_preview(marker)
+		_sync_sprite_ui(marker)
 	else:
 		controlled_check.set_pressed_no_signal(false)
 		local_pos_label.text = "Local (--, --)"
@@ -237,26 +254,70 @@ func _sync_detail_from_marker(marker: PoseMarker) -> void:
 		look_at_target_option.clear()
 		look_at_target_option.add_item("None")
 		rot_offset_row.visible = false
-		_sync_sprite_preview(null)
+		_sync_sprite_ui(null)
 	_updating_detail = false
 
-func _sync_sprite_preview(marker: PoseMarker) -> void:
+func _sync_sprite_ui(marker: PoseMarker) -> void:
+	_sync_primary_sprite_ui(marker)
+	_sync_accessory_sprite_ui(marker)
+
+func _sync_primary_sprite_ui(marker: PoseMarker) -> void:
 	var slot: BodyPartSlot = _get_body_part_slot(marker)
 	var has_slot := slot != null
 	sprite_preview_row.visible = has_slot
 	sprite_slot_controls.visible = has_slot
 	if has_slot:
 		part_sprite_preview.texture = slot.get_display_texture()
-		_sync_sprite_slot_controls(slot)
+		_apply_slot_controls_to_ui(slot, sprite_offset_x, sprite_offset_y, sprite_scale_x, sprite_scale_y, sprite_rot_spin)
 	else:
 		part_sprite_preview.texture = null
 
-func _sync_sprite_slot_controls(slot: BodyPartSlot) -> void:
-	sprite_offset_x.set_value_no_signal(slot.offset.x)
-	sprite_offset_y.set_value_no_signal(slot.offset.y)
-	sprite_scale_x.set_value_no_signal(slot.slot_scale.x)
-	sprite_scale_y.set_value_no_signal(slot.slot_scale.y)
-	sprite_rot_spin.set_value_no_signal(slot.slot_rotation_degrees)
+func _sync_accessory_sprite_ui(marker: PoseMarker) -> void:
+	var slot: BodyPartSlot = _get_accessory_part_slot(marker)
+	var has_slot := slot != null
+	accessory_section.visible = has_slot
+	if not has_slot:
+		accessory_sprite_preview.texture = null
+		return
+	accessory_check.set_pressed_no_signal(slot.visible)
+	var show_details := slot.visible
+	accessory_preview_row.visible = show_details
+	accessory_slot_controls.visible = show_details
+	if show_details:
+		accessory_sprite_preview.texture = slot.get_display_texture()
+		_apply_slot_controls_to_ui(slot, accessory_offset_x, accessory_offset_y, accessory_scale_x, accessory_scale_y, accessory_rot_spin)
+	else:
+		accessory_sprite_preview.texture = null
+
+func _apply_slot_controls_to_ui(
+	slot: BodyPartSlot,
+	offset_x: SpinBox,
+	offset_y: SpinBox,
+	scale_x: SpinBox,
+	scale_y: SpinBox,
+	rot_spin: SpinBox
+) -> void:
+	offset_x.set_value_no_signal(slot.offset.x)
+	offset_y.set_value_no_signal(slot.offset.y)
+	scale_x.set_value_no_signal(slot.slot_scale.x)
+	scale_y.set_value_no_signal(slot.slot_scale.y)
+	rot_spin.set_value_no_signal(slot.slot_rotation_degrees)
+
+func _read_slot_controls_from_ui(
+	offset_x: SpinBox,
+	offset_y: SpinBox,
+	scale_x: SpinBox,
+	scale_y: SpinBox,
+	rot_spin: SpinBox
+) -> Dictionary:
+	return {
+		"offset": Vector2(offset_x.value, offset_y.value),
+		"slot_scale": Vector2(scale_x.value, scale_y.value),
+		"slot_rotation_degrees": rot_spin.value,
+	}
+
+func _sync_sprite_preview(marker: PoseMarker) -> void:
+	_sync_sprite_ui(marker)
 
 func _get_body_part_slot(marker: PoseMarker) -> BodyPartSlot:
 	if marker == null or marker.body_part_slot == null:
@@ -265,6 +326,19 @@ func _get_body_part_slot(marker: PoseMarker) -> BodyPartSlot:
 	if not is_instance_valid(slot):
 		return null
 	return slot
+
+func _get_accessory_part_slot(marker: PoseMarker) -> BodyPartSlot:
+	if marker == null or marker.accessory_part_slot == null:
+		return null
+	var slot := marker.accessory_part_slot
+	if not is_instance_valid(slot):
+		return null
+	return slot
+
+func _get_primary_accessory_part_slot() -> BodyPartSlot:
+	if not pose_controller:
+		return null
+	return _get_accessory_part_slot(pose_controller.get_primary_marker())
 
 func _get_primary_body_part_slot() -> BodyPartSlot:
 	if not pose_controller:
@@ -277,7 +351,8 @@ func _on_sprite_offset_changed(_value: float) -> void:
 	var slot := _get_primary_body_part_slot()
 	if slot == null:
 		return
-	slot.offset = Vector2(sprite_offset_x.value, sprite_offset_y.value)
+	var values := _read_slot_controls_from_ui(sprite_offset_x, sprite_offset_y, sprite_scale_x, sprite_scale_y, sprite_rot_spin)
+	slot.offset = values.offset
 	_auto_key_body_part_slot(slot)
 
 func _on_sprite_scale_changed(_value: float) -> void:
@@ -286,7 +361,8 @@ func _on_sprite_scale_changed(_value: float) -> void:
 	var slot := _get_primary_body_part_slot()
 	if slot == null:
 		return
-	slot.slot_scale = Vector2(sprite_scale_x.value, sprite_scale_y.value)
+	var values := _read_slot_controls_from_ui(sprite_offset_x, sprite_offset_y, sprite_scale_x, sprite_scale_y, sprite_rot_spin)
+	slot.slot_scale = values.slot_scale
 	_auto_key_body_part_slot(slot)
 
 func _on_sprite_rot_changed(value: float) -> void:
@@ -297,6 +373,63 @@ func _on_sprite_rot_changed(value: float) -> void:
 		return
 	slot.slot_rotation_degrees = value
 	_auto_key_body_part_slot(slot)
+
+func _on_accessory_toggled(enabled: bool) -> void:
+	if _updating_detail:
+		return
+	var slot := _get_primary_accessory_part_slot()
+	if slot == null:
+		return
+	slot.visible = enabled
+	_sync_accessory_sprite_ui(pose_controller.get_primary_marker() if pose_controller else null)
+	_auto_key_body_part_slot(slot)
+
+func _on_accessory_offset_changed(_value: float) -> void:
+	if _updating_detail:
+		return
+	var slot := _get_primary_accessory_part_slot()
+	if slot == null:
+		return
+	var values := _read_slot_controls_from_ui(accessory_offset_x, accessory_offset_y, accessory_scale_x, accessory_scale_y, accessory_rot_spin)
+	slot.offset = values.offset
+	_auto_key_body_part_slot(slot)
+
+func _on_accessory_scale_changed(_value: float) -> void:
+	if _updating_detail:
+		return
+	var slot := _get_primary_accessory_part_slot()
+	if slot == null:
+		return
+	var values := _read_slot_controls_from_ui(accessory_offset_x, accessory_offset_y, accessory_scale_x, accessory_scale_y, accessory_rot_spin)
+	slot.slot_scale = values.slot_scale
+	_auto_key_body_part_slot(slot)
+
+func _on_accessory_rot_changed(value: float) -> void:
+	if _updating_detail:
+		return
+	var slot := _get_primary_accessory_part_slot()
+	if slot == null:
+		return
+	slot.slot_rotation_degrees = value
+	_auto_key_body_part_slot(slot)
+
+func _on_accessory_preview_gui_input(event: InputEvent) -> void:
+	if not event is InputEventMouseButton:
+		return
+	var mouse_event := event as InputEventMouseButton
+	if mouse_event.button_index != MOUSE_BUTTON_LEFT or not mouse_event.pressed:
+		return
+	_open_accessory_swap_dialog()
+	get_viewport().set_input_as_handled()
+
+func _open_accessory_swap_dialog() -> void:
+	if not pose_controller:
+		return
+	var primary := pose_controller.get_primary_marker()
+	if not primary or not primary.accessory_part_slot:
+		return
+	_swap_target_slot = primary.accessory_part_slot
+	part_sprite_file_dialog.popup_centered()
 
 func _on_sprite_preview_gui_input(event: InputEvent) -> void:
 	if not event is InputEventMouseButton:

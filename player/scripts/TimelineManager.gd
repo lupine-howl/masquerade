@@ -294,6 +294,7 @@ func key_body_part_slot(anim_name: String, slot: BodyPartSlot) -> void:
 		_key_property_at_current_step(anim_name, slot, ":offset", slot.offset)
 		_key_property_at_current_step(anim_name, slot, ":slot_scale", slot.slot_scale)
 		_key_property_at_current_step(anim_name, slot, ":slot_rotation_degrees", slot.slot_rotation_degrees)
+		_key_property_at_current_step(anim_name, slot, ":visible", slot.visible)
 	current_step = previous_step
 
 ## Keys path offset relative to an optional PathAnchor (body trajectory for climbs, etc.).

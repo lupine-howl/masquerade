@@ -39,7 +39,7 @@
 [ext_resource type="Script" uid="uid://cns3xkrq4cwa4" path="res://player/scripts/SyncedBone2D.gd" id="32_gswnw"]
 [ext_resource type="Script" uid="uid://cu4xh4ryvnh24" path="res://player/scripts/PlayerStateMachine.gd" id="33_jd2rm"]
 [ext_resource type="Script" uid="uid://bc7ucmt1gfah4" path="res://player/scripts/GroundState.gd" id="34_q28gw"]
-[ext_resource type="Animation" uid="uid://dfid8t6cirqx7" path="res://ledge_climb.res" id="35_237xx"]
+[ext_resource type="Animation" path="res://ledge_climb.res" id="35_237xx"]
 [ext_resource type="Script" uid="uid://bbr87tj0bptcu" path="res://player/scripts/AirState.gd" id="35_q28gw"]
 [ext_resource type="Script" uid="uid://kyiyjgxc6kth" path="res://player/scripts/DashState.gd" id="36_ge24q"]
 [ext_resource type="Script" uid="uid://ddqwus5kaxhr7" path="res://player/scripts/RollState.gd" id="37_pnw6m"]
@@ -56,7 +56,7 @@
 [ext_resource type="Script" uid="uid://ur6st2bilayr" path="res://player/scripts/HardAngularLimitJoint2D.gd" id="47_hardpin"]
 [ext_resource type="Script" uid="uid://b2nohj542abak" path="res://player/scripts/PathAnchor.gd" id="48_pathanchor"]
 [ext_resource type="Script" uid="uid://b0j3ljvo8k1l0" path="res://player/scripts/PathGuideMarker.gd" id="49_pathguide"]
-[ext_resource type="Script" path="res://player/scripts/BodyPartSlot.gd" id="50_bodypart"]
+[ext_resource type="Script" uid="uid://btsosdvyjpf17" path="res://player/scripts/BodyPartSlot.gd" id="50_bodypart"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mmwog"]
 bg_color = Color(0.6, 0.6, 0.6, 0)
@@ -1030,10 +1030,10 @@ theme_override_constants/separation = 8
 unique_name_in_owner = true
 custom_minimum_size = Vector2(80, 80)
 layout_mode = 2
+tooltip_text = "Click to swap sprite"
 mouse_filter = 0
 expand_mode = 1
 stretch_mode = 5
-tooltip_text = "Click to swap sprite"
 
 [node name="SpriteSlotControls" type="VBoxContainer" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/PosePartPanel/ContentRow/Panel/MarginContainer2/PartInfo" unique_id=884210360]
 unique_name_in_owner = true
@@ -1111,6 +1111,120 @@ theme_override_font_sizes/font_size = 11
 text = "Rot°"
 
 [node name="SpriteRotSpin" type="SpinBox" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/PosePartPanel/ContentRow/Panel/MarginContainer2/PartInfo/SpriteSlotControls/SpriteRotRow" unique_id=884210371]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(56, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = -360.0
+max_value = 360.0
+step = 0.1
+alignment = 1
+
+[node name="AccessorySection" type="VBoxContainer" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/PosePartPanel/ContentRow/Panel/MarginContainer2/PartInfo" unique_id=884210390]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="AccessoryToggleRow" type="HBoxContainer" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/PosePartPanel/ContentRow/Panel/MarginContainer2/PartInfo/AccessorySection" unique_id=884210391]
+layout_mode = 2
+
+[node name="AccessoryCheck" type="CheckBox" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/PosePartPanel/ContentRow/Panel/MarginContainer2/PartInfo/AccessorySection/AccessoryToggleRow" unique_id=884210392]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 0
+theme_override_font_sizes/font_size = 11
+text = "Accessory"
+
+[node name="AccessoryPreviewRow" type="HBoxContainer" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/PosePartPanel/ContentRow/Panel/MarginContainer2/PartInfo/AccessorySection" unique_id=884210393]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="AccessorySpritePreview" type="TextureRect" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/PosePartPanel/ContentRow/Panel/MarginContainer2/PartInfo/AccessorySection/AccessoryPreviewRow" unique_id=884210394]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+tooltip_text = "Click to swap accessory sprite"
+mouse_filter = 0
+expand_mode = 1
+stretch_mode = 5
+
+[node name="AccessorySlotControls" type="VBoxContainer" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/PosePartPanel/ContentRow/Panel/MarginContainer2/PartInfo/AccessorySection" unique_id=884210395]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="AccessoryOffsetRow" type="HBoxContainer" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/PosePartPanel/ContentRow/Panel/MarginContainer2/PartInfo/AccessorySection/AccessorySlotControls" unique_id=884210396]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Label" type="Label" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/PosePartPanel/ContentRow/Panel/MarginContainer2/PartInfo/AccessorySection/AccessorySlotControls/AccessoryOffsetRow" unique_id=884210397]
+custom_minimum_size = Vector2(40, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
+text = "Offset"
+
+[node name="AccessoryOffsetX" type="SpinBox" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/PosePartPanel/ContentRow/Panel/MarginContainer2/PartInfo/AccessorySection/AccessorySlotControls/AccessoryOffsetRow" unique_id=884210398]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(56, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = -500.0
+max_value = 500.0
+step = 0.1
+alignment = 1
+
+[node name="AccessoryOffsetY" type="SpinBox" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/PosePartPanel/ContentRow/Panel/MarginContainer2/PartInfo/AccessorySection/AccessorySlotControls/AccessoryOffsetRow" unique_id=884210399]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(56, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = -500.0
+max_value = 500.0
+step = 0.1
+alignment = 1
+
+[node name="AccessoryScaleRow" type="HBoxContainer" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/PosePartPanel/ContentRow/Panel/MarginContainer2/PartInfo/AccessorySection/AccessorySlotControls" unique_id=884210400]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Label" type="Label" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/PosePartPanel/ContentRow/Panel/MarginContainer2/PartInfo/AccessorySection/AccessorySlotControls/AccessoryScaleRow" unique_id=884210401]
+custom_minimum_size = Vector2(40, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
+text = "Scale"
+
+[node name="AccessoryScaleX" type="SpinBox" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/PosePartPanel/ContentRow/Panel/MarginContainer2/PartInfo/AccessorySection/AccessorySlotControls/AccessoryScaleRow" unique_id=884210402]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(56, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = -5.0
+max_value = 5.0
+step = 0.01
+alignment = 1
+
+[node name="AccessoryScaleY" type="SpinBox" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/PosePartPanel/ContentRow/Panel/MarginContainer2/PartInfo/AccessorySection/AccessorySlotControls/AccessoryScaleRow" unique_id=884210403]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(56, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = -5.0
+max_value = 5.0
+step = 0.01
+alignment = 1
+
+[node name="AccessoryRotRow" type="HBoxContainer" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/PosePartPanel/ContentRow/Panel/MarginContainer2/PartInfo/AccessorySection/AccessorySlotControls" unique_id=884210404]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Label" type="Label" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/PosePartPanel/ContentRow/Panel/MarginContainer2/PartInfo/AccessorySection/AccessorySlotControls/AccessoryRotRow" unique_id=884210405]
+custom_minimum_size = Vector2(40, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
+text = "Rot°"
+
+[node name="AccessoryRotSpin" type="SpinBox" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/PosePartPanel/ContentRow/Panel/MarginContainer2/PartInfo/AccessorySection/AccessorySlotControls/AccessoryRotRow" unique_id=884210406]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(56, 0)
 layout_mode = 2
@@ -1224,11 +1338,10 @@ flat = true
 
 [node name="PartSpriteFileDialog" type="FileDialog" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/PosePartPanel" unique_id=884210352]
 unique_name_in_owner = true
-title = "Swap Body Part Sprite"
+title = "Open a File"
 size = Vector2i(800, 600)
 ok_button_text = "Open"
 file_mode = 0
-access = 0
 filters = PackedStringArray("*.png, *.jpg, *.jpeg, *.webp")
 
 [node name="SectionSep" type="HSeparator" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox" unique_id=519141311]
@@ -1784,13 +1897,14 @@ min_radius = 100.0
 max_radius = 100.0
 radius_constraint_parent = NodePath("../../../Ragdoll/Root")
 
-[node name="Torso" parent="PlayerBody/FacingPivot/PoseController" unique_id=1164425788 node_paths=PackedStringArray("slave", "pivot") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
+[node name="Torso" parent="PlayerBody/FacingPivot/PoseController" unique_id=1164425788 node_paths=PackedStringArray("slave", "body_part_slot", "accessory_part_slot", "pivot") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
 visible = false
 position = Vector2(-1.7003953, -101.07639)
 slave = NodePath("../../../Ragdoll/Torso/Torso2_Physics")
+body_part_slot = NodePath("../../Armature/BodySprites/Torso/Torso")
+accessory_part_slot = NodePath("../../Armature/BodySprites/Torso/Jetpack")
 pivot = NodePath("../..")
 is_controlled = false
-hide_in_pose_ui = true
 
 [node name="Root" parent="PlayerBody/FacingPivot/PoseController" unique_id=219274694 node_paths=PackedStringArray("slave", "pivot", "x_constraint_parent", "radius_drag_partner") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
 position = Vector2(5.2989073, 2.1379883)
@@ -2012,15 +2126,6 @@ position_body = NodePath("../../../../../../Ragdoll/Torso/UpperAbdomen_Physics")
 inverted_scale_x_rotation_compensation = 180.0
 metadata/_custom_type_script = "uid://cns3xkrq4cwa4"
 
-[node name="Torso" type="Sprite2D" parent="PlayerBody/FacingPivot/Armature/Skeleton2D/Pelvis/Abdomen/Torso" unique_id=231744044]
-z_index = 3
-position = Vector2(1.1920929e-06, -0.0013122559)
-scale = Vector2(0.4, 0.4)
-texture = ExtResource("30_b8hi5")
-offset = Vector2(30.000439, -77.48464)
-region_enabled = true
-region_rect = Rect2(490, 316, 160, 194)
-
 [node name="Shoulders" type="Bone2D" parent="PlayerBody/FacingPivot/Armature/Skeleton2D/Pelvis/Abdomen/Torso" unique_id=640968521]
 position = Vector2(0, -28.999832)
 rest = Transform2D(1, 0, 0, 1, 0, -40)
@@ -2166,15 +2271,6 @@ offset = Vector2(9, -60)
 region_enabled = true
 region_rect = Rect2(53, 780, 108, 134)
 
-[node name="Jetpack" type="Sprite2D" parent="PlayerBody/FacingPivot/Armature/Skeleton2D/Pelvis/Abdomen/Torso" unique_id=688744130]
-visible = false
-z_index = 1
-scale = Vector2(0.4, 0.4)
-texture = ExtResource("30_b8hi5")
-offset = Vector2(-70.00108, -59.994186)
-region_enabled = true
-region_rect = Rect2(394, 380, 75, 214)
-
 [node name="Thigh_Back" type="Bone2D" parent="PlayerBody/FacingPivot/Armature/Skeleton2D/Pelvis" unique_id=641763800 node_paths=PackedStringArray("physics_body")]
 rotation = 3.1415925
 scale = Vector2(0.99997056, 0.99997056)
@@ -2282,7 +2378,7 @@ flip_h = true
 region_enabled = true
 region_rect = Rect2(647, 862, 151, 77)
 
-[node name="BodySprites" type="Node" parent="PlayerBody/FacingPivot/Armature" unique_id=1508687099]
+[node name="BodySprites" type="Node2D" parent="PlayerBody/FacingPivot/Armature" unique_id=1665226624]
 
 [node name="Head" type="Sprite2D" parent="PlayerBody/FacingPivot/Armature/BodySprites" unique_id=2024693180 node_paths=PackedStringArray("follow_bone")]
 z_index = 1
@@ -2294,6 +2390,29 @@ script = ExtResource("50_bodypart")
 follow_bone = NodePath("../../Skeleton2D/Pelvis/Abdomen/Torso/Shoulders/Neck/Head")
 slot_position = Vector2(7.00021, 5.998169)
 slot_scale = Vector2(0.32, 0.32)
+
+[node name="Torso" type="Node" parent="PlayerBody/FacingPivot/Armature/BodySprites" unique_id=884210380]
+
+[node name="Torso" type="Sprite2D" parent="PlayerBody/FacingPivot/Armature/BodySprites/Torso" unique_id=231744044 node_paths=PackedStringArray("follow_bone")]
+z_index = 3
+texture = ExtResource("30_b8hi5")
+offset = Vector2(30.000439, -77.48464)
+region_enabled = true
+region_rect = Rect2(490, 316, 160, 194)
+script = ExtResource("50_bodypart")
+follow_bone = NodePath("../../../Skeleton2D/Pelvis/Abdomen/Torso")
+slot_scale = Vector2(0.4, 0.4)
+
+[node name="Jetpack" type="Sprite2D" parent="PlayerBody/FacingPivot/Armature/BodySprites/Torso" unique_id=688744130 node_paths=PackedStringArray("follow_bone")]
+visible = false
+z_index = 1
+texture = ExtResource("30_b8hi5")
+offset = Vector2(-70.00108, -59.994186)
+region_enabled = true
+region_rect = Rect2(394, 380, 75, 214)
+script = ExtResource("50_bodypart")
+follow_bone = NodePath("../../../Skeleton2D/Pelvis/Abdomen/Torso")
+slot_scale = Vector2(0.4, 0.4)
 
 [node name="Ragdoll" type="Node2D" parent="PlayerBody" unique_id=35418647 node_paths=PackedStringArray("skeleton_node", "pivot")]
 z_index = 4

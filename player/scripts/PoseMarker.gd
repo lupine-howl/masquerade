@@ -9,6 +9,7 @@ signal dragged_rotation(delta_angle: float)
 
 @export var slave: RigidBody2D ## RigidBody2D driven by this marker when controlled. The marker snaps to the slave when uncontrolled.
 @export var body_part_slot: BodyPartSlot ## Skeleton sprite shown in the part detail panel and driven by follow_bone.
+@export var accessory_part_slot: BodyPartSlot ## Optional accessory layer on the same bone (e.g. jetpack on torso).
 @export var sibling: PoseMarker ## Optional paired marker used by sibling-swap posing tools.
 @export var pivot: Node2D ## Facing pivot (usually the sprite root). Used for flip detection and authored rotation under a mirrored hierarchy.
 @export var invert_rotation_on_flip: bool ## When the facing pivot is flipped (scale.x < 0), apply flip_rotation_compensation_deg to the slave so limb rotation stays visually correct.
