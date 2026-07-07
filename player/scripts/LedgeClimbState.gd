@@ -74,8 +74,8 @@ func exit() -> void:
 
 func get_total_duration() -> float:
 	if (
-		PlayerAnimator.animation_has_path_guide_keys(player.animator, CLIMB_ANIM)
-		and player.animator.has_animation(CLIMB_ANIM)
+		player.animator.has_animation(CLIMB_ANIM)
+		and PlayerAnimator.animation_should_path_body_drive(player.animator, CLIMB_ANIM)
 	):
 		return player.animator.get_animation(CLIMB_ANIM).length
 	return vertical_duration + forward_duration

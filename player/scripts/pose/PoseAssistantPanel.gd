@@ -3,6 +3,7 @@ extends VBoxContainer
 
 signal grounded_toggled(enabled: bool)
 signal animation_created(anim_name: String)
+signal player_drive_toggled(enabled: bool)
 
 const RESET_ANIM_NAME := "RESET"
 
@@ -16,6 +17,7 @@ const RESET_ANIM_NAME := "RESET"
 @onready var ctrl_legs_check: CheckBox = %CtrlLegsCheck
 @onready var ctrl_head_check: CheckBox = %CtrlHeadCheck
 @onready var ctrl_root_check: CheckBox = %CtrlRootCheck
+@onready var ctrl_player_check: CheckBox = %CtrlPlayerCheck
 @onready var grounded_check: CheckBox = %GroundedCheck
 @onready var btn_reset: Button = %BtnReset
 @onready var btn_norm_horiz: Button = %BtnNormHoriz
@@ -39,6 +41,7 @@ var _syncing_ragdoll: bool = false
 var _ctrl_checks: Dictionary = {}
 var _grounded_checks: Array[CheckBox] = []
 var _loop_checks: Array[CheckBox] = []
+var _player_drive_checks: Array[CheckBox] = []
 var _export_buttons: Array[Button] = []
 
 func setup(
@@ -70,6 +73,7 @@ func _ready() -> void:
 	_register_ctrl_check("legs", ctrl_legs_check)
 	_register_ctrl_check("head", ctrl_head_check)
 	_register_ctrl_check("root", ctrl_root_check)
+	_register_player_drive_check(ctrl_player_check)
 	_register_grounded_check(grounded_check)
 	_register_export_button(btn_export)
 	_register_loop_check(loop_check)
@@ -87,6 +91,7 @@ func register_timeline_mirrors(
 	ctrl_legs: CheckBox,
 	ctrl_head: CheckBox,
 	ctrl_root: CheckBox,
+	ctrl_player: CheckBox,
 	grounded: CheckBox,
 	btn_export_mirror: Button,
 	loop_check_mirror: CheckBox,
@@ -102,6 +107,7 @@ func register_timeline_mirrors(
 	_register_ctrl_check("legs", ctrl_legs)
 	_register_ctrl_check("head", ctrl_head)
 	_register_ctrl_check("root", ctrl_root)
+	_register_player_drive_check(ctrl_player)
 	_register_grounded_check(grounded)
 	_register_export_button(btn_export_mirror)
 	_register_loop_check(loop_check_mirror)
@@ -138,6 +144,12 @@ func _register_loop_check(check: CheckBox) -> void:
 	_loop_checks.append(check)
 	check.toggled.connect(_on_loop_toggled)
 
+func _register_player_drive_check(check: CheckBox) -> void:
+	if check in _player_drive_checks:
+		return
+	_player_drive_checks.append(check)
+	check.toggled.connect(_on_player_drive_toggled)
+
 func is_grounded() -> bool:
 	return grounded_check.button_pressed
 
@@ -155,6 +167,9 @@ func sync_title_ui() -> void:
 	_syncing_timing = true
 	for check in _loop_checks:
 		check.set_pressed_no_signal(loop_enabled)
+	var player_drive_enabled := _timeline.get_path_body_drive(anim_name) if _timeline else false
+	for check in _player_drive_checks:
+		check.set_pressed_no_signal(player_drive_enabled)
 	_syncing_timing = false
 
 func sync_ragdoll_toggles() -> void:
@@ -205,6 +220,21 @@ func _on_loop_toggled(enabled: bool) -> void:
 	for check in _loop_checks:
 		check.set_pressed_no_signal(enabled)
 	_syncing_timing = false
+
+func _on_player_drive_toggled(enabled: bool) -> void:
+	if _syncing_timing or _get_current_animation.is_null() or not _timeline:
+		return
+	var anim_name: String = _get_current_animation.call()
+	if anim_name == "":
+		return
+	_timeline.key_path_body_drive(anim_name, enabled)
+	_syncing_timing = true
+	for check in _player_drive_checks:
+		check.set_pressed_no_signal(enabled)
+	_syncing_timing = false
+	player_drive_toggled.emit(enabled)
+	if not _on_refresh_visuals.is_null():
+		_on_refresh_visuals.call()
 
 func _on_ctrl_group_toggled(group: String, enabled: bool) -> void:
 	if _syncing_ragdoll or not _pose_controller:

@@ -71,6 +71,7 @@ func _setup_panels() -> void:
 			timeline_panel.tl_ctrl_legs,
 			timeline_panel.tl_ctrl_head,
 			timeline_panel.tl_ctrl_root,
+			timeline_panel.tl_ctrl_player,
 			timeline_panel.tl_grounded,
 			timeline_panel.tl_btn_export,
 			timeline_panel.tl_loop_check,
@@ -98,6 +99,7 @@ func _wire_signals() -> void:
 
 	if assistant_panel:
 		assistant_panel.animation_created.connect(_on_animation_changed)
+		assistant_panel.player_drive_toggled.connect(_on_player_drive_toggled)
 
 	if timeline_panel and mode_bar:
 		_set_timeline_dock_visible(mode_bar.is_posing())
@@ -135,13 +137,25 @@ func key_all_markers() -> void:
 func key_path_guide(guide: PathGuideMarker) -> void:
 	if not timeline or not part_panel:
 		return
+	if not is_path_body_drive_enabled():
+		return
 	var anim_name := get_current_animation()
 	if anim_name == "":
 		return
 	timeline.key_path_guide_pose(anim_name, guide)
 	refresh_timeline_visuals()
 
+func is_path_body_drive_enabled() -> bool:
+	if not timeline:
+		return false
+	var anim_name := get_current_animation()
+	if anim_name == "":
+		return false
+	return timeline.is_path_body_drive_authoring_enabled(anim_name)
+
 func prepare_path_guides_for_authoring() -> void:
+	if not is_path_body_drive_enabled():
+		return
 	if not pose_controller or not pose_controller.player:
 		return
 	for guide in PathGuideMarker.gather_under(pose_controller.player):
@@ -228,8 +242,17 @@ func _on_animation_changed(anim_name: String) -> void:
 	timeline.seek_step(0, anim_name)
 	refresh_timeline_visuals()
 	on_step_navigated()
-	if anim_name == "ledge_climb" and is_posing():
+	_sync_path_guide_authoring()
+
+func _on_player_drive_toggled(_enabled: bool) -> void:
+	_sync_path_guide_authoring()
+	refresh_timeline_visuals()
+
+func _sync_path_guide_authoring() -> void:
+	if is_posing() and is_path_body_drive_enabled():
 		prepare_path_guides_for_authoring()
+	for guide in PathGuideMarker.gather_under(pose_controller.player) if pose_controller and pose_controller.player else []:
+		guide.visible = guide.should_show_gizmo()
 
 func _on_duration_changed(duration: float) -> void:
 	timeline_panel.build_step_grid(duration)
@@ -278,5 +301,4 @@ func _apply_posing_mode(posing: bool) -> void:
 			timeline_panel.sync_timing_ui(playing_anim)
 			_last_sync_anim = playing_anim
 			_last_sync_grid_len = anim.length
-	if posing and get_current_animation() == "ledge_climb":
-		prepare_path_guides_for_authoring()
+	_sync_path_guide_authoring()

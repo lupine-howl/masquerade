@@ -3,6 +3,9 @@ class_name PlayerAnimator
 
 signal path_body_finished(anim_name: String)
 
+## Animation binding target for per-clip player body drive toggles (frame 0 key).
+@export var path_body_drive_enabled := false
+
 var current_anim: String
 
 var _player: Player
@@ -54,7 +57,7 @@ func _on_animation_finished(anim_name: StringName) -> void:
 func _try_begin_path_body_drive(anim_name: String) -> void:
 	if _player == null or _player.is_posing:
 		return
-	if not animation_has_path_guide_keys(self, anim_name):
+	if not animation_should_path_body_drive(self, anim_name):
 		end_path_body_drive()
 		return
 	var guide := PathGuideMarker.get_drive_body_guide(_player)
@@ -91,6 +94,48 @@ static func animation_has_path_guide_keys(animator: AnimationPlayer, anim_name: 
 			if animation.track_get_key_count(i) > 0:
 				return true
 	return false
+
+static func animation_should_path_body_drive(animator: AnimationPlayer, anim_name: String) -> bool:
+	if not has_path_body_drive_key(animator, anim_name):
+		return false
+	if not read_path_body_drive_key(animator, anim_name):
+		return false
+	return animation_has_path_guide_keys(animator, anim_name)
+
+static func read_path_body_drive_key(animator: AnimationPlayer, anim_name: String) -> bool:
+	if not animator.has_animation(anim_name):
+		return false
+	var animation := animator.get_animation(anim_name)
+	var track_idx := find_path_body_drive_track(animator, animation)
+	if track_idx == -1:
+		return false
+	var key_idx := animation.track_find_key(track_idx, 0.0, Animation.FIND_MODE_NEAREST)
+	if key_idx == -1 or absf(animation.track_get_key_time(track_idx, key_idx)) > 0.01:
+		return false
+	return bool(animation.track_get_key_value(track_idx, key_idx))
+
+static func has_path_body_drive_key(animator: AnimationPlayer, anim_name: String) -> bool:
+	if not animator.has_animation(anim_name):
+		return false
+	var animation := animator.get_animation(anim_name)
+	var track_idx := find_path_body_drive_track(animator, animation)
+	if track_idx == -1:
+		return false
+	var key_idx := animation.track_find_key(track_idx, 0.0, Animation.FIND_MODE_NEAREST)
+	if key_idx == -1:
+		return false
+	return absf(animation.track_get_key_time(track_idx, key_idx)) <= 0.01
+
+static func find_path_body_drive_track(animator: AnimationPlayer, animation: Animation) -> int:
+	var root := animator.get_node(animator.root_node)
+	var expected := str(root.get_path_to(animator)) + ":path_body_drive_enabled"
+	var track_idx := animation.find_track(expected, Animation.TYPE_VALUE)
+	if track_idx != -1:
+		return track_idx
+	for i in animation.get_track_count():
+		if str(animation.track_get_path(i)).ends_with(":path_body_drive_enabled"):
+			return i
+	return -1
 
 func read_speed_scale_key(anim_name: String) -> float:
 	if not has_animation(anim_name):

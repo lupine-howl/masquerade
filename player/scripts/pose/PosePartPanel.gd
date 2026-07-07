@@ -147,7 +147,7 @@ func key_all_markers() -> void:
 	var anim_name: String = _get_anim_name.call()
 	for m in pose_controller.all_markers:
 		timeline.key_marker_pose(anim_name, m)
-	if pose_controller.player:
+	if pose_controller.player and timeline.is_path_body_drive_authoring_enabled(anim_name):
 		for guide in PathGuideMarker.gather_under(pose_controller.player):
 			timeline.key_path_guide_pose(anim_name, guide)
 	_refresh_visuals()

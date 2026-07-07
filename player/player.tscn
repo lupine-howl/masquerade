@@ -1249,6 +1249,13 @@ focus_mode = 0
 theme_override_font_sizes/font_size = 10
 text = "Ctrl Root"
 
+[node name="CtrlPlayerCheck" type="CheckBox" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/AnimSection/AnimMainColumn/MarginContainer2/PoseAssistantPanel/RagdollRow" unique_id=-447676212]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 0
+theme_override_font_sizes/font_size = 10
+text = "Player"
+
 [node name="GroundedCheck" type="CheckBox" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/AnimSection/AnimMainColumn/MarginContainer2/PoseAssistantPanel/RagdollRow" unique_id=-447676236]
 unique_name_in_owner = true
 layout_mode = 2
@@ -1501,6 +1508,13 @@ layout_mode = 2
 focus_mode = 0
 theme_override_font_sizes/font_size = 10
 text = "Root"
+
+[node name="TlCtrlPlayer" type="CheckBox" parent="PoseHUD/PoseTimelineDock/MarginContainer/PoseTimelinePanel/HelpersCenter/HelpersRow" unique_id=-447676240]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 0
+theme_override_font_sizes/font_size = 10
+text = "Player"
 
 [node name="TlGrounded" type="CheckBox" parent="PoseHUD/PoseTimelineDock/MarginContainer/PoseTimelinePanel/HelpersCenter/HelpersRow" unique_id=-447676248]
 unique_name_in_owner = true

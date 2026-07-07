@@ -265,6 +265,8 @@ func key_marker_pose(anim_name: String, marker: PoseMarker) -> void:
 func key_path_guide_pose(anim_name: String, guide: PathGuideMarker) -> void:
 	if not guide:
 		return
+	if not is_path_body_drive_authoring_enabled(anim_name):
+		return
 	var previous_step := current_step
 	for step in get_key_target_steps():
 		current_step = step
@@ -438,6 +440,48 @@ func key_speed_scale(anim_name: String, speed_value: float) -> void:
 		animation.track_insert_key(track_idx, key_time, speed_value)
 
 	_persist_animation(anim_name)
+
+## Keyframes player body drive on frame 0 of the given animation.
+func key_path_body_drive(anim_name: String, enabled: bool) -> void:
+	if not anim_player or not anim_player.has_animation(anim_name):
+		return
+
+	var animation := anim_player.get_animation(anim_name)
+	var track_idx := _find_path_body_drive_track(animation)
+	if track_idx == -1:
+		track_idx = animation.add_track(Animation.TYPE_VALUE)
+		animation.track_set_path(track_idx, _path_body_drive_track_path())
+		animation.track_set_interpolation_type(track_idx, Animation.INTERPOLATION_NEAREST)
+
+	var key_time := 0.0
+	var key_idx := animation.track_find_key(track_idx, key_time, Animation.FIND_MODE_NEAREST)
+	if key_idx != -1 and abs(animation.track_get_key_time(track_idx, key_idx) - key_time) <= 0.01:
+		animation.track_set_key_value(track_idx, key_idx, enabled)
+	else:
+		animation.track_insert_key(track_idx, key_time, enabled)
+
+	_persist_animation(anim_name)
+
+func get_path_body_drive(anim_name: String) -> bool:
+	return is_path_body_drive_authoring_enabled(anim_name)
+
+func is_path_body_drive_authoring_enabled(anim_name: String) -> bool:
+	if not anim_player or not anim_player.has_animation(anim_name):
+		return false
+	if PlayerAnimator.has_path_body_drive_key(anim_player, anim_name):
+		return PlayerAnimator.read_path_body_drive_key(anim_player, anim_name)
+	return false
+
+func _path_body_drive_track_path() -> NodePath:
+	if not anim_player:
+		return NodePath()
+	var root_node := anim_player.get_node(anim_player.root_node)
+	return NodePath(str(root_node.get_path_to(anim_player)) + ":path_body_drive_enabled")
+
+func _find_path_body_drive_track(animation: Animation) -> int:
+	if not anim_player:
+		return -1
+	return PlayerAnimator.find_path_body_drive_track(anim_player, animation)
 
 func get_speed_scale(anim_name: String) -> float:
 	if not anim_player or not anim_player.has_animation(anim_name):

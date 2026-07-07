@@ -35,6 +35,7 @@ const PLAYBACK_BTN_SIZE := Vector2(40, 32)
 @onready var tl_ctrl_legs: CheckBox = %TlCtrlLegs
 @onready var tl_ctrl_head: CheckBox = %TlCtrlHead
 @onready var tl_ctrl_root: CheckBox = %TlCtrlRoot
+@onready var tl_ctrl_player: CheckBox = %TlCtrlPlayer
 @onready var tl_grounded: CheckBox = %TlGrounded
 @onready var tl_btn_pose_reset: Button = %TlBtnPoseReset
 @onready var tl_btn_norm_horiz: Button = %TlBtnNormHoriz
@@ -120,7 +121,7 @@ func _style_key_all_button() -> void:
 
 func _style_helper_row() -> void:
 	const HELPER_FONT := 10
-	for check in [tl_ctrl_all, tl_ctrl_arms, tl_ctrl_legs, tl_ctrl_head, tl_ctrl_root, tl_grounded]:
+	for check in [tl_ctrl_all, tl_ctrl_arms, tl_ctrl_legs, tl_ctrl_head, tl_ctrl_root, tl_ctrl_player, tl_grounded]:
 		check.focus_mode = Control.FOCUS_NONE
 		check.add_theme_font_size_override("font_size", HELPER_FONT)
 	for btn in [tl_btn_pose_reset, tl_btn_norm_horiz, tl_btn_hang, tl_btn_fall, tl_btn_clear, tl_btn_swap_all]:

@@ -42,7 +42,20 @@ func is_posing() -> bool:
 	return _player != null and _player.is_posing
 
 func should_show_gizmo() -> bool:
-	return is_dev_mode and is_posing()
+	if not is_dev_mode or not is_posing():
+		return false
+	return _is_player_drive_authoring_enabled()
+
+func _is_player_drive_authoring_enabled() -> bool:
+	if _player == null:
+		return false
+	var pose_controller := _player.sprite_pivot.get_node_or_null("PoseController") as PoseController
+	if pose_controller == null or pose_controller.pose_hud == null or pose_controller.pose_hud.timeline == null:
+		return false
+	var anim_name := pose_controller.pose_hud.get_current_animation()
+	if anim_name == "":
+		return false
+	return pose_controller.pose_hud.timeline.is_path_body_drive_authoring_enabled(anim_name)
 
 func get_climb_offset(facing: int) -> Vector2:
 	return Vector2(position.x * facing, position.y)
@@ -76,8 +89,9 @@ func _process(_delta: float) -> void:
 	visible = should_show_gizmo()
 	queue_redraw()
 	
-func _physics_process(delta: float) -> void:
-	if not player.is_posing: return
+func _physics_process(_delta: float) -> void:
+	if not player or not player.is_posing or not should_show_gizmo():
+		return
 	global_position = follow.global_position
 
 func _draw() -> void:
