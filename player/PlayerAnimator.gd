@@ -7,8 +7,7 @@ var current_anim: String
 
 var _player: Player
 var _path_drive_active := false
-var _path_origin := Vector2.ZERO
-var _path_guide: PathGuideMarker
+var _path_anchor_driver := PathAnchorDriver.new()
 var _path_drive_anim := ""
 var _disabled_collision_for_path := false
 
@@ -21,29 +20,25 @@ func is_path_body_driving() -> bool:
 	return _path_drive_active
 
 func physics_update_path_body() -> void:
-	if not _path_drive_active or _path_guide == null or _player == null:
+	if not _path_drive_active or _player == null:
 		return
 	_player.velocity = Vector2.ZERO
 	sync_path_body_position()
 
 func sync_path_body_position() -> void:
-	if not _path_drive_active or _path_guide == null or _player == null:
-		return
-	_player.global_position = _path_origin + _path_guide.get_climb_offset(_player.facing)
+	_path_anchor_driver.sync_body(_player)
 
 func end_path_body_drive() -> void:
 	if not _path_drive_active:
 		return
 	_path_drive_active = false
-	if _path_guide and _path_guide.anchor:
-		_path_guide.anchor.release_lock()
+	_path_anchor_driver.end()
 	if _disabled_collision_for_path and _player and _player.master_collision_shape:
 		_player.master_collision_shape.disabled = false
 		_disabled_collision_for_path = false
 	if _player:
 		_player.armature.position = Vector2.ZERO
 	_path_drive_anim = ""
-	_path_guide = null
 
 func _on_animation_started(anim_name: StringName) -> void:
 	var anim_name_str := String(anim_name)
@@ -73,7 +68,6 @@ func _try_begin_path_body_drive(anim_name: String) -> void:
 
 	_path_drive_active = true
 	_path_drive_anim = anim_name
-	_path_guide = guide
 
 	_player.velocity = Vector2.ZERO
 	_player.armature.position = Vector2.ZERO
@@ -84,13 +78,7 @@ func _try_begin_path_body_drive(anim_name: String) -> void:
 		_disabled_collision_for_path = true
 
 	seek(0.0, true)
-
-	if _path_guide.anchor:
-		_path_origin = _path_guide.anchor.global_position
-		_path_guide.anchor.lock_at(_path_origin)
-	else:
-		_path_origin = _player.global_position
-
+	_path_anchor_driver.begin(guide, _player)
 	sync_path_body_position()
 
 static func animation_has_path_guide_keys(animator: AnimationPlayer, anim_name: String) -> bool:
