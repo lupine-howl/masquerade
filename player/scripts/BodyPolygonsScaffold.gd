@@ -73,6 +73,7 @@ const _SINGLE_BONE_MAP: Dictionary = {
 @export_group("Polygon scaffold")
 var _fit_polygons_to_skeleton_sprites: bool = false
 
+## Check this box once to fit all child polygons to skeleton reference sprites.
 @export var fit_polygons_to_skeleton_sprites: bool:
 	set(value):
 		_fit_polygons_to_skeleton_sprites = false
@@ -83,9 +84,9 @@ var _fit_polygons_to_skeleton_sprites: bool = false
 
 
 @export_tool_button("Fit polygons to skeleton sprites", "Callable")
-var _fit_polygons_tool_button: Callable:
+var fit_polygons_tool_button: Callable:
 	get:
-		return scaffold_from_reference_sprites
+		return Callable(self, &"scaffold_from_reference_sprites")
 
 
 func scaffold_from_reference_sprites() -> void:

@@ -1,4 +1,4 @@
-﻿[gd_scene format=3 uid="uid://dan4h02iujee1"]
+[gd_scene format=3 uid="uid://cka8v3jxqxas1"]
 
 [ext_resource type="Script" uid="uid://drp2eynrmclma" path="res://player/RainbowModulate.gd" id="1_2uvqg"]
 [ext_resource type="Script" uid="uid://dpj2ed23nxprf" path="res://player/player.gd" id="1_rgyib"]
@@ -29,6 +29,7 @@
 [ext_resource type="Animation" uid="uid://bno8oe15hlcpo" path="res://player/animations/jump_launch.res" id="26_a2xo5"]
 [ext_resource type="Animation" uid="uid://d4bcd3ucqoqxp" path="res://player/animations/jump_land.res" id="26_art4l"]
 [ext_resource type="Animation" uid="uid://bliddtc4hdqmx" path="res://player/animations/run2.res" id="27_55jnj"]
+[ext_resource type="Script" uid="uid://bpk0sbxsx1onv" path="res://player/scripts/BodyPolygonsScaffold.gd" id="28_3dxkp"]
 [ext_resource type="Script" uid="uid://b8j54hiva7jef" path="res://player/DebugHUD.gd" id="28_rptt4"]
 [ext_resource type="Animation" uid="uid://bsdro1idno0hh" path="res://player/animations/run_start.res" id="29_fjxoa"]
 [ext_resource type="Animation" uid="uid://eooei1lf40xa" path="res://fall.res" id="29_n0b8q"]
@@ -58,7 +59,6 @@
 [ext_resource type="Script" uid="uid://b0j3ljvo8k1l0" path="res://player/scripts/PathGuideMarker.gd" id="49_pathguide"]
 [ext_resource type="Script" uid="uid://btsosdvyjpf17" path="res://player/scripts/BodyPartSlot.gd" id="50_bodypart"]
 [ext_resource type="Script" uid="uid://c3npq57fqtwui" path="res://player/scripts/BodyPolygonSlot.gd" id="51_bodypoly"]
-[ext_resource type="Script" path="res://player/scripts/BodyPolygonsScaffold.gd" id="52_polyscaffold"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mmwog"]
 bg_color = Color(0.6, 0.6, 0.6, 0)
@@ -1110,7 +1110,7 @@ theme_override_constants/separation = 4
 custom_minimum_size = Vector2(40, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 11
-text = "RotÂ°"
+text = "Rot°"
 
 [node name="SpriteRotSpin" type="SpinBox" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/PosePartPanel/ContentRow/Panel/MarginContainer2/PartInfo/SpriteSlotControls/SpriteRotRow" unique_id=884210371]
 unique_name_in_owner = true
@@ -1224,7 +1224,7 @@ theme_override_constants/separation = 4
 custom_minimum_size = Vector2(40, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 11
-text = "RotÂ°"
+text = "Rot°"
 
 [node name="AccessoryRotSpin" type="SpinBox" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/PosePartPanel/ContentRow/Panel/MarginContainer2/PartInfo/AccessorySection/AccessorySlotControls/AccessoryRotRow" unique_id=884210406]
 unique_name_in_owner = true
@@ -1279,7 +1279,7 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(72, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 11
-text = "Rot OffsetÂ°"
+text = "Rot Offset°"
 
 [node name="RotOffsetSpin" type="SpinBox" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/PosePartPanel/ContentRow/Panel/MarginContainer2/PartInfo/VBoxContainer/RotOffsetRow" unique_id=884210307]
 unique_name_in_owner = true
@@ -1335,7 +1335,7 @@ text = "Swap with sibling"
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
-text = "â‡†"
+text = "⇆"
 flat = true
 
 [node name="PartSpriteFileDialog" type="FileDialog" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/PosePartPanel" unique_id=884210352]
@@ -1403,7 +1403,7 @@ layout_mode = 2
 tooltip_text = "Save animation to disk"
 focus_mode = 0
 theme_override_font_sizes/font_size = 11
-text = "âžœ]"
+text = "➜]"
 flat = true
 
 [node name="LoopCheck" type="CheckBox" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/AnimSection/AnimMainColumn/MarginContainer2/PoseAssistantPanel/HeaderRow" unique_id=-447676220]
@@ -1528,7 +1528,7 @@ layout_mode = 2
 tooltip_text = "Swap all sibling pairs"
 focus_mode = 0
 theme_override_font_sizes/font_size = 11
-text = "â‡† All"
+text = "⇆ All"
 
 [node name="PoseTimelineDock" type="PanelContainer" parent="PoseHUD" unique_id=339532122]
 anchors_preset = 7
@@ -1579,7 +1579,7 @@ layout_mode = 2
 tooltip_text = "Save animation to disk"
 focus_mode = 0
 theme_override_font_sizes/font_size = 11
-text = "âžœ]"
+text = "➜]"
 flat = true
 
 [node name="TlLoopCheck" type="CheckBox" parent="PoseHUD/PoseTimelineDock/MarginContainer/PoseTimelinePanel/ControlsCenter/ControlsRow" unique_id=-447676257]
@@ -1601,14 +1601,14 @@ unique_name_in_owner = true
 layout_mode = 2
 tooltip_text = "Keyframe all parts"
 focus_mode = 0
-text = "ê„—"
+text = "ꄗ"
 flat = true
 
 [node name="BtnRewind" type="Button" parent="PoseHUD/PoseTimelineDock/MarginContainer/PoseTimelinePanel/ControlsCenter/ControlsRow" unique_id=16692025]
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
-text = "â—"
+text = "◁"
 flat = true
 
 [node name="BtnStop" type="Button" parent="PoseHUD/PoseTimelineDock/MarginContainer/PoseTimelinePanel/ControlsCenter/ControlsRow" unique_id=1325336453]
@@ -1622,7 +1622,7 @@ flat = true
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
-text = "â–·"
+text = "▷"
 flat = true
 
 [node name="RecordCheck" type="CheckBox" parent="PoseHUD/PoseTimelineDock/MarginContainer/PoseTimelinePanel/ControlsCenter/ControlsRow" unique_id=1950183948]
@@ -1671,7 +1671,7 @@ theme_override_font_sizes/font_size = 11
 visible = false
 layout_mode = 2
 focus_mode = 0
-text = "â†º"
+text = "↺"
 flat = true
 
 [node name="GridCenter" type="CenterContainer" parent="PoseHUD/PoseTimelineDock/MarginContainer/PoseTimelinePanel" unique_id=29801080]
@@ -1795,7 +1795,7 @@ layout_mode = 2
 tooltip_text = "Swap all sibling pairs"
 focus_mode = 0
 theme_override_font_sizes/font_size = 10
-text = "â‡† All"
+text = "⇆ All"
 
 [node name="DebugHUD" type="CanvasLayer" parent="." unique_id=730528789]
 offset = Vector2(1130, 0)
@@ -2011,7 +2011,7 @@ follow_rotation_target = NodePath("../../../Ragdoll/Leg_Front/Calf_Front_Physics
 [node name="Eyeline" parent="PlayerBody/FacingPivot/PoseController" unique_id=112503581 node_paths=PackedStringArray("radius_constraint_parent") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
 position = Vector2(196.80748, -138.16428)
 is_controlled = false
-marker_icon = "ðŸ‘ï¸"
+marker_icon = "👁️"
 use_radius_limit = true
 min_radius = 200.0
 max_radius = 200.0
@@ -2612,15 +2612,14 @@ slot_rotation_degrees = 90.0
 slot_scale = Vector2(0.4, 0.4)
 
 [node name="BodyPolygons" type="Node2D" parent="PlayerBody/FacingPivot/Armature" unique_id=756086073]
-visible = false
-script = ExtResource("52_polyscaffold")
+script = ExtResource("28_3dxkp")
 
 [node name="Head" type="Polygon2D" parent="PlayerBody/FacingPivot/Armature/BodyPolygons" unique_id=15263408 node_paths=PackedStringArray("skeleton_root")]
 z_index = 1
 texture = ExtResource("30_b8hi5")
 skeleton = NodePath("../../Skeleton2D")
-polygon = PackedVector2Array(-170.125486623713, 22.8000687311558, 5205.87502537632, 22.8002655034938, 5205.87502878254, 69.3294361082806, -170.125483217488, 69.3292393359426)
-uv = PackedVector2Array(2, 631.19995, 44.000004, 631.19995, 44.000004, 404, 2, 404)
+polygon = PackedVector2Array(-22.918922, -166.70377, 49.718914, -166.70377, 49.718914, -100.14575, -22.918922, -100.14575)
+uv = PackedVector2Array(404, 42.000004, 631.19995, 42.000004, 631.19995, 250.79999, 404, 250.79999)
 bones = ["Pelvis/Abdomen/Torso/Shoulders/Neck/Head", PackedFloat32Array(1, 1, 1, 1)]
 script = ExtResource("51_bodypoly")
 skeleton_root = NodePath("../../Skeleton2D")
@@ -2629,9 +2628,29 @@ skeleton_root = NodePath("../../Skeleton2D")
 z_index = 2
 texture = ExtResource("30_b8hi5")
 skeleton = NodePath("../../Skeleton2D")
-polygon = PackedVector2Array(1723.875, 6.76972862777362, 1723.875, 6.76972862777362, 1712.00987116681, 63.6506387630756, 1712.00986788722, 63.6506387630756)
-uv = PackedVector2Array(275.5, 648, 275.5, 508, 275.5, 508, 275.5, 648)
+polygon = PackedVector2Array(6.7697287, -39.545876, 6.7697287, -39.545876, 10.527326, -1.2200661, 10.527326, -1.2200661)
+uv = PackedVector2Array(578, 698, 578, 547, 578, 547, 578, 698)
 bones = ["Pelvis", PackedFloat32Array(1, 1, 0, 0), "Pelvis/Abdomen", PackedFloat32Array(0, 0, 1, 1)]
+script = ExtResource("51_bodypoly")
+skeleton_root = NodePath("../../Skeleton2D")
+
+[node name="UpperAbdomen" type="Polygon2D" parent="PlayerBody/FacingPivot/Armature/BodyPolygons" unique_id=67358939 node_paths=PackedStringArray("skeleton_root")]
+z_index = 3
+texture = ExtResource("30_b8hi5")
+skeleton = NodePath("../../Skeleton2D")
+polygon = PackedVector2Array(43.897358, 15.443101, -20.10166, 15.430505, -20.086386, -62.168297, 43.91264, -62.15571)
+uv = PackedVector2Array(660.9062, 712.47736, 500.90622, 712.47736, 500.90622, 518.47736, 660.9062, 518.47736)
+bones = ["Pelvis", PackedFloat32Array(0, 0, 0, 0), "Pelvis/Abdomen", PackedFloat32Array(1, 1, 0, 0), "Pelvis/Abdomen/Torso", PackedFloat32Array(0, 0, 1, 1), "Pelvis/Abdomen/Torso/Shoulders", PackedFloat32Array(0, 0, 0, 0), "Pelvis/Abdomen/Torso/Shoulders/Neck", PackedFloat32Array(0, 0, 0, 0), "Pelvis/Abdomen/Torso/Shoulders/Neck/Head", PackedFloat32Array(0, 0, 0, 0), "Pelvis/Abdomen/Torso/Shoulders/UpperArm_Back", PackedFloat32Array(0, 0, 0, 0), "Pelvis/Abdomen/Torso/Shoulders/UpperArm_Back/Forearm_Back", PackedFloat32Array(0, 0, 0, 0), "Pelvis/Abdomen/Torso/Shoulders/UpperArm_Back/Forearm_Back/Hand_Back", PackedFloat32Array(0, 0, 0, 0), "Pelvis/Abdomen/Torso/Shoulders/UpperArm_Front", PackedFloat32Array(0, 0, 0, 0), "Pelvis/Abdomen/Torso/Shoulders/UpperArm_Front/Forearm_Front", PackedFloat32Array(0, 0, 0, 0), "Pelvis/Abdomen/Torso/Shoulders/UpperArm_Front/Forearm_Front/Hand_Front", PackedFloat32Array(0, 0, 0, 0), "Pelvis/Thigh_Back", PackedFloat32Array(0, 0, 0, 0), "Pelvis/Thigh_Back/Calf_Back", PackedFloat32Array(0, 0, 0, 0), "Pelvis/Thigh_Back/Calf_Back/Foot_Back", PackedFloat32Array(0, 0, 0, 0), "Pelvis/Thigh_Front", PackedFloat32Array(0, 0, 0, 0), "Pelvis/Thigh_Front/Calf_Front", PackedFloat32Array(0, 0, 0, 0), "Pelvis/Thigh_Front/Calf_Front/Foot_Front", PackedFloat32Array(0, 0, 0, 0)]
+script = ExtResource("51_bodypoly")
+skeleton_root = NodePath("../../Skeleton2D")
+
+[node name="LowerAbdomen" type="Polygon2D" parent="PlayerBody/FacingPivot/Armature/BodyPolygons" unique_id=1505787247 node_paths=PackedStringArray("skeleton_root")]
+z_index = 3
+texture = ExtResource("30_b8hi5")
+skeleton = NodePath("../../Skeleton2D")
+polygon = PackedVector2Array(43.897358, 15.443101, -20.10166, 15.430505, -20.086386, -62.168297, 43.91264, -62.15571)
+uv = PackedVector2Array(660.9062, 712.47736, 500.90622, 712.47736, 500.90622, 518.47736, 660.9062, 518.47736)
+bones = ["Pelvis", PackedFloat32Array(1, 1, 0, 0), "Pelvis/Abdomen", PackedFloat32Array(0, 0, 1, 1), "Pelvis/Abdomen/Torso", PackedFloat32Array(1, 1, 1, 1), "Pelvis/Abdomen/Torso/Shoulders", PackedFloat32Array(0, 0, 0, 0), "Pelvis/Abdomen/Torso/Shoulders/Neck", PackedFloat32Array(0, 0, 0, 0), "Pelvis/Abdomen/Torso/Shoulders/Neck/Head", PackedFloat32Array(0, 0, 0, 0), "Pelvis/Abdomen/Torso/Shoulders/UpperArm_Back", PackedFloat32Array(0, 0, 0, 0), "Pelvis/Abdomen/Torso/Shoulders/UpperArm_Back/Forearm_Back", PackedFloat32Array(0, 0, 0, 0), "Pelvis/Abdomen/Torso/Shoulders/UpperArm_Back/Forearm_Back/Hand_Back", PackedFloat32Array(0, 0, 0, 0), "Pelvis/Abdomen/Torso/Shoulders/UpperArm_Front", PackedFloat32Array(0, 0, 0, 0), "Pelvis/Abdomen/Torso/Shoulders/UpperArm_Front/Forearm_Front", PackedFloat32Array(0, 0, 0, 0), "Pelvis/Abdomen/Torso/Shoulders/UpperArm_Front/Forearm_Front/Hand_Front", PackedFloat32Array(0, 0, 0, 0), "Pelvis/Thigh_Back", PackedFloat32Array(0, 0, 0, 0), "Pelvis/Thigh_Back/Calf_Back", PackedFloat32Array(0, 0, 0, 0), "Pelvis/Thigh_Back/Calf_Back/Foot_Back", PackedFloat32Array(0, 0, 0, 0), "Pelvis/Thigh_Front", PackedFloat32Array(0, 0, 0, 0), "Pelvis/Thigh_Front/Calf_Front", PackedFloat32Array(0, 0, 0, 0), "Pelvis/Thigh_Front/Calf_Front/Foot_Front", PackedFloat32Array(0, 0, 0, 0)]
 script = ExtResource("51_bodypoly")
 skeleton_root = NodePath("../../Skeleton2D")
 
@@ -2641,8 +2660,8 @@ skeleton_root = NodePath("../../Skeleton2D")
 z_index = 3
 texture = ExtResource("30_b8hi5")
 skeleton = NodePath("../../../Skeleton2D")
-polygon = PackedVector2Array(-394.125486828693, 20.000045296636, 4661.87451317133, 20.0002303563172, 4661.87451691944, 71.1994500683946, -394.125483080591, 71.1992650087134)
-uv = PackedVector2Array(2, 650, 318, 650, 318, 490, 2, 490)
+polygon = PackedVector2Array(44.06805, -38.20024, -19.930971, -38.212837, -19.915697, -115.81164, 44.08333, -115.79905)
+uv = PackedVector2Array(650, 510, 490, 510, 490, 316, 650, 316)
 bones = ["Pelvis/Abdomen/Torso", PackedFloat32Array(1, 1, 1, 1)]
 script = ExtResource("51_bodypoly")
 skeleton_root = NodePath("../../../Skeleton2D")
@@ -2652,128 +2671,128 @@ visible = false
 z_index = 1
 texture = ExtResource("30_b8hi5")
 skeleton = NodePath("../../../Skeleton2D")
-polygon = PackedVector2Array(-394.12549268519, -59.9999506849653, 5685.87450731484, -59.9997281448423, 5685.87450907177, -36.000093904806, -394.125490928267, -36.000316444929)
-uv = PackedVector2Array(2, 469, 382, 469, 382, 394, 2, 394)
+polygon = PackedVector2Array(-42.99978, -123.79534, -13.000236, -123.79534, -13.000236, -38.196648, -42.99978, -38.196648)
+uv = PackedVector2Array(394, 594, 469, 594, 469, 380, 394, 380)
 bones = ["Pelvis/Abdomen/Torso", PackedFloat32Array(1, 1, 1, 1)]
 script = ExtResource("51_bodypoly")
 skeleton_root = NodePath("../../../Skeleton2D")
 
 [node name="UpperArm_Back" type="Polygon2D" parent="PlayerBody/FacingPivot/Armature/BodyPolygons" unique_id=1189491042 node_paths=PackedStringArray("skeleton_root")]
 modulate = Color(0.6901961, 0.6901961, 0.6901961, 1)
-texture = ExtResource("30_b8hi5")
+texture = SubResource("CompressedTexture2D_q28gw")
 skeleton = NodePath("../../Skeleton2D")
-polygon = PackedVector2Array(-426.125488229643, 3.9997435449268, -426.125415250061, 1643.93539054726, -651.405460306063, 1643.93537571289, -651.405533285645, 3.99972871055613)
-uv = PackedVector2Array(2, 338, 207, 338, 207, 250, 2, 250)
+polygon = PackedVector2Array(14.399437, -103.59738, 14.399433, -68.398766, -57.597744, -68.39877, -57.597744, -103.5974)
+uv = PackedVector2Array(250, 205, 338, 205, 338, 385, 250, 385)
 bones = ["Pelvis/Abdomen/Torso/Shoulders/UpperArm_Back", PackedFloat32Array(1, 1, 1, 1)]
 script = ExtResource("51_bodypoly")
 skeleton_root = NodePath("../../Skeleton2D")
 
 [node name="Forearm_Back" type="Polygon2D" parent="PlayerBody/FacingPivot/Armature/BodyPolygons" unique_id=1538285980 node_paths=PackedStringArray("skeleton_root")]
 modulate = Color(0.6901961, 0.6901961, 0.6901961, 1)
-texture = ExtResource("30_b8hi5")
+texture = SubResource("CompressedTexture2D_ge24q")
 skeleton = NodePath("../../Skeleton2D")
-polygon = PackedVector2Array(-496.824440993988, -108.00608291621, -4087.49541741938, 4173.92404619563, -4541.59223748639, 4172.43668991574, -950.921261060996, -109.493439196099)
-uv = PackedVector2Array(2, 990, 538, 990, 538, 874, 2, 874)
+polygon = PackedVector2Array(-36.06178, -105.28024, -38.18653, -64.73772, -117.873566, -68.91395, -115.748825, -109.456474)
+uv = PackedVector2Array(990, 536, 874, 536, 874, 764, 990, 764)
 bones = ["Pelvis/Abdomen/Torso/Shoulders/UpperArm_Back/Forearm_Back", PackedFloat32Array(1, 1, 1, 1)]
 script = ExtResource("51_bodypoly")
 skeleton_root = NodePath("../../Skeleton2D")
 
 [node name="Hand_Back" type="Polygon2D" parent="PlayerBody/FacingPivot/Armature/BodyPolygons" unique_id=763682004 node_paths=PackedStringArray("skeleton_root")]
 modulate = Color(0.6901961, 0.6901961, 0.6901961, 1)
-texture = ExtResource("30_b8hi5")
+texture = SubResource("CompressedTexture2D_pnw6m")
 skeleton = NodePath("../../Skeleton2D")
-polygon = PackedVector2Array(-874.125377000764, -222.87029484281, -874.134104106349, 6016.8484096783, -1990.29410410634, 6016.84832503301, -1990.28537700076, -222.870379488098)
-uv = PackedVector2Array(2, 340, 782, 340, 782, 231, 2, 231)
+polygon = PackedVector2Array(-165.03264, -103.74222, -165.03265, -60.144184, -111.435074, -60.144173, -111.43506, -103.7422)
+uv = PackedVector2Array(340, 780, 231, 780, 231, 914, 340, 914)
 bones = ["Pelvis/Abdomen/Torso/Shoulders/UpperArm_Back/Forearm_Back/Hand_Back", PackedFloat32Array(1, 1, 1, 1)]
 script = ExtResource("51_bodypoly")
 skeleton_root = NodePath("../../Skeleton2D")
 
 [node name="UpperArm_Front" type="Polygon2D" parent="PlayerBody/FacingPivot/Armature/BodyPolygons" unique_id=1040049273 node_paths=PackedStringArray("skeleton_root")]
 z_index = 5
-texture = ExtResource("30_b8hi5")
+texture = SubResource("CompressedTexture2D_q28gw")
 skeleton = NodePath("../../Skeleton2D")
-polygon = PackedVector2Array(-362.125493856394, -11.9996250497225, -362.12657436084, -1651.93527205208, -134.286528792837, -1651.93526579748, -134.285448288391, -11.9996187951225)
-uv = PackedVector2Array(2, 143, 207, 143, 207, 54, 2, 54)
+polygon = PackedVector2Array(-14.399436, -68.19878, -14.399438, -103.79738, 57.597744, -103.79738, 57.597744, -68.19878)
+uv = PackedVector2Array(54, 205, 143, 205, 143, 385, 54, 385)
 bones = ["Pelvis/Abdomen/Torso/Shoulders/UpperArm_Front", PackedFloat32Array(1, 1, 1, 1)]
 script = ExtResource("51_bodypoly")
 skeleton_root = NodePath("../../Skeleton2D")
 
 [node name="Forearm_Front" type="Polygon2D" parent="PlayerBody/FacingPivot/Armature/BodyPolygons" unique_id=2050977964 node_paths=PackedStringArray("skeleton_root")]
 z_index = 5
-texture = ExtResource("30_b8hi5")
+texture = SubResource("CompressedTexture2D_ge24q")
 skeleton = NodePath("../../Skeleton2D")
-polygon = PackedVector2Array(-298.1254903428, 99.9952352032623, -298.130378678209, -3827.82769289968, 147.309710409796, -3827.82767863362, 147.314598745205, 99.9952494693191)
-uv = PackedVector2Array(2, 143, 493, 143, 493, 56, 2, 56)
+polygon = PackedVector2Array(45.997852, -68.59886, 45.997852, -103.39729, 113.99479, -103.39729, 113.99479, -68.59886)
+uv = PackedVector2Array(56, 491, 143, 491, 143, 661, 56, 661)
 bones = ["Pelvis/Abdomen/Torso/Shoulders/UpperArm_Front/Forearm_Front", PackedFloat32Array(1, 1, 1, 1)]
 script = ExtResource("51_bodypoly")
 skeleton_root = NodePath("../../Skeleton2D")
 
 [node name="Hand_Front" type="Polygon2D" parent="PlayerBody/FacingPivot/Armature/BodyPolygons" unique_id=1605534155 node_paths=PackedStringArray("skeleton_root")]
 z_index = 5
-texture = ExtResource("30_b8hi5")
+texture = SubResource("CompressedTexture2D_pnw6m")
 skeleton = NodePath("../../Skeleton2D")
-polygon = PackedVector2Array(60.2745343784747, 215.989851311091, 60.27942799721, -6023.72885321044, 1166.19942799722, -6023.72881180557, 1166.19453437848, 215.989892715958)
-uv = PackedVector2Array(2, 161, 782, 161, 782, 53, 2, 53)
+polygon = PackedVector2Array(164.79242, -67.998886, 164.79242, -111.19694, 111.19483, -111.19694, 111.19483, -67.998886)
+uv = PackedVector2Array(53, 780, 161, 780, 161, 914, 53, 914)
 bones = ["Pelvis/Abdomen/Torso/Shoulders/UpperArm_Front/Forearm_Front/Hand_Front", PackedFloat32Array(1, 1, 1, 1)]
 script = ExtResource("51_bodypoly")
 skeleton_root = NodePath("../../Skeleton2D")
 
 [node name="Thigh_Back" type="Polygon2D" parent="PlayerBody/FacingPivot/Armature/BodyPolygons" unique_id=784200733 node_paths=PackedStringArray("skeleton_root")]
 modulate = Color(0.69135684, 0.6913568, 0.69135684, 1)
-texture = ExtResource("30_b8hi5")
+texture = SubResource("CompressedTexture2D_a2xo5")
 skeleton = NodePath("../../Skeleton2D")
-polygon = PackedVector2Array(-480.1250000574, -3.99982066745094, -480.125011824507, -823.963183436605, -396.925011824507, -823.963188303245, -396.925000057401, -3.99982553409085)
-uv = PackedVector2Array(2, 990, 207, 990, 207, 860, 2, 860)
+polygon = PackedVector2Array(-17.588812, 25.99884, -17.588816, -25.998837, 80.00683, -25.998848, 80.00683, 25.998829)
+uv = PackedVector2Array(990, 205, 860, 205, 860, 449, 990, 449)
 bones = ["Pelvis/Thigh_Back", PackedFloat32Array(1, 1, 1, 1)]
 script = ExtResource("51_bodypoly")
 skeleton_root = NodePath("../../Skeleton2D")
 
 [node name="Calf_Back" type="Polygon2D" parent="PlayerBody/FacingPivot/Armature/BodyPolygons" unique_id=99687300 node_paths=PackedStringArray("skeleton_root")]
 modulate = Color(0.69135684, 0.6913568, 0.69135684, 1)
-texture = ExtResource("30_b8hi5")
+texture = SubResource("CompressedTexture2D_art4l")
 skeleton = NodePath("../../Skeleton2D")
-polygon = PackedVector2Array(-496.124974312466, 75.9966365959038, -496.124377267171, -2067.89127677737, -347.644347571171, -2067.89128682109, -347.644944616466, 75.9966265521849)
-uv = PackedVector2Array(2, 990, 538, 990, 538, 874, 2, 874)
+polygon = PackedVector2Array(64.02966, 23.198778, 64.029655, -23.198797, 155.22488, -23.198807, 155.22488, 23.198769)
+uv = PackedVector2Array(874, 536, 990, 536, 990, 764, 874, 764)
 bones = ["Pelvis/Thigh_Back/Calf_Back", PackedFloat32Array(1, 1, 1, 1)]
 script = ExtResource("51_bodypoly")
 skeleton_root = NodePath("../../Skeleton2D")
 
 [node name="Foot_Back" type="Polygon2D" parent="PlayerBody/FacingPivot/Armature/BodyPolygons" unique_id=1546027488 node_paths=PackedStringArray("skeleton_root")]
 modulate = Color(0.69135684, 0.6913568, 0.69135684, 1)
-texture = ExtResource("30_b8hi5")
+texture = SubResource("CompressedTexture2D_mmwog")
 skeleton = NodePath("../../Skeleton2D")
-polygon = PackedVector2Array(-305.126457388013, 150.993076067564, -305.127318757918, -3296.50588006675, 81.4326812420754, -3296.50590409944, 81.4335426119811, 150.993052034874)
-uv = PackedVector2Array(2, 798, 864, 798, 864, 647, 2, 647)
+polygon = PackedVector2Array(149.05664, 20.259626, 149.05664, -40.131596, 179.85216, -40.131596, 179.85216, 20.259624)
+uv = PackedVector2Array(797.9756, 861.95215, 646.9756, 862.0479, 647.0244, 939.04785, 798.0244, 938.9521)
 bones = ["Pelvis/Thigh_Back/Calf_Back/Foot_Back", PackedFloat32Array(1, 1, 1, 1)]
 script = ExtResource("51_bodypoly")
 skeleton_root = NodePath("../../Skeleton2D")
 
 [node name="Thigh_Front" type="Polygon2D" parent="PlayerBody/FacingPivot/Armature/BodyPolygons" unique_id=450583398 node_paths=PackedStringArray("skeleton_root")]
 z_index = 2
-texture = ExtResource("30_b8hi5")
+texture = SubResource("CompressedTexture2D_a2xo5")
 skeleton = NodePath("../../Skeleton2D")
-polygon = PackedVector2Array(-464.125001171282, 3.99982128180071, -464.125241284021, 823.963184050946, -547.965241284021, 823.963182516635, -547.965001171281, 3.99981974749029)
-uv = PackedVector2Array(2, 802, 207, 802, 207, 671, 2, 671)
+polygon = PackedVector2Array(17.588816, -26.19883, 17.588812, 26.19883, -80.00683, 26.198826, -80.00683, -26.198833)
+uv = PackedVector2Array(671, 205, 802, 205, 802, 449, 671, 449)
 bones = ["Pelvis/Thigh_Front", PackedFloat32Array(1, 1, 1, 1)]
 script = ExtResource("51_bodypoly")
 skeleton_root = NodePath("../../Skeleton2D")
 
 [node name="Calf_Front" type="Polygon2D" parent="PlayerBody/FacingPivot/Armature/BodyPolygons" unique_id=1464323632 node_paths=PackedStringArray("skeleton_root")]
 z_index = 2
-texture = ExtResource("30_b8hi5")
+texture = SubResource("CompressedTexture2D_art4l")
 skeleton = NodePath("../../Skeleton2D")
-polygon = PackedVector2Array(-448.125002342563, -75.9966347528554, -448.126257956498, 2067.89127862035, -619.646292260499, 2067.89127705091, -619.645036646565, -75.9966363222911)
-uv = PackedVector2Array(2, 802, 538, 802, 538, 668, 2, 668)
+polygon = PackedVector2Array(-64.029655, -26.798601, -64.029655, 26.798601, -155.22488, 26.798597, -155.22488, -26.798605)
+uv = PackedVector2Array(668, 536, 802, 536, 802, 764, 668, 764)
 bones = ["Pelvis/Thigh_Front/Calf_Front", PackedFloat32Array(1, 1, 1, 1)]
 script = ExtResource("51_bodypoly")
 skeleton_root = NodePath("../../Skeleton2D")
 
 [node name="Foot_Front" type="Polygon2D" parent="PlayerBody/FacingPivot/Armature/BodyPolygons" unique_id=838309014 node_paths=PackedStringArray("skeleton_root")]
 z_index = 2
-texture = ExtResource("30_b8hi5")
+texture = SubResource("CompressedTexture2D_fjxoa")
 skeleton = NodePath("../../Skeleton2D")
-polygon = PackedVector2Array(-624.740191885126, -150.993086906972, -624.744230464275, 3296.50586922733, -1011.30423046427, 3296.50586745895, -1011.30019188513, -150.993088675351)
-uv = PackedVector2Array(2, 798, 864, 798, 864, 647, 2, 647)
+polygon = PackedVector2Array(-148.96191, -17.159056, -148.96191, 43.232166, -179.75743, 43.232166, -179.75743, -17.159058)
+uv = PackedVector2Array(798.09033, 862.1777, 647.0908, 861.8225, 646.90967, 938.8223, 797.9092, 939.1775)
 bones = ["Pelvis/Thigh_Front/Calf_Front/Foot_Front", PackedFloat32Array(1, 1, 1, 1)]
 script = ExtResource("51_bodypoly")
 skeleton_root = NodePath("../../Skeleton2D")
