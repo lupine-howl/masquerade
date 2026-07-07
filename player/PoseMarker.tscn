@@ -138,6 +138,18 @@ offset_bottom = 16.0
 mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_knn7v")
 
+[node name="MarkerIcon" type="Label" parent="." unique_id=173610001]
+visible = false
+offset_left = -16.0
+offset_top = -16.0
+offset_right = 16.0
+offset_bottom = 16.0
+mouse_filter = 2
+horizontal_alignment = 1
+vertical_alignment = 1
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 14
+
 [node name="Marker" type="Panel" parent="InnerMoveCircleSelected" unique_id=891643385]
 custom_minimum_size = Vector2(2, 2)
 layout_mode = 1

@@ -1655,6 +1655,7 @@ use_radius_angle_limit = true
 min_radius_angle_deg = -210.0
 max_radius_angle_deg = 30.0
 radius_keep_world_offset = true
+marker_icon = "🧠"
 use_look_at = true
 look_at_target = NodePath("../Eyeline")
 
@@ -1690,6 +1691,7 @@ min_x = -20.0
 max_x = 20.0
 x_constraint_parent = NodePath("../../..")
 radius_drag_partner = NodePath("../Head")
+marker_icon = "⬢"
 
 [node name="HandBack" parent="PlayerBody/FacingPivot/PoseController" unique_id=1872066078 node_paths=PackedStringArray("slave", "sibling", "pivot", "y_constraint_parent", "radius_constraint_parent", "follow_rotation_target") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
 position = Vector2(-0.76701355, 31.454704)
@@ -1708,6 +1710,7 @@ min_radius = 20.0
 max_radius = 115.0
 radius_constraint_parent = NodePath("../../../Ragdoll/Arm_Back/Shoulder_Back_Physics")
 radius_keep_world_offset = true
+marker_icon = "✋"
 use_follow_rotation = true
 follow_rotation_target = NodePath("../../../Ragdoll/Arm_Back/Forearm_Back_Physics")
 
@@ -1727,6 +1730,7 @@ min_radius = 20.0
 max_radius = 115.0
 radius_constraint_parent = NodePath("../../../Ragdoll/Arm_Front/Shoulder_Front_Physics")
 radius_keep_world_offset = true
+marker_icon = "🤚"
 use_follow_rotation = true
 follow_rotation_target = NodePath("../../../Ragdoll/Arm_Front/Forearm_Front_Physics")
 
@@ -1750,6 +1754,7 @@ max_radius = 170.0
 radius_constraint_parent = NodePath("../../../Ragdoll/Root")
 radius_drag_partner = NodePath("../Root")
 radius_keep_world_offset = true
+marker_icon = "🦶"
 use_follow_rotation = true
 follow_rotation_target = NodePath("../../../Ragdoll/Leg_Back/Calf_Back_Physics")
 
@@ -1772,6 +1777,7 @@ max_radius = 170.0
 radius_constraint_parent = NodePath("../../../Ragdoll/Root")
 radius_drag_partner = NodePath("../Root")
 radius_keep_world_offset = true
+marker_icon = "🦶"
 use_follow_rotation = true
 follow_rotation_target = NodePath("../../../Ragdoll/Leg_Front/Calf_Front_Physics")
 
@@ -1783,6 +1789,7 @@ min_radius = 200.0
 max_radius = 200.0
 radius_constraint_parent = NodePath("../../../Ragdoll/Head/Head_Physics")
 radius_keep_world_offset = true
+marker_icon = "👁️"
 
 [node name="UpperAdbomen" parent="PlayerBody/FacingPivot/PoseController" unique_id=881103751 node_paths=PackedStringArray("slave", "pivot") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
 visible = false

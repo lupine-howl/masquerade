@@ -24,6 +24,7 @@ signal dragged_rotation(delta_angle: float)
 @export var is_controlled: bool = true ## When true, the marker drives the slave (slave is frozen). When false, the slave drives the marker (physics/ragdoll).
 @export var constrain_rotation_when_uncontrolled: bool = false ## While uncontrolled, still solve look-at / follow / ground-lock / rotation-limit and write rotation to the slave instead of copying slave rotation.
 @export var hide_in_pose_ui: bool = false ## Hide from the pose part list and on-screen gizmo. Marker still animates, constraints, and keys normally (for baking helpers).
+@export var marker_icon: String = "" ## Optional text/emoji shown centered in the marker gizmo.
 
 @export_category("X-Axis Constraint")
 @export var use_min_max_x: bool = false ## Clamp world X while the marker is controlled (and during drag before physics sync).
@@ -97,6 +98,7 @@ var _radius_parent_follow_ready: bool = false
 @onready var rotation_indicator_controlled: Panel = $InnerMoveCircleControlled/RotationIndicator
 @onready var rotation_indicator_uncontrolled: Panel = $InnerMoveCircleUncontrolled/RotationIndicator
 @onready var rotation_indicator_selected: Panel = $InnerMoveCircleSelected/RotationIndicator
+@onready var marker_icon_label: Label = $MarkerIcon
 
 func _ready() -> void:
 	process_priority = 100
@@ -113,6 +115,7 @@ func _ready() -> void:
 		take_control()
 	else:
 		release_control()
+	_update_icon_ui()
 	_apply_pose_ui_visibility()
 
 func is_interactive_in_pose_ui() -> bool:
@@ -176,6 +179,15 @@ func _update_visuals() -> void:
 	inner_circle_selected.visible = is_active
 	rotation_indicator_selected.visible = is_active and can_rotate
 	outer_rotation_ring.visible = is_active and can_rotate and is_controlled
+	_update_icon_ui()
+
+func _update_icon_ui() -> void:
+	if marker_icon_label == null:
+		return
+	var has_icon := marker_icon.strip_edges() != ""
+	marker_icon_label.visible = has_icon and is_interactive_in_pose_ui()
+	if has_icon:
+		marker_icon_label.text = marker_icon
 
 func _handle_drag_input() -> void:
 	var mouse_pos := get_global_mouse_position()
