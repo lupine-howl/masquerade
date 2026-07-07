@@ -2888,9 +2888,8 @@ script = ExtResource("40_dx5ib")
 [node name="WallClimb" type="Node" parent="PlayerBody/StateMachine" unique_id=1047708118]
 script = ExtResource("41_a2xo5")
 
-[node name="LedgeClimb" type="Node" parent="PlayerBody/StateMachine" unique_id=692231346 node_paths=PackedStringArray("path_guide")]
+[node name="LedgeClimb" type="Node" parent="PlayerBody/StateMachine" unique_id=692231346]
 script = ExtResource("42_art4l")
-path_guide = NodePath("../../PathAnchors/LedgeClimbAnchor/LedgeClimbPath")
 
 [node name="Dead" type="Node" parent="PlayerBody/StateMachine" unique_id=1530615474]
 script = ExtResource("42_fjxoa")

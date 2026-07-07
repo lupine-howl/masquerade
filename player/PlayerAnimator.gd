@@ -1,13 +1,108 @@
 extends AnimationPlayer
 class_name PlayerAnimator
 
+signal path_body_finished(anim_name: String)
+
 var current_anim: String
 
+var _player: Player
+var _path_drive_active := false
+var _path_origin := Vector2.ZERO
+var _path_guide: PathGuideMarker
+var _path_drive_anim := ""
+var _disabled_collision_for_path := false
+
 func _ready() -> void:
+	_player = get_parent() as Player
 	animation_started.connect(_on_animation_started)
+	animation_finished.connect(_on_animation_finished)
+
+func is_path_body_driving() -> bool:
+	return _path_drive_active
+
+func physics_update_path_body() -> void:
+	if not _path_drive_active or _path_guide == null or _player == null:
+		return
+	_player.velocity = Vector2.ZERO
+	sync_path_body_position()
+
+func sync_path_body_position() -> void:
+	if not _path_drive_active or _path_guide == null or _player == null:
+		return
+	_player.global_position = _path_origin + _path_guide.get_climb_offset(_player.facing)
+
+func end_path_body_drive() -> void:
+	if not _path_drive_active:
+		return
+	_path_drive_active = false
+	if _path_guide and _path_guide.anchor:
+		_path_guide.anchor.release_lock()
+	if _disabled_collision_for_path and _player and _player.master_collision_shape:
+		_player.master_collision_shape.disabled = false
+		_disabled_collision_for_path = false
+	if _player:
+		_player.armature.position = Vector2.ZERO
+	_path_drive_anim = ""
+	_path_guide = null
 
 func _on_animation_started(anim_name: StringName) -> void:
-	speed_scale = read_speed_scale_key(String(anim_name))
+	var anim_name_str := String(anim_name)
+	speed_scale = read_speed_scale_key(anim_name_str)
+	_try_begin_path_body_drive(anim_name_str)
+
+func _on_animation_finished(anim_name: StringName) -> void:
+	if not _path_drive_active or String(anim_name) != _path_drive_anim:
+		return
+	sync_path_body_position()
+	path_body_finished.emit(_path_drive_anim)
+
+func _try_begin_path_body_drive(anim_name: String) -> void:
+	if _player == null or _player.is_posing:
+		return
+	if not animation_has_path_guide_keys(self, anim_name):
+		end_path_body_drive()
+		return
+	var guide := PathGuideMarker.get_drive_body_guide(_player)
+	if guide == null or guide.role != PathGuideMarker.Role.DRIVE_BODY:
+		end_path_body_drive()
+		return
+	if _path_drive_active and _path_drive_anim == anim_name:
+		return
+
+	end_path_body_drive()
+
+	_path_drive_active = true
+	_path_drive_anim = anim_name
+	_path_guide = guide
+
+	_player.velocity = Vector2.ZERO
+	_player.armature.position = Vector2.ZERO
+
+	_disabled_collision_for_path = false
+	if _player.master_collision_shape and not _player.master_collision_shape.disabled:
+		_player.master_collision_shape.disabled = true
+		_disabled_collision_for_path = true
+
+	seek(0.0, true)
+
+	if _path_guide.anchor:
+		_path_origin = _path_guide.anchor.global_position
+		_path_guide.anchor.lock_at(_path_origin)
+	else:
+		_path_origin = _player.global_position
+
+	sync_path_body_position()
+
+static func animation_has_path_guide_keys(animator: AnimationPlayer, anim_name: String) -> bool:
+	if not animator.has_animation(anim_name):
+		return false
+	var animation := animator.get_animation(anim_name)
+	for i in animation.get_track_count():
+		var path := str(animation.track_get_path(i))
+		if path.begins_with("PathAnchors/") and path.ends_with(":position"):
+			if animation.track_get_key_count(i) > 0:
+				return true
+	return false
 
 func read_speed_scale_key(anim_name: String) -> float:
 	if not has_animation(anim_name):

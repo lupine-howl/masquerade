@@ -1,12 +1,9 @@
 extends PlayerState
 
 const GRAB_OFFSET_X := 80
+const CLIMB_ANIM := "ledge_climb"
 
-## When set and role is DRIVE_BODY, body follows this guide's keyed path instead of the lerp below.
-@export var path_guide: PathGuideMarker
-@export var use_path_guide := true
-
-## Fallback scripted path when no path guide is used.
+## Fallback scripted path when the climb animation has no keyed path guide tracks.
 @export var vertical_duration := 0.3
 @export var forward_duration := 0.3
 @export var vertical_rise := 0.0
@@ -15,7 +12,6 @@ const GRAB_OFFSET_X := 80
 @export var auto_match_anim_duration := true
 
 var _start_pos := Vector2.ZERO
-var _path_origin := Vector2.ZERO
 var _rise_pos := Vector2.ZERO
 var _end_pos := Vector2.ZERO
 var _elapsed := 0.0
@@ -27,29 +23,31 @@ func enter() -> void:
 	player.velocity = Vector2.ZERO
 	player.armature.position = Vector2.ZERO
 
+	player.animator.play(CLIMB_ANIM, 0.0)
+	if player.animator.is_path_body_driving():
+		if not player.animator.path_body_finished.is_connected(_on_path_body_finished):
+			player.animator.path_body_finished.connect(_on_path_body_finished)
+		return
+
 	var collision_shape: CollisionShape2D = player.master_collision_shape
 	if collision_shape:
 		collision_shape.disabled = true
 
-	if _uses_path_guide():
-		_begin_path_guide_climb()
-	else:
-		var wall_pt: Vector2 = player.wall_detector.get_collision_point()
-		player.global_position.x = wall_pt.x - (player.facing * GRAB_OFFSET_X)
-		player.global_position.y = wall_pt.y
-		_start_pos = player.global_position
-		_setup_climb_lerp()
-		player.animator.play("ledge_climb", 0.0)
-		if auto_match_anim_duration:
-			call_deferred("_match_anim_speed_to_movement")
+	var wall_pt: Vector2 = player.wall_detector.get_collision_point()
+	player.global_position.x = wall_pt.x - (player.facing * GRAB_OFFSET_X)
+	player.global_position.y = wall_pt.y
+	_start_pos = player.global_position
+	_setup_climb_lerp()
+	if auto_match_anim_duration:
+		call_deferred("_match_anim_speed_to_movement")
 
 func physics_update(delta: float) -> void:
 	player.velocity = Vector2.ZERO
 	if _finalized:
 		return
 
-	if _uses_path_guide():
-		player.global_position = _path_origin + path_guide.get_climb_offset(player.facing)
+	if player.animator.is_path_body_driving():
+		player.animator.physics_update_path_body()
 		return
 
 	_elapsed += delta
@@ -67,40 +65,23 @@ func physics_update(delta: float) -> void:
 		_finalize_climb()
 
 func exit() -> void:
-	if player.animator.animation_finished.is_connected(_on_animation_finished):
-		player.animator.animation_finished.disconnect(_on_animation_finished)
-	if path_guide and path_guide.anchor:
-		path_guide.anchor.release_lock()
+	if player.animator.path_body_finished.is_connected(_on_path_body_finished):
+		player.animator.path_body_finished.disconnect(_on_path_body_finished)
+	player.animator.end_path_body_drive()
 	if player.master_collision_shape:
 		player.master_collision_shape.disabled = false
 	player.armature.position = Vector2.ZERO
 
 func get_total_duration() -> float:
-	if _uses_path_guide() and player.animator.has_animation("ledge_climb"):
-		return player.animator.get_animation("ledge_climb").length
+	if (
+		PlayerAnimator.animation_has_path_guide_keys(player.animator, CLIMB_ANIM)
+		and player.animator.has_animation(CLIMB_ANIM)
+	):
+		return player.animator.get_animation(CLIMB_ANIM).length
 	return vertical_duration + forward_duration
 
-func _uses_path_guide() -> bool:
-	return (
-		use_path_guide
-		and path_guide != null
-		and path_guide.role == PathGuideMarker.Role.DRIVE_BODY
-	)
-
-func _begin_path_guide_climb() -> void:
-	if not player.animator.animation_finished.is_connected(_on_animation_finished):
-		player.animator.animation_finished.connect(_on_animation_finished)
-	player.animator.play("ledge_climb", 0.0)
-	player.animator.seek(0.0, true)
-	if path_guide.anchor:
-		_path_origin = path_guide.anchor.global_position
-		path_guide.anchor.lock_at(_path_origin)
-	else:
-		_path_origin = player.global_position
-	player.global_position = _path_origin + path_guide.get_climb_offset(player.facing)
-
-func _on_animation_finished(anim_name: StringName) -> void:
-	if String(anim_name) == "ledge_climb" and _uses_path_guide():
+func _on_path_body_finished(anim_name: String) -> void:
+	if anim_name == CLIMB_ANIM:
 		_finalize_climb()
 
 func _setup_climb_lerp() -> void:
@@ -109,9 +90,9 @@ func _setup_climb_lerp() -> void:
 	_end_pos = _rise_pos + Vector2(forward_offset * player.facing, end_height_adjust)
 
 func _match_anim_speed_to_movement() -> void:
-	if not player.animator.has_animation("ledge_climb"):
+	if not player.animator.has_animation(CLIMB_ANIM):
 		return
-	var anim: Animation = player.animator.get_animation("ledge_climb")
+	var anim: Animation = player.animator.get_animation(CLIMB_ANIM)
 	var move_duration := get_total_duration()
 	if anim.length <= 0.0 or move_duration <= 0.0:
 		return
@@ -121,8 +102,8 @@ func _finalize_climb() -> void:
 	if _finalized:
 		return
 	_finalized = true
-	if _uses_path_guide():
-		player.global_position = _path_origin + path_guide.get_climb_offset(player.facing)
+	if player.animator.is_path_body_driving():
+		player.animator.sync_path_body_position()
 	else:
 		player.global_position = _end_pos
 	if player.animator.has_animation("idle"):
