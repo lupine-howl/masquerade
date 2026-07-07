@@ -282,6 +282,20 @@ func key_marker_pose(anim_name: String, marker: PoseMarker) -> void:
 		_key_property_at_current_step(anim_name, marker, ":use_follow_rotation", marker.use_follow_rotation)
 	current_step = previous_step
 
+## Keys body-part sprite texture and region state at target steps.
+func key_body_part_slot(anim_name: String, slot: BodyPartSlot) -> void:
+	if not slot:
+		return
+	var previous_step := current_step
+	for step in get_key_target_steps():
+		current_step = step
+		_key_property_at_current_step(anim_name, slot, ":texture", slot.texture)
+		_key_property_at_current_step(anim_name, slot, ":region_enabled", slot.region_enabled)
+		_key_property_at_current_step(anim_name, slot, ":offset", slot.offset)
+		_key_property_at_current_step(anim_name, slot, ":slot_scale", slot.slot_scale)
+		_key_property_at_current_step(anim_name, slot, ":slot_rotation_degrees", slot.slot_rotation_degrees)
+	current_step = previous_step
+
 ## Keys path offset relative to an optional PathAnchor (body trajectory for climbs, etc.).
 func key_path_guide_pose(anim_name: String, guide: PathGuideMarker) -> void:
 	if not guide:

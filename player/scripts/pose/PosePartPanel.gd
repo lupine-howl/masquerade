@@ -18,6 +18,13 @@ signal inspector_updated(marker: PoseMarker)
 @onready var look_at_target_option: OptionButton = %LookAtTargetOption
 @onready var sprite_preview_row: HBoxContainer = %SpritePreviewRow
 @onready var part_sprite_preview: TextureRect = %PartSpritePreview
+@onready var part_sprite_file_dialog: FileDialog = %PartSpriteFileDialog
+@onready var sprite_slot_controls: VBoxContainer = %SpriteSlotControls
+@onready var sprite_offset_x: SpinBox = %SpriteOffsetX
+@onready var sprite_offset_y: SpinBox = %SpriteOffsetY
+@onready var sprite_scale_x: SpinBox = %SpriteScaleX
+@onready var sprite_scale_y: SpinBox = %SpriteScaleY
+@onready var sprite_rot_spin: SpinBox = %SpriteRotSpin
 
 var pose_controller: PoseController
 var timeline: TimelineManager
@@ -30,6 +37,7 @@ var _marker_order: Array[PoseMarker] = []
 var _updating_from_controller: bool = false
 var _updating_from_ui: bool = false
 var _updating_detail: bool = false
+var _swap_target_slot: BodyPartSlot = null
 
 func setup(
 	p_controller: PoseController,
@@ -53,6 +61,13 @@ func _ready() -> void:
 	controlled_check.toggled.connect(_on_controlled_toggled)
 	%BtnSwapSibling.pressed.connect(_on_swap_sibling_pressed)
 	%BtnZeroRot.pressed.connect(_on_zero_rotation_pressed)
+	part_sprite_preview.gui_input.connect(_on_sprite_preview_gui_input)
+	part_sprite_file_dialog.file_selected.connect(_on_sprite_file_selected)
+	sprite_offset_x.value_changed.connect(_on_sprite_offset_changed)
+	sprite_offset_y.value_changed.connect(_on_sprite_offset_changed)
+	sprite_scale_x.value_changed.connect(_on_sprite_scale_changed)
+	sprite_scale_y.value_changed.connect(_on_sprite_scale_changed)
+	sprite_rot_spin.value_changed.connect(_on_sprite_rot_changed)
 	_style_details_panel()
 	_style_details_wrapper()
 	_style_outer_panel()
@@ -226,13 +241,100 @@ func _sync_detail_from_marker(marker: PoseMarker) -> void:
 	_updating_detail = false
 
 func _sync_sprite_preview(marker: PoseMarker) -> void:
-	var slot: BodyPartSlot = marker.body_part_slot if marker else null
-	if slot and is_instance_valid(slot):
-		sprite_preview_row.visible = true
+	var slot: BodyPartSlot = _get_body_part_slot(marker)
+	var has_slot := slot != null
+	sprite_preview_row.visible = has_slot
+	sprite_slot_controls.visible = has_slot
+	if has_slot:
 		part_sprite_preview.texture = slot.get_display_texture()
+		_sync_sprite_slot_controls(slot)
 	else:
-		sprite_preview_row.visible = false
 		part_sprite_preview.texture = null
+
+func _sync_sprite_slot_controls(slot: BodyPartSlot) -> void:
+	sprite_offset_x.set_value_no_signal(slot.offset.x)
+	sprite_offset_y.set_value_no_signal(slot.offset.y)
+	sprite_scale_x.set_value_no_signal(slot.slot_scale.x)
+	sprite_scale_y.set_value_no_signal(slot.slot_scale.y)
+	sprite_rot_spin.set_value_no_signal(slot.slot_rotation_degrees)
+
+func _get_body_part_slot(marker: PoseMarker) -> BodyPartSlot:
+	if marker == null or marker.body_part_slot == null:
+		return null
+	var slot := marker.body_part_slot
+	if not is_instance_valid(slot):
+		return null
+	return slot
+
+func _get_primary_body_part_slot() -> BodyPartSlot:
+	if not pose_controller:
+		return null
+	return _get_body_part_slot(pose_controller.get_primary_marker())
+
+func _on_sprite_offset_changed(_value: float) -> void:
+	if _updating_detail:
+		return
+	var slot := _get_primary_body_part_slot()
+	if slot == null:
+		return
+	slot.offset = Vector2(sprite_offset_x.value, sprite_offset_y.value)
+	_auto_key_body_part_slot(slot)
+
+func _on_sprite_scale_changed(_value: float) -> void:
+	if _updating_detail:
+		return
+	var slot := _get_primary_body_part_slot()
+	if slot == null:
+		return
+	slot.slot_scale = Vector2(sprite_scale_x.value, sprite_scale_y.value)
+	_auto_key_body_part_slot(slot)
+
+func _on_sprite_rot_changed(value: float) -> void:
+	if _updating_detail:
+		return
+	var slot := _get_primary_body_part_slot()
+	if slot == null:
+		return
+	slot.slot_rotation_degrees = value
+	_auto_key_body_part_slot(slot)
+
+func _on_sprite_preview_gui_input(event: InputEvent) -> void:
+	if not event is InputEventMouseButton:
+		return
+	var mouse_event := event as InputEventMouseButton
+	if mouse_event.button_index != MOUSE_BUTTON_LEFT or not mouse_event.pressed:
+		return
+	_open_sprite_swap_dialog()
+	get_viewport().set_input_as_handled()
+
+func _open_sprite_swap_dialog() -> void:
+	if not pose_controller:
+		return
+	var primary := pose_controller.get_primary_marker()
+	if not primary or not primary.body_part_slot:
+		return
+	_swap_target_slot = primary.body_part_slot
+	part_sprite_file_dialog.popup_centered()
+
+func _on_sprite_file_selected(path: String) -> void:
+	var slot := _swap_target_slot
+	_swap_target_slot = null
+	if slot == null or not is_instance_valid(slot):
+		return
+	if not slot.set_texture_from_path(path):
+		return
+	var primary := pose_controller.get_primary_marker() if pose_controller else null
+	refresh_inspector(primary)
+	_auto_key_body_part_slot(slot)
+	_refresh_visuals()
+
+func _auto_key_body_part_slot(slot: BodyPartSlot) -> void:
+	if _is_auto_recording.is_null() or not _is_auto_recording.call() or not timeline or _get_anim_name.is_null():
+		return
+	var anim_name: String = _get_anim_name.call()
+	_key_with_mirror(func() -> void:
+		timeline.key_body_part_slot(anim_name, slot)
+	)
 
 func _sync_rot_offset_ui(marker: PoseMarker) -> void:
 	var has_constraint := marker.use_look_at or marker.use_follow_rotation

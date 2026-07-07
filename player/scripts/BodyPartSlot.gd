@@ -35,3 +35,16 @@ func get_display_texture() -> Texture2D:
 		atlas.region = region_rect
 		return atlas
 	return texture
+
+
+func set_texture_from_path(path: String) -> bool:
+	if path.is_empty() or not ResourceLoader.exists(path):
+		push_warning("BodyPartSlot: invalid texture path: %s" % path)
+		return false
+	var loaded_texture := load(path) as Texture2D
+	if loaded_texture == null:
+		push_warning("BodyPartSlot: failed to load texture: %s" % path)
+		return false
+	texture = loaded_texture
+	region_enabled = false
+	return true
