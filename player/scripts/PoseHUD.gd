@@ -234,12 +234,14 @@ func _on_animation_changed(anim_name: String) -> void:
 	refresh_timeline_visuals()
 	if assistant_panel:
 		assistant_panel.sync_title_ui()
-		assistant_panel.sync_ragdoll_toggles()
 	if timeline_panel:
 		timeline_panel.sync_timing_ui(anim_name)
 	if timeline.anim_player.is_playing():
 		timeline.stop()
 	timeline.seek_step(0, anim_name)
+	if assistant_panel:
+		assistant_panel.sync_ragdoll_toggles()
+		assistant_panel.call_deferred("sync_ragdoll_toggles")
 	refresh_timeline_visuals()
 	on_step_navigated()
 	_sync_path_guide_authoring()
