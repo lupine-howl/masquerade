@@ -310,25 +310,39 @@ func _on_speed_changed(speed: float) -> void:
 func _on_step_clicked(event: InputEvent, step_index: int) -> void:
 	if pose_controller and pose_controller.player and not pose_controller.player.is_posing:
 		return
-	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+	if event is InputEventMouseButton and event.pressed:
+		var mouse_event := event as InputEventMouseButton
 		var anim_name: String = _get_anim_name.call() if not _get_anim_name.is_null() else ""
-		var shift_pressed: bool = event.shift_pressed
-		var ctrl_pressed: bool = event.is_command_or_control_pressed()
+		var shift_pressed: bool = mouse_event.shift_pressed
+		var ctrl_pressed: bool = mouse_event.is_command_or_control_pressed()
 
-		if shift_pressed and not ctrl_pressed:
-			timeline.select_step_range(timeline.step_selection_anchor, step_index)
-		elif ctrl_pressed:
-			timeline.toggle_step_selected(step_index)
-			timeline.step_selection_anchor = step_index
-		else:
-			timeline.set_step_selection([step_index])
-			timeline.step_selection_anchor = step_index
+		if mouse_event.button_index == MOUSE_BUTTON_LEFT:
+			if shift_pressed and not ctrl_pressed:
+				timeline.select_step_range(timeline.step_selection_anchor, step_index)
+			elif ctrl_pressed:
+				timeline.toggle_step_selected(step_index)
+				timeline.step_selection_anchor = step_index
+			else:
+				timeline.set_step_selection([step_index])
+				timeline.step_selection_anchor = step_index
 
-		timeline.current_step = step_index
-		if anim_name != "":
-			timeline.seek_step(step_index, anim_name)
-		update_grid_visuals()
-		step_interacted.emit(step_index)
+			timeline.current_step = step_index
+			if anim_name != "":
+				timeline.seek_step(step_index, anim_name)
+			update_grid_visuals()
+			step_interacted.emit(step_index)
+		elif mouse_event.button_index == MOUSE_BUTTON_RIGHT:
+			if shift_pressed and not ctrl_pressed:
+				timeline.select_step_range(timeline.step_selection_anchor, step_index)
+			elif ctrl_pressed:
+				timeline.toggle_step_selected(step_index)
+				timeline.step_selection_anchor = step_index
+			else:
+				timeline.set_step_selection([step_index])
+				timeline.step_selection_anchor = step_index
+
+			# Ghost-select for keying only: do not change current step or seek animation.
+			update_grid_visuals()
 
 func _on_play_pressed() -> void:
 	if _get_anim_name.is_null():
