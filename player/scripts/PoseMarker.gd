@@ -165,6 +165,7 @@ func _process(_delta: float) -> void:
 		_apply_radius_parent_offset_follow()
 		constrain_global_position(global_position)
 	elif _uses_position_constraints():
+		_apply_radius_parent_offset_follow()
 		constrain_global_position(global_position)
 
 func _update_visuals() -> void:
