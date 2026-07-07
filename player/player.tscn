@@ -21,7 +21,7 @@
 [ext_resource type="Script" uid="uid://caq1o7vjefuky" path="res://player/scripts/pose/PoseTimelineDock.gd" id="11_timedock"]
 [ext_resource type="Script" uid="uid://ptpbj4ebn1b0" path="res://player/scripts/pose/PoseTimelinePanel.gd" id="11_timeline"]
 [ext_resource type="Script" uid="uid://c23x0uci37vw3" path="res://player/scripts/pose/PoseToolBar.gd" id="11_toolbar"]
-[ext_resource type="Animation" uid="uid://rshu04bbk0yo" path="res://player/animations/RESET.res" id="17_2uvqg"]
+[ext_resource type="Animation" uid="uid://dwo2hvuwd4r57" path="res://player/animations/RESET.res" id="17_2uvqg"]
 [ext_resource type="Animation" uid="uid://didsa17bf61ia" path="res://player/animations/idle.res" id="17_r7pn3"]
 [ext_resource type="Animation" uid="uid://bcmjlymvakqdr" path="res://player/animations/dead.res" id="23_55jnj"]
 [ext_resource type="Texture2D" uid="uid://b1govaot86lmk" path="res://light-mask.png" id="24_g4c7l"]
@@ -39,7 +39,7 @@
 [ext_resource type="Script" uid="uid://cns3xkrq4cwa4" path="res://player/scripts/SyncedBone2D.gd" id="32_gswnw"]
 [ext_resource type="Script" uid="uid://cu4xh4ryvnh24" path="res://player/scripts/PlayerStateMachine.gd" id="33_jd2rm"]
 [ext_resource type="Script" uid="uid://bc7ucmt1gfah4" path="res://player/scripts/GroundState.gd" id="34_q28gw"]
-[ext_resource type="Animation" uid="uid://dl75xecbre840" path="res://ledge_climb.res" id="35_237xx"]
+[ext_resource type="Animation" uid="uid://dfid8t6cirqx7" path="res://ledge_climb.res" id="35_237xx"]
 [ext_resource type="Script" uid="uid://bbr87tj0bptcu" path="res://player/scripts/AirState.gd" id="35_q28gw"]
 [ext_resource type="Script" uid="uid://kyiyjgxc6kth" path="res://player/scripts/DashState.gd" id="36_ge24q"]
 [ext_resource type="Script" uid="uid://ddqwus5kaxhr7" path="res://player/scripts/RollState.gd" id="37_pnw6m"]
@@ -1288,7 +1288,7 @@ focus_mode = 0
 theme_override_font_sizes/font_size = 11
 text = "Hang"
 
-[node name="BtnFall" type="Button" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/AnimSection/AnimMainColumn/MarginContainer2/PoseAssistantPanel/ActionsRow" unique_id=-447676212]
+[node name="BtnFall" type="Button" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/AnimSection/AnimMainColumn/MarginContainer2/PoseAssistantPanel/ActionsRow" unique_id=1173346025]
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
@@ -1509,7 +1509,7 @@ focus_mode = 0
 theme_override_font_sizes/font_size = 10
 text = "Root"
 
-[node name="TlCtrlPlayer" type="CheckBox" parent="PoseHUD/PoseTimelineDock/MarginContainer/PoseTimelinePanel/HelpersCenter/HelpersRow" unique_id=-447676240]
+[node name="TlCtrlPlayer" type="CheckBox" parent="PoseHUD/PoseTimelineDock/MarginContainer/PoseTimelinePanel/HelpersCenter/HelpersRow" unique_id=1333494521]
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
@@ -1654,6 +1654,7 @@ radius_constraint_parent = NodePath("../../../Ragdoll/Root")
 use_radius_angle_limit = true
 min_radius_angle_deg = -210.0
 max_radius_angle_deg = 30.0
+radius_keep_world_offset = true
 use_look_at = true
 look_at_target = NodePath("../Eyeline")
 
@@ -1706,6 +1707,7 @@ use_radius_limit = true
 min_radius = 20.0
 max_radius = 115.0
 radius_constraint_parent = NodePath("../../../Ragdoll/Arm_Back/Shoulder_Back_Physics")
+radius_keep_world_offset = true
 use_follow_rotation = true
 follow_rotation_target = NodePath("../../../Ragdoll/Arm_Back/Forearm_Back_Physics")
 
@@ -1724,6 +1726,7 @@ use_radius_limit = true
 min_radius = 20.0
 max_radius = 115.0
 radius_constraint_parent = NodePath("../../../Ragdoll/Arm_Front/Shoulder_Front_Physics")
+radius_keep_world_offset = true
 use_follow_rotation = true
 follow_rotation_target = NodePath("../../../Ragdoll/Arm_Front/Forearm_Front_Physics")
 
@@ -1746,6 +1749,7 @@ use_radius_limit = true
 max_radius = 170.0
 radius_constraint_parent = NodePath("../../../Ragdoll/Root")
 radius_drag_partner = NodePath("../Root")
+radius_keep_world_offset = true
 use_follow_rotation = true
 follow_rotation_target = NodePath("../../../Ragdoll/Leg_Back/Calf_Back_Physics")
 
@@ -1767,6 +1771,7 @@ use_radius_limit = true
 max_radius = 170.0
 radius_constraint_parent = NodePath("../../../Ragdoll/Root")
 radius_drag_partner = NodePath("../Root")
+radius_keep_world_offset = true
 use_follow_rotation = true
 follow_rotation_target = NodePath("../../../Ragdoll/Leg_Front/Calf_Front_Physics")
 
@@ -1777,6 +1782,7 @@ use_radius_limit = true
 min_radius = 200.0
 max_radius = 200.0
 radius_constraint_parent = NodePath("../../../Ragdoll/Head/Head_Physics")
+radius_keep_world_offset = true
 
 [node name="UpperAdbomen" parent="PlayerBody/FacingPivot/PoseController" unique_id=881103751 node_paths=PackedStringArray("slave", "pivot") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
 visible = false
@@ -2809,6 +2815,8 @@ anchor = NodePath("..")
 follow = NodePath("../../../FacingPivot/PoseController/Root")
 player = NodePath("../../..")
 role = 1
+pick_radius = 0.0
+halo_fill_color = Color(1, 0.55, 0.100000024, 0)
 
 [node name="AnimationTree" type="AnimationTree" parent="PlayerBody" unique_id=1787523656]
 tree_root = SubResource("AnimationNodeBlendTree_dx5ib")

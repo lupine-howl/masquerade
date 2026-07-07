@@ -51,6 +51,7 @@ signal dragged_rotation(delta_angle: float)
 @export var use_radius_angle_limit: bool = false ## Limit position to a world-angle arc around the radius origin (ignores parent rotation — good for eyeline targets).
 @export var min_radius_angle_deg: float = -90.0 ## Minimum world angle (degrees) from origin → marker. 0° = east/right in Godot. Sticks when crossed (supports ranges beyond ±180, e.g. -270 to 90).
 @export var max_radius_angle_deg: float = 90.0 ## Maximum world angle (degrees) from origin → marker.
+@export var radius_keep_world_offset: bool = false ## Keep the same world X/Y offset from radius_constraint_parent when it translates. Ignores parent rotation. Skipped while dragging this marker.
 
 @export_category("Rotation Constraint")
 @export var use_rotation_limit: bool = false ## Clamp solved rotation to a local angle range relative to rotation_constraint_parent (or follow target if parent is empty).
@@ -83,6 +84,9 @@ var original_rotation: float
 var has_unsaved_changes: bool = false
 var _radius_angle_unwrapped_deg: float = 0.0
 var _radius_angle_state_valid: bool = false
+var _radius_parent_world_offset: Vector2 = Vector2.ZERO
+var _last_radius_parent_pos: Vector2 = Vector2.ZERO
+var _radius_parent_follow_ready: bool = false
 
 @onready var area_2d: Area2D = $Area2D
 @onready var collision_shape: CollisionShape2D = $Area2D/CollisionShape2D
@@ -158,6 +162,7 @@ func _process(_delta: float) -> void:
 		_update_visuals()
 		_handle_drag_input()
 	if is_controlled and slave:
+		_apply_radius_parent_offset_follow()
 		constrain_global_position(global_position)
 	elif _uses_position_constraints():
 		constrain_global_position(global_position)
@@ -245,6 +250,7 @@ func _physics_process(_delta: float) -> void:
 		return
 	_sync_slave_freeze()
 	if is_controlled:
+		_apply_radius_parent_offset_follow()
 		constrain_global_position(global_position)
 		var pose_rot := _solve_rotation()
 		slave.global_rotation = _to_slave_rotation(pose_rot)
@@ -308,6 +314,46 @@ func _radius_constraint_origin() -> Vector2:
 	if radius_is_global or not radius_constraint_parent:
 		return Vector2.ZERO
 	return radius_constraint_parent.global_position
+
+func _apply_radius_parent_offset_follow() -> void:
+	if not use_radius_limit or not radius_keep_world_offset or radius_is_global:
+		_radius_parent_follow_ready = false
+		return
+	var parent := radius_constraint_parent
+	if not parent or not is_instance_valid(parent):
+		_radius_parent_follow_ready = false
+		return
+
+	var parent_pos := parent.global_position
+
+	if is_dragging_position:
+		_radius_parent_world_offset = global_position - parent_pos
+		_radius_parent_follow_ready = true
+		_last_radius_parent_pos = parent_pos
+		return
+
+	if not _radius_parent_follow_ready:
+		_radius_parent_world_offset = global_position - parent_pos
+		_radius_parent_follow_ready = true
+		_last_radius_parent_pos = parent_pos
+		return
+
+	var parent_delta := parent_pos - _last_radius_parent_pos
+	var expected_pos := _last_radius_parent_pos + _radius_parent_world_offset
+
+	if parent_delta != Vector2.ZERO:
+		if global_position.is_equal_approx(expected_pos):
+			var new_pos := global_position + parent_delta
+			global_position = new_pos
+			if slave and is_controlled:
+				slave.global_position = new_pos
+	elif not global_position.is_equal_approx(parent_pos + _radius_parent_world_offset):
+		_radius_parent_world_offset = global_position - parent_pos
+
+	_last_radius_parent_pos = parent_pos
+
+func _invalidate_radius_parent_offset_follow() -> void:
+	_radius_parent_follow_ready = false
 
 func _unwrap_angle_toward(angle_deg: float, reference_deg: float) -> float:
 	var a := angle_deg
@@ -544,4 +590,5 @@ func revert_to_original() -> void:
 	else:
 		global_rotation = original_rotation
 	_radius_angle_state_valid = false
+	_invalidate_radius_parent_offset_follow()
 	_reset_marker_ui()
