@@ -2452,6 +2452,16 @@ slot_scale = Vector2(0.4, 0.4)
 
 [node name="BodyPolygons" type="Node2D" parent="PlayerBody/FacingPivot/Armature" unique_id=756086073]
 
+[node name="Head" type="Polygon2D" parent="PlayerBody/FacingPivot/Armature/BodyPolygons" node_paths=PackedStringArray("skeleton_root")]
+z_index = 1
+texture = ExtResource("30_b8hi5")
+polygon = PackedVector2Array(10, -130, 80, -130, 80, -200, 10, -200)
+uv = PackedVector2Array(404, 250.8, 631.2, 250.8, 631.2, 42, 404, 42)
+skeleton = NodePath("../../Skeleton2D")
+bones = ["Pelvis/Abdomen/Torso/Shoulders/Neck/Head", PackedFloat32Array(1, 1, 1, 1)]
+script = ExtResource("51_bodypoly")
+skeleton_root = NodePath("../../Skeleton2D")
+
 [node name="AbdomenSeam" type="Polygon2D" parent="PlayerBody/FacingPivot/Armature/BodyPolygons" unique_id=586427595 node_paths=PackedStringArray("skeleton_root")]
 z_index = 2
 texture = ExtResource("30_b8hi5")
@@ -2465,11 +2475,145 @@ skeleton_root = NodePath("../../Skeleton2D")
 [node name="Torso" type="Node2D" parent="PlayerBody/FacingPivot/Armature/BodyPolygons" unique_id=972404060]
 
 [node name="Torso" type="Polygon2D" parent="PlayerBody/FacingPivot/Armature/BodyPolygons/Torso" unique_id=1621426057 node_paths=PackedStringArray("skeleton_root")]
-visible = false
+z_index = 3
 texture = ExtResource("30_b8hi5")
+polygon = PackedVector2Array(-32, -50, 32, -50, 32, -128, -32, -128)
+uv = PackedVector2Array(490, 510, 650, 510, 650, 316, 490, 316)
 skeleton = NodePath("../../../Skeleton2D")
+bones = ["Pelvis/Abdomen/Torso", PackedFloat32Array(1, 1, 1, 1)]
 script = ExtResource("51_bodypoly")
 skeleton_root = NodePath("../../../Skeleton2D")
+
+[node name="Jetpack" type="Polygon2D" parent="PlayerBody/FacingPivot/Armature/BodyPolygons/Torso" node_paths=PackedStringArray("skeleton_root")]
+visible = false
+z_index = 1
+texture = ExtResource("30_b8hi5")
+polygon = PackedVector2Array(-72, -55, -42, -55, -42, -141, -72, -141)
+uv = PackedVector2Array(394, 594, 469, 594, 469, 380, 394, 380)
+skeleton = NodePath("../../../Skeleton2D")
+bones = ["Pelvis/Abdomen/Torso", PackedFloat32Array(1, 1, 1, 1)]
+script = ExtResource("51_bodypoly")
+skeleton_root = NodePath("../../../Skeleton2D")
+
+[node name="UpperArm_Back" type="Polygon2D" parent="PlayerBody/FacingPivot/Armature/BodyPolygons" node_paths=PackedStringArray("skeleton_root")]
+modulate = Color(0.6901961, 0.6901961, 0.6901961, 1)
+texture = ExtResource("30_b8hi5")
+polygon = PackedVector2Array(-55, -35, -20, -35, -20, 37, -55, 37)
+uv = PackedVector2Array(250, 385, 338, 385, 338, 205, 250, 205)
+skeleton = NodePath("../../Skeleton2D")
+bones = ["Pelvis/Abdomen/Torso/Shoulders/UpperArm_Back", PackedFloat32Array(1, 1, 1, 1)]
+script = ExtResource("51_bodypoly")
+skeleton_root = NodePath("../../Skeleton2D")
+
+[node name="Forearm_Back" type="Polygon2D" parent="PlayerBody/FacingPivot/Armature/BodyPolygons" node_paths=PackedStringArray("skeleton_root")]
+modulate = Color(0.6901961, 0.6901961, 0.6901961, 1)
+texture = ExtResource("30_b8hi5")
+polygon = PackedVector2Array(-100, -35, -59, -35, -59, 45, -100, 45)
+uv = PackedVector2Array(874, 764, 990, 764, 990, 536, 874, 536)
+skeleton = NodePath("../../Skeleton2D")
+bones = ["Pelvis/Abdomen/Torso/Shoulders/UpperArm_Back/Forearm_Back", PackedFloat32Array(1, 1, 1, 1)]
+script = ExtResource("51_bodypoly")
+skeleton_root = NodePath("../../Skeleton2D")
+
+[node name="Hand_Back" type="Polygon2D" parent="PlayerBody/FacingPivot/Armature/BodyPolygons" node_paths=PackedStringArray("skeleton_root")]
+modulate = Color(0.6901961, 0.6901961, 0.6901961, 1)
+texture = ExtResource("30_b8hi5")
+polygon = PackedVector2Array(-135, -48, -91, -48, -91, -102, -135, -102)
+uv = PackedVector2Array(231, 914, 340, 914, 340, 780, 231, 780)
+skeleton = NodePath("../../Skeleton2D")
+bones = ["Pelvis/Abdomen/Torso/Shoulders/UpperArm_Back/Forearm_Back/Hand_Back", PackedFloat32Array(1, 1, 1, 1)]
+script = ExtResource("51_bodypoly")
+skeleton_root = NodePath("../../Skeleton2D")
+
+[node name="UpperArm_Front" type="Polygon2D" parent="PlayerBody/FacingPivot/Armature/BodyPolygons" node_paths=PackedStringArray("skeleton_root")]
+z_index = 5
+texture = ExtResource("30_b8hi5")
+polygon = PackedVector2Array(5, -35, 41, -35, 41, 37, 5, 37)
+uv = PackedVector2Array(54, 385, 143, 385, 143, 205, 54, 205)
+skeleton = NodePath("../../Skeleton2D")
+bones = ["Pelvis/Abdomen/Torso/Shoulders/UpperArm_Front", PackedFloat32Array(1, 1, 1, 1)]
+script = ExtResource("51_bodypoly")
+skeleton_root = NodePath("../../Skeleton2D")
+
+[node name="Forearm_Front" type="Polygon2D" parent="PlayerBody/FacingPivot/Armature/BodyPolygons" node_paths=PackedStringArray("skeleton_root")]
+z_index = 5
+texture = ExtResource("30_b8hi5")
+polygon = PackedVector2Array(41, -35, 78, -35, 78, 33, 41, 33)
+uv = PackedVector2Array(56, 661, 143, 661, 143, 491, 56, 491)
+skeleton = NodePath("../../Skeleton2D")
+bones = ["Pelvis/Abdomen/Torso/Shoulders/UpperArm_Front/Forearm_Front", PackedFloat32Array(1, 1, 1, 1)]
+script = ExtResource("51_bodypoly")
+skeleton_root = NodePath("../../Skeleton2D")
+
+[node name="Hand_Front" type="Polygon2D" parent="PlayerBody/FacingPivot/Armature/BodyPolygons" node_paths=PackedStringArray("skeleton_root")]
+z_index = 5
+texture = ExtResource("30_b8hi5")
+polygon = PackedVector2Array(78, -48, 122, -48, 122, -102, 78, -102)
+uv = PackedVector2Array(53, 914, 161, 914, 161, 780, 53, 780)
+skeleton = NodePath("../../Skeleton2D")
+bones = ["Pelvis/Abdomen/Torso/Shoulders/UpperArm_Front/Forearm_Front/Hand_Front", PackedFloat32Array(1, 1, 1, 1)]
+script = ExtResource("51_bodypoly")
+skeleton_root = NodePath("../../Skeleton2D")
+
+[node name="Thigh_Back" type="Polygon2D" parent="PlayerBody/FacingPivot/Armature/BodyPolygons" node_paths=PackedStringArray("skeleton_root")]
+modulate = Color(0.69135684, 0.6913568, 0.69135684, 1)
+texture = ExtResource("30_b8hi5")
+polygon = PackedVector2Array(-65, 5, -13, 5, -13, 103, -65, 103)
+uv = PackedVector2Array(860, 449, 990, 449, 990, 205, 860, 205)
+skeleton = NodePath("../../Skeleton2D")
+bones = ["Pelvis/Thigh_Back", PackedFloat32Array(1, 1, 1, 1)]
+script = ExtResource("51_bodypoly")
+skeleton_root = NodePath("../../Skeleton2D")
+
+[node name="Calf_Back" type="Polygon2D" parent="PlayerBody/FacingPivot/Armature/BodyPolygons" node_paths=PackedStringArray("skeleton_root")]
+modulate = Color(0.69135684, 0.6913568, 0.69135684, 1)
+texture = ExtResource("30_b8hi5")
+polygon = PackedVector2Array(-140, 5, -88, 5, -88, 96, -140, 96)
+uv = PackedVector2Array(874, 764, 990, 764, 990, 536, 874, 536)
+skeleton = NodePath("../../Skeleton2D")
+bones = ["Pelvis/Thigh_Back/Calf_Back", PackedFloat32Array(1, 1, 1, 1)]
+script = ExtResource("51_bodypoly")
+skeleton_root = NodePath("../../Skeleton2D")
+
+[node name="Foot_Back" type="Polygon2D" parent="PlayerBody/FacingPivot/Armature/BodyPolygons" node_paths=PackedStringArray("skeleton_root")]
+modulate = Color(0.69135684, 0.6913568, 0.69135684, 1)
+texture = ExtResource("30_b8hi5")
+polygon = PackedVector2Array(-200, 88, -140, 88, -140, 57, -200, 57)
+uv = PackedVector2Array(647, 939, 798, 939, 798, 862, 647, 862)
+skeleton = NodePath("../../Skeleton2D")
+bones = ["Pelvis/Thigh_Back/Calf_Back/Foot_Back", PackedFloat32Array(1, 1, 1, 1)]
+script = ExtResource("51_bodypoly")
+skeleton_root = NodePath("../../Skeleton2D")
+
+[node name="Thigh_Front" type="Polygon2D" parent="PlayerBody/FacingPivot/Armature/BodyPolygons" node_paths=PackedStringArray("skeleton_root")]
+z_index = 2
+texture = ExtResource("30_b8hi5")
+polygon = PackedVector2Array(-13, 5, 39, 5, 39, 103, -13, 103)
+uv = PackedVector2Array(671, 449, 802, 449, 802, 205, 671, 205)
+skeleton = NodePath("../../Skeleton2D")
+bones = ["Pelvis/Thigh_Front", PackedFloat32Array(1, 1, 1, 1)]
+script = ExtResource("51_bodypoly")
+skeleton_root = NodePath("../../Skeleton2D")
+
+[node name="Calf_Front" type="Polygon2D" parent="PlayerBody/FacingPivot/Armature/BodyPolygons" node_paths=PackedStringArray("skeleton_root")]
+z_index = 2
+texture = ExtResource("30_b8hi5")
+polygon = PackedVector2Array(39, 5, 91, 5, 91, 96, 39, 96)
+uv = PackedVector2Array(668, 764, 802, 764, 802, 536, 668, 536)
+skeleton = NodePath("../../Skeleton2D")
+bones = ["Pelvis/Thigh_Front/Calf_Front", PackedFloat32Array(1, 1, 1, 1)]
+script = ExtResource("51_bodypoly")
+skeleton_root = NodePath("../../Skeleton2D")
+
+[node name="Foot_Front" type="Polygon2D" parent="PlayerBody/FacingPivot/Armature/BodyPolygons" node_paths=PackedStringArray("skeleton_root")]
+z_index = 2
+texture = ExtResource("30_b8hi5")
+polygon = PackedVector2Array(91, 57, 151, 57, 151, 88, 91, 88)
+uv = PackedVector2Array(647, 939, 798, 939, 798, 862, 647, 862)
+skeleton = NodePath("../../Skeleton2D")
+bones = ["Pelvis/Thigh_Front/Calf_Front/Foot_Front", PackedFloat32Array(1, 1, 1, 1)]
+script = ExtResource("51_bodypoly")
+skeleton_root = NodePath("../../Skeleton2D")
 
 [node name="Ragdoll" type="Node2D" parent="PlayerBody" unique_id=35418647 node_paths=PackedStringArray("skeleton_node", "pivot")]
 z_index = 4
