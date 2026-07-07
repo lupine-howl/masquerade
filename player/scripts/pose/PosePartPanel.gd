@@ -16,6 +16,8 @@ signal inspector_updated(marker: PoseMarker)
 @onready var follow_rot_target_option: OptionButton = %FollowRotTargetOption
 @onready var look_at_check: CheckBox = %LookAtCheck
 @onready var look_at_target_option: OptionButton = %LookAtTargetOption
+@onready var sprite_preview_row: HBoxContainer = %SpritePreviewRow
+@onready var part_sprite_preview: TextureRect = %PartSpritePreview
 
 var pose_controller: PoseController
 var timeline: TimelineManager
@@ -209,6 +211,7 @@ func _sync_detail_from_marker(marker: PoseMarker) -> void:
 		look_at_target_option.disabled = not marker.use_look_at
 		_populate_constraint_target_option(look_at_target_option, marker, marker.look_at_target)
 		_sync_rot_offset_ui(marker)
+		_sync_sprite_preview(marker)
 	else:
 		controlled_check.set_pressed_no_signal(false)
 		local_pos_label.text = "Local (--, --)"
@@ -219,7 +222,17 @@ func _sync_detail_from_marker(marker: PoseMarker) -> void:
 		look_at_target_option.clear()
 		look_at_target_option.add_item("None")
 		rot_offset_row.visible = false
+		_sync_sprite_preview(null)
 	_updating_detail = false
+
+func _sync_sprite_preview(marker: PoseMarker) -> void:
+	var slot: BodyPartSlot = marker.body_part_slot if marker else null
+	if slot and is_instance_valid(slot):
+		sprite_preview_row.visible = true
+		part_sprite_preview.texture = slot.get_display_texture()
+	else:
+		sprite_preview_row.visible = false
+		part_sprite_preview.texture = null
 
 func _sync_rot_offset_ui(marker: PoseMarker) -> void:
 	var has_constraint := marker.use_look_at or marker.use_follow_rotation

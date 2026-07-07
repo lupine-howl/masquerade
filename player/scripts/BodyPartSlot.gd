@@ -24,3 +24,14 @@ func _sync_to_bone() -> void:
 
 	var local := Transform2D(deg_to_rad(slot_rotation_degrees), slot_position).scaled(slot_scale)
 	global_transform = follow_bone.global_transform * local
+
+
+func get_display_texture() -> Texture2D:
+	if texture == null:
+		return null
+	if region_enabled:
+		var atlas := AtlasTexture.new()
+		atlas.atlas = texture
+		atlas.region = region_rect
+		return atlas
+	return texture

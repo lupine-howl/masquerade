@@ -1021,6 +1021,18 @@ visible = false
 layout_mode = 2
 text = "Parent: None"
 
+[node name="SpritePreviewRow" type="HBoxContainer" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/PosePartPanel/ContentRow/Panel/MarginContainer2/PartInfo" unique_id=884210350]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="PartSpritePreview" type="TextureRect" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/PosePartPanel/ContentRow/Panel/MarginContainer2/PartInfo/SpritePreviewRow" unique_id=884210351]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
 [node name="VBoxContainer" type="VBoxContainer" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox/PosePartPanel/ContentRow/Panel/MarginContainer2/PartInfo" unique_id=318349264]
 layout_mode = 2
 theme_override_constants/separation = 4
@@ -1639,10 +1651,11 @@ use_rotation_limit = true
 min_rotation_deg = 0.0
 max_rotation_deg = 0.0
 
-[node name="Head" parent="PlayerBody/FacingPivot/PoseController" unique_id=1906863 node_paths=PackedStringArray("slave", "pivot", "y_constraint_parent", "radius_constraint_parent", "look_at_target") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
+[node name="Head" parent="PlayerBody/FacingPivot/PoseController" unique_id=1906863 node_paths=PackedStringArray("slave", "body_part_slot", "pivot", "y_constraint_parent", "radius_constraint_parent", "look_at_target") groups=["anim_markers"] instance=ExtResource("9_s7qer")]
 position = Vector2(-1.7985806, -112.642784)
 rotation = -0.0034784384
 slave = NodePath("../../../Ragdoll/Head/Head_Physics")
+body_part_slot = NodePath("../../Armature/BodySprites/Head")
 pivot = NodePath("../..")
 invert_rotation_on_flip = true
 can_rotate = true
