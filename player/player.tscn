@@ -47,7 +47,7 @@
 [ext_resource type="Script" uid="uid://u8uo732uaou7" path="res://player/scripts/KnockbackState.gd" id="39_55jnj"]
 [ext_resource type="Script" uid="uid://da4ftf166ra4t" path="res://player/scripts/LadderClimbState.gd" id="40_dx5ib"]
 [ext_resource type="Script" uid="uid://wu5s6u3i25mj" path="res://player/scripts/WallClimb.gd" id="41_a2xo5"]
-[ext_resource type="Animation" uid="uid://bloygk18lfxun" path="res://walk.res" id="42_7crtr"]
+[ext_resource type="Animation" uid="uid://b2ju3bm0x4jjf" path="res://walk.res" id="42_7crtr"]
 [ext_resource type="Script" uid="uid://dc301x4lrovbu" path="res://player/scripts/LedgeClimbState.gd" id="42_art4l"]
 [ext_resource type="Script" uid="uid://b8784bru0cofh" path="res://player/scripts/DeadState.gd" id="42_fjxoa"]
 [ext_resource type="Texture2D" uid="uid://cnssw0xaid3pc" path="res://icon.svg" id="43_fjxoa"]
@@ -56,6 +56,7 @@
 [ext_resource type="Script" uid="uid://ur6st2bilayr" path="res://player/scripts/HardAngularLimitJoint2D.gd" id="47_hardpin"]
 [ext_resource type="Script" uid="uid://b2nohj542abak" path="res://player/scripts/PathAnchor.gd" id="48_pathanchor"]
 [ext_resource type="Script" uid="uid://b0j3ljvo8k1l0" path="res://player/scripts/PathGuideMarker.gd" id="49_pathguide"]
+[ext_resource type="Script" path="res://player/scripts/BodyPartSlot.gd" id="50_bodypart"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mmwog"]
 bg_color = Color(0.6, 0.6, 0.6, 0)
@@ -71,24 +72,20 @@ height = 320.0
 size = Vector2(69, 49)
 
 [sub_resource type="SkeletonModification2DTwoBoneIK" id="SkeletonModification2DTwoBoneIK_b8hi5"]
-target_nodepath = NodePath("../Target_BackFoot")
 joint_one_bone_idx = 9
 joint_two_bone_idx = 10
 
 [sub_resource type="SkeletonModification2DTwoBoneIK" id="SkeletonModification2DTwoBoneIK_2uvqg"]
-target_nodepath = NodePath("../Target_FrontFoot")
 joint_one_bone_idx = 15
 joint_one_bone2d_node = NodePath("Pelvis/Thigh_Front")
 joint_two_bone_idx = 16
 joint_two_bone2d_node = NodePath("Pelvis/Thigh_Front/Calf_Front")
 
 [sub_resource type="SkeletonModification2DTwoBoneIK" id="SkeletonModification2DTwoBoneIK_1s1yo"]
-target_nodepath = NodePath("../Target_BackHand")
 joint_one_bone_idx = 3
 joint_two_bone_idx = 4
 
 [sub_resource type="SkeletonModification2DTwoBoneIK" id="SkeletonModification2DTwoBoneIK_5ejfk"]
-target_nodepath = NodePath("../Target_FrontHand")
 flip_bend_direction = true
 joint_one_bone_idx = 9
 joint_one_bone2d_node = NodePath("Pelvis/Abdomen/Torso/Shoulders/UpperArm_Front")
@@ -97,12 +94,10 @@ joint_two_bone2d_node = NodePath("Pelvis/Abdomen/Torso/Shoulders/UpperArm_Front/
 
 [sub_resource type="SkeletonModification2DLookAt" id="SkeletonModification2DLookAt_b8hi5"]
 bone_index = 11
-target_nodepath = NodePath("../Target_BackFoot_Rotation")
 
 [sub_resource type="SkeletonModification2DLookAt" id="SkeletonModification2DLookAt_2uvqg"]
 bone_index = 17
 bone2d_node = NodePath("Pelvis/Thigh_Front/Calf_Front/Foot_Front")
-target_nodepath = NodePath("../Target_FrontFoot_Rotation")
 
 [sub_resource type="SkeletonModification2DPhysicalBones" id="SkeletonModification2DPhysicalBones_2uvqg"]
 physical_bone_chain_length = 1
@@ -1939,15 +1934,6 @@ physics_body = NodePath("../../../../../../../../../Ragdoll/Head/Head_Physics")
 inverted_scale_x_rotation_compensation = 180.0
 metadata/_custom_type_script = "uid://cns3xkrq4cwa4"
 
-[node name="Head" type="Sprite2D" parent="PlayerBody/FacingPivot/Armature/Skeleton2D/Pelvis/Abdomen/Torso/Shoulders/Neck/Head" unique_id=255580531]
-z_index = 1
-position = Vector2(7.00021, 5.998169)
-scale = Vector2(0.32, 0.32)
-texture = ExtResource("30_b8hi5")
-offset = Vector2(20.000586, -73.204865)
-region_enabled = true
-region_rect = Rect2(404, 42.000004, 227.19995, 208.79999)
-
 [node name="UpperArm_Back" type="Bone2D" parent="PlayerBody/FacingPivot/Armature/Skeleton2D/Pelvis/Abdomen/Torso/Shoulders" unique_id=1348144898 node_paths=PackedStringArray("physics_body")]
 rotation = -3.1415925
 scale = Vector2(0.999976, 0.999976)
@@ -2187,27 +2173,18 @@ flip_h = true
 region_enabled = true
 region_rect = Rect2(647, 862, 151, 77)
 
-[node name="Target_BackFoot" type="Marker2D" parent="PlayerBody/FacingPivot/Armature" unique_id=392848940]
-position = Vector2(14.013748, -29.917976)
+[node name="BodySprites" type="Node" parent="PlayerBody/FacingPivot/Armature" unique_id=1508687099]
 
-[node name="Target_BackFoot_Rotation" type="Marker2D" parent="PlayerBody/FacingPivot/Armature" unique_id=1973556778]
-position = Vector2(-65.98625, 64.082016)
-
-[node name="Target_FrontFoot_Rotation" type="Marker2D" parent="PlayerBody/FacingPivot/Armature" unique_id=418602272]
-position = Vector2(34.01374, -41.917984)
-
-[node name="Target_FrontFoot" type="Marker2D" parent="PlayerBody/FacingPivot/Armature" unique_id=472346068]
-position = Vector2(-61.66745, 16.314346)
-
-[node name="Target_BackHand" type="Marker2D" parent="PlayerBody/FacingPivot/Armature" unique_id=714395792]
-position = Vector2(88.46463, -133.27112)
-
-[node name="Target_FrontHand" type="Marker2D" parent="PlayerBody/FacingPivot/Armature" unique_id=1140569574]
-position = Vector2(-62.911102, -142.74261)
-
-[node name="LedgeAnchor" type="Marker2D" parent="PlayerBody/FacingPivot/Armature" unique_id=1140569575]
-unique_name_in_owner = true
-position = Vector2(60, -160)
+[node name="Head" type="Sprite2D" parent="PlayerBody/FacingPivot/Armature/BodySprites" unique_id=2024693180 node_paths=PackedStringArray("follow_bone")]
+z_index = 1
+texture = ExtResource("30_b8hi5")
+offset = Vector2(20.000586, -73.204865)
+region_enabled = true
+region_rect = Rect2(404, 42.000004, 227.19995, 208.79999)
+script = ExtResource("50_bodypart")
+follow_bone = NodePath("../../Skeleton2D/Pelvis/Abdomen/Torso/Shoulders/Neck/Head")
+slot_position = Vector2(7.00021, 5.998169)
+slot_scale = Vector2(0.32, 0.32)
 
 [node name="Ragdoll" type="Node2D" parent="PlayerBody" unique_id=35418647 node_paths=PackedStringArray("skeleton_node", "pivot")]
 z_index = 4
