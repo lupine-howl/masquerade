@@ -10,6 +10,8 @@ var current_step: int = 0
 var selected_steps: Array[int] = []
 var step_selection_anchor: int = 0
 var _playback_active: bool = false
+var mirror_mode_enabled: bool = false
+var mirror_base_steps: int = 1
 
 # Clipboard storage container for the copied frame payload
 # Format: [{"path": NodePath, "value": Variant, "interpolation": int}]
@@ -135,6 +137,25 @@ func get_key_target_steps() -> Array[int]:
 	if selected_steps.is_empty():
 		return [current_step]
 	return selected_steps.duplicate()
+
+func set_mirror_mode(enabled: bool, base_steps: int) -> void:
+	mirror_mode_enabled = enabled
+	mirror_base_steps = maxi(1, base_steps)
+
+func get_mirror_total_steps() -> int:
+	if not mirror_mode_enabled:
+		return mirror_base_steps
+	return mirror_base_steps * 2
+
+func get_mirror_target_steps() -> Array[int]:
+	if not mirror_mode_enabled:
+		return []
+	var targets: Array[int] = []
+	for step in get_key_target_steps():
+		if step >= 0 and step < mirror_base_steps:
+			targets.append(step + mirror_base_steps)
+	targets.sort()
+	return targets
 
 func _on_animation_finished(anim_name: StringName) -> void:
 	if not _playback_active or not anim_player:

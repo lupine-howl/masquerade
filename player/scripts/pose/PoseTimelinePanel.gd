@@ -18,6 +18,7 @@ const PLAYBACK_BTN_SIZE := Vector2(40, 32)
 @onready var anim_select: OptionButton = %AnimSelect
 @onready var tl_btn_export: Button = %TlBtnExport
 @onready var tl_loop_check: CheckBox = %TlLoopCheck
+@onready var tl_mirror_check: CheckBox = %TlMirrorCheck
 @onready var btn_key_all: Button = %BtnKeyAll
 @onready var btn_play: Button = %BtnPlay
 @onready var btn_stop: Button = %BtnStop
@@ -69,6 +70,10 @@ func _ready() -> void:
 	if tl_loop_check:
 		tl_loop_check.focus_mode = Control.FOCUS_NONE
 		tl_loop_check.add_theme_font_size_override("font_size", 11)
+	if tl_mirror_check:
+		tl_mirror_check.focus_mode = Control.FOCUS_NONE
+		tl_mirror_check.add_theme_font_size_override("font_size", 11)
+		tl_mirror_check.toggled.connect(_on_mirror_toggled)
 	if btn_key_all:
 		btn_key_all.pressed.connect(func(): key_all_pressed.emit())
 		_style_key_all_button()
@@ -165,8 +170,13 @@ func sync_timing_ui(anim_name: String) -> void:
 		return
 	var anim := timeline.anim_player.get_animation(anim_name)
 	_syncing_timing = true
-	steps_spin.set_value_no_signal(_time_to_steps(anim.length))
+	var total_steps := _time_to_steps(anim.length)
+	var base_steps := _base_steps_from_total_steps(total_steps) if timeline.mirror_mode_enabled else total_steps
+	timeline.set_mirror_mode(timeline.mirror_mode_enabled, base_steps)
+	steps_spin.set_value_no_signal(base_steps)
 	speed_spin.set_value_no_signal(timeline.get_speed_scale(anim_name))
+	if tl_mirror_check:
+		tl_mirror_check.set_pressed_no_signal(timeline.mirror_mode_enabled)
 	_syncing_timing = false
 
 func _time_to_steps(duration_seconds: float) -> int:
@@ -187,15 +197,17 @@ func build_step_grid(duration: float) -> void:
 		child.free()
 
 	step_grid.columns = GRID_COLUMNS
-	var num_steps := int(round(duration / timeline.step_duration)) + 1
+	var base_steps := _time_to_steps(duration)
+	var num_steps := timeline.get_mirror_total_steps() if timeline.mirror_mode_enabled else base_steps
 	if num_steps < 1:
 		num_steps = 1
 
 	for i in range(num_steps):
 		var step_rect := ColorRect.new()
 		step_rect.custom_minimum_size = Vector2(STEP_CELL_SIZE, STEP_CELL_SIZE)
-		var is_dark_group := (i / 4) % 2 == 0
-		var base_color := Color(0.2, 0.2, 0.2) if is_dark_group else Color(0.35, 0.35, 0.35)
+		var is_dark_group := int(i / 4) % 2 == 0
+		var is_mirrored_step := timeline.mirror_mode_enabled and i >= timeline.mirror_base_steps
+		var base_color := Color(0.15, 0.22, 0.28) if is_mirrored_step else (Color(0.2, 0.2, 0.2) if is_dark_group else Color(0.35, 0.35, 0.35))
 		step_rect.color = base_color
 		step_rect.set_meta("base_color", base_color)
 
@@ -292,8 +304,26 @@ func _on_steps_changed(steps: float) -> void:
 	var anim_name: String = _get_anim_name.call()
 	if anim_name == "":
 		return
-	var next_time := _steps_to_time(int(steps))
+	var base_steps := maxi(1, int(steps))
+	var total_steps := _total_steps_from_base_steps(base_steps)
+	timeline.set_mirror_mode(timeline.mirror_mode_enabled, base_steps)
+	var next_time := _steps_to_time(total_steps)
 	timeline.set_length(anim_name, next_time)
+	build_step_grid(next_time)
+	duration_changed.emit(next_time)
+
+func _on_mirror_toggled(enabled: bool) -> void:
+	if not timeline or _get_anim_name.is_null():
+		return
+	var anim_name: String = _get_anim_name.call()
+	if anim_name == "":
+		return
+	var base_steps := maxi(1, get_steps_value())
+	timeline.set_mirror_mode(enabled, base_steps)
+	var total_steps := _total_steps_from_base_steps(base_steps)
+	var next_time := _steps_to_time(total_steps)
+	timeline.set_length(anim_name, next_time)
+	build_step_grid(next_time)
 	duration_changed.emit(next_time)
 
 func _on_speed_changed(speed: float) -> void:
@@ -368,3 +398,13 @@ func _on_reset_pressed() -> void:
 		return
 	timeline.clear_animation(_get_anim_name.call())
 	update_grid_visuals()
+
+func _total_steps_from_base_steps(base_steps: int) -> int:
+	if timeline and timeline.mirror_mode_enabled:
+		return base_steps * 2
+	return base_steps
+
+func _base_steps_from_total_steps(total_steps: int) -> int:
+	if not timeline or not timeline.mirror_mode_enabled:
+		return total_steps
+	return maxi(1, int(round(float(total_steps) * 0.5)))

@@ -145,11 +145,13 @@ func key_all_markers() -> void:
 	if not pose_controller or not timeline or _get_anim_name.is_null():
 		return
 	var anim_name: String = _get_anim_name.call()
-	for m in pose_controller.all_markers:
-		timeline.key_marker_pose(anim_name, m)
-	if pose_controller.player and timeline.is_path_body_drive_authoring_enabled(anim_name):
-		for guide in PathGuideMarker.gather_under(pose_controller.player):
-			timeline.key_path_guide_pose(anim_name, guide)
+	_key_with_mirror(func() -> void:
+		for m in pose_controller.all_markers:
+			timeline.key_marker_pose(anim_name, m)
+		if pose_controller.player and timeline.is_path_body_drive_authoring_enabled(anim_name):
+			for guide in PathGuideMarker.gather_under(pose_controller.player):
+				timeline.key_path_guide_pose(anim_name, guide)
+	)
 	_refresh_visuals()
 
 func normalize_horizontal() -> void:
@@ -381,8 +383,29 @@ func _auto_key_property(marker: PoseMarker, property_suffix: String, value: Vari
 func _key_marker_pose(marker: PoseMarker) -> void:
 	if not timeline or _get_anim_name.is_null():
 		return
-	timeline.key_marker_pose(_get_anim_name.call(), marker)
+	var anim_name: String = _get_anim_name.call()
+	_key_with_mirror(func() -> void:
+		timeline.key_marker_pose(anim_name, marker)
+	)
 	marker._reset_marker_ui()
+
+func _key_with_mirror(key_action: Callable) -> void:
+	key_action.call()
+	if not pose_controller or not timeline.mirror_mode_enabled:
+		return
+	var mirror_steps := timeline.get_mirror_target_steps()
+	if mirror_steps.is_empty():
+		return
+
+	var previous_steps := timeline.selected_steps.duplicate()
+	var previous_anchor := timeline.step_selection_anchor
+	pose_controller.swap_all_siblings()
+	timeline.set_step_selection(mirror_steps)
+	timeline.step_selection_anchor = mirror_steps[0]
+	key_action.call()
+	pose_controller.swap_all_siblings()
+	timeline.set_step_selection(previous_steps)
+	timeline.step_selection_anchor = previous_anchor
 
 func _refresh_visuals() -> void:
 	if not _on_visuals_refresh.is_null():

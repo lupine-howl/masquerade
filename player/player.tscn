@@ -47,6 +47,7 @@
 [ext_resource type="Script" uid="uid://u8uo732uaou7" path="res://player/scripts/KnockbackState.gd" id="39_55jnj"]
 [ext_resource type="Script" uid="uid://da4ftf166ra4t" path="res://player/scripts/LadderClimbState.gd" id="40_dx5ib"]
 [ext_resource type="Script" uid="uid://wu5s6u3i25mj" path="res://player/scripts/WallClimb.gd" id="41_a2xo5"]
+[ext_resource type="Animation" uid="uid://bloygk18lfxun" path="res://walk.res" id="42_7crtr"]
 [ext_resource type="Script" uid="uid://dc301x4lrovbu" path="res://player/scripts/LedgeClimbState.gd" id="42_art4l"]
 [ext_resource type="Script" uid="uid://b8784bru0cofh" path="res://player/scripts/DeadState.gd" id="42_fjxoa"]
 [ext_resource type="Texture2D" uid="uid://cnssw0xaid3pc" path="res://icon.svg" id="43_fjxoa"]
@@ -899,6 +900,7 @@ _data = {
 &"ledge_climb": ExtResource("35_237xx"),
 &"run": ExtResource("27_55jnj"),
 &"run_start": ExtResource("29_fjxoa"),
+&"walk": ExtResource("42_7crtr"),
 &"wall_climb": ExtResource("38_wpyo2")
 }
 
@@ -1368,6 +1370,13 @@ layout_mode = 2
 focus_mode = 0
 theme_override_font_sizes/font_size = 11
 text = "Loop"
+
+[node name="TlMirrorCheck" type="CheckBox" parent="PoseHUD/PoseTimelineDock/MarginContainer/PoseTimelinePanel/ControlsCenter/ControlsRow" unique_id=1859051120]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 0
+theme_override_font_sizes/font_size = 11
+text = "Mirror"
 
 [node name="BtnKeyAll" type="Button" parent="PoseHUD/PoseTimelineDock/MarginContainer/PoseTimelinePanel/ControlsCenter/ControlsRow" unique_id=-447676223]
 unique_name_in_owner = true
@@ -2883,7 +2892,7 @@ parameters/ClimbScale/scale = 1.0
 deterministic = true
 libraries/ = SubResource("AnimationLibrary_1s1yo")
 autoplay = &"run"
-speed_scale = 1.5
+speed_scale = 0.0
 script = ExtResource("46_animator")
 
 [node name="StateMachine" type="Node" parent="PlayerBody" unique_id=1888989459 node_paths=PackedStringArray("initial_state")]
