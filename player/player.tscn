@@ -21,6 +21,7 @@
 [ext_resource type="Script" uid="uid://caq1o7vjefuky" path="res://player/scripts/pose/PoseTimelineDock.gd" id="11_timedock"]
 [ext_resource type="Script" uid="uid://ptpbj4ebn1b0" path="res://player/scripts/pose/PoseTimelinePanel.gd" id="11_timeline"]
 [ext_resource type="Script" uid="uid://c23x0uci37vw3" path="res://player/scripts/pose/PoseToolBar.gd" id="11_toolbar"]
+[ext_resource type="Script" path="res://player/scripts/build/BuildPanel.gd" id="11_build"]
 [ext_resource type="Animation" uid="uid://dwo2hvuwd4r57" path="res://player/animations/RESET.res" id="17_2uvqg"]
 [ext_resource type="Animation" uid="uid://didsa17bf61ia" path="res://player/animations/idle.res" id="17_r7pn3"]
 [ext_resource type="Animation" uid="uid://bcmjlymvakqdr" path="res://player/animations/dead.res" id="23_55jnj"]
@@ -1350,7 +1351,16 @@ filters = PackedStringArray("*.png, *.jpg, *.jpeg, *.webp")
 layout_mode = 2
 mouse_filter = 2
 
+[node name="BuildPanel" type="PanelContainer" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox" unique_id=519141400]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(280, 260)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("11_build")
+
 [node name="AnimSection" type="HBoxContainer" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox" unique_id=519141307]
+visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 0
