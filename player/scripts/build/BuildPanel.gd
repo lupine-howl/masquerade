@@ -23,7 +23,7 @@ const TILE_BUTTON_SIZE := 44
 const GRID_COLUMNS := 4
 
 var _tab_strip: VBoxContainer
-var _source_row: HBoxContainer
+var _source_row: HFlowContainer
 var _tile_grid: GridContainer
 var _header_label: Label
 var _selected_label: Label
@@ -42,6 +42,12 @@ var paint_enabled: bool = true
 var _has_selection: bool = false
 var _paint_source_id: int = -1
 var _paint_coords: Vector2i = Vector2i.ZERO
+
+## Hover highlight drawn on the target layer to show where a tile will land.
+var _brush: Node2D = null
+var _brush_layer: TileMapLayer = null
+var _hover_coords: Vector2i = Vector2i.ZERO
+var _brush_visible: bool = false
 
 
 func _ready() -> void:
@@ -97,14 +103,16 @@ func _build_ui() -> void:
 	main_col.add_child(source_caption)
 
 	var source_scroll := ScrollContainer.new()
-	source_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
-	source_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	source_scroll.custom_minimum_size = Vector2(0, 30)
+	source_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	source_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
+	source_scroll.custom_minimum_size = Vector2(0, 54)
 	source_scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	main_col.add_child(source_scroll)
 
-	_source_row = HBoxContainer.new()
-	_source_row.add_theme_constant_override("separation", 3)
+	_source_row = HFlowContainer.new()
+	_source_row.add_theme_constant_override("h_separation", 3)
+	_source_row.add_theme_constant_override("v_separation", 3)
+	_source_row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	source_scroll.add_child(_source_row)
 
 	var tiles_caption := Label.new()
@@ -179,11 +187,13 @@ func _populate_sources(tileset: TileSet) -> void:
 	for i in tileset.get_source_count():
 		var source_id := tileset.get_source_id(i)
 		var source := tileset.get_source(source_id)
-		var label := _source_label(source, source_id)
+		var full_label := _source_label(source, source_id)
 		var btn := Button.new()
-		btn.text = label
+		btn.text = full_label.trim_prefix("tileset-")
+		btn.tooltip_text = full_label
 		btn.focus_mode = Control.FOCUS_NONE
 		btn.add_theme_font_size_override("font_size", 9)
+		btn.clip_text = false
 		btn.toggle_mode = true
 		btn.set_meta("source_id", source_id)
 		btn.pressed.connect(_select_source.bind(tileset, source_id))
@@ -301,6 +311,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			_paint_at_mouse(true)
 			get_viewport().set_input_as_handled()
 	elif event is InputEventMouseMotion:
+		_update_brush_hover()
 		var mask := (event as InputEventMouseMotion).button_mask
 		if mask & MOUSE_BUTTON_MASK_LEFT:
 			_paint_at_mouse(false)
@@ -334,6 +345,50 @@ func _find_target_layer(layer_name: String) -> TileMapLayer:
 		return null
 	var node := scene.find_child(layer_name, true, false)
 	return node as TileMapLayer
+
+
+func _update_brush_hover() -> void:
+	if Engine.is_editor_hint() or not paint_enabled or _current_tilemap_index < 0:
+		_set_brush_visible(false)
+		return
+	var layer := _find_target_layer(String(TILEMAPS[_current_tilemap_index].name))
+	if layer == null:
+		_set_brush_visible(false)
+		return
+	_ensure_brush(layer)
+	var world := layer.get_global_mouse_position()
+	_hover_coords = layer.local_to_map(layer.to_local(world))
+	_set_brush_visible(true)
+	_brush.queue_redraw()
+
+
+func _ensure_brush(layer: TileMapLayer) -> void:
+	if _brush != null and is_instance_valid(_brush) and _brush_layer == layer:
+		return
+	if _brush != null and is_instance_valid(_brush):
+		_brush.queue_free()
+	_brush = Node2D.new()
+	_brush.z_index = 1000
+	layer.add_child(_brush)
+	_brush_layer = layer
+	_brush.draw.connect(_on_brush_draw)
+
+
+func _set_brush_visible(value: bool) -> void:
+	_brush_visible = value
+	if _brush != null and is_instance_valid(_brush):
+		_brush.visible = value
+
+
+func _on_brush_draw() -> void:
+	if not _brush_visible or _brush_layer == null or not is_instance_valid(_brush_layer):
+		return
+	var ts := _brush_layer.tile_set
+	var cell := Vector2(ts.tile_size) if ts else Vector2(16, 16)
+	var center := _brush_layer.map_to_local(_hover_coords)
+	var rect := Rect2(center - cell * 0.5, cell)
+	_brush.draw_rect(rect, Color(0.35, 0.75, 1.0, 0.18), true)
+	_brush.draw_rect(rect, Color(0.4, 0.8, 1.0, 0.9), false, 2.0)
 
 
 func _load_tileset(path: String) -> TileSet:
