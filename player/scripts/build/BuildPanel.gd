@@ -2,10 +2,12 @@
 class_name BuildPanel
 extends PanelContainer
 
-## MOCKUP level-build panel.
-## Layout: tilemap tabs (right) -> tileset/atlas buttons -> tile grid -> select.
-## Populates from the project's real TileSet resources so the mockup shows real
-## tiles. Painting is not wired yet — selecting a tile only emits `tile_selected`.
+## Prototype level-build panel.
+## Layout: tilemap tabs (left) -> tileset/atlas buttons -> tile grid -> select.
+## Populates from the project's real TileSet resources. Selecting a tile arms it;
+## left-click in the world paints it onto the matching TileMapLayer, right-click
+## erases. Painting targets the layer in the current level whose node name matches
+## the active tilemap tab (Terrain / Hazards / Controls / Water).
 
 signal tile_selected(tilemap: String, source_id: int, atlas_coords: Vector2i)
 
@@ -34,6 +36,13 @@ var _current_tilemap_index: int = -1
 var _current_source_id: int = -1
 var _selected_tile_button: Button = null
 
+## Painting is only active while a tile is armed. Later this should be gated by a
+## dedicated "Build" mode toggle.
+var paint_enabled: bool = true
+var _has_selection: bool = false
+var _paint_source_id: int = -1
+var _paint_coords: Vector2i = Vector2i.ZERO
+
 
 func _ready() -> void:
 	custom_minimum_size = Vector2(280, 260)
@@ -54,10 +63,20 @@ func _build_ui() -> void:
 	content_row.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	add_child(content_row)
 
+	var tab_strip_panel := PanelContainer.new()
+	PoseTabStyles.apply_left_tab_strip(tab_strip_panel)
+	tab_strip_panel.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
+	content_row.add_child(tab_strip_panel)
+
+	_tab_strip = VBoxContainer.new()
+	_tab_strip.add_theme_constant_override("separation", 2)
+	PoseTabStyles.configure_strip_container(_tab_strip)
+	tab_strip_panel.add_child(_tab_strip)
+
 	var main_panel := PanelContainer.new()
 	main_panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	main_panel.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	PoseTabStyles.apply_content_panel(main_panel, false)
+	PoseTabStyles.apply_content_panel(main_panel, true)
 	content_row.add_child(main_panel)
 
 	var main_col := VBoxContainer.new()
@@ -115,16 +134,6 @@ func _build_ui() -> void:
 	_selected_label.text = "No tile selected"
 	main_col.add_child(_selected_label)
 
-	var tab_strip_panel := PanelContainer.new()
-	PoseTabStyles.apply_right_tab_strip(tab_strip_panel)
-	tab_strip_panel.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
-	content_row.add_child(tab_strip_panel)
-
-	_tab_strip = VBoxContainer.new()
-	_tab_strip.add_theme_constant_override("separation", 2)
-	PoseTabStyles.configure_strip_container(_tab_strip)
-	tab_strip_panel.add_child(_tab_strip)
-
 
 func _populate_tilemap_tabs() -> void:
 	_clear_children(_tab_strip)
@@ -132,7 +141,7 @@ func _populate_tilemap_tabs() -> void:
 	for i in TILEMAPS.size():
 		var entry: Dictionary = TILEMAPS[i]
 		var btn := PoseTabStyles.make_tab_button(String(entry.name), "Tilemap: %s" % entry.name)
-		PoseTabStyles.apply_tab_button(btn, false, true)
+		PoseTabStyles.apply_tab_button(btn, false, false)
 		btn.pressed.connect(_select_tilemap.bind(i))
 		_tab_strip.add_child(btn)
 		_tab_buttons.append(btn)
@@ -143,7 +152,7 @@ func _select_tilemap(index: int) -> void:
 		return
 	_current_tilemap_index = index
 	for i in _tab_buttons.size():
-		PoseTabStyles.apply_tab_button(_tab_buttons[i], i == index, true)
+		PoseTabStyles.apply_tab_button(_tab_buttons[i], i == index, false)
 
 	var entry: Dictionary = TILEMAPS[index]
 	_header_label.text = "Build — %s" % entry.name
@@ -259,6 +268,9 @@ func _on_tile_pressed(btn: Button, source_id: int, coords: Vector2i) -> void:
 		_style_tile_button(_selected_tile_button, false)
 	_selected_tile_button = btn
 	_style_tile_button(btn, true)
+	_paint_source_id = source_id
+	_paint_coords = coords
+	_has_selection = true
 	var tilemap_name := "?"
 	if _current_tilemap_index >= 0:
 		tilemap_name = String(TILEMAPS[_current_tilemap_index].name)
@@ -275,6 +287,53 @@ func _source_label(source: TileSetSource, source_id: int) -> String:
 		if path != "":
 			return path.get_file().get_basename()
 	return "Source %d" % source_id
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	# Clicks over any UI are consumed before reaching here, so panel input is safe.
+	if Engine.is_editor_hint() or not paint_enabled:
+		return
+	if event is InputEventMouseButton and event.pressed:
+		if event.button_index == MOUSE_BUTTON_LEFT:
+			_paint_at_mouse(false)
+			get_viewport().set_input_as_handled()
+		elif event.button_index == MOUSE_BUTTON_RIGHT:
+			_paint_at_mouse(true)
+			get_viewport().set_input_as_handled()
+	elif event is InputEventMouseMotion:
+		var mask := (event as InputEventMouseMotion).button_mask
+		if mask & MOUSE_BUTTON_MASK_LEFT:
+			_paint_at_mouse(false)
+		elif mask & MOUSE_BUTTON_MASK_RIGHT:
+			_paint_at_mouse(true)
+
+
+func _paint_at_mouse(erase: bool) -> void:
+	if not erase and not _has_selection:
+		return
+	if _current_tilemap_index < 0:
+		return
+	var layer := _find_target_layer(String(TILEMAPS[_current_tilemap_index].name))
+	if layer == null:
+		push_warning("BuildPanel: no TileMapLayer named '%s' in the current level." % TILEMAPS[_current_tilemap_index].name)
+		return
+	var world := layer.get_global_mouse_position()
+	var coords := layer.local_to_map(layer.to_local(world))
+	if erase:
+		layer.erase_cell(coords)
+		return
+	if layer.tile_set == null or not layer.tile_set.has_source(_paint_source_id):
+		push_warning("BuildPanel: layer '%s' uses a different tileset (no source %d) — can't paint the browsed tile." % [layer.name, _paint_source_id])
+		return
+	layer.set_cell(coords, _paint_source_id, _paint_coords)
+
+
+func _find_target_layer(layer_name: String) -> TileMapLayer:
+	var scene := get_tree().current_scene
+	if scene == null:
+		return null
+	var node := scene.find_child(layer_name, true, false)
+	return node as TileMapLayer
 
 
 func _load_tileset(path: String) -> TileSet:
