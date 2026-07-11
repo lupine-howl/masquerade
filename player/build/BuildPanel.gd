@@ -31,7 +31,14 @@ var _current_tilemap_index: int = -1
 var _current_source_id: int = -1
 var _selected_tile_button: Button = null
 
-var paint_enabled: bool = false
+var _paint_enabled: bool = false
+var paint_enabled: bool:
+	get:
+		return _paint_enabled
+	set(value):
+		_paint_enabled = value
+		if not value:
+			_set_brush_visible(false)
 var _has_selection: bool = false
 var _paint_source_id: int = -1
 var _paint_coords: Vector2i = Vector2i.ZERO
