@@ -18,7 +18,7 @@ static func save_level(tree: SceneTree) -> Dictionary:
 	var scene := tree.current_scene
 	if scene == null:
 		return {"ok": false, "error": "No active level"}
-	var path := scene.scene_file_path
+	var path: String = scene.scene_file_path
 	if path.is_empty():
 		return {"ok": false, "error": "Level has no save path (scene_file_path is empty)"}
 	var err := ResourceSaver.save(scene, path)

@@ -428,7 +428,7 @@ func _clear_tile_selection() -> void:
 func _source_label(source: TileSetSource, source_id: int) -> String:
 	var atlas := source as TileSetAtlasSource
 	if atlas != null and atlas.texture != null:
-		var path := atlas.texture.resource_path
+		var path: String = atlas.texture.resource_path
 		if path != "":
 			return path.get_file().get_basename()
 	return "Source %d" % source_id

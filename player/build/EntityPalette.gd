@@ -35,10 +35,10 @@ static func load_entries() -> Array[Dictionary]:
 				var tile_data := atlas.get_tile_data(coords, 0)
 				if tile_data == null:
 					continue
-				var scene := tile_data.get_custom_data("spawn_scene")
-				if scene == null or not scene is PackedScene:
+				var scene: PackedScene = tile_data.get_custom_data("spawn_scene") as PackedScene
+				if scene == null:
 					continue
-				var scene_path := scene.resource_path
+				var scene_path: String = scene.resource_path
 				if scene_path.is_empty() or seen_paths.has(scene_path):
 					continue
 				seen_paths[scene_path] = true
