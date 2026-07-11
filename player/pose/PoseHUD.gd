@@ -364,6 +364,7 @@ func _apply_studio_tab(tab: StudioTabBar.Tab) -> void:
 			_last_sync_grid_len = anim.length
 
 	_sync_path_guide_authoring()
+	LevelAuthoring.apply_studio_tab(tab, get_tree())
 
 func _apply_bottom_dock_size(_tab: StudioTabBar.Tab) -> void:
 	if not timeline_dock:

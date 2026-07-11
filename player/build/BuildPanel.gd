@@ -498,6 +498,7 @@ func _place_entity_at_mouse() -> void:
 	var node := instance as Node2D
 	node.global_position = _snap_world_to_grid(_get_world_mouse_position())
 	container.add_child(node)
+	LevelAuthoring.prepare_placed_entity(node)
 	_set_selected_entity(node)
 	LevelSave.mark_dirty()
 	_refresh_dirty_label()
