@@ -133,7 +133,7 @@ func _wire_signals() -> void:
 	timeline_panel.key_all_pressed.connect(func(): key_all_markers())
 
 	if studio_tab_bar:
-		studio_tab_bar.tab_changed.connect(_on_studio_tab_changed)
+		studio_tab_bar.tab_change_requested.connect(_on_tab_change_requested)
 
 	if assistant_panel:
 		assistant_panel.animation_created.connect(_on_animation_changed)
@@ -308,8 +308,32 @@ func _on_duration_changed(duration: float) -> void:
 func _on_step_interacted(_step: int) -> void:
 	on_step_navigated()
 
-func _on_studio_tab_changed(tab: StudioTabBar.Tab) -> void:
+func _on_tab_change_requested(tab: StudioTabBar.Tab) -> void:
+	var current := get_studio_tab()
+	if tab == current:
+		return
+	if LevelSave.dirty:
+		var choice: String = await LevelSave.prompt_unsaved(self)
+		match choice:
+			"save":
+				var result := LevelSave.save_level(get_tree())
+				if not result.ok:
+					studio_tab_bar.sync_tab_buttons(current)
+					if build_panel:
+						build_panel.notify_save_failed(String(result.error))
+					return
+				if build_panel:
+					build_panel.notify_saved(String(result.path))
+			"discard":
+				LevelSave.clear_dirty()
+				if build_panel:
+					build_panel.refresh_dirty_label()
+			"cancel":
+				studio_tab_bar.sync_tab_buttons(current)
+				return
+	studio_tab_bar.apply_tab(tab)
 	_apply_studio_tab(tab)
+
 
 func _on_timeline_anim_selected(anim_name: String) -> void:
 	if anim_browser:
