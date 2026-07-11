@@ -6,14 +6,11 @@ extends RefCounted
 
 static func apply_studio_tab(tab: StudioTabBar.Tab, tree: SceneTree) -> void:
 	var playing := tab == StudioTabBar.Tab.PLAY
-	var authoring := tab == StudioTabBar.Tab.BUILD
-	_set_navigation_markers_visible(tree, authoring)
+	var show_markers := not playing
+	_set_navigation_markers_visible(tree, show_markers)
 	_set_entities_active(tree, playing)
 	# Run again next frame so markers added/placed this frame pick up the tab state.
-	if authoring:
-		tree.call_deferred("call_group", "navigation_markers", "_apply_authoring_visibility", true)
-	else:
-		tree.call_deferred("call_group", "navigation_markers", "_apply_authoring_visibility", false)
+	tree.call_deferred("call_group", "navigation_markers", "_apply_authoring_visibility", show_markers)
 
 
 static func prepare_placed_entity(entity: Node, show_markers: bool = true) -> void:
