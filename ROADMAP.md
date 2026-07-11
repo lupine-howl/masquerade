@@ -2,77 +2,274 @@
 
 Masquerade is becoming a **general-purpose 2D game creation tool**: design characters with a built-in pose and animation studio, build levels with an in-game tileset editor, and iterate without leaving the running game.
 
-This document tracks product direction and engineering priorities. For how systems connect today, see [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md). For code that is being replaced, see [docs/LEGACY.md](docs/LEGACY.md).
+This document tracks product direction and engineering priorities. For how systems connect today, see [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md). For author-facing workflows, see [docs/STUDIO.md](docs/STUDIO.md). For code that is being replaced, see [docs/LEGACY.md](docs/LEGACY.md).
 
 ## Vision
 
 - **Characters first** — Create and animate diverse character rigs (sprite-based, pose markers, ragdoll-assisted) through in-game tooling.
 - **Levels in the game** — Paint terrain, place entities, and tune gameplay layers from a build panel instead of only from the Godot editor.
+- **Central workspace** — Frequent tools live in a large bottom-centre panel; advanced configuration lives in hideable side panels.
 - **Accessible workspace** — Prefer curated palettes and in-game placement over sprawling scene trees for common authoring tasks.
 - **General-purpose foundation** — Movement, combat, and entity logic should eventually be reusable across player characters, NPCs, and enemies.
+
+## Studio layout model (target)
+
+The player `PoseHUD` is organized around three UI zones:
+
+| Zone | Node(s) | Role |
+|------|---------|------|
+| **Left toolbar** | `PoseToolBar` / mode bar | Play / Pose / Build mode switcher |
+| **Bottom centre** | `PoseTimelineDock` (studio bottom dock) | **Pose:** timeline (primary animator workspace). **Build:** large tile/scene palette. **Play:** hidden or minimal |
+| **Right side** | `PoseDockRow` / `PosePartPanel` | Advanced marker configuration (constraints, sprites, accessories). Hideable |
+
+`AnimSection` (`PoseAnimBrowser` + `PoseAssistantPanel`) remains in the scene tree but is **intentionally hidden**. Useful features were moved to `PoseTimelinePanel`; the assistant panel is kept dormant unless revived later.
+
+```mermaid
+flowchart TB
+  subgraph toolbar [Left toolbar]
+    M[Play / Pose / Build]
+  end
+
+  subgraph viewport [Viewport]
+    V[Level + character]
+  end
+
+  subgraph bottom [Bottom centre dock]
+    T[Pose: Timeline panel]
+    B[Build: Tile palette]
+  end
+
+  subgraph side [Right side - hideable]
+    P[PosePartPanel - advanced]
+  end
+
+  M -->|Play| V
+  M -->|Pose| T
+  M -->|Build| B
+  M -.->|Pose only| P
+```
+
+**Current state vs target:** Today there is only a “Posing” checkbox (defaults on), `BuildPanel` sits in the right dock, and the bottom dock always hosts the timeline. Tri-mode and bottom-dock swapping are the next engineering steps.
 
 ## Phase overview
 
 | Phase | Focus | Status |
 |-------|-------|--------|
-| 0 | Project hygiene, folder layout, naming conventions | Done |
-| 1 | Character animation studio (pose, timeline, ragdoll) | In progress |
-| 2 | In-game tileset / level editor (`BuildPanel`) | In progress |
-| 3 | Enemy and hazard art scale-up (16px legacy → 64px world) | Planned |
-| 4 | General-purpose character controller (multi-actor, shared with enemies) | Planned |
-| 5 | Polished studio UX, project/session model, publishing flow | Future |
+| 0 | Project hygiene, folder layout, naming conventions | **Done** |
+| 1 | Character animation studio (pose, timeline, ragdoll) | **Mostly complete** — timeline is the product surface |
+| 2 | Studio mode UX (Play / Pose / Build) | **Next** |
+| 3 | Build panel in bottom-centre dock | **Next** (after or with phase 2) |
+| 4 | Build depth (save, layers, scene palette) | Planned |
+| 5 | Deprecate tile → scene spawn pipeline | Planned (after scene palette) |
+| 6 | Enemy and hazard art scale-up (16px legacy → 64px world) | Planned |
+| 7 | General-purpose character controller | Future |
+| 8 | Polished studio UX, project/session model, publishing | Future |
 
-## Near-term priorities
+---
 
-Ordered by current intent; details may shift as studio features land.
+## Detailed roadmap
 
-### 1. Character animation studio
+### Phase 0 — Project hygiene ✅ Done
 
-Improve the pose and timeline workflow for authoring character animations without external tools.
+- Lowercase top-level folders (`assets/`, `levels/`, `scenes/`)
+- PascalCase filenames for `class_name` scripts; snake_case for non-class assets
+- Bulk `res://` path repair after renames
+- Developer docs: `README.md`, `AGENTS.md`, `docs/*`
 
-- **Key paths:** `player/pose/`, `player/components/TimelineManager.gd`, `player/PoseMarker.tscn`, `player/ragdoll/`
-- **Goals:** Smoother marker editing, timeline UX, animation library management, clearer pose vs gameplay mode separation.
-- **Acceptance:** Authors can create, edit, and play back character animations entirely in-game on the current rig.
+**Remaining housekeeping:** merge open refactor PRs; manually verify `spawn_scene` scene bindings in Godot editor after path changes.
 
-### 2. Tileset and level editor
+---
 
-Extend the prototype build panel into a dependable level authoring surface.
+### Phase 1 — Character animation studio ✅ Mostly complete
 
-- **Key paths:** `player/build/BuildPanel.gd`, `resources/tilesets/`, `levels/`
-- **Goals:** Stable painting on named layers, better tileset browsing, clearer build vs play mode, save/load level changes.
-- **Acceptance:** Authors can lay out terrain, hazards, controls, and water layers from the in-game UI on a representative level.
+**Status:** Core authoring is implemented. Animators work primarily on the **bottom-centre timeline**, not the hidden assistant panel.
 
-### 3. Deprecate tile → scene spawn pipeline
+#### Complete
 
-Replace runtime conversion of hazard-tile paintings into scene instances with direct scene placement via the build editor.
+| Capability | Location |
+|------------|----------|
+| Pose markers with constraints, look-at, follow-rot, accessories | `player/pose/PoseMarker.gd`, `PoseMarker.tscn` |
+| Marker selection and manipulation | `player/pose/PoseController.gd` |
+| Advanced part inspector (sprites, offsets, constraints) | `player/pose/PosePartPanel.gd` — **side panel** |
+| Step-based timeline, keying, mirror, clipboard | `player/components/TimelineManager.gd` |
+| Playback, record, step grid, ragdoll toggles, export | `player/pose/PoseTimelinePanel.gd` — **bottom dock** |
+| Animation library selector | Timeline anim dropdown + `PoseAnimBrowser` (browser UI dormant in hidden `AnimSection`; list logic still used) |
+| Ragdoll assist | `player/ragdoll/RagdollManager.gd`, body slots |
+| Path-body drive authoring | `player/path/PathAnchorDriver.gd`, `PathGuideMarker.gd` |
+| Animation persist / export to disk | `TimelineManager._persist_animation`, `save_animation_to_disk` |
 
-- **Key paths:** `scenes/environment/hazards/hazards.gd`, `resources/tilesets/tileset_enemies.tres` (`spawn_scene` custom data)
-- **Goals:** New content uses scene placement; tilemap spawn path frozen then removed.
-- **Acceptance:** No new `spawn_scene` tile bindings; existing levels migrated or documented; `hazards.gd` conversion optional/removed.
+#### Intentionally dormant
 
-### 4. Enemy and hazard scale harmonization
+| Item | Notes |
+|------|-------|
+| `AnimSection` / `PoseAssistantPanel` | Hidden in `player.tscn`. Features duplicated on timeline via `register_timeline_mirrors()`. Kept for possible future use — **not a backlog gap**. |
+
+#### Remaining (low priority until mode UX lands)
+
+- Viewport marker picking polish when not posing
+- Keyboard shortcut map (may interact with build-mode movement — see phase 2 note)
+- Tutorial copy aligned with tri-mode workflow
+
+**Acceptance (phase 1):** Authors can create, edit, and play back character animations in-game using the timeline and part panel. ✅ Largely met today.
+
+---
+
+### Phase 2 — Studio tri-mode (Play / Pose / Build) 🔜 Next
+
+**Goal:** One authoritative studio mode that gates movement, painting, and dock visibility.
+
+| Task | Detail |
+|------|--------|
+| `StudioMode` enum | `PLAY`, `POSE`, `BUILD` — single source of truth on `PoseHUD` or extended mode bar |
+| Replace `PosingCheck` | Three-way control in left toolbar (`PoseModeBar` → `StudioModeBar` or equivalent) |
+| Default to **Play** | `Player.is_posing := false`; movement enabled on load |
+| **Play** behaviour | Movement on; `BuildPanel.paint_enabled = false`; bottom dock hidden; right dock hidden/collapsed |
+| **Pose** behaviour | `is_posing = true`; bottom dock shows `PoseTimelinePanel`; right dock shows `PosePartPanel`; painting off |
+| **Build** behaviour | Bottom dock shows `BuildPanel`; `paint_enabled = true`; timeline hidden; part panel hidden by default |
+| Centralize mode apply | Extend `PoseHUD._apply_posing_mode` → `_apply_studio_mode(mode)`; stop timeline on mode change |
+
+**Build + movement (initial design):** Build mode allows **play and build at the same time** — the player can walk the level while painting. Revisit if hotkey bindings clash (e.g. paint vs jump/attack on same mouse buttons or keys).
+
+**Acceptance:** Load `test.tscn` → playable by default. Pose → timeline + markers. Build → paint arms, movement still works, no accidental timeline or marker interference.
+
+**Key paths:** `player/pose/PoseHUD.gd`, `player/pose/PoseModeBar.gd`, `player/Player.gd`, `player/build/BuildPanel.gd`
+
+---
+
+### Phase 3 — Build panel → bottom-centre dock 🔜 Next
+
+**Goal:** Relocate tile authoring to the same bottom-centre workspace animators already use.
+
+| Task | Detail |
+|------|--------|
+| Reparent `BuildPanel` | Move from `PoseDock/DockVBox` into `PoseTimelineDock` (studio bottom dock) |
+| Mode swap | Pose: show `PoseTimelinePanel`, hide `BuildPanel`. Build: inverse |
+| Enlarge dock in build mode | Current dock ~645×84px — build needs more height for layer tabs + tile grid |
+| Remove build UI from right dock | Right dock = `PosePartPanel` (+ dormant `AnimSection`) only |
+| Keep paint logic unchanged | `BuildPanel._unhandled_input`, brush preview, layer lookup — only placement and gating change |
+
+**Build dock layout (horizontal):**
+
+```
+[ Terrain | Hazards | Controls | Water ] | [ atlas sources… ] | [ tile grid ] | selection info
+```
+
+**Acceptance:** Build mode shows a large bottom-centre tile palette; pose mode restores the timeline; no build controls on the right.
+
+**Key paths:** `player/player.tscn`, `player/build/BuildPanel.gd`, `player/pose/PoseHUD.gd`, `player/pose/PoseTimelineDock.gd`
+
+---
+
+### Phase 4 — Side panel ergonomics
+
+**Goal:** Match “central = frequent tools, sides = advanced config.”
+
+| Task | Detail |
+|------|--------|
+| Collapse toggle on `PoseDockRow` / `PosePartPanel` | Pin or hide advanced inspector |
+| Play mode | Hide entire right dock |
+| Build mode | Part panel hidden by default; optional peek |
+
+**Acceptance:** Play mode is a clean gameplay view; pose/build modes expose side panels only when needed.
+
+---
+
+### Phase 5 — Build depth (save, layers, scene palette)
+
+**Goal:** Make level authoring dependable beyond the prototype paint loop.
+
+| Task | Priority | Detail |
+|------|----------|--------|
+| **Level save** | High | `ResourceSaver.save` on `get_tree().current_scene`; dirty flag; confirm dialog |
+| **Layer picker** | High | Dropdown of `TileMapLayer` nodes in current level — levels use `Terrain2`, `DeepBackTerrain`, etc., not only canonical names |
+| **Scene placement palette** | Medium | Curated list from `scenes/`; click-to-place into `Enemies` container; lives in bottom dock (tiles \| scenes tabs) |
+| **Erase / select placed instances** | Medium | Complement tile erase |
+| **Hotkey audit** | Medium | Document and resolve play+build binding conflicts if they appear |
+
+**Acceptance:** Paint on `test.tscn`, save, reload — tiles persist. Place `enemy_bat.tscn` without `spawn_scene` tiles. Author can target non-canonical terrain layers on complex levels.
+
+**Key paths:** `player/build/BuildPanel.gd`, `player/build/` (new scene palette), `levels/*.tscn`
+
+---
+
+### Phase 6 — Deprecate tile → scene spawn pipeline
+
+**Goal:** Freeze and migrate the legacy Hazards-tile spawn path.
+
+| Task | Detail |
+|------|--------|
+| `@export var convert_spawn_tiles := true` on `hazards.gd` | Opt-out per level during migration |
+| Pilot migration | One level (`test.tscn`) to direct instances + scene palette |
+| Freeze new bindings | No new `spawn_scene` entries in `tileset_enemies.tres` |
+| Remove converter | After all levels migrated |
+
+**Prerequisite:** Phase 5 scene palette. Do not extend `hazards.gd` for new features.
+
+**Key paths:** `scenes/environment/hazards/hazards.gd`, `resources/tilesets/tileset_enemies.tres`, [LEGACY.md](docs/LEGACY.md)
+
+---
+
+### Phase 7 — Enemy and hazard scale harmonization
 
 Align entity art, collision, and movement with the 64×64 environmental tile grid and larger player sprite (256×256+).
 
 - **Key paths:** `scenes/enemies/`, `scenes/hazards/`, `assets/enemies/`, `scenes/enemies/BaseEnemy.gd`
-- **Goals:** Consistent visual scale, hitboxes, and speeds relative to world tiles.
 - **Acceptance:** Representative enemies and hazards look and feel correct on 64px terrain without legacy 16px assumptions.
 
-### 5. General-purpose character controller
+Independent of studio UX; defer until authoring workflow is stable.
+
+---
+
+### Phase 8 — General-purpose character controller
 
 Refactor the player stack into a reusable controller usable for multiple local players and script-driven enemies.
 
 - **Key paths:** `player/Player.gd`, `player/states/`, `scenes/enemies/BaseEnemy.gd`
-- **Goals:** Shared movement/combat core; thin player-specific and enemy-specific layers.
+- **Note:** `SteerableCharacterBody2D` exists for arrow-following entities only — not the player FSM.
 - **Acceptance:** Second controllable actor prototype; one enemy variant driven by shared controller logic.
+
+---
+
+### Phase 9 — Studio polish and publishing (future)
+
+- Project/session model (which level, which character rig)
+- Publishing / export flow
+- Onboarding and in-game help aligned with tri-mode layout
+
+---
+
+## Implementation order (engineering)
+
+Ordered list of build proposals — each builds on the previous where noted:
+
+| # | Proposal | Phase | Depends on | Size |
+|---|----------|-------|------------|------|
+| 1 | **Tri-mode** (Play / Pose / Build) + mode gating | 2 | — | Small |
+| 2 | **Build panel → bottom-centre dock** (swap with timeline) | 3 | 1 | Medium |
+| 3 | **Hideable side panels** (collapse `PoseDockRow`) | 4 | 1 | Small |
+| 4 | **Level save** from build mode | 5 | 2 | Medium |
+| 5 | **Layer picker** for non-canonical `TileMapLayer` names | 5 | 2 | Medium |
+| 6 | **Scene placement palette** in bottom dock | 5 | 2, 4 | Medium |
+| 7 | **Hotkey audit** (play + build coexistence) | 5 | 1, 2 | Small–medium |
+| 8 | **Spawn migration pilot** (`test.tscn`, `convert_spawn_tiles` flag) | 6 | 6 | Medium |
+| 9 | **Enemy scale harmonization** | 7 | — | Large |
+| 10 | **Shared character controller** | 8 | — | Large |
+
+**Recommended first PR:** #1 + #2 (tri-mode and bottom-dock relocation) — delivers the core workflow change in one vertical slice.
+
+**Recommended second PR:** #3 + #4 (side panel collapse + level save).
+
+---
 
 ## Deprecations
 
 | Item | Status | Replacement |
 |------|--------|-------------|
-| `spawn_scene` tile custom data on Hazards layer | Deprecated | In-game scene placement / build palette |
+| `spawn_scene` tile custom data on Hazards layer | Deprecated | Scene placement palette in build dock |
 | 16×16 enemy art as source of truth | Legacy | Rescaled art + updated `BaseEnemy` collision |
 | Monolithic `Player`-only movement | Legacy | Shared character controller module |
+| `AnimSection` / `PoseAssistantPanel` as primary UI | Dormant | `PoseTimelinePanel` (kept in tree, hidden) |
+| `BuildPanel` in right dock | Transitional | Bottom-centre studio dock in build mode |
 
 ## Out of scope (for now)
 
@@ -80,7 +277,8 @@ Refactor the player stack into a reusable controller usable for multiple local p
 - 3D authoring
 - External marketplace / asset store integration
 - Full visual scripting layer
+- Re-enabling `AnimSection` unless explicitly requested
 
 ## How to propose changes
 
-When opening a PR or agent task, tag which roadmap item it serves and whether it touches **legacy** systems listed in [docs/LEGACY.md](docs/LEGACY.md).
+When opening a PR or agent task, tag which roadmap phase it serves and whether it touches **legacy** systems listed in [docs/LEGACY.md](docs/LEGACY.md).

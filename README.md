@@ -34,9 +34,9 @@ On first open, allow Godot to import assets and regenerate the `.godot/` cache.
 
 | Document | Audience | Contents |
 |----------|----------|----------|
-| [ROADMAP.md](ROADMAP.md) | Everyone | Vision, phases, near-term priorities |
-| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Developers | System map, data flow, key classes |
-| [docs/STUDIO.md](docs/STUDIO.md) | Tool users | Character studio and level editing workflows |
+| [ROADMAP.md](ROADMAP.md) | Everyone | Vision, phased roadmap, implementation order |
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Developers | System map, studio UI zones, data flow |
+| [docs/STUDIO.md](docs/STUDIO.md) | Tool users | Play/Pose/Build modes, timeline vs build dock |
 | [docs/CONVENTIONS.md](docs/CONVENTIONS.md) | Developers & agents | Naming, folders, refactors |
 | [docs/LEGACY.md](docs/LEGACY.md) | Developers & agents | Deprecated patterns and migrations |
 | [docs/agents/AGENTS.md](docs/agents/AGENTS.md) | Coding agents | Constraints and key paths |
