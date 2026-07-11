@@ -12,7 +12,7 @@
 [ext_resource type="Texture2D" uid="uid://crx4rc6i3b52t" path="res://Assets/Tilesets/old-tileset-business-district.png" id="10_usg3c"]
 [ext_resource type="Texture2D" uid="uid://doxq81tvdojuk" path="res://Assets/Tilesets/old-tileset-water.png" id="11_ujgop"]
 [ext_resource type="PackedScene" uid="uid://dan4h02iujee1" path="res://player/player.tscn" id="12_m77xh"]
-[ext_resource type="PackedScene" uid="uid://cu4bj76bmtklo" path="res://key.tscn" id="13_52vrk"]
+[ext_resource type="PackedScene" uid="uid://cu4bj76bmtklo" path="res://scenes/collectibles/key/key.tscn" id="13_52vrk"]
 [ext_resource type="Shader" uid="uid://b3k5ktcgerf3u" path="res://Levels/ShaderWater.gdshader" id="14_slait"]
 [ext_resource type="TileSet" uid="uid://b3kuofxpqggvo" path="res://TileSetWater.tres" id="15_1lmv2"]
 [ext_resource type="TileSet" uid="uid://cqi34h10fqer3" path="res://TileSetControls.tres" id="16_i7xma"]

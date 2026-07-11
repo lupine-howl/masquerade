@@ -1,3 +1,9 @@
 # Godot 4+ specific ignores
 .godot/
 /android/
+
+# Editor temp and backup files
+*.tmp
+*~
+*.autosave.*
+*.kra~
