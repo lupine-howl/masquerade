@@ -42,17 +42,22 @@ static func prompt_unsaved(parent: Node) -> String:
 	parent.add_child(dialog)
 
 	var choice := "cancel"
-	var complete := func(value: String) -> void:
+	var resolved := false
+	var finish := func(value: String) -> void:
+		if resolved:
+			return
+		resolved = true
 		choice = value
 		dialog.hide()
-	dialog.confirmed.connect(func() -> void: complete.call("save"))
-	dialog.canceled.connect(func() -> void: complete.call("cancel"))
+
+	dialog.confirmed.connect(func() -> void: finish.call("save"))
+	dialog.canceled.connect(func() -> void: finish.call("cancel"))
 	dialog.custom_action.connect(func(action: StringName) -> void:
 		if action == "discard":
-			complete.call("discard")
+			finish.call("discard")
 	)
 	dialog.popup_centered()
-	while dialog.visible:
+	while not resolved:
 		await parent.get_tree().process_frame
 	dialog.queue_free()
 	return choice
