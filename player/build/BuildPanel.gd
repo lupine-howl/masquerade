@@ -20,7 +20,7 @@ const TILEMAPS: Array[Dictionary] = [
 ]
 
 const TILE_BUTTON_SIZE := 44
-const GRID_COLUMNS := 4
+const GRID_COLUMNS := 8
 
 var _tab_strip: VBoxContainer
 var _source_row: HFlowContainer
@@ -36,9 +36,8 @@ var _current_tilemap_index: int = -1
 var _current_source_id: int = -1
 var _selected_tile_button: Button = null
 
-## Painting is only active while a tile is armed. Later this should be gated by a
-## dedicated "Build" mode toggle.
-var paint_enabled: bool = true
+## Painting is only active in Build studio mode while a tile is armed.
+var paint_enabled: bool = false
 var _has_selection: bool = false
 var _paint_source_id: int = -1
 var _paint_coords: Vector2i = Vector2i.ZERO
@@ -51,7 +50,7 @@ var _brush_visible: bool = false
 
 
 func _ready() -> void:
-	custom_minimum_size = Vector2(280, 260)
+	custom_minimum_size = Vector2(880, 168)
 	_build_ui()
 	_populate_tilemap_tabs()
 	if not TILEMAPS.is_empty():

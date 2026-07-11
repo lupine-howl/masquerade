@@ -57,8 +57,8 @@ flowchart TB
 |-------|-------|--------|
 | 0 | Project hygiene, folder layout, naming conventions | **Done** |
 | 1 | Character animation studio (pose, timeline, ragdoll) | **Mostly complete** — timeline is the product surface |
-| 2 | Studio mode UX (Play / Pose / Build) | **Next** |
-| 3 | Build panel in bottom-centre dock | **Next** (after or with phase 2) |
+| 2 | Studio mode UX (Play / Pose / Build) | **Done** |
+| 3 | Build panel in bottom-centre dock | **Done** |
 | 4 | Build depth (save, layers, scene palette) | Planned |
 | 5 | Deprecate tile → scene spawn pipeline | Planned (after scene palette) |
 | 6 | Enemy and hazard art scale-up (16px legacy → 64px world) | Planned |
@@ -114,49 +114,34 @@ flowchart TB
 
 ---
 
-### Phase 2 — Studio tri-mode (Play / Pose / Build) 🔜 Next
+### Phase 2 — Studio tri-mode (Play / Pose / Build) ✅ Done
 
 **Goal:** One authoritative studio mode that gates movement, painting, and dock visibility.
 
-| Task | Detail |
+| Task | Status |
 |------|--------|
-| `StudioMode` enum | `PLAY`, `POSE`, `BUILD` — single source of truth on `PoseHUD` or extended mode bar |
-| Replace `PosingCheck` | Three-way control in left toolbar (`PoseModeBar` → `StudioModeBar` or equivalent) |
-| Default to **Play** | `Player.is_posing := false`; movement enabled on load |
-| **Play** behaviour | Movement on; `BuildPanel.paint_enabled = false`; bottom dock hidden; right dock hidden/collapsed |
-| **Pose** behaviour | `is_posing = true`; bottom dock shows `PoseTimelinePanel`; right dock shows `PosePartPanel`; painting off |
-| **Build** behaviour | Bottom dock shows `BuildPanel`; `paint_enabled = true`; timeline hidden; part panel hidden by default |
-| Centralize mode apply | Extend `PoseHUD._apply_posing_mode` → `_apply_studio_mode(mode)`; stop timeline on mode change |
+| `PoseModeBar.Mode` enum (`PLAY`, `POSE`, `BUILD`) | Done |
+| Three-way toolbar buttons | Done |
+| Default to **Play** | Done |
+| Mode gating in `PoseHUD._apply_studio_mode` | Done |
+| Build + movement coexistence | Done (initial design) |
 
-**Build + movement (initial design):** Build mode allows **play and build at the same time** — the player can walk the level while painting. Revisit if hotkey bindings clash (e.g. paint vs jump/attack on same mouse buttons or keys).
-
-**Acceptance:** Load `test.tscn` → playable by default. Pose → timeline + markers. Build → paint arms, movement still works, no accidental timeline or marker interference.
-
-**Key paths:** `player/pose/PoseHUD.gd`, `player/pose/PoseModeBar.gd`, `player/Player.gd`, `player/build/BuildPanel.gd`
+**Key paths:** `player/pose/PoseModeBar.gd`, `player/pose/PoseHUD.gd`, `player/Player.gd`, `player/build/BuildPanel.gd`
 
 ---
 
-### Phase 3 — Build panel → bottom-centre dock 🔜 Next
+### Phase 3 — Build panel → bottom-centre dock ✅ Done
 
-**Goal:** Relocate tile authoring to the same bottom-centre workspace animators already use.
+**Goal:** Relocate tile authoring to the bottom-centre workspace.
 
-| Task | Detail |
+| Task | Status |
 |------|--------|
-| Reparent `BuildPanel` | Move from `PoseDock/DockVBox` into `PoseTimelineDock` (studio bottom dock) |
-| Mode swap | Pose: show `PoseTimelinePanel`, hide `BuildPanel`. Build: inverse |
-| Enlarge dock in build mode | Current dock ~645×84px — build needs more height for layer tabs + tile grid |
-| Remove build UI from right dock | Right dock = `PosePartPanel` (+ dormant `AnimSection`) only |
-| Keep paint logic unchanged | `BuildPanel._unhandled_input`, brush preview, layer lookup — only placement and gating change |
+| `BuildPanel` in `PoseTimelineDock` | Done |
+| Mode swap (timeline ↔ build) | Done |
+| Enlarged dock in build mode | Done |
+| Removed build UI from right dock | Done |
 
-**Build dock layout (horizontal):**
-
-```
-[ Terrain | Hazards | Controls | Water ] | [ atlas sources… ] | [ tile grid ] | selection info
-```
-
-**Acceptance:** Build mode shows a large bottom-centre tile palette; pose mode restores the timeline; no build controls on the right.
-
-**Key paths:** `player/player.tscn`, `player/build/BuildPanel.gd`, `player/pose/PoseHUD.gd`, `player/pose/PoseTimelineDock.gd`
+**Key paths:** `player/player.tscn`, `player/pose/PoseHUD.gd`, `player/build/BuildPanel.gd`
 
 ---
 
@@ -242,11 +227,11 @@ Refactor the player stack into a reusable controller usable for multiple local p
 
 Ordered list of build proposals — each builds on the previous where noted:
 
-| # | Proposal | Phase | Depends on | Size |
-|---|----------|-------|------------|------|
-| 1 | **Tri-mode** (Play / Pose / Build) + mode gating | 2 | — | Small |
-| 2 | **Build panel → bottom-centre dock** (swap with timeline) | 3 | 1 | Medium |
-| 3 | **Hideable side panels** (collapse `PoseDockRow`) | 4 | 1 | Small |
+| # | Proposal | Phase | Depends on | Size | Status |
+|---|----------|-------|------------|------|--------|
+| 1 | **Tri-mode** (Play / Pose / Build) + mode gating | 2 | — | Small | **Done** |
+| 2 | **Build panel → bottom-centre dock** (swap with timeline) | 3 | 1 | Medium | **Done** |
+| 3 | **Hideable side panels** (collapse `PoseDockRow`) | 4 | 1 | Small | Next |
 | 4 | **Level save** from build mode | 5 | 2 | Medium |
 | 5 | **Layer picker** for non-canonical `TileMapLayer` names | 5 | 2 | Medium |
 | 6 | **Scene placement palette** in bottom dock | 5 | 2, 4 | Medium |
@@ -255,9 +240,9 @@ Ordered list of build proposals — each builds on the previous where noted:
 | 9 | **Enemy scale harmonization** | 7 | — | Large |
 | 10 | **Shared character controller** | 8 | — | Large |
 
-**Recommended first PR:** #1 + #2 (tri-mode and bottom-dock relocation) — delivers the core workflow change in one vertical slice.
+**Recommended first PR:** #1 + #2 — **merged in studio tri-mode PR**.
 
-**Recommended second PR:** #3 + #4 (side panel collapse + level save).
+**Recommended next PR:** #3 + #4 (side panel collapse + level save).
 
 ---
 
@@ -269,7 +254,7 @@ Ordered list of build proposals — each builds on the previous where noted:
 | 16×16 enemy art as source of truth | Legacy | Rescaled art + updated `BaseEnemy` collision |
 | Monolithic `Player`-only movement | Legacy | Shared character controller module |
 | `AnimSection` / `PoseAssistantPanel` as primary UI | Dormant | `PoseTimelinePanel` (kept in tree, hidden) |
-| `BuildPanel` in right dock | Transitional | Bottom-centre studio dock in build mode |
+| `BuildPanel` in right dock | Transitional | **Done** — bottom-centre dock in build mode |
 
 ## Out of scope (for now)
 

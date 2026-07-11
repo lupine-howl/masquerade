@@ -29,7 +29,7 @@ The player scene (`player/player.tscn`) bundles gameplay and authoring UI under 
 | **Bottom centre** | `PoseTimelineDock` | Primary workspace — timeline in pose mode, build palette in build mode |
 | **Right side** | `PoseDockRow`, `PosePartPanel` | Advanced marker configuration; hideable |
 
-**Current implementation note:** Today only a “Posing” checkbox exists (defaults on), `BuildPanel` still lives in the right dock, and the bottom dock always shows the timeline. Tri-mode and bottom-dock swapping are planned next — see [ROADMAP.md](../ROADMAP.md) phases 2–3.
+**Current implementation:** Play / Pose / Build tri-mode is in the left toolbar (`PoseModeBar`). The bottom-centre dock swaps between `PoseTimelinePanel` (pose) and `BuildPanel` (build). Play mode hides both docks and the right part panel.
 
 ### Dormant UI (`AnimSection`)
 
@@ -47,7 +47,7 @@ The player scene (`player/player.tscn`) bundles gameplay and authoring UI under 
 
 **Play + build together:** Build mode initially keeps player movement enabled so authors can reach different parts of the level while painting. This may be revisited if hotkey bindings clash (e.g. paint vs jump/attack).
 
-Mode switching will replace the current single “Posing” checkbox in `PoseModeBar`.
+Mode switching uses three toolbar buttons in `PoseModeBar` (Play / Pose / Build).
 
 ---
 
@@ -119,7 +119,7 @@ Layout (horizontal):
 [ Terrain | Hazards | Controls | Water ] | [ atlas sources… ] | [ tile grid ] | selection info
 ```
 
-**Current implementation note:** `BuildPanel` is still embedded in the right `PoseDock` column. Relocation to the bottom dock is planned ([ROADMAP.md](../ROADMAP.md) phase 3).
+**Current implementation:** `BuildPanel` lives in the bottom-centre `PoseTimelineDock`, visible in Build mode only.
 
 ### Concepts
 
@@ -205,7 +205,7 @@ Water rendering uses `levels/shaders/water.gdshader`.
 | Timeline tools missing | Use bottom dock — not the hidden `AnimSection` |
 | Tileset shows broken scene slot | Open `tileset_*.tres` in Godot; reassign scene after path refactor |
 | Enemy scale looks wrong | Known 16px art vs 64px tiles — see [LEGACY.md](LEGACY.md) |
-| Movement frozen on load | `is_posing` defaults true today — switch to Play/Pose via mode bar when tri-mode lands |
+| Movement frozen on load | Old default — use Play button in toolbar (tri-mode defaults to Play) |
 
 ---
 

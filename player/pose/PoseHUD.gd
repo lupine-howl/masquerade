@@ -3,13 +3,20 @@ extends CanvasLayer
 
 signal playback_started
 
+const DOCK_POSE_HEIGHT := 84.0
+const DOCK_BUILD_HEIGHT := 196.0
+const DOCK_POSE_HALF_WIDTH := 322.5
+const DOCK_BUILD_HALF_WIDTH := 460.0
+
 @export var pose_controller: PoseController
 @export var timeline: TimelineManager
 
 @onready var part_panel: PosePartPanel = $PoseDockRow/PoseDock/DockVBox/PosePartPanel
 @onready var anim_browser: PoseAnimBrowser = $PoseDockRow/PoseDock/DockVBox/AnimSection/PoseAnimBrowser
-@onready var timeline_panel: PoseTimelinePanel = $PoseTimelineDock/MarginContainer/PoseTimelinePanel
+@onready var timeline_panel: PoseTimelinePanel = $PoseTimelineDock/MarginContainer/StudioBottomVBox/PoseTimelinePanel
+@onready var build_panel: BuildPanel = $PoseTimelineDock/MarginContainer/StudioBottomVBox/BuildPanel
 @onready var timeline_dock: PanelContainer = $PoseTimelineDock
+@onready var pose_dock_row: Control = $PoseDockRow
 @onready var assistant_panel: PoseAssistantPanel = $PoseDockRow/PoseDock/DockVBox/AnimSection/AnimMainColumn/MarginContainer2/PoseAssistantPanel
 @onready var toolbar: PoseToolBar = $PoseToolBar
 @onready var mode_bar: PoseModeBar = $PoseToolBar/ToolVBox/PoseModeBar
@@ -31,6 +38,8 @@ func _ready() -> void:
 		_on_animation_changed(anim_browser.get_current_animation())
 		timeline.stop()
 
+	call_deferred("_apply_studio_mode", mode_bar.get_mode() if mode_bar else PoseModeBar.Mode.PLAY)
+
 func _setup_panels() -> void:
 	if not part_panel:
 		push_error("PoseHUD: PosePartPanel not found")
@@ -41,6 +50,8 @@ func _setup_panels() -> void:
 	if not timeline_panel:
 		push_error("PoseHUD: PoseTimelinePanel not found")
 		return
+	if not build_panel:
+		push_error("PoseHUD: BuildPanel not found")
 
 	var get_anim := func() -> String: return get_current_animation()
 	var is_recording := func() -> bool: return is_auto_recording()
@@ -95,19 +106,17 @@ func _wire_signals() -> void:
 	timeline_panel.animation_selected.connect(_on_timeline_anim_selected)
 	timeline_panel.key_all_pressed.connect(func(): key_all_markers())
 
-	mode_bar.posing_toggled.connect(_on_posing_toggled)
+	mode_bar.mode_changed.connect(_on_studio_mode_changed)
 
 	if assistant_panel:
 		assistant_panel.animation_created.connect(_on_animation_changed)
 		assistant_panel.player_drive_toggled.connect(_on_player_drive_toggled)
 
-	if timeline_panel and mode_bar:
-		_set_timeline_dock_visible(mode_bar.is_posing())
-
-	call_deferred("_apply_posing_mode", mode_bar.is_posing())
-
 func get_current_animation() -> String:
 	return anim_browser.get_current_animation() if anim_browser else ""
+
+func get_studio_mode() -> PoseModeBar.Mode:
+	return mode_bar.get_mode() if mode_bar else PoseModeBar.Mode.PLAY
 
 func is_posing() -> bool:
 	return mode_bar.is_posing() if mode_bar else false
@@ -268,8 +277,8 @@ func _on_duration_changed(duration: float) -> void:
 func _on_step_interacted(_step: int) -> void:
 	on_step_navigated()
 
-func _on_posing_toggled(posing: bool) -> void:
-	_apply_posing_mode(posing)
+func _on_studio_mode_changed(mode: PoseModeBar.Mode) -> void:
+	_apply_studio_mode(mode)
 
 func _on_timeline_anim_selected(anim_name: String) -> void:
 	if anim_browser:
@@ -281,19 +290,35 @@ func _refresh_anim_selector(select_name: String = "") -> void:
 	var current := select_name if select_name != "" else anim_browser.get_current_animation()
 	timeline_panel.populate_anim_selector(anim_browser.get_animation_names(), current)
 
-func _set_timeline_dock_visible(show_dock: bool) -> void:
-	if timeline_dock:
-		timeline_dock.visible = show_dock
+func _apply_studio_mode(mode: PoseModeBar.Mode) -> void:
+	var posing := mode == PoseModeBar.Mode.POSE
+	var building := mode == PoseModeBar.Mode.BUILD
 
-func _apply_posing_mode(posing: bool) -> void:
 	if pose_controller and pose_controller.player:
 		pose_controller.player.is_posing = posing
+
 	if timeline:
 		timeline.stop()
+	if timeline_panel and not posing:
+		timeline_panel.set_recording(false)
+
+	if build_panel:
+		build_panel.paint_enabled = building
+
+	if timeline_dock:
+		timeline_dock.visible = posing or building
 	if timeline_panel:
-		if not posing:
-			timeline_panel.set_recording(false)
-	_set_timeline_dock_visible(posing)
+		timeline_panel.visible = posing
+	if build_panel:
+		build_panel.visible = building
+
+	_apply_bottom_dock_size(mode)
+
+	if pose_dock_row:
+		pose_dock_row.visible = posing
+	if part_panel:
+		part_panel.visible = posing
+
 	if posing and timeline and timeline.anim_player:
 		var playing_anim := String(timeline.anim_player.current_animation)
 		if playing_anim != "":
@@ -303,4 +328,14 @@ func _apply_posing_mode(posing: bool) -> void:
 			timeline_panel.sync_timing_ui(playing_anim)
 			_last_sync_anim = playing_anim
 			_last_sync_grid_len = anim.length
+
 	_sync_path_guide_authoring()
+
+func _apply_bottom_dock_size(mode: PoseModeBar.Mode) -> void:
+	if not timeline_dock:
+		return
+	var half_width := DOCK_BUILD_HALF_WIDTH if mode == PoseModeBar.Mode.BUILD else DOCK_POSE_HALF_WIDTH
+	var height := DOCK_BUILD_HEIGHT if mode == PoseModeBar.Mode.BUILD else DOCK_POSE_HEIGHT
+	timeline_dock.offset_left = -half_width
+	timeline_dock.offset_right = half_width
+	timeline_dock.offset_top = -height

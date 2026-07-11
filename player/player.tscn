@@ -923,8 +923,8 @@ script = ExtResource("2_rptt4")
 anim_player = NodePath("../../PlayerBody/PlayerAnimator")
 
 [node name="PoseToolBar" type="PanelContainer" parent="PoseHUD" unique_id=2012058644]
-offset_right = 72.0
-offset_bottom = 72.0
+offset_right = 40.0
+offset_bottom = 116.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_mmwog")
 script = ExtResource("11_toolbar")
 
@@ -938,16 +938,39 @@ layout_mode = 2
 mouse_filter = 2
 script = ExtResource("11_mode")
 
-[node name="PosingCheck" type="CheckBox" parent="PoseHUD/PoseToolBar/ToolVBox/PoseModeBar" unique_id=1482292167]
+[node name="PlayBtn" type="Button" parent="PoseHUD/PoseToolBar/ToolVBox/PoseModeBar" unique_id=1482292167]
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
-theme_override_font_sizes/font_size = 10
-theme_override_icons/checked = ExtResource("5_rptt4")
-theme_override_icons/unchecked = ExtResource("4_uw77l")
+tooltip_text = "Play mode"
+theme_override_font_sizes/font_size = 9
+toggle_mode = true
+button_pressed = true
 flat = true
+icon = ExtResource("4_uw77l")
+
+[node name="PoseBtn" type="Button" parent="PoseHUD/PoseToolBar/ToolVBox/PoseModeBar" unique_id=1482292168]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 0
+tooltip_text = "Pose mode"
+theme_override_font_sizes/font_size = 9
+toggle_mode = true
+flat = true
+icon = ExtResource("5_rptt4")
+
+[node name="BuildBtn" type="Button" parent="PoseHUD/PoseToolBar/ToolVBox/PoseModeBar" unique_id=1482292169]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 0
+tooltip_text = "Build mode"
+theme_override_font_sizes/font_size = 9
+toggle_mode = true
+flat = true
+text = "Bld"
 
 [node name="PoseDockRow" type="HBoxContainer" parent="PoseHUD" unique_id=519141306]
+visible = false
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
@@ -1351,19 +1374,6 @@ ok_button_text = "Open"
 file_mode = 0
 filters = PackedStringArray("*.png, *.jpg, *.jpeg, *.webp")
 
-[node name="SectionSep" type="HSeparator" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox" unique_id=519141311]
-layout_mode = 2
-mouse_filter = 2
-
-[node name="BuildPanel" type="PanelContainer" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox" unique_id=519141400]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(280, 260)
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_jbx34")
-script = ExtResource("11_build")
-
 [node name="AnimSection" type="HBoxContainer" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox" unique_id=519141307]
 visible = false
 layout_mode = 2
@@ -1546,6 +1556,7 @@ theme_override_font_sizes/font_size = 11
 text = "⇆ All"
 
 [node name="PoseTimelineDock" type="PanelContainer" parent="PoseHUD" unique_id=339532122]
+visible = false
 anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0
@@ -1566,12 +1577,25 @@ theme_override_constants/margin_top = 4
 theme_override_constants/margin_right = 4
 theme_override_constants/margin_bottom = 4
 
-[node name="PoseTimelinePanel" type="VBoxContainer" parent="PoseHUD/PoseTimelineDock/MarginContainer" unique_id=339532123]
+[node name="StudioBottomVBox" type="VBoxContainer" parent="PoseHUD/PoseTimelineDock/MarginContainer" unique_id=29801079]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="PoseTimelinePanel" type="VBoxContainer" parent="PoseHUD/PoseTimelineDock/MarginContainer/StudioBottomVBox" unique_id=339532123]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 6
 script = ExtResource("11_timeline")
+
+[node name="BuildPanel" type="PanelContainer" parent="PoseHUD/PoseTimelineDock/MarginContainer/StudioBottomVBox" unique_id=519141400]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("11_build")
 
 [node name="ControlsCenter" type="CenterContainer" parent="PoseHUD/PoseTimelineDock/MarginContainer/PoseTimelinePanel" unique_id=1337660024]
 layout_mode = 2

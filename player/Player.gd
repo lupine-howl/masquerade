@@ -24,7 +24,7 @@ extends CharacterBody2D
 
 @export_category("Debug")
 @export var show_debug_ui := true
-@export var is_posing := true
+@export var is_posing := false
 @export var debug_hud : CanvasLayer
 
 @export var ragdoll : Node2D
