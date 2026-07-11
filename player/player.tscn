@@ -25,7 +25,7 @@
 [ext_resource type="Animation" uid="uid://dwo2hvuwd4r57" path="res://player/animations/RESET.res" id="17_2uvqg"]
 [ext_resource type="Animation" uid="uid://didsa17bf61ia" path="res://player/animations/idle.res" id="17_r7pn3"]
 [ext_resource type="Animation" uid="uid://bcmjlymvakqdr" path="res://player/animations/dead.res" id="23_55jnj"]
-[ext_resource type="Texture2D" uid="uid://b1govaot86lmk" path="res://light-mask.png" id="24_g4c7l"]
+[ext_resource type="Texture2D" uid="uid://b1govaot86lmk" path="res://Assets/Objects/light-mask.png" id="24_g4c7l"]
 [ext_resource type="Animation" uid="uid://e71da17er0oy" path="res://player/animations/jump.res" id="25_dx5ib"]
 [ext_resource type="Animation" uid="uid://bno8oe15hlcpo" path="res://player/animations/jump_launch.res" id="26_a2xo5"]
 [ext_resource type="Animation" uid="uid://d4bcd3ucqoqxp" path="res://player/animations/jump_land.res" id="26_art4l"]

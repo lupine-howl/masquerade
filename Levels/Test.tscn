@@ -11,7 +11,7 @@
 [ext_resource type="PackedScene" uid="uid://dj5fl5uil362x" path="res://Levels/03_Ocean.tscn" id="9_o1h1p"]
 [ext_resource type="Shader" uid="uid://b3k5ktcgerf3u" path="res://Levels/ShaderWater.gdshader" id="10_1n1u5"]
 [ext_resource type="Texture2D" uid="uid://doxq81tvdojuk" path="res://Assets/Tilesets/old-tileset-water.png" id="11_3ud8a"]
-[ext_resource type="Texture2D" uid="uid://bxciv7rssh0sc" path="res://Assets/Items/tileset-small-plants-upscaled.png" id="12_u15cw"]
+[ext_resource type="Texture2D" uid="uid://bxciv7rssh0sc" path="res://Assets/Tilesets/tileset-small-plants-upscaled.png" id="12_u15cw"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_t8vbo"]
 shader = ExtResource("10_1n1u5")

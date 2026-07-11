@@ -6,7 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://wb30ewj3ytb6" path="res://Assets/Backgrounds/Sky.jpg" id="4_xjoda"]
 [ext_resource type="Texture2D" uid="uid://ccpwf7w25bhht" path="res://Assets/Backgrounds/Black.png" id="5_5ajl3"]
 [ext_resource type="TileSet" uid="uid://b0etgrb5l3mkt" path="res://resources/tilesets/TileSetTerrain.tres" id="6_lqx1y"]
-[ext_resource type="Texture2D" uid="uid://cghjb07womfds" path="res://Terrain (16x16).png" id="7_a8856"]
+[ext_resource type="Texture2D" uid="uid://cghjb07womfds" path="res://Assets/Objects/Terrain (16x16).png" id="7_a8856"]
 [ext_resource type="Texture2D" uid="uid://su8vfadl85mm" path="res://Assets/Tilesets/old-tileset-desert.png" id="8_guojx"]
 [ext_resource type="Texture2D" uid="uid://wdbb25pk3303" path="res://Assets/Tilesets/old-tileset-lab.png" id="9_nl5vj"]
 [ext_resource type="Texture2D" uid="uid://crx4rc6i3b52t" path="res://Assets/Tilesets/old-tileset-business-district.png" id="10_usg3c"]
