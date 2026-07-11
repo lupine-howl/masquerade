@@ -24,7 +24,6 @@ var is_active := true # Internal track to see if a one-shot tile has popped
 
 func _ready() -> void:
 	add_to_group("navigation_markers")
-	visible = false
 	_update_direction_properties()
 
 func deactivate_trigger() -> void:
@@ -44,3 +43,9 @@ func _update_direction_properties() -> void:
 			"Down": target_direction = Vector2.DOWN; #rotation_degrees = 90
 	else:
 		rotation_degrees = 0
+
+
+func _apply_authoring_visibility(visible: bool) -> void:
+	self.visible = visible
+	if visible:
+		modulate.a = 1.0
