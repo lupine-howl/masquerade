@@ -62,6 +62,8 @@ var _has_tile_selection: bool = false
 var _paint_source_id: int = -1
 var _paint_coords: Vector2i = Vector2i.ZERO
 var _paint_pattern: TileMapPattern = null
+var _paint_selection_size: Vector2i = Vector2i.ONE
+var _paint_brush_size: Vector2i = Vector2i.ONE
 var _last_paint_map_coords: Vector2i = Vector2i(-99999, -99999)
 
 var _brush: Node2D = null
@@ -452,9 +454,14 @@ func _style_tile_button(btn: Button, selected: bool) -> void:
 func _on_atlas_selection_changed(pattern: TileMapPattern, source_id: int, selection_rect: Rect2i) -> void:
 	_paint_pattern = pattern
 	_paint_source_id = source_id
+	_paint_selection_size = selection_rect.size
+	_paint_brush_size = _compute_pattern_brush_size(pattern)
 	_has_tile_selection = true
 	_paint_coords = selection_rect.position
 	_last_paint_map_coords = Vector2i(-99999, -99999)
+	var used_cells := pattern.get_used_cells()
+	if not used_cells.is_empty():
+		_paint_coords = pattern.get_cell_atlas_coords(used_cells[0])
 
 	var tilemap_name := "?"
 	if _current_tilemap_index >= 0 and _current_tilemap_index < _tile_layers.size():
@@ -476,6 +483,9 @@ func _on_atlas_selection_changed(pattern: TileMapPattern, source_id: int, select
 		]
 		tile_selected.emit(tilemap_name, source_id, selection_rect.position)
 
+	if _brush != null and is_instance_valid(_brush):
+		_brush.queue_redraw()
+
 
 func _clear_tile_selection() -> void:
 	if _tile_atlas_picker:
@@ -484,6 +494,8 @@ func _clear_tile_selection() -> void:
 	_has_tile_selection = false
 	_paint_source_id = -1
 	_paint_pattern = null
+	_paint_selection_size = Vector2i.ONE
+	_paint_brush_size = Vector2i.ONE
 	_paint_coords = Vector2i.ZERO
 	_last_paint_map_coords = Vector2i(-99999, -99999)
 
@@ -497,8 +509,22 @@ func _source_label(source: TileSetSource, source_id: int) -> String:
 	return "Source %d" % source_id
 
 
-func _unhandled_input(event: InputEvent) -> void:
-	if Engine.is_editor_hint() or not paint_enabled:
+func _compute_pattern_brush_size(pattern: TileMapPattern) -> Vector2i:
+	if pattern == null:
+		return Vector2i.ONE
+	var cells := pattern.get_used_cells()
+	if cells.is_empty():
+		return Vector2i.ONE
+	var min_cell: Vector2i = cells[0]
+	var max_cell: Vector2i = cells[0]
+	for rel in cells:
+		min_cell = Vector2i(mini(min_cell.x, rel.x), mini(min_cell.y, rel.y))
+		max_cell = Vector2i(maxi(max_cell.x, rel.x), maxi(max_cell.y, rel.y))
+	return max_cell - min_cell + Vector2i.ONE
+
+
+func process_build_input(event: InputEvent) -> void:
+	if not paint_enabled:
 		return
 	if _is_camera_modifier_held():
 		return
@@ -662,12 +688,28 @@ func _paint_tile_at_mouse(erase: bool) -> void:
 	if layer.tile_set == null or not layer.tile_set.has_source(_paint_source_id):
 		push_warning("BuildPanel: layer '%s' uses a different tileset (no source %d)." % [layer.name, _paint_source_id])
 		return
-	if _paint_pattern != null:
-		layer.set_pattern(coords, _paint_pattern)
-	else:
-		layer.set_cell(coords, _paint_source_id, _paint_coords)
+	_stamp_paint_at(layer, coords)
 	LevelSave.mark_dirty()
 	_refresh_dirty_label()
+
+
+func _stamp_paint_at(layer: TileMapLayer, origin: Vector2i) -> void:
+	var painted := false
+	if _paint_pattern != null:
+		for rel in _paint_pattern.get_used_cells():
+			layer.set_cell(
+				origin + rel,
+				_paint_pattern.get_cell_source_id(rel),
+				_paint_pattern.get_cell_atlas_coords(rel),
+				_paint_pattern.get_cell_alternative_tile(rel)
+			)
+			painted = true
+	elif _has_tile_selection and _paint_source_id >= 0:
+		layer.set_cell(origin, _paint_source_id, _paint_coords)
+		painted = true
+	if painted:
+		layer.update_internals()
+		layer.queue_redraw()
 
 
 func _find_target_layer(layer_name: String) -> TileMapLayer:
@@ -712,7 +754,7 @@ func _snap_world_to_grid(world: Vector2) -> Vector2:
 
 
 func _update_brush_hover() -> void:
-	if Engine.is_editor_hint() or not paint_enabled:
+	if not paint_enabled:
 		_set_brush_visible(false)
 		return
 
@@ -757,8 +799,13 @@ func _on_brush_draw() -> void:
 		return
 	var ts := _brush_layer.tile_set
 	var cell := Vector2(ts.tile_size) if ts else Vector2(64, 64)
-	var center := _brush_layer.map_to_local(_hover_coords)
-	var rect := Rect2(center - cell * 0.5, cell)
+	var half := cell * 0.5
+	var brush_size := _paint_brush_size if _has_tile_selection else Vector2i.ONE
+	var top_center := _brush_layer.map_to_local(_hover_coords)
+	var bottom_center := _brush_layer.map_to_local(_hover_coords + brush_size - Vector2i.ONE)
+	var top_left := top_center - half
+	var bottom_right := bottom_center + half
+	var rect := Rect2(top_left, bottom_right - top_left)
 	_brush.draw_rect(rect, Color(0.35, 0.75, 1.0, 0.18), true)
 	_brush.draw_rect(rect, Color(0.4, 0.8, 1.0, 0.9), false, 2.0)
 

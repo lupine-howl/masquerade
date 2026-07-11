@@ -25,6 +25,7 @@ var _last_sync_grid_len: float = -1.0
 
 
 func _ready() -> void:
+	set_process_unhandled_input(true)
 	_hide_legacy_panels()
 	_reparent_part_panel()
 	_setup_panels()
@@ -398,3 +399,8 @@ func _apply_bottom_dock_size(_tab: StudioTabBar.Tab) -> void:
 	timeline_dock.offset_right = -DOCK_MARGIN_H
 	timeline_dock.offset_top = -DOCK_HEIGHT
 	timeline_dock.offset_bottom = 0.0
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if build_panel and build_panel.visible and build_panel.paint_enabled:
+		build_panel.process_build_input(event)
