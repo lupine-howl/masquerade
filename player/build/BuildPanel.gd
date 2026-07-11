@@ -57,6 +57,7 @@ var paint_enabled: bool:
 		else:
 			_set_brush_visible(false)
 			_clear_entity_selection()
+			_clear_tile_selection()
 			_dragging_entity = false
 
 var _has_tile_selection: bool = false

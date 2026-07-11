@@ -332,6 +332,10 @@ func _on_tab_change_requested(tab: StudioTabBar.Tab) -> void:
 			"cancel":
 				studio_tab_bar.sync_tab_buttons(current)
 				return
+	_commit_studio_tab(tab)
+
+
+func _commit_studio_tab(tab: StudioTabBar.Tab) -> void:
 	studio_tab_bar.apply_tab(tab)
 	_apply_studio_tab(tab)
 
