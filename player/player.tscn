@@ -1610,22 +1610,22 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource("11_build")
 
-[node name="ControlsCenter" type="CenterContainer" parent="PoseHUD/PoseTimelineDock/MarginContainer/PoseTimelinePanel" unique_id=1337660024]
+[node name="ControlsCenter" type="CenterContainer" parent="PoseHUD/PoseTimelineDock/MarginContainer/StudioBottomVBox/PoseTimelinePanel" unique_id=1337660024]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="ControlsRow" type="HBoxContainer" parent="PoseHUD/PoseTimelineDock/MarginContainer/PoseTimelinePanel/ControlsCenter" unique_id=1337660025]
+[node name="ControlsRow" type="HBoxContainer" parent="PoseHUD/PoseTimelineDock/MarginContainer/StudioBottomVBox/PoseTimelinePanel/ControlsCenter" unique_id=1337660025]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="AnimSelect" type="OptionButton" parent="PoseHUD/PoseTimelineDock/MarginContainer/PoseTimelinePanel/ControlsCenter/ControlsRow" unique_id=-447676237]
+[node name="AnimSelect" type="OptionButton" parent="PoseHUD/PoseTimelineDock/MarginContainer/StudioBottomVBox/PoseTimelinePanel/ControlsCenter/ControlsRow" unique_id=-447676237]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
 focus_mode = 0
 
-[node name="TlBtnExport" type="Button" parent="PoseHUD/PoseTimelineDock/MarginContainer/PoseTimelinePanel/ControlsCenter/ControlsRow" unique_id=-447676256]
+[node name="TlBtnExport" type="Button" parent="PoseHUD/PoseTimelineDock/MarginContainer/StudioBottomVBox/PoseTimelinePanel/ControlsCenter/ControlsRow" unique_id=-447676256]
 unique_name_in_owner = true
 layout_mode = 2
 tooltip_text = "Save animation to disk"
@@ -1634,21 +1634,21 @@ theme_override_font_sizes/font_size = 11
 text = "➜]"
 flat = true
 
-[node name="TlLoopCheck" type="CheckBox" parent="PoseHUD/PoseTimelineDock/MarginContainer/PoseTimelinePanel/ControlsCenter/ControlsRow" unique_id=-447676257]
+[node name="TlLoopCheck" type="CheckBox" parent="PoseHUD/PoseTimelineDock/MarginContainer/StudioBottomVBox/PoseTimelinePanel/ControlsCenter/ControlsRow" unique_id=-447676257]
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
 theme_override_font_sizes/font_size = 11
 text = "Loop"
 
-[node name="TlMirrorCheck" type="CheckBox" parent="PoseHUD/PoseTimelineDock/MarginContainer/PoseTimelinePanel/ControlsCenter/ControlsRow" unique_id=1859051120]
+[node name="TlMirrorCheck" type="CheckBox" parent="PoseHUD/PoseTimelineDock/MarginContainer/StudioBottomVBox/PoseTimelinePanel/ControlsCenter/ControlsRow" unique_id=1859051120]
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
 theme_override_font_sizes/font_size = 11
 text = "Mirror"
 
-[node name="BtnKeyAll" type="Button" parent="PoseHUD/PoseTimelineDock/MarginContainer/PoseTimelinePanel/ControlsCenter/ControlsRow" unique_id=-447676223]
+[node name="BtnKeyAll" type="Button" parent="PoseHUD/PoseTimelineDock/MarginContainer/StudioBottomVBox/PoseTimelinePanel/ControlsCenter/ControlsRow" unique_id=-447676223]
 unique_name_in_owner = true
 layout_mode = 2
 tooltip_text = "Keyframe all parts"
@@ -1656,28 +1656,28 @@ focus_mode = 0
 text = "ꄗ"
 flat = true
 
-[node name="BtnRewind" type="Button" parent="PoseHUD/PoseTimelineDock/MarginContainer/PoseTimelinePanel/ControlsCenter/ControlsRow" unique_id=16692025]
+[node name="BtnRewind" type="Button" parent="PoseHUD/PoseTimelineDock/MarginContainer/StudioBottomVBox/PoseTimelinePanel/ControlsCenter/ControlsRow" unique_id=16692025]
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
 text = "◁"
 flat = true
 
-[node name="BtnStop" type="Button" parent="PoseHUD/PoseTimelineDock/MarginContainer/PoseTimelinePanel/ControlsCenter/ControlsRow" unique_id=1325336453]
+[node name="BtnStop" type="Button" parent="PoseHUD/PoseTimelineDock/MarginContainer/StudioBottomVBox/PoseTimelinePanel/ControlsCenter/ControlsRow" unique_id=1325336453]
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
 text = " || "
 flat = true
 
-[node name="BtnPlay" type="Button" parent="PoseHUD/PoseTimelineDock/MarginContainer/PoseTimelinePanel/ControlsCenter/ControlsRow" unique_id=140180053]
+[node name="BtnPlay" type="Button" parent="PoseHUD/PoseTimelineDock/MarginContainer/StudioBottomVBox/PoseTimelinePanel/ControlsCenter/ControlsRow" unique_id=140180053]
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
 text = "▷"
 flat = true
 
-[node name="RecordCheck" type="CheckBox" parent="PoseHUD/PoseTimelineDock/MarginContainer/PoseTimelinePanel/ControlsCenter/ControlsRow" unique_id=1950183948]
+[node name="RecordCheck" type="CheckBox" parent="PoseHUD/PoseTimelineDock/MarginContainer/StudioBottomVBox/PoseTimelinePanel/ControlsCenter/ControlsRow" unique_id=1950183948]
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
@@ -1685,12 +1685,12 @@ theme_override_font_sizes/font_size = 10
 theme_override_icons/checked = ExtResource("2_knn7v")
 theme_override_icons/unchecked = ExtResource("2_g4c7l")
 
-[node name="StepsLabel" type="Label" parent="PoseHUD/PoseTimelineDock/MarginContainer/PoseTimelinePanel/ControlsCenter/ControlsRow" unique_id=-447676227]
+[node name="StepsLabel" type="Label" parent="PoseHUD/PoseTimelineDock/MarginContainer/StudioBottomVBox/PoseTimelinePanel/ControlsCenter/ControlsRow" unique_id=-447676227]
 layout_mode = 2
 theme_override_font_sizes/font_size = 11
 text = "Steps"
 
-[node name="StepsSpin" type="SpinBox" parent="PoseHUD/PoseTimelineDock/MarginContainer/PoseTimelinePanel/ControlsCenter/ControlsRow" unique_id=-447676226]
+[node name="StepsSpin" type="SpinBox" parent="PoseHUD/PoseTimelineDock/MarginContainer/StudioBottomVBox/PoseTimelinePanel/ControlsCenter/ControlsRow" unique_id=-447676226]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(64, 0)
 layout_mode = 2
@@ -1699,12 +1699,12 @@ max_value = 999.0
 value = 8.0
 alignment = 1
 
-[node name="SpeedLabel" type="Label" parent="PoseHUD/PoseTimelineDock/MarginContainer/PoseTimelinePanel/ControlsCenter/ControlsRow" unique_id=-447676225]
+[node name="SpeedLabel" type="Label" parent="PoseHUD/PoseTimelineDock/MarginContainer/StudioBottomVBox/PoseTimelinePanel/ControlsCenter/ControlsRow" unique_id=-447676225]
 layout_mode = 2
 theme_override_font_sizes/font_size = 11
 text = "Speed"
 
-[node name="SpeedSpin" type="SpinBox" parent="PoseHUD/PoseTimelineDock/MarginContainer/PoseTimelinePanel/ControlsCenter/ControlsRow" unique_id=-447676224]
+[node name="SpeedSpin" type="SpinBox" parent="PoseHUD/PoseTimelineDock/MarginContainer/StudioBottomVBox/PoseTimelinePanel/ControlsCenter/ControlsRow" unique_id=-447676224]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(64, 0)
 layout_mode = 2
@@ -1714,105 +1714,105 @@ step = 0.1
 value = 1.0
 alignment = 1
 
-[node name="TimecodeLabel" type="Label" parent="PoseHUD/PoseTimelineDock/MarginContainer/PoseTimelinePanel/ControlsCenter/ControlsRow" unique_id=1189055011]
+[node name="TimecodeLabel" type="Label" parent="PoseHUD/PoseTimelineDock/MarginContainer/StudioBottomVBox/PoseTimelinePanel/ControlsCenter/ControlsRow" unique_id=1189055011]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 11
 
-[node name="BtnReset" type="Button" parent="PoseHUD/PoseTimelineDock/MarginContainer/PoseTimelinePanel/ControlsCenter/ControlsRow" unique_id=200118915]
+[node name="BtnReset" type="Button" parent="PoseHUD/PoseTimelineDock/MarginContainer/StudioBottomVBox/PoseTimelinePanel/ControlsCenter/ControlsRow" unique_id=200118915]
 visible = false
 layout_mode = 2
 focus_mode = 0
 text = "↺"
 flat = true
 
-[node name="GridCenter" type="CenterContainer" parent="PoseHUD/PoseTimelineDock/MarginContainer/PoseTimelinePanel" unique_id=29801080]
+[node name="GridCenter" type="CenterContainer" parent="PoseHUD/PoseTimelineDock/MarginContainer/StudioBottomVBox/PoseTimelinePanel" unique_id=29801080]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="GridMargin" type="MarginContainer" parent="PoseHUD/PoseTimelineDock/MarginContainer/PoseTimelinePanel/GridCenter" unique_id=29801079]
+[node name="GridMargin" type="MarginContainer" parent="PoseHUD/PoseTimelineDock/MarginContainer/StudioBottomVBox/PoseTimelinePanel/GridCenter" unique_id=29801082]
 layout_mode = 2
 
-[node name="StepGrid" type="GridContainer" parent="PoseHUD/PoseTimelineDock/MarginContainer/PoseTimelinePanel/GridCenter/GridMargin" unique_id=2066120046]
+[node name="StepGrid" type="GridContainer" parent="PoseHUD/PoseTimelineDock/MarginContainer/StudioBottomVBox/PoseTimelinePanel/GridCenter/GridMargin" unique_id=2066120046]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 columns = 16
 
-[node name="HelpersCenter" type="CenterContainer" parent="PoseHUD/PoseTimelineDock/MarginContainer/PoseTimelinePanel" unique_id=29801081]
+[node name="HelpersCenter" type="CenterContainer" parent="PoseHUD/PoseTimelineDock/MarginContainer/StudioBottomVBox/PoseTimelinePanel" unique_id=29801081]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="HelpersRow" type="HBoxContainer" parent="PoseHUD/PoseTimelineDock/MarginContainer/PoseTimelinePanel/HelpersCenter" unique_id=-447676241]
+[node name="HelpersRow" type="HBoxContainer" parent="PoseHUD/PoseTimelineDock/MarginContainer/StudioBottomVBox/PoseTimelinePanel/HelpersCenter" unique_id=-447676241]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/separation = 6
 
-[node name="ControlLabel" type="Label" parent="PoseHUD/PoseTimelineDock/MarginContainer/PoseTimelinePanel/HelpersCenter/HelpersRow" unique_id=-447676242]
+[node name="ControlLabel" type="Label" parent="PoseHUD/PoseTimelineDock/MarginContainer/StudioBottomVBox/PoseTimelinePanel/HelpersCenter/HelpersRow" unique_id=-447676242]
 layout_mode = 2
 theme_override_font_sizes/font_size = 10
 text = "Control"
 
-[node name="TlCtrlAll" type="CheckBox" parent="PoseHUD/PoseTimelineDock/MarginContainer/PoseTimelinePanel/HelpersCenter/HelpersRow" unique_id=-447676243]
+[node name="TlCtrlAll" type="CheckBox" parent="PoseHUD/PoseTimelineDock/MarginContainer/StudioBottomVBox/PoseTimelinePanel/HelpersCenter/HelpersRow" unique_id=-447676243]
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
 theme_override_font_sizes/font_size = 10
 text = "All"
 
-[node name="TlCtrlArms" type="CheckBox" parent="PoseHUD/PoseTimelineDock/MarginContainer/PoseTimelinePanel/HelpersCenter/HelpersRow" unique_id=-447676244]
+[node name="TlCtrlArms" type="CheckBox" parent="PoseHUD/PoseTimelineDock/MarginContainer/StudioBottomVBox/PoseTimelinePanel/HelpersCenter/HelpersRow" unique_id=-447676244]
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
 theme_override_font_sizes/font_size = 10
 text = "Arms"
 
-[node name="TlCtrlLegs" type="CheckBox" parent="PoseHUD/PoseTimelineDock/MarginContainer/PoseTimelinePanel/HelpersCenter/HelpersRow" unique_id=-447676245]
+[node name="TlCtrlLegs" type="CheckBox" parent="PoseHUD/PoseTimelineDock/MarginContainer/StudioBottomVBox/PoseTimelinePanel/HelpersCenter/HelpersRow" unique_id=-447676245]
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
 theme_override_font_sizes/font_size = 10
 text = "Legs"
 
-[node name="TlCtrlHead" type="CheckBox" parent="PoseHUD/PoseTimelineDock/MarginContainer/PoseTimelinePanel/HelpersCenter/HelpersRow" unique_id=-447676246]
+[node name="TlCtrlHead" type="CheckBox" parent="PoseHUD/PoseTimelineDock/MarginContainer/StudioBottomVBox/PoseTimelinePanel/HelpersCenter/HelpersRow" unique_id=-447676246]
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
 theme_override_font_sizes/font_size = 10
 text = "Head"
 
-[node name="TlCtrlRoot" type="CheckBox" parent="PoseHUD/PoseTimelineDock/MarginContainer/PoseTimelinePanel/HelpersCenter/HelpersRow" unique_id=-447676247]
+[node name="TlCtrlRoot" type="CheckBox" parent="PoseHUD/PoseTimelineDock/MarginContainer/StudioBottomVBox/PoseTimelinePanel/HelpersCenter/HelpersRow" unique_id=-447676247]
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
 theme_override_font_sizes/font_size = 10
 text = "Root"
 
-[node name="TlCtrlPlayer" type="CheckBox" parent="PoseHUD/PoseTimelineDock/MarginContainer/PoseTimelinePanel/HelpersCenter/HelpersRow" unique_id=1333494521]
+[node name="TlCtrlPlayer" type="CheckBox" parent="PoseHUD/PoseTimelineDock/MarginContainer/StudioBottomVBox/PoseTimelinePanel/HelpersCenter/HelpersRow" unique_id=1333494521]
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
 theme_override_font_sizes/font_size = 10
 text = "Player"
 
-[node name="TlGrounded" type="CheckBox" parent="PoseHUD/PoseTimelineDock/MarginContainer/PoseTimelinePanel/HelpersCenter/HelpersRow" unique_id=-447676248]
+[node name="TlGrounded" type="CheckBox" parent="PoseHUD/PoseTimelineDock/MarginContainer/StudioBottomVBox/PoseTimelinePanel/HelpersCenter/HelpersRow" unique_id=-447676248]
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
 theme_override_font_sizes/font_size = 10
 text = "Ground"
 
-[node name="HelperSep" type="VSeparator" parent="PoseHUD/PoseTimelineDock/MarginContainer/PoseTimelinePanel/HelpersCenter/HelpersRow" unique_id=-447676249]
+[node name="HelperSep" type="VSeparator" parent="PoseHUD/PoseTimelineDock/MarginContainer/StudioBottomVBox/PoseTimelinePanel/HelpersCenter/HelpersRow" unique_id=-447676249]
 layout_mode = 2
 
-[node name="TlBtnPoseReset" type="Button" parent="PoseHUD/PoseTimelineDock/MarginContainer/PoseTimelinePanel/HelpersCenter/HelpersRow" unique_id=-447676250]
+[node name="TlBtnPoseReset" type="Button" parent="PoseHUD/PoseTimelineDock/MarginContainer/StudioBottomVBox/PoseTimelinePanel/HelpersCenter/HelpersRow" unique_id=-447676250]
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
 theme_override_font_sizes/font_size = 10
 text = "Reset"
 
-[node name="TlBtnNormHoriz" type="Button" parent="PoseHUD/PoseTimelineDock/MarginContainer/PoseTimelinePanel/HelpersCenter/HelpersRow" unique_id=-447676251]
+[node name="TlBtnNormHoriz" type="Button" parent="PoseHUD/PoseTimelineDock/MarginContainer/StudioBottomVBox/PoseTimelinePanel/HelpersCenter/HelpersRow" unique_id=-447676251]
 unique_name_in_owner = true
 layout_mode = 2
 tooltip_text = "Normalize horizontal position"
@@ -1820,28 +1820,28 @@ focus_mode = 0
 theme_override_font_sizes/font_size = 10
 text = "Norm X"
 
-[node name="TlBtnHang" type="Button" parent="PoseHUD/PoseTimelineDock/MarginContainer/PoseTimelinePanel/HelpersCenter/HelpersRow" unique_id=-447676252]
+[node name="TlBtnHang" type="Button" parent="PoseHUD/PoseTimelineDock/MarginContainer/StudioBottomVBox/PoseTimelinePanel/HelpersCenter/HelpersRow" unique_id=-447676252]
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
 theme_override_font_sizes/font_size = 10
 text = "Hang"
 
-[node name="TlBtnFall" type="Button" parent="PoseHUD/PoseTimelineDock/MarginContainer/PoseTimelinePanel/HelpersCenter/HelpersRow" unique_id=-447676253]
+[node name="TlBtnFall" type="Button" parent="PoseHUD/PoseTimelineDock/MarginContainer/StudioBottomVBox/PoseTimelinePanel/HelpersCenter/HelpersRow" unique_id=-447676253]
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
 theme_override_font_sizes/font_size = 10
 text = "Fall"
 
-[node name="TlBtnClear" type="Button" parent="PoseHUD/PoseTimelineDock/MarginContainer/PoseTimelinePanel/HelpersCenter/HelpersRow" unique_id=-447676254]
+[node name="TlBtnClear" type="Button" parent="PoseHUD/PoseTimelineDock/MarginContainer/StudioBottomVBox/PoseTimelinePanel/HelpersCenter/HelpersRow" unique_id=-447676254]
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
 theme_override_font_sizes/font_size = 10
 text = "Clear"
 
-[node name="TlBtnSwapAll" type="Button" parent="PoseHUD/PoseTimelineDock/MarginContainer/PoseTimelinePanel/HelpersCenter/HelpersRow" unique_id=-447676255]
+[node name="TlBtnSwapAll" type="Button" parent="PoseHUD/PoseTimelineDock/MarginContainer/StudioBottomVBox/PoseTimelinePanel/HelpersCenter/HelpersRow" unique_id=-447676255]
 unique_name_in_owner = true
 layout_mode = 2
 tooltip_text = "Swap all sibling pairs"
