@@ -155,8 +155,6 @@ func _physics_process(delta: float) -> void:
 
 	_apply_gravity(delta)
 	_move()
-	
-	if debug_hud: debug_hud.update_physics(self)
 
 # ---------------------------------------------------------
 # CORE UTILITIES & PIPELINE HELPERS

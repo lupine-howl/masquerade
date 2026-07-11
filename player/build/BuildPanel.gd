@@ -2,16 +2,11 @@
 class_name BuildPanel
 extends PanelContainer
 
-## Prototype level-build panel.
-## Layout: tilemap tabs (left) -> tileset/atlas buttons -> tile grid -> select.
-## Populates from the project's real TileSet resources. Selecting a tile arms it;
-## left-click in the world paints it onto the matching TileMapLayer, right-click
-## erases. Painting targets the layer in the current level whose node name matches
-## the active tilemap tab (Terrain / Hazards / Controls / Water).
+## Level-build panel: layer tabs, tileset sources, full-width tile strip.
+## Painting targets TileMapLayer nodes in the active level by name.
 
 signal tile_selected(tilemap: String, source_id: int, atlas_coords: Vector2i)
 
-## Each entry: a logical tilemap layer -> the TileSet resource it uses.
 const TILEMAPS: Array[Dictionary] = [
 	{"name": "Terrain", "tileset": "res://resources/tilesets/tileset_terrain.tres"},
 	{"name": "Hazards", "tileset": "res://resources/tilesets/tileset_enemies.tres"},
@@ -19,12 +14,11 @@ const TILEMAPS: Array[Dictionary] = [
 	{"name": "Water", "tileset": "res://resources/tilesets/tileset_water.tres"},
 ]
 
-const TILE_BUTTON_SIZE := 44
-const GRID_COLUMNS := 8
+const TILE_BUTTON_SIZE := 40
 
 var _tab_strip: VBoxContainer
 var _source_row: HFlowContainer
-var _tile_grid: GridContainer
+var _tile_flow: HFlowContainer
 var _header_label: Label
 var _selected_label: Label
 
@@ -36,13 +30,11 @@ var _current_tilemap_index: int = -1
 var _current_source_id: int = -1
 var _selected_tile_button: Button = null
 
-## Painting is only active in Build studio mode while a tile is armed.
 var paint_enabled: bool = false
 var _has_selection: bool = false
 var _paint_source_id: int = -1
 var _paint_coords: Vector2i = Vector2i.ZERO
 
-## Hover highlight drawn on the target layer to show where a tile will land.
 var _brush: Node2D = null
 var _brush_layer: TileMapLayer = null
 var _hover_coords: Vector2i = Vector2i.ZERO
@@ -50,7 +42,7 @@ var _brush_visible: bool = false
 
 
 func _ready() -> void:
-	custom_minimum_size = Vector2(880, 168)
+	custom_minimum_size = Vector2(0, 108)
 	_build_ui()
 	_populate_tilemap_tabs()
 	if not TILEMAPS.is_empty():
@@ -85,13 +77,13 @@ func _build_ui() -> void:
 	content_row.add_child(main_panel)
 
 	var main_col := VBoxContainer.new()
-	main_col.add_theme_constant_override("separation", 4)
+	main_col.add_theme_constant_override("separation", 3)
 	main_col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	main_col.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	main_panel.add_child(main_col)
 
 	_header_label = Label.new()
-	_header_label.add_theme_font_size_override("font_size", 11)
+	_header_label.add_theme_font_size_override("font_size", 10)
 	_header_label.text = "Build"
 	main_col.add_child(_header_label)
 
@@ -102,9 +94,9 @@ func _build_ui() -> void:
 	main_col.add_child(source_caption)
 
 	var source_scroll := ScrollContainer.new()
-	source_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	source_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
-	source_scroll.custom_minimum_size = Vector2(0, 54)
+	source_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
+	source_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	source_scroll.custom_minimum_size = Vector2(0, 28)
 	source_scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	main_col.add_child(source_scroll)
 
@@ -123,17 +115,16 @@ func _build_ui() -> void:
 	var tile_scroll := ScrollContainer.new()
 	tile_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	tile_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
-	tile_scroll.custom_minimum_size = Vector2(0, 150)
+	tile_scroll.custom_minimum_size = Vector2(0, 56)
 	tile_scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	tile_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	main_col.add_child(tile_scroll)
 
-	_tile_grid = GridContainer.new()
-	_tile_grid.columns = GRID_COLUMNS
-	_tile_grid.add_theme_constant_override("h_separation", 4)
-	_tile_grid.add_theme_constant_override("v_separation", 4)
-	_tile_grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	tile_scroll.add_child(_tile_grid)
+	_tile_flow = HFlowContainer.new()
+	_tile_flow.add_theme_constant_override("h_separation", 4)
+	_tile_flow.add_theme_constant_override("v_separation", 4)
+	_tile_flow.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	tile_scroll.add_child(_tile_flow)
 
 	_selected_label = Label.new()
 	_selected_label.add_theme_font_size_override("font_size", 9)
@@ -170,7 +161,7 @@ func _select_tilemap(index: int) -> void:
 func _populate_sources(tileset: TileSet) -> void:
 	_clear_children(_source_row)
 	_source_buttons.clear()
-	_clear_children(_tile_grid)
+	_clear_children(_tile_flow)
 	_tile_buttons.clear()
 	_selected_tile_button = null
 	_selected_label.text = "No tile selected"
@@ -192,7 +183,6 @@ func _populate_sources(tileset: TileSet) -> void:
 		btn.tooltip_text = full_label
 		btn.focus_mode = Control.FOCUS_NONE
 		btn.add_theme_font_size_override("font_size", 9)
-		btn.clip_text = false
 		btn.toggle_mode = true
 		btn.set_meta("source_id", source_id)
 		btn.pressed.connect(_select_source.bind(tileset, source_id))
@@ -214,7 +204,7 @@ func _select_source(tileset: TileSet, source_id: int) -> void:
 
 
 func _populate_tiles(source: TileSetSource, source_id: int) -> void:
-	_clear_children(_tile_grid)
+	_clear_children(_tile_flow)
 	_tile_buttons.clear()
 	_selected_tile_button = null
 
@@ -222,9 +212,8 @@ func _populate_tiles(source: TileSetSource, source_id: int) -> void:
 	if atlas == null:
 		var note := Label.new()
 		note.text = "Scene-collection tileset (no atlas preview)"
-		note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		note.add_theme_font_size_override("font_size", 9)
-		_tile_grid.add_child(note)
+		_tile_flow.add_child(note)
 		return
 
 	for i in atlas.get_tiles_count():
@@ -237,14 +226,14 @@ func _populate_tiles(source: TileSetSource, source_id: int) -> void:
 		tex.region = region
 		var btn := _make_tile_button(tex)
 		btn.pressed.connect(_on_tile_pressed.bind(btn, source_id, coords))
-		_tile_grid.add_child(btn)
+		_tile_flow.add_child(btn)
 		_tile_buttons.append(btn)
 
 	if _tile_buttons.is_empty():
 		var empty := Label.new()
 		empty.text = "(no tiles)"
 		empty.add_theme_font_size_override("font_size", 9)
-		_tile_grid.add_child(empty)
+		_tile_flow.add_child(empty)
 
 
 func _make_tile_button(tex: Texture2D) -> Button:
@@ -299,7 +288,6 @@ func _source_label(source: TileSetSource, source_id: int) -> String:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	# Clicks over any UI are consumed before reaching here, so panel input is safe.
 	if Engine.is_editor_hint() or not paint_enabled:
 		return
 	if event is InputEventMouseButton and event.pressed:
@@ -333,7 +321,7 @@ func _paint_at_mouse(erase: bool) -> void:
 		layer.erase_cell(coords)
 		return
 	if layer.tile_set == null or not layer.tile_set.has_source(_paint_source_id):
-		push_warning("BuildPanel: layer '%s' uses a different tileset (no source %d) — can't paint the browsed tile." % [layer.name, _paint_source_id])
+		push_warning("BuildPanel: layer '%s' uses a different tileset (no source %d)." % [layer.name, _paint_source_id])
 		return
 	layer.set_cell(coords, _paint_source_id, _paint_coords)
 
