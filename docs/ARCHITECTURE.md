@@ -75,14 +75,25 @@ flowchart TB
 
 The player scene (`player/player.tscn`) composes several cooperating systems:
 
-1. **`Player` (`class_name Player`)** — `CharacterBody2D` root; reads input, delegates to state machine, toggles pose/build modes.
+1. **`Player` (`class_name Player`)** — `CharacterBody2D` root; reads input, delegates to state machine; `is_posing` freezes movement in pose mode.
 2. **`PlayerStateMachine`** — Holds current `PlayerState`; states extend `PlayerState` and receive the `Player` reference.
-3. **`PoseHUD` / `PoseController`** — UI and logic for selecting and manipulating `PoseMarker` nodes on the rig.
+3. **`PoseHUD` / `PoseController`** — Studio UI shell and marker manipulation logic.
 4. **`TimelineManager`** — Drives `AnimationPlayer` for stepped pose animations; keys marker properties.
-5. **`BuildPanel`** — `@tool` panel; loads tilesets from `resources/tilesets/` and paints onto level layers by name.
-6. **`RagdollManager`** — Optional physics-aligned skeleton helpers for pose authoring.
+5. **`PoseTimelinePanel`** — Primary animator workspace (bottom-centre dock): playback, step grid, ragdoll toggles, export.
+6. **`PosePartPanel`** — Advanced per-marker inspector (right dock); hideable.
+7. **`BuildPanel`** — `@tool` panel; loads tilesets and paints onto level layers. **Target:** bottom-centre dock in build mode (currently still in right dock).
+8. **`RagdollManager`** — Optional physics-aligned skeleton helpers for pose authoring.
 
-Pose mode and gameplay mode can overlap today (`is_posing` export on `Player`); studio UX is still being separated (see [ROADMAP.md](../ROADMAP.md)).
+### Studio UI layout
+
+| Zone | Nodes | Mode visibility (target) |
+|------|-------|--------------------------|
+| Left toolbar | `PoseToolBar`, `PoseModeBar` | Play / Pose / Build switcher |
+| Bottom centre | `PoseTimelineDock` | Pose → timeline; Build → `BuildPanel`; Play → hidden |
+| Right side | `PoseDockRow`, `PosePartPanel` | Pose → advanced config; Build/Play → hidden |
+| Dormant | `AnimSection`, `PoseAssistantPanel` | Hidden; features live on timeline |
+
+Tri-mode orchestration is planned in `PoseHUD` ([ROADMAP.md](../ROADMAP.md) phase 2). Today only a “Posing” checkbox exists and modes overlap (`is_posing` defaults true; `BuildPanel.paint_enabled` defaults true).
 
 ## Level model
 
@@ -158,7 +169,9 @@ Where new features should land:
 
 | Feature | Prefer |
 |---------|--------|
-| New build tool UI | Extend `BuildPanel` or sibling under `player/build/` |
+| New build tool UI | Extend `BuildPanel` or sibling under `player/build/`; place in bottom-centre dock |
+| New frequent animator tool | Add to `PoseTimelinePanel` (not dormant `AnimSection`) |
+| New advanced marker option | Extend `PosePartPanel` (right dock) |
 | New pose tool | Extend `player/pose/` components |
 | New enemy behavior | `BaseEnemy` subclass or exported config on variant scenes |
 | New global game rule | `GameManager` or future session singleton (TBD) |

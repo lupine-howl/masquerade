@@ -39,8 +39,8 @@ Short rules for automated coding agents (Cursor Cloud, CI bots, etc.) working on
 | Area | Path |
 |------|------|
 | Player | `player/Player.gd`, `player/player.tscn`, `player/states/` |
-| Character studio | `player/pose/`, `player/PoseMarker.tscn`, `player/components/TimelineManager.gd` |
-| Level build UI | `player/build/BuildPanel.gd` |
+| Character studio | `player/pose/`, `player/PoseMarker.tscn`, `player/components/TimelineManager.gd`, `player/pose/PoseTimelinePanel.gd` |
+| Level build UI | `player/build/BuildPanel.gd` (target: bottom-centre `PoseTimelineDock`) |
 | Tilesets | `resources/tilesets/` |
 | Legacy tile spawn | `scenes/environment/hazards/hazards.gd` |
 | Enemy base | `scenes/enemies/BaseEnemy.gd` |
@@ -62,7 +62,11 @@ Prefer new scene under `scenes/enemies/` extending `BaseEnemy`. Do **not** wire 
 
 ### Add studio UI
 
-Hook into `PoseHUD` / `BuildPanel` patterns; use `class_name` + PascalCase file.
+- **Frequent tools** → bottom-centre dock (`PoseTimelinePanel` for pose, `BuildPanel` for build)
+- **Advanced config** → right dock (`PosePartPanel`)
+- **Do not** extend hidden `AnimSection` / `PoseAssistantPanel` unless explicitly asked — timeline is the product surface
+- Hook mode changes through `PoseHUD`; use `class_name` + PascalCase file
+- See [ROADMAP.md](../../ROADMAP.md) phases 2–3 for tri-mode and build-dock relocation
 
 ## Branch naming
 
