@@ -15,7 +15,7 @@ const TILEMAPS: Array[Dictionary] = [
 ]
 
 const TILE_BUTTON_SIZE := 40
-const TILE_VISIBLE_ROWS := 4
+const TILE_VISIBLE_ROWS := 3
 
 var _tab_strip: VBoxContainer
 var _source_row: HFlowContainer

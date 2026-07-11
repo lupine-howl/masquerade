@@ -142,7 +142,7 @@ func _apply_compact_layout() -> void:
 			accessory_section.remove_child(acc_controls)
 			col_spins.add_child(acc_controls)
 		if accessory_section.get_child_count() == 0:
-			accessory_section.queue_free()
+			accessory_section.visible = false
 
 	if sprite_slot_controls:
 		part_info.remove_child(sprite_slot_controls)
@@ -372,9 +372,16 @@ func _sync_primary_sprite_ui(marker: PoseMarker) -> void:
 func _sync_accessory_sprite_ui(marker: PoseMarker) -> void:
 	var slot: BodyPartSlot = _get_accessory_part_slot(marker)
 	var has_slot := slot != null
-	accessory_section.visible = has_slot
+	var acc_toggle_row := accessory_check.get_parent() as Control if is_instance_valid(accessory_check) else null
+	if acc_toggle_row:
+		acc_toggle_row.visible = has_slot
 	if not has_slot:
-		accessory_sprite_preview.texture = null
+		if is_instance_valid(accessory_preview_row):
+			accessory_preview_row.visible = false
+		if is_instance_valid(accessory_slot_controls):
+			accessory_slot_controls.visible = false
+		if is_instance_valid(accessory_sprite_preview):
+			accessory_sprite_preview.texture = null
 		return
 	accessory_check.set_pressed_no_signal(slot.visible)
 	var show_details := slot.visible

@@ -4,7 +4,7 @@ extends CanvasLayer
 signal playback_started
 
 const DOCK_MARGIN_H := 12.0
-const DOCK_HEIGHT := 236.0
+const DOCK_HEIGHT := 192.0
 
 @export var pose_controller: PoseController
 @export var timeline: TimelineManager
