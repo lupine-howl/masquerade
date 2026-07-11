@@ -94,7 +94,7 @@ func _get_prev_state_name(player: Player) -> String:
 			set_meta("_prev_fsm", player.state_machine.current_state.name)
 			set_meta("_curr_fsm", player.state_machine.current_state.name)
 		var curr: String = get_meta("_curr_fsm")
-		var active := player.state_machine.current_state.name
+		var active : String = player.state_machine.current_state.name
 		if active != curr:
 			set_meta("_prev_fsm", curr)
 			set_meta("_curr_fsm", active)
