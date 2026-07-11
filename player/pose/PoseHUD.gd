@@ -22,7 +22,6 @@ const DOCK_HEIGHT := 192.0
 
 var _last_sync_anim: String = ""
 var _last_sync_grid_len: float = -1.0
-var _tab_change_busy: bool = false
 
 
 func _ready() -> void:
@@ -311,75 +310,9 @@ func _on_step_interacted(_step: int) -> void:
 	on_step_navigated()
 
 func _on_tab_change_requested(tab: StudioTabBar.Tab) -> void:
-	if _tab_change_busy:
-		studio_tab_bar.sync_tab_buttons(get_studio_tab())
+	if tab == get_studio_tab():
 		return
-
-	var current := get_studio_tab()
-	if tab == current:
-		return
-
-	if LevelSave.dirty:
-		_tab_change_busy = true
-		var choice: String = await _prompt_unsaved_level_changes()
-		_tab_change_busy = false
-
-		match choice:
-			"save":
-				var result := LevelSave.save_level(get_tree())
-				if not result.ok:
-					studio_tab_bar.sync_tab_buttons(current)
-					if build_panel:
-						build_panel.notify_save_failed(String(result.error))
-					push_warning("PoseHUD: could not save before tab switch: %s" % String(result.error))
-					return
-				if build_panel:
-					build_panel.notify_saved(String(result.path))
-			"discard":
-				LevelSave.clear_dirty()
-				if build_panel:
-					build_panel.refresh_dirty_label()
-			"cancel":
-				studio_tab_bar.sync_tab_buttons(current)
-				return
-
 	_commit_studio_tab(tab)
-
-
-func _prompt_unsaved_level_changes() -> String:
-	var dialog := ConfirmationDialog.new()
-	dialog.title = "Unsaved level changes"
-	dialog.dialog_text = "Save changes to the level before continuing?"
-	dialog.ok_button_text = "Save"
-	dialog.add_button("Discard", false, "discard")
-
-	var state := {"done": false, "choice": "cancel"}
-	var finish := func(value: String) -> void:
-		if state.done:
-			return
-		state.done = true
-		state.choice = value
-		dialog.hide()
-
-	dialog.confirmed.connect(func() -> void: finish.call("save"))
-	dialog.canceled.connect(func() -> void: finish.call("cancel"))
-	dialog.close_requested.connect(func() -> void: finish.call("cancel"))
-	dialog.custom_action.connect(func(action: StringName) -> void:
-		if action == &"discard":
-			finish.call("discard")
-	)
-
-	get_tree().root.add_child(dialog)
-	dialog.popup_centered()
-
-	while not state.done:
-		await get_tree().process_frame
-
-	if is_instance_valid(dialog):
-		dialog.get_parent().remove_child(dialog)
-		dialog.free()
-
-	return state.choice
 
 
 func _commit_studio_tab(tab: StudioTabBar.Tab) -> void:
