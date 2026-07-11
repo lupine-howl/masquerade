@@ -24,6 +24,7 @@ var _tile_atlas_picker: TileAtlasPicker
 var _atlas_message: Label
 var _header_label: Label
 var _selected_label: Label
+var _debug_label: Label
 var _dirty_label: Label
 var _save_button: Button
 var _source_caption: Label
@@ -61,7 +62,6 @@ var paint_enabled: bool:
 var _has_tile_selection: bool = false
 var _paint_source_id: int = -1
 var _paint_coords: Vector2i = Vector2i.ZERO
-var _paint_pattern: TileMapPattern = null
 var _paint_stamps: Array[Dictionary] = []
 var _paint_selection_size: Vector2i = Vector2i.ONE
 var _paint_brush_size: Vector2i = Vector2i.ONE
@@ -76,6 +76,7 @@ var _dragging_entity: bool = false
 
 func _ready() -> void:
 	custom_minimum_size = Vector2.ZERO
+	BuildPaintDebug.on_log = _on_debug_log
 	_entity_entries = EntityPalette.load_entries()
 	_build_ui()
 	refresh_tile_layers()
@@ -226,6 +227,13 @@ func _build_ui() -> void:
 	_selected_label.add_theme_color_override("font_color", Color(0.75, 0.85, 0.95))
 	_selected_label.text = "No tile selected"
 	main_col.add_child(_selected_label)
+
+	_debug_label = Label.new()
+	_debug_label.add_theme_font_size_override("font_size", 8)
+	_debug_label.add_theme_color_override("font_color", Color(0.55, 0.8, 0.55))
+	_debug_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_debug_label.visible = BuildPaintDebug.enabled
+	main_col.add_child(_debug_label)
 
 
 func _populate_tabs() -> void:
@@ -452,17 +460,30 @@ func _style_tile_button(btn: Button, selected: bool) -> void:
 	btn.add_theme_stylebox_override("pressed", style)
 
 
-func _on_atlas_selection_changed(pattern: TileMapPattern, source_id: int, selection_rect: Rect2i) -> void:
-	_paint_pattern = pattern
+func _on_debug_log(text: String) -> void:
+	if _debug_label:
+		_debug_label.text = text
+
+
+func _on_atlas_selection_changed(stamps: Array[Dictionary], source_id: int, selection_rect: Rect2i) -> void:
+	_paint_stamps = stamps.duplicate()
 	_paint_source_id = source_id
 	_paint_selection_size = selection_rect.size
-	_cache_paint_stamps(pattern)
 	_paint_brush_size = _compute_brush_map_size()
 	_has_tile_selection = not _paint_stamps.is_empty()
 	_paint_coords = selection_rect.position
 	_last_paint_map_coords = Vector2i(-99999, -99999)
 	if not _paint_stamps.is_empty():
 		_paint_coords = _paint_stamps[0]["atlas_coords"]
+	BuildPaintDebug.trace(
+		"panel stamps=%d sel=%s brush=%s source=%d layer_idx=%d" % [
+			_paint_stamps.size(),
+			_paint_selection_size,
+			_paint_brush_size,
+			_paint_source_id,
+			_current_tilemap_index,
+		]
+	)
 
 	var tilemap_name := "?"
 	if _current_tilemap_index >= 0 and _current_tilemap_index < _tile_layers.size():
@@ -494,7 +515,6 @@ func _clear_tile_selection() -> void:
 	_selected_label.text = "No tile selected" if _active_tab_kind == TabKind.TILE_LAYER else _selected_label.text
 	_has_tile_selection = false
 	_paint_source_id = -1
-	_paint_pattern = null
 	_paint_stamps.clear()
 	_paint_selection_size = Vector2i.ONE
 	_paint_brush_size = Vector2i.ONE
@@ -511,32 +531,31 @@ func _source_label(source: TileSetSource, source_id: int) -> String:
 	return "Source %d" % source_id
 
 
-func _cache_paint_stamps(pattern: TileMapPattern) -> void:
-	_paint_stamps.clear()
-	if pattern == null:
-		return
-	for rel in pattern.get_used_cells():
-		_paint_stamps.append({
-			"rel": rel,
-			"source_id": pattern.get_cell_source_id(rel),
-			"atlas_coords": pattern.get_cell_atlas_coords(rel),
-			"alternative": pattern.get_cell_alternative_tile(rel),
-		})
-
-
 func _compute_brush_map_size() -> Vector2i:
-	if _paint_stamps.is_empty():
-		return Vector2i.ONE
-	if _paint_stamps.size() == 1:
+	if _paint_stamps.size() <= 1:
 		return Vector2i.ONE
 	return _paint_selection_size
 
 
-func process_build_input(event: InputEvent) -> bool:
+func process_build_input(event: InputEvent, channel: String = "hud") -> bool:
 	if not paint_enabled:
 		return false
 	if _is_camera_modifier_held():
 		return false
+
+	if event is InputEventMouseButton and event.pressed:
+		var btn := (event as InputEventMouseButton).button_index
+		if btn == MOUSE_BUTTON_LEFT or btn == MOUSE_BUTTON_RIGHT:
+			BuildPaintDebug.trace(
+				"%s mouse btn=%d tab=%d stamps=%d enabled=%s editor=%s" % [
+					channel,
+					btn,
+					_active_tab_kind,
+					_paint_stamps.size(),
+					paint_enabled,
+					Engine.is_editor_hint(),
+				]
+			)
 
 	if event is InputEventKey and event.pressed and not event.echo:
 		if event.keycode == KEY_DELETE or event.keycode == KEY_BACKSPACE:
@@ -685,9 +704,11 @@ func _clear_entity_selection() -> void:
 
 func _paint_tile_at_mouse(erase: bool) -> void:
 	if not erase and not _has_tile_selection:
+		BuildPaintDebug.trace("paint blocked: no selection (stamps=%d)" % _paint_stamps.size())
 		return
 	var layer := _get_current_tile_layer()
 	if layer == null:
+		BuildPaintDebug.trace("paint blocked: no tile layer (idx=%d)" % _current_tilemap_index)
 		push_warning("BuildPanel: no tile layer selected.")
 		return
 	var world := layer.get_global_mouse_position()
@@ -696,11 +717,21 @@ func _paint_tile_at_mouse(erase: bool) -> void:
 		layer.erase_cell(coords)
 		LevelSave.mark_dirty()
 		_refresh_dirty_label()
+		BuildPaintDebug.trace("erased cell %s on %s" % [coords, layer.name])
 		return
 	if coords == _last_paint_map_coords:
+		BuildPaintDebug.trace("paint skipped: same cell %s" % coords)
 		return
 	_last_paint_map_coords = coords
-	if layer.tile_set == null or not layer.tile_set.has_source(_paint_source_id):
+	if layer.tile_set == null:
+		BuildPaintDebug.trace("paint blocked: layer '%s' has no tileset" % layer.name)
+		return
+	if not layer.tile_set.has_source(_paint_source_id):
+		BuildPaintDebug.trace(
+			"paint blocked: layer '%s' missing source %d (sources=%d)" % [
+				layer.name, _paint_source_id, layer.tile_set.get_source_count()
+			]
+		)
 		push_warning("BuildPanel: layer '%s' uses a different tileset (no source %d)." % [layer.name, _paint_source_id])
 		return
 	_stamp_paint_at(layer, coords)
@@ -723,8 +754,10 @@ func _stamp_paint_at(layer: TileMapLayer, origin: Vector2i) -> void:
 		layer.set_cell(origin, _paint_source_id, _paint_coords)
 		painted = true
 	if not painted:
+		BuildPaintDebug.trace("stamp failed: no cells at origin %s" % origin)
 		push_warning("BuildPanel: paint skipped — no stamp cells for source %d." % _paint_source_id)
 		return
+	BuildPaintDebug.trace("stamped %d cell(s) at %s on %s" % [_paint_stamps.size(), origin, layer.name])
 	layer.update_internals()
 	layer.queue_redraw()
 
@@ -827,6 +860,8 @@ func _on_brush_draw() -> void:
 	var top_left := top_center - half
 	var bottom_right := bottom_center + half
 	var rect := Rect2(top_left, bottom_right - top_left)
+	_brush.set_meta("debug_brush_rect", rect)
+	_brush.set_meta("debug_brush_cells", brush_size)
 	_brush.draw_rect(rect, Color(0.35, 0.75, 1.0, 0.18), true)
 	_brush.draw_rect(rect, Color(0.4, 0.8, 1.0, 0.9), false, 2.0)
 
