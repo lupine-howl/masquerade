@@ -4,10 +4,7 @@ extends CanvasLayer
 signal playback_started
 
 const DOCK_MARGIN_H := 12.0
-const DOCK_HEIGHT_PLAY := 108.0
-const DOCK_HEIGHT_SKIN := 200.0
-const DOCK_HEIGHT_ANIMATE := 84.0
-const DOCK_HEIGHT_BUILD := 128.0
+const DOCK_HEIGHT := 236.0
 
 @export var pose_controller: PoseController
 @export var timeline: TimelineManager
@@ -64,6 +61,7 @@ func _reparent_part_panel() -> void:
 	studio_vbox.move_child(part_panel, studio_tab_bar.get_index() + 1)
 	part_panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	part_panel.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	part_panel.custom_minimum_size = Vector2.ZERO
 	part_panel.visible = false
 
 
@@ -345,10 +343,13 @@ func _apply_studio_tab(tab: StudioTabBar.Tab) -> void:
 		part_panel.visible = tab == StudioTabBar.Tab.SKIN
 	if timeline_panel:
 		timeline_panel.visible = tab == StudioTabBar.Tab.ANIMATE
+		timeline_panel.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	if build_panel:
 		build_panel.visible = tab == StudioTabBar.Tab.BUILD
+		build_panel.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	if play_stats_panel:
 		play_stats_panel.visible = tab == StudioTabBar.Tab.PLAY
+		play_stats_panel.size_flags_vertical = Control.SIZE_EXPAND_FILL
 
 	_apply_bottom_dock_size(tab)
 
@@ -364,21 +365,11 @@ func _apply_studio_tab(tab: StudioTabBar.Tab) -> void:
 
 	_sync_path_guide_authoring()
 
-func _apply_bottom_dock_size(tab: StudioTabBar.Tab) -> void:
+func _apply_bottom_dock_size(_tab: StudioTabBar.Tab) -> void:
 	if not timeline_dock:
 		return
-	var height := DOCK_HEIGHT_PLAY
-	match tab:
-		StudioTabBar.Tab.SKIN:
-			height = DOCK_HEIGHT_SKIN
-		StudioTabBar.Tab.ANIMATE:
-			height = DOCK_HEIGHT_ANIMATE
-		StudioTabBar.Tab.BUILD:
-			height = DOCK_HEIGHT_BUILD
-		StudioTabBar.Tab.PLAY:
-			height = DOCK_HEIGHT_PLAY
 	timeline_dock.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
 	timeline_dock.offset_left = DOCK_MARGIN_H
 	timeline_dock.offset_right = -DOCK_MARGIN_H
-	timeline_dock.offset_top = -height
+	timeline_dock.offset_top = -DOCK_HEIGHT
 	timeline_dock.offset_bottom = 0.0

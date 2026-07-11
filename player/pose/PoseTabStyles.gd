@@ -8,7 +8,9 @@ const TAB_INACTIVE_BG := Color(0.14, 0.14, 0.16, 0.72)
 const TAB_HOVER_BG := Color(0.17, 0.17, 0.19, 0.82)
 const TOOLBAR_BG := Color(0.16, 0.16, 0.18, 0.95)
 
-const TAB_FONT_SIZE := 9
+const TAB_FONT_SIZE := 10
+const PANEL_FONT_SIZE := 11
+const CAPTION_FONT_SIZE := 10
 const TAB_MIN_HEIGHT := 20
 const TAB_STRIP_WIDTH := 48
 const TOOL_BUTTON_SIZE := 32
@@ -111,3 +113,23 @@ static func apply_toolbar_panel(panel: PanelContainer) -> void:
 	style.content_margin_left = 2
 	style.content_margin_right = 2
 	panel.add_theme_stylebox_override("panel", style)
+
+
+static func bump_fonts_recursive(root: Node, delta: int = 1) -> void:
+	if root is Label:
+		var label := root as Label
+		var size := label.get_theme_font_size("font_size")
+		if size > 0:
+			label.add_theme_font_size_override("font_size", size + delta)
+	elif root is CheckBox:
+		var check := root as CheckBox
+		var size := check.get_theme_font_size("font_size")
+		if size > 0:
+			check.add_theme_font_size_override("font_size", size + delta)
+	elif root is Button:
+		var button := root as Button
+		var size := button.get_theme_font_size("font_size")
+		if size > 0:
+			button.add_theme_font_size_override("font_size", size + delta)
+	for child in root.get_children():
+		bump_fonts_recursive(child, delta)

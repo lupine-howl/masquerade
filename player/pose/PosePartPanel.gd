@@ -85,6 +85,103 @@ func _ready() -> void:
 	accessory_scale_x.value_changed.connect(_on_accessory_scale_changed)
 	accessory_scale_y.value_changed.connect(_on_accessory_scale_changed)
 	accessory_rot_spin.value_changed.connect(_on_accessory_rot_changed)
+	call_deferred("_apply_compact_layout")
+
+
+func _apply_compact_layout() -> void:
+	var part_info := get_node_or_null("ContentRow/Panel/MarginContainer2/PartInfo") as VBoxContainer
+	if part_info == null:
+		return
+
+	var header := part_info.get_node_or_null("HBoxContainer")
+	var sprite_preview_row := part_info.get_node_or_null("SpritePreviewRow") as Control
+	var sprite_slot_controls := part_info.get_node_or_null("SpriteSlotControls") as Control
+	var accessory_section := part_info.get_node_or_null("AccessorySection") as Control
+	var details_vbox := part_info.get_node_or_null("VBoxContainer") as Control
+
+	var body_row := HBoxContainer.new()
+	body_row.name = "BodyRow"
+	body_row.add_theme_constant_override("separation", 10)
+	body_row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	body_row.size_flags_vertical = Control.SIZE_EXPAND_FILL
+
+	var col_sprites := VBoxContainer.new()
+	col_sprites.add_theme_constant_override("separation", 4)
+	col_sprites.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+
+	var col_spins := VBoxContainer.new()
+	col_spins.add_theme_constant_override("separation", 2)
+	col_spins.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	col_spins.size_flags_stretch_ratio = 1.2
+
+	var col_pose := VBoxContainer.new()
+	col_pose.add_theme_constant_override("separation", 2)
+	col_pose.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+
+	var col_constraints := VBoxContainer.new()
+	col_constraints.add_theme_constant_override("separation", 2)
+	col_constraints.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+
+	if sprite_preview_row:
+		part_info.remove_child(sprite_preview_row)
+		_compact_sprite_preview(sprite_preview_row, 56)
+		col_sprites.add_child(sprite_preview_row)
+
+	if accessory_section:
+		var acc_toggle := accessory_section.get_node_or_null("AccessoryToggleRow")
+		var acc_preview := accessory_section.get_node_or_null("AccessoryPreviewRow")
+		var acc_controls := accessory_section.get_node_or_null("AccessorySlotControls")
+		if acc_toggle:
+			accessory_section.remove_child(acc_toggle)
+			col_sprites.add_child(acc_toggle)
+		if acc_preview:
+			accessory_section.remove_child(acc_preview)
+			_compact_sprite_preview(acc_preview, 56)
+			col_sprites.add_child(acc_preview)
+		if acc_controls:
+			accessory_section.remove_child(acc_controls)
+			col_spins.add_child(acc_controls)
+		if accessory_section.get_child_count() == 0:
+			accessory_section.queue_free()
+
+	if sprite_slot_controls:
+		part_info.remove_child(sprite_slot_controls)
+		col_spins.add_child(sprite_slot_controls)
+
+	if details_vbox:
+		part_info.remove_child(details_vbox)
+		for row_name in ["FollowRotRow", "LookAtRow", "HBoxContainer6"]:
+			var row := details_vbox.get_node_or_null(row_name)
+			if row:
+				details_vbox.remove_child(row)
+				col_constraints.add_child(row)
+		col_pose.add_child(details_vbox)
+
+	body_row.add_child(col_sprites)
+	body_row.add_child(col_spins)
+	body_row.add_child(col_pose)
+	body_row.add_child(col_constraints)
+
+	if header:
+		var header_index := header.get_index()
+		part_info.add_child(body_row)
+		part_info.move_child(body_row, header_index + 1)
+	else:
+		part_info.add_child(body_row)
+
+	var content_panel := get_node_or_null("ContentRow/Panel") as Control
+	if content_panel:
+		content_panel.size_flags_vertical = Control.SIZE_EXPAND_FILL
+
+	custom_minimum_size = Vector2.ZERO
+	size_flags_vertical = Control.SIZE_EXPAND_FILL
+	PoseTabStyles.bump_fonts_recursive(self, 1)
+
+
+func _compact_sprite_preview(row: Control, edge: int) -> void:
+	for child in row.get_children():
+		if child is TextureRect:
+			child.custom_minimum_size = Vector2(edge, edge)
 	_style_details_panel()
 	_style_details_wrapper()
 	_style_outer_panel()
