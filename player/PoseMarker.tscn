@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://cs1txumcsbrpb"]
 
-[ext_resource type="Script" uid="uid://bb8as4tat8c72" path="res://player/scripts/PoseMarker.gd" id="1_ljuav"]
+[ext_resource type="Script" uid="uid://bb8as4tat8c72" path="res://player/pose/PoseMarker.gd" id="1_ljuav"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_g4c7l"]
 radius = 16.0
