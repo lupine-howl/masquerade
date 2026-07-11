@@ -310,28 +310,8 @@ func _on_step_interacted(_step: int) -> void:
 	on_step_navigated()
 
 func _on_tab_change_requested(tab: StudioTabBar.Tab) -> void:
-	var current := get_studio_tab()
-	if tab == current:
+	if tab == get_studio_tab():
 		return
-	if LevelSave.dirty:
-		var choice: String = await LevelSave.prompt_unsaved(self)
-		match choice:
-			"save":
-				var result := LevelSave.save_level(get_tree())
-				if not result.ok:
-					studio_tab_bar.sync_tab_buttons(current)
-					if build_panel:
-						build_panel.notify_save_failed(String(result.error))
-					return
-				if build_panel:
-					build_panel.notify_saved(String(result.path))
-			"discard":
-				LevelSave.clear_dirty()
-				if build_panel:
-					build_panel.refresh_dirty_label()
-			"cancel":
-				studio_tab_bar.sync_tab_buttons(current)
-				return
 	_commit_studio_tab(tab)
 
 

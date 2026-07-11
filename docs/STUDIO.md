@@ -143,7 +143,7 @@ Entity thumbnails come from `spawn_scene` metadata in tilesets (catalog only via
 
 Build tools are disabled while **Ctrl** is held so camera pan does not paint or move entities.
 
-Unsaved level edits (`*` indicator) prompt to **Save**, **Discard**, or **Cancel** when switching studio tabs.
+Unsaved level edits show a `*` indicator in the build panel; use **Save** when you are ready to persist.
 
 ### Typical workflow (build mode)
 
@@ -151,7 +151,7 @@ Unsaved level edits (`*` indicator) prompt to **Save**, **Discard**, or **Cancel
 2. Open the **Build** tab.
 3. Pick a **tile layer** tab and tileset source; drag on the **atlas** to select one tile or a block; LMB paint, RMB erase.
 4. **Entities:** pick category and scene; LMB place; click instance to select; drag to reposition; RMB erase; Delete removes selection.
-5. Click **Save** when the `*` dirty indicator appears (or save when prompted on tab switch).
+5. Click **Save** when the `*` dirty indicator appears. You can switch to **Play** to test without saving first.
 
 ### Key files
 

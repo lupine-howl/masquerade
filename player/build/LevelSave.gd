@@ -30,34 +30,3 @@ static func save_level(tree: SceneTree) -> Dictionary:
 		return {"ok": false, "error": "Save failed: %s" % error_string(err)}
 	dirty = false
 	return {"ok": true, "path": path}
-
-
-static func prompt_unsaved(parent: Node) -> String:
-	var dialog := AcceptDialog.new()
-	dialog.title = "Unsaved level changes"
-	dialog.dialog_text = "Save changes to the level before continuing?"
-	dialog.ok_button_text = "Save"
-	dialog.add_cancel_button("Cancel")
-	dialog.add_button("Discard", false, "discard")
-	parent.add_child(dialog)
-
-	var choice := "cancel"
-	var resolved := false
-	var finish := func(value: String) -> void:
-		if resolved:
-			return
-		resolved = true
-		choice = value
-		dialog.hide()
-
-	dialog.confirmed.connect(func() -> void: finish.call("save"))
-	dialog.canceled.connect(func() -> void: finish.call("cancel"))
-	dialog.custom_action.connect(func(action: StringName) -> void:
-		if action == "discard":
-			finish.call("discard")
-	)
-	dialog.popup_centered()
-	while not resolved:
-		await parent.get_tree().process_frame
-	dialog.queue_free()
-	return choice
