@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dsviot0qn7rc"
-path="res://.godot/imported/tileset-ruins-upscaled.png-4a5d475b8dbf5e1041eaff460d9da2d1.ctex"
+path="res://.godot/imported/tileset-ruins-upscaled.png-834fbcabb4420b1a3914199eb69c262e.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/tilesets/tileset-ruins-upscaled.png"
-dest_files=["res://.godot/imported/tileset-ruins-upscaled.png-4a5d475b8dbf5e1041eaff460d9da2d1.ctex"]
+dest_files=["res://.godot/imported/tileset-ruins-upscaled.png-834fbcabb4420b1a3914199eb69c262e.ctex"]
 
 [params]
 

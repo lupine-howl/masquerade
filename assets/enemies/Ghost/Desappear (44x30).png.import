@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://f6bjxjoftb0h"
-path="res://.godot/imported/Desappear (44x30).png-3522c817ff57b5ca9ec8f84ab1133f84.ctex"
+path="res://.godot/imported/Desappear (44x30).png-a439f06afd9dec5db73ee7fbde3a17a6.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/enemies/Ghost/Desappear (44x30).png"
-dest_files=["res://.godot/imported/Desappear (44x30).png-3522c817ff57b5ca9ec8f84ab1133f84.ctex"]
+dest_files=["res://.godot/imported/Desappear (44x30).png-a439f06afd9dec5db73ee7fbde3a17a6.ctex"]
 
 [params]
 

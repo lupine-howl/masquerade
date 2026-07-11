@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dk5p7ykdps2lu"
-path="res://.godot/imported/Monitor1.png-f9ceb57f4182670eb0b59e2dfa224a1c.ctex"
+path="res://.godot/imported/Monitor1.png-13bc8eeaabf7d8e525126021de29d880.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/items/Lab/Monitor1.png"
-dest_files=["res://.godot/imported/Monitor1.png-f9ceb57f4182670eb0b59e2dfa224a1c.ctex"]
+dest_files=["res://.godot/imported/Monitor1.png-13bc8eeaabf7d8e525126021de29d880.ctex"]
 
 [params]
 

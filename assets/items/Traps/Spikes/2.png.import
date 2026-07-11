@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cr0f76qna3kl7"
-path="res://.godot/imported/2.png-06299eec8fc585c9525f79cf14710644.ctex"
+path="res://.godot/imported/2.png-a782f8b1df3771e46e86b61897cab1be.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/items/Traps/Spikes/2.png"
-dest_files=["res://.godot/imported/2.png-06299eec8fc585c9525f79cf14710644.ctex"]
+dest_files=["res://.godot/imported/2.png-a782f8b1df3771e46e86b61897cab1be.ctex"]
 
 [params]
 

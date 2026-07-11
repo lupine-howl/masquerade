@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dxvkd360y7oai"
-path="res://.godot/imported/Hit (18x18).png-c41c418f312c4b5389528805249feb22.ctex"
+path="res://.godot/imported/Hit (18x18).png-618a67775595bd97982c34d33be53e5f.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/items/Traps/Arrow/Hit (18x18).png"
-dest_files=["res://.godot/imported/Hit (18x18).png-c41c418f312c4b5389528805249feb22.ctex"]
+dest_files=["res://.godot/imported/Hit (18x18).png-618a67775595bd97982c34d33be53e5f.ctex"]
 
 [params]
 

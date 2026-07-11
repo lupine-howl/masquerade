@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dwpmv1op7ado4"
-path="res://.godot/imported/Power_lines1.png-0e811d2c0584550c8cec799029cdd047.ctex"
+path="res://.godot/imported/Power_lines1.png-15cbe1b31035d7d1f6a544e9bca8d5a2.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/items/City/Power_lines1.png"
-dest_files=["res://.godot/imported/Power_lines1.png-0e811d2c0584550c8cec799029cdd047.ctex"]
+dest_files=["res://.godot/imported/Power_lines1.png-15cbe1b31035d7d1f6a544e9bca8d5a2.ctex"]
 
 [params]
 

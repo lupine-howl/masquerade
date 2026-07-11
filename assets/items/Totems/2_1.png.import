@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bkav8urnhs161"
-path="res://.godot/imported/2_1.png-3e9d34005159d5a4f2a57698d15ae70a.ctex"
+path="res://.godot/imported/2_1.png-15f8b612e8a692465750a33b84035b05.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/items/Totems/2_1.png"
-dest_files=["res://.godot/imported/2_1.png-3e9d34005159d5a4f2a57698d15ae70a.ctex"]
+dest_files=["res://.godot/imported/2_1.png-15f8b612e8a692465750a33b84035b05.ctex"]
 
 [params]
 

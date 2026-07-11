@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://85l0kmyjfdbl"
-path="res://.godot/imported/tileset-clouds.png-32be8ace3e1bbe15125bd91c89ec0fbf.ctex"
+path="res://.godot/imported/tileset-clouds.png-3593c0b77a9455773a336440f8962ebb.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/tilesets/tileset-clouds.png"
-dest_files=["res://.godot/imported/tileset-clouds.png-32be8ace3e1bbe15125bd91c89ec0fbf.ctex"]
+dest_files=["res://.godot/imported/tileset-clouds.png-3593c0b77a9455773a336440f8962ebb.ctex"]
 
 [params]
 

@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c2wxd4efyxkb1"
-path="res://.godot/imported/Camera.png-c1aa357141a61b5a307fb07c2485fc8a.ctex"
+path="res://.godot/imported/Camera.png-0f924d2a50a8295051c5a078dce9ecd8.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/items/Lab/Camera.png"
-dest_files=["res://.godot/imported/Camera.png-c1aa357141a61b5a307fb07c2485fc8a.ctex"]
+dest_files=["res://.godot/imported/Camera.png-0f924d2a50a8295051c5a078dce9ecd8.ctex"]
 
 [params]
 

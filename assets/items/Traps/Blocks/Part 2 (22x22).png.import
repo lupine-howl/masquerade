@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://io51e6t57d1s"
-path="res://.godot/imported/Part 2 (22x22).png-d5f3b58d2343a04497be94dd33f7aa19.ctex"
+path="res://.godot/imported/Part 2 (22x22).png-c748133f4c1079f0daf1cb59a4bfeac7.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/items/Traps/Blocks/Part 2 (22x22).png"
-dest_files=["res://.godot/imported/Part 2 (22x22).png-d5f3b58d2343a04497be94dd33f7aa19.ctex"]
+dest_files=["res://.godot/imported/Part 2 (22x22).png-c748133f4c1079f0daf1cb59a4bfeac7.ctex"]
 
 [params]
 

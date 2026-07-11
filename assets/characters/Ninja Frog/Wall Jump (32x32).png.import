@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dhmi6lf4emmpf"
-path="res://.godot/imported/Wall Jump (32x32).png-39c34cd547a1930d5c07d97fcee65a7b.ctex"
+path="res://.godot/imported/Wall Jump (32x32).png-0ba500d7fffc147438da21db01ddec34.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/characters/Ninja Frog/Wall Jump (32x32).png"
-dest_files=["res://.godot/imported/Wall Jump (32x32).png-39c34cd547a1930d5c07d97fcee65a7b.ctex"]
+dest_files=["res://.godot/imported/Wall Jump (32x32).png-0ba500d7fffc147438da21db01ddec34.ctex"]
 
 [params]
 

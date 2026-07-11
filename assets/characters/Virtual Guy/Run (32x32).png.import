@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://flj0sbj5rn0n"
-path="res://.godot/imported/Run (32x32).png-c48db1e5cd7d90ccc5fde1f5cf494ff0.ctex"
+path="res://.godot/imported/Run (32x32).png-bf00d154412573247b0d55eb6c8abddb.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/characters/Virtual Guy/Run (32x32).png"
-dest_files=["res://.godot/imported/Run (32x32).png-c48db1e5cd7d90ccc5fde1f5cf494ff0.ctex"]
+dest_files=["res://.godot/imported/Run (32x32).png-bf00d154412573247b0d55eb6c8abddb.ctex"]
 
 [params]
 

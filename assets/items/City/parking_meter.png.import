@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://sq7xf2m6joaf"
-path="res://.godot/imported/parking_meter.png-3ba374001f416684aa2ebbcd5125569b.ctex"
+path="res://.godot/imported/parking_meter.png-a927fa6b264a12bcac0115d866ba0eae.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/items/City/parking_meter.png"
-dest_files=["res://.godot/imported/parking_meter.png-3ba374001f416684aa2ebbcd5125569b.ctex"]
+dest_files=["res://.godot/imported/parking_meter.png-a927fa6b264a12bcac0115d866ba0eae.ctex"]
 
 [params]
 

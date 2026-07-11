@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c0uda38qddp20"
-path="res://.godot/imported/Idle (38x24).png-23cde1de4ed0028abe37a60029dc7dbd.ctex"
+path="res://.godot/imported/Idle (38x24).png-c03b5d8b1e81e237b98b2562b3da757f.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/enemies/Snail/Idle (38x24).png"
-dest_files=["res://.godot/imported/Idle (38x24).png-23cde1de4ed0028abe37a60029dc7dbd.ctex"]
+dest_files=["res://.godot/imported/Idle (38x24).png-c03b5d8b1e81e237b98b2562b3da757f.ctex"]
 
 [params]
 

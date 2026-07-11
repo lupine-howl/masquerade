@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cgdtvseu0rfh"
-path="res://.godot/imported/1.png-5bedf0849d433b07166de2b11925047a.ctex"
+path="res://.godot/imported/1.png-257e05f6738fae6690696d36382c7ced.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/items/Pyramid/1.png"
-dest_files=["res://.godot/imported/1.png-5bedf0849d433b07166de2b11925047a.ctex"]
+dest_files=["res://.godot/imported/1.png-257e05f6738fae6690696d36382c7ced.ctex"]
 
 [params]
 

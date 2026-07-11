@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cpkwbujrv31ss"
-path="res://.godot/imported/6.png-d3789e0417717330d476da4937c72c29.ctex"
+path="res://.godot/imported/6.png-4240cee1580ab89c7a879f627f553945.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/items/Fence/6.png"
-dest_files=["res://.godot/imported/6.png-d3789e0417717330d476da4937c72c29.ctex"]
+dest_files=["res://.godot/imported/6.png-4240cee1580ab89c7a879f627f553945.ctex"]
 
 [params]
 

@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cnpdo327gfb54"
-path="res://.godot/imported/tileset-clouds-upscaled.png-cc24f2303f612126c9b8c4c45d76378b.ctex"
+path="res://.godot/imported/tileset-clouds-upscaled.png-770d38b46b079b89b24a96b07f684088.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/tilesets/tileset-clouds-upscaled.png"
-dest_files=["res://.godot/imported/tileset-clouds-upscaled.png-cc24f2303f612126c9b8c4c45d76378b.ctex"]
+dest_files=["res://.godot/imported/tileset-clouds-upscaled.png-770d38b46b079b89b24a96b07f684088.ctex"]
 
 [params]
 

@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ckg1mxm7u0pef"
-path="res://.godot/imported/Idle.png-b5e97813757367339d9bb4aa580b27e5.ctex"
+path="res://.godot/imported/Idle.png-9aae612c8f61ae81e96906b26f82d94e.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/items/Boxes/Box3/Idle.png"
-dest_files=["res://.godot/imported/Idle.png-b5e97813757367339d9bb4aa580b27e5.ctex"]
+dest_files=["res://.godot/imported/Idle.png-9aae612c8f61ae81e96906b26f82d94e.ctex"]
 
 [params]
 

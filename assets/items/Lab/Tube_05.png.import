@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://box73s23ukqee"
-path="res://.godot/imported/Tube_05.png-e24ab959012bff659b54bc14e790342c.ctex"
+path="res://.godot/imported/Tube_05.png-d6ff1ee6e5a918c84693308f7040ab18.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/items/Lab/Tube_05.png"
-dest_files=["res://.godot/imported/Tube_05.png-e24ab959012bff659b54bc14e790342c.ctex"]
+dest_files=["res://.godot/imported/Tube_05.png-d6ff1ee6e5a918c84693308f7040ab18.ctex"]
 
 [params]
 

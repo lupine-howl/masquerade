@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://brpsgnqmfchr1"
-path="res://.godot/imported/Break.png-ee58ab56dfd4ca69d9aa7a5de1bb1df8.ctex"
+path="res://.godot/imported/Break.png-b186ebec7e009c35b6c6e4782dee994e.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/items/Boxes/Box1/Break.png"
-dest_files=["res://.godot/imported/Break.png-ee58ab56dfd4ca69d9aa7a5de1bb1df8.ctex"]
+dest_files=["res://.godot/imported/Break.png-b186ebec7e009c35b6c6e4782dee994e.ctex"]
 
 [params]
 

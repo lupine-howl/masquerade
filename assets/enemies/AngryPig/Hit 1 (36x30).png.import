@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://gncdi1vbylsa"
-path="res://.godot/imported/Hit 1 (36x30).png-8af6de26aa9d62569bdc6dccdc037403.ctex"
+path="res://.godot/imported/Hit 1 (36x30).png-9780dbbfd3da734223952f2871b11091.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/enemies/AngryPig/Hit 1 (36x30).png"
-dest_files=["res://.godot/imported/Hit 1 (36x30).png-8af6de26aa9d62569bdc6dccdc037403.ctex"]
+dest_files=["res://.godot/imported/Hit 1 (36x30).png-9780dbbfd3da734223952f2871b11091.ctex"]
 
 [params]
 

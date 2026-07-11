@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://d02bl7f15gexn"
-path="res://.godot/imported/Money.png-7a673f372aa58fbca6b0409e28b21547.ctex"
+path="res://.godot/imported/Money.png-8dff4ea8450a57a3be45edf67cf510bf.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/items/City/Money.png"
-dest_files=["res://.godot/imported/Money.png-7a673f372aa58fbca6b0409e28b21547.ctex"]
+dest_files=["res://.godot/imported/Money.png-8dff4ea8450a57a3be45edf67cf510bf.ctex"]
 
 [params]
 

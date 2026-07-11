@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://f5dxr3ledctq"
-path="res://.godot/imported/Card.png-d5feb3872665d9dfcd2ec6e750f93583.ctex"
+path="res://.godot/imported/Card.png-4c24e10a6da9954c4651bf0c55ee89c8.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/items/Coins/Card.png"
-dest_files=["res://.godot/imported/Card.png-d5feb3872665d9dfcd2ec6e750f93583.ctex"]
+dest_files=["res://.godot/imported/Card.png-4c24e10a6da9954c4651bf0c55ee89c8.ctex"]
 
 [params]
 

@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://0dkgy1ixypo8"
-path="res://.godot/imported/BlackGradient.png-83ff62d807f5aa7040b6eb309acf07ae.ctex"
+path="res://.godot/imported/BlackGradient.png-3582a0d1d43932fc6c0567d3a5f5623a.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/backgrounds/BlackGradient.png"
-dest_files=["res://.godot/imported/BlackGradient.png-83ff62d807f5aa7040b6eb309acf07ae.ctex"]
+dest_files=["res://.godot/imported/BlackGradient.png-3582a0d1d43932fc6c0567d3a5f5623a.ctex"]
 
 [params]
 

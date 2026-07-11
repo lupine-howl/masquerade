@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dfdnnitih1vcx"
-path="res://.godot/imported/Spiked Ball.png-6027112affedb0f38e3fd0928b560bcb.ctex"
+path="res://.godot/imported/Spiked Ball.png-20098815c5234a65743cfc0d934d3d06.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/items/Traps/Spiked Ball/Spiked Ball.png"
-dest_files=["res://.godot/imported/Spiked Ball.png-6027112affedb0f38e3fd0928b560bcb.ctex"]
+dest_files=["res://.godot/imported/Spiked Ball.png-20098815c5234a65743cfc0d934d3d06.ctex"]
 
 [params]
 

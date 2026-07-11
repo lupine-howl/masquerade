@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://52b2pl1f6hfm"
-path="res://.godot/imported/Off.png-8eb574da4ac4a847c99d0c30f1808414.ctex"
+path="res://.godot/imported/Off.png-37982c697960dfbf45548aa43f90499b.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/items/Traps/Falling Platforms/Off.png"
-dest_files=["res://.godot/imported/Off.png-8eb574da4ac4a847c99d0c30f1808414.ctex"]
+dest_files=["res://.godot/imported/Off.png-37982c697960dfbf45548aa43f90499b.ctex"]
 
 [params]
 

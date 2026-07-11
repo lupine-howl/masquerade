@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b5wmcsthhui46"
-path="res://.godot/imported/Pixel Heart Sprite 16x16.png-32961ed0e30ed03a5d44635a0b713c80.ctex"
+path="res://.godot/imported/Pixel Heart Sprite 16x16.png-d59ae5706ba7ad117e13ff04734b6c4f.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/items/Pixel Heart/Pixel Heart Sprite 16x16.png"
-dest_files=["res://.godot/imported/Pixel Heart Sprite 16x16.png-32961ed0e30ed03a5d44635a0b713c80.ctex"]
+dest_files=["res://.godot/imported/Pixel Heart Sprite 16x16.png-d59ae5706ba7ad117e13ff04734b6c4f.ctex"]
 
 [params]
 

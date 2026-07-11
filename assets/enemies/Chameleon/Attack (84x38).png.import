@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bcuibuyc3ms1g"
-path="res://.godot/imported/Attack (84x38).png-76817a702ebdd36ddd723e3963be1725.ctex"
+path="res://.godot/imported/Attack (84x38).png-155e281e6c7e4fd0b280741eca7fda2d.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/enemies/Chameleon/Attack (84x38).png"
-dest_files=["res://.godot/imported/Attack (84x38).png-76817a702ebdd36ddd723e3963be1725.ctex"]
+dest_files=["res://.godot/imported/Attack (84x38).png-155e281e6c7e4fd0b280741eca7fda2d.ctex"]
 
 [params]
 

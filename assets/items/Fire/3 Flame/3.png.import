@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bcwa4p1b7dpp7"
-path="res://.godot/imported/3.png-36d950cbe22294716dd387f410d662ac.ctex"
+path="res://.godot/imported/3.png-20b389bf2a4721e70b977fe646b8c089.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/items/Fire/3 Flame/3.png"
-dest_files=["res://.godot/imported/3.png-36d950cbe22294716dd387f410d662ac.ctex"]
+dest_files=["res://.godot/imported/3.png-20b389bf2a4721e70b977fe646b8c089.ctex"]
 
 [params]
 

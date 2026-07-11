@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://8ag2j2k5lxpr"
-path="res://.godot/imported/2-Chest2.png-cd2a60e8a75e9fb6edfb898098d1fcae.ctex"
+path="res://.godot/imported/2-Chest2.png-1f10d42a19c7c968362fc450933e34c3.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/items/Chests/2-Chest2.png"
-dest_files=["res://.godot/imported/2-Chest2.png-cd2a60e8a75e9fb6edfb898098d1fcae.ctex"]
+dest_files=["res://.godot/imported/2-Chest2.png-1f10d42a19c7c968362fc450933e34c3.ctex"]
 
 [params]
 

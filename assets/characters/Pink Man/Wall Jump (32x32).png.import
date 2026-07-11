@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://blyjpchlpwh2c"
-path="res://.godot/imported/Wall Jump (32x32).png-c444fa0b7511493f71c28f8087449ee1.ctex"
+path="res://.godot/imported/Wall Jump (32x32).png-b5742c1fd4f4e943a65a635eba64efda.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/characters/Pink Man/Wall Jump (32x32).png"
-dest_files=["res://.godot/imported/Wall Jump (32x32).png-c444fa0b7511493f71c28f8087449ee1.ctex"]
+dest_files=["res://.godot/imported/Wall Jump (32x32).png-b5742c1fd4f4e943a65a635eba64efda.ctex"]
 
 [params]
 

@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ch3qq4su3vqr3"
-path="res://.godot/imported/Melon.png-0f60a3e1b61e0a8e6df1cbd83e704326.ctex"
+path="res://.godot/imported/Melon.png-de3487a257627b52bf6322e93fa9aa09.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/items/Food/Melon.png"
-dest_files=["res://.godot/imported/Melon.png-0f60a3e1b61e0a8e6df1cbd83e704326.ctex"]
+dest_files=["res://.godot/imported/Melon.png-de3487a257627b52bf6322e93fa9aa09.ctex"]
 
 [params]
 

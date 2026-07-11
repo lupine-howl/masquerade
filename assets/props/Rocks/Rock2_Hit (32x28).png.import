@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c34h3ytfwqcg8"
-path="res://.godot/imported/Rock2_Hit (32x28).png-c475fcb41d868a11783fea274642ec35.ctex"
+path="res://.godot/imported/Rock2_Hit (32x28).png-bd37d2bf214c4133a34eb3fa1f1ebcbf.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/props/Rocks/Rock2_Hit (32x28).png"
-dest_files=["res://.godot/imported/Rock2_Hit (32x28).png-c475fcb41d868a11783fea274642ec35.ctex"]
+dest_files=["res://.godot/imported/Rock2_Hit (32x28).png-bd37d2bf214c4133a34eb3fa1f1ebcbf.ctex"]
 
 [params]
 

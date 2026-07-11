@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bqi1m0ijxerha"
-path="res://.godot/imported/blue-whale.png-232d707301545fbb3b75c271cafb97d4.ctex"
+path="res://.godot/imported/blue-whale.png-6f415e8582de5d013fa95c296d083c23.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/enemies/Fishes/blue-whale.png"
-dest_files=["res://.godot/imported/blue-whale.png-232d707301545fbb3b75c271cafb97d4.ctex"]
+dest_files=["res://.godot/imported/blue-whale.png-6f415e8582de5d013fa95c296d083c23.ctex"]
 
 [params]
 
