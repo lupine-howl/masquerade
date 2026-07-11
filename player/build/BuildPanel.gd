@@ -526,11 +526,13 @@ func _pick_entity_near(world: Vector2) -> Node2D:
 	var best: Node2D = null
 	var best_dist := ENTITY_PICK_RADIUS
 	for child in container.get_children():
-		if child is Node2D and is_instance_valid(child):
-			var dist := child.global_position.distance_to(snap)
-			if dist <= best_dist:
-				best = child
-				best_dist = dist
+		var node := child as Node2D
+		if node == null or not is_instance_valid(node):
+			continue
+		var dist: float = node.global_position.distance_to(snap)
+		if dist <= best_dist:
+			best = node
+			best_dist = dist
 	return best
 
 
