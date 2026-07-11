@@ -25,7 +25,7 @@ var _last_sync_grid_len: float = -1.0
 
 
 func _ready() -> void:
-	set_process_unhandled_input(true)
+	set_process_input(true)
 	_hide_legacy_panels()
 	_reparent_part_panel()
 	_setup_panels()
@@ -401,6 +401,18 @@ func _apply_bottom_dock_size(_tab: StudioTabBar.Tab) -> void:
 	timeline_dock.offset_bottom = 0.0
 
 
-func _unhandled_input(event: InputEvent) -> void:
-	if build_panel and build_panel.visible and build_panel.paint_enabled:
-		build_panel.process_build_input(event)
+func _is_pointer_over_build_dock() -> bool:
+	if timeline_dock == null or not timeline_dock.visible:
+		return false
+	return timeline_dock.get_global_rect().has_point(get_viewport().get_mouse_position())
+
+
+func _input(event: InputEvent) -> void:
+	if not build_panel or not build_panel.visible or not build_panel.paint_enabled:
+		return
+	if _is_pointer_over_build_dock():
+		if event is InputEventMouseMotion:
+			build_panel.suppress_brush()
+		return
+	if build_panel.process_build_input(event):
+		get_viewport().set_input_as_handled()
