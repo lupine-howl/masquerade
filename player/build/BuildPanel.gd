@@ -76,9 +76,6 @@ var _dragging_entity: bool = false
 
 func _ready() -> void:
 	custom_minimum_size = Vector2.ZERO
-	if not Engine.is_editor_hint():
-		set_process_input(true)
-		set_process_unhandled_input(true)
 	BuildPaintDebug.on_log = _on_debug_log
 	_entity_entries = EntityPalette.load_entries()
 	_build_ui()
@@ -538,22 +535,6 @@ func _compute_brush_map_size() -> Vector2i:
 	if _paint_stamps.size() <= 1:
 		return Vector2i.ONE
 	return _paint_selection_size
-
-
-func _input(event: InputEvent) -> void:
-	if _try_process_build_input(event, "panel_input"):
-		get_viewport().set_input_as_handled()
-
-
-func _unhandled_input(event: InputEvent) -> void:
-	if _try_process_build_input(event, "panel_unhandled"):
-		get_viewport().set_input_as_handled()
-
-
-func _try_process_build_input(event: InputEvent, channel: String) -> bool:
-	if Engine.is_editor_hint() or not paint_enabled:
-		return false
-	return process_build_input(event, channel)
 
 
 func process_build_input(event: InputEvent, channel: String = "hud") -> bool:

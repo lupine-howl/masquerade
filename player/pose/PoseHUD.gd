@@ -25,7 +25,6 @@ var _last_sync_grid_len: float = -1.0
 
 
 func _ready() -> void:
-	set_process_input(true)
 	set_process_unhandled_input(true)
 	_hide_legacy_panels()
 	_reparent_part_panel()
@@ -421,19 +420,11 @@ func _route_build_input(event: InputEvent, channel: String) -> void:
 	if not build_panel or not build_panel.visible or not build_panel.paint_enabled:
 		return
 	if _is_pointer_over_build_dock():
-		if event is InputEventMouseButton and (event as InputEventMouseButton).pressed:
-			BuildPaintDebug.trace("%s skipped: pointer over dock (y=%.0f)" % [
-				channel, get_viewport().get_mouse_position().y
-			])
 		if event is InputEventMouseMotion:
 			build_panel.suppress_brush()
 		return
 	if build_panel.process_build_input(event, channel):
 		get_viewport().set_input_as_handled()
-
-
-func _input(event: InputEvent) -> void:
-	_route_build_input(event, "hud_input")
 
 
 func _unhandled_input(event: InputEvent) -> void:
