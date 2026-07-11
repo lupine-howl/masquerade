@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://dbufpfnhj4eot"]
 
-[ext_resource type="Script" uid="uid://s7bpfq60d63n" path="res://Heart.gd" id="1_fhu63"]
+[ext_resource type="Script" uid="uid://s7bpfq60d63n" path="res://scenes/collectibles/heart/Heart.gd" id="1_fhu63"]
 [ext_resource type="Texture2D" uid="uid://b5wmcsthhui46" path="res://Assets/Items/Pixel Heart/Pixel Heart Sprite 16x16.png" id="2_fhu63"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_yuntp"]
