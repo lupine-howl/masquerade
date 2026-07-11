@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://ey7t71hiq34u"]
 
 [ext_resource type="Script" uid="uid://cmx6e3vyil0ct" path="res://scenes/environment/force_arrow/ForceArrow.gd" id="1_3sl3x"]
-[ext_resource type="Texture2D" uid="uid://bdcql3fs7mupk" path="res://up-arrow-pixel-art-isolated-on-a-white-background-8-bit-illustration-vector.jpg" id="1_g1r24"]
+[ext_resource type="Texture2D" uid="uid://bdcql3fs7mupk" path="res://Assets/Objects/up-arrow-pixel-art-isolated-on-a-white-background-8-bit-illustration-vector.jpg" id="1_g1r24"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_3sl3x"]
 radius = 64.0

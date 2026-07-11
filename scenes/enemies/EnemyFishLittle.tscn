@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://bm80s0nhrugrm"]
 
 [ext_resource type="Script" uid="uid://cr28irpvcophc" path="res://scenes/enemies/Enemy.gd" id="1_34scj"]
-[ext_resource type="Texture2D" uid="uid://h66gv43daw6y" path="res://Assets/Enemies/fish.png" id="3_p1wnh"]
+[ext_resource type="Texture2D" uid="uid://h66gv43daw6y" path="res://Assets/Enemies/Fishes/fish.png" id="3_p1wnh"]
 [ext_resource type="PackedScene" uid="uid://bjiloil24uy5x" path="res://scenes/projectiles/ProjectileLauncher.tscn" id="4_3fayu"]
 [ext_resource type="PackedScene" uid="uid://drnpe03i7el81" path="res://scenes/projectiles/Projectile.tscn" id="5_btp5w"]
 

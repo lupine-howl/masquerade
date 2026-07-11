@@ -2,8 +2,15 @@
 .godot/
 /android/
 
+# Godot 4.2+ GDExtension hot-reload temp copies on Windows (e.g. Rapier2D).
+# Godot creates ~*.dll beside the real DLL while the editor is open; ignore these
+# so they never block pulls or show as undeletable local changes during testing.
+~*.dll
+
 # Editor temp and backup files
 *.tmp
+*.TMP
+*~RF*.TMP
 *~
 *.autosave.*
 *.kra~

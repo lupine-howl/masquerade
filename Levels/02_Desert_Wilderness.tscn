@@ -11,7 +11,7 @@
 [ext_resource type="Script" uid="uid://d2pv7rca1l01i" path="res://scenes/environment/hazards/hazards.gd" id="9_yjc7g"]
 [ext_resource type="TileSet" uid="uid://b0etgrb5l3mkt" path="res://resources/tilesets/TileSetTerrain.tres" id="10_eyki8"]
 [ext_resource type="Texture2D" uid="uid://doxq81tvdojuk" path="res://Assets/Tilesets/old-tileset-water.png" id="10_yjc7g"]
-[ext_resource type="Texture2D" uid="uid://bxciv7rssh0sc" path="res://Assets/Items/tileset-small-plants-upscaled.png" id="11_yjc7g"]
+[ext_resource type="Texture2D" uid="uid://bxciv7rssh0sc" path="res://Assets/Tilesets/tileset-small-plants-upscaled.png" id="11_yjc7g"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_t8vbo"]
 shader = ExtResource("9_eyki8")

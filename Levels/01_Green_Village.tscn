@@ -13,7 +13,7 @@
 [ext_resource type="Texture2D" uid="uid://ipvw8vbp6540" path="res://Assets/Tilesets/old-tileset-sunken-city.png" id="12_oonoi"]
 [ext_resource type="TileSet" uid="uid://ctaya6hy7kn72" path="res://resources/tilesets/TileSetEnemies.tres" id="13_au5s1"]
 [ext_resource type="Script" uid="uid://d2pv7rca1l01i" path="res://scenes/environment/hazards/hazards.gd" id="14_gawt5"]
-[ext_resource type="Texture2D" uid="uid://doxpsx2cc4t4m" path="res://village-objects-sheet.png" id="15_q01gh"]
+[ext_resource type="Texture2D" uid="uid://doxpsx2cc4t4m" path="res://Assets/Objects/village-objects-sheet.png" id="15_q01gh"]
 [ext_resource type="TileSet" uid="uid://cqi34h10fqer3" path="res://resources/tilesets/TileSetControls.tres" id="16_mvwmb"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_xr0qo"]
