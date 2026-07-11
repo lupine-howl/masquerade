@@ -62,6 +62,7 @@ var _has_tile_selection: bool = false
 var _paint_source_id: int = -1
 var _paint_coords: Vector2i = Vector2i.ZERO
 var _paint_pattern: TileMapPattern = null
+var _paint_stamps: Array[Dictionary] = []
 var _paint_selection_size: Vector2i = Vector2i.ONE
 var _paint_brush_size: Vector2i = Vector2i.ONE
 var _last_paint_map_coords: Vector2i = Vector2i(-99999, -99999)
@@ -455,13 +456,13 @@ func _on_atlas_selection_changed(pattern: TileMapPattern, source_id: int, select
 	_paint_pattern = pattern
 	_paint_source_id = source_id
 	_paint_selection_size = selection_rect.size
-	_paint_brush_size = _compute_pattern_brush_size(pattern)
-	_has_tile_selection = true
+	_cache_paint_stamps(pattern)
+	_paint_brush_size = _compute_brush_map_size()
+	_has_tile_selection = not _paint_stamps.is_empty()
 	_paint_coords = selection_rect.position
 	_last_paint_map_coords = Vector2i(-99999, -99999)
-	var used_cells := pattern.get_used_cells()
-	if not used_cells.is_empty():
-		_paint_coords = pattern.get_cell_atlas_coords(used_cells[0])
+	if not _paint_stamps.is_empty():
+		_paint_coords = _paint_stamps[0]["atlas_coords"]
 
 	var tilemap_name := "?"
 	if _current_tilemap_index >= 0 and _current_tilemap_index < _tile_layers.size():
@@ -494,6 +495,7 @@ func _clear_tile_selection() -> void:
 	_has_tile_selection = false
 	_paint_source_id = -1
 	_paint_pattern = null
+	_paint_stamps.clear()
 	_paint_selection_size = Vector2i.ONE
 	_paint_brush_size = Vector2i.ONE
 	_paint_coords = Vector2i.ZERO
@@ -509,25 +511,32 @@ func _source_label(source: TileSetSource, source_id: int) -> String:
 	return "Source %d" % source_id
 
 
-func _compute_pattern_brush_size(pattern: TileMapPattern) -> Vector2i:
+func _cache_paint_stamps(pattern: TileMapPattern) -> void:
+	_paint_stamps.clear()
 	if pattern == null:
-		return Vector2i.ONE
-	var cells := pattern.get_used_cells()
-	if cells.is_empty():
-		return Vector2i.ONE
-	var min_cell: Vector2i = cells[0]
-	var max_cell: Vector2i = cells[0]
-	for rel in cells:
-		min_cell = Vector2i(mini(min_cell.x, rel.x), mini(min_cell.y, rel.y))
-		max_cell = Vector2i(maxi(max_cell.x, rel.x), maxi(max_cell.y, rel.y))
-	return max_cell - min_cell + Vector2i.ONE
+		return
+	for rel in pattern.get_used_cells():
+		_paint_stamps.append({
+			"rel": rel,
+			"source_id": pattern.get_cell_source_id(rel),
+			"atlas_coords": pattern.get_cell_atlas_coords(rel),
+			"alternative": pattern.get_cell_alternative_tile(rel),
+		})
 
 
-func process_build_input(event: InputEvent) -> void:
+func _compute_brush_map_size() -> Vector2i:
+	if _paint_stamps.is_empty():
+		return Vector2i.ONE
+	if _paint_stamps.size() == 1:
+		return Vector2i.ONE
+	return _paint_selection_size
+
+
+func process_build_input(event: InputEvent) -> bool:
 	if not paint_enabled:
-		return
+		return false
 	if _is_camera_modifier_held():
-		return
+		return false
 
 	if event is InputEventKey and event.pressed and not event.echo:
 		if event.keycode == KEY_DELETE or event.keycode == KEY_BACKSPACE:
@@ -536,8 +545,8 @@ func process_build_input(event: InputEvent) -> void:
 				_clear_entity_selection()
 				LevelSave.mark_dirty()
 				_refresh_dirty_label()
-				get_viewport().set_input_as_handled()
-			return
+				return true
+			return false
 
 	if event is InputEventMouseButton:
 		if _active_tab_kind == TabKind.ENTITIES:
@@ -546,30 +555,36 @@ func process_build_input(event: InputEvent) -> void:
 					_handle_entity_left_press()
 				else:
 					_dragging_entity = false
-				get_viewport().set_input_as_handled()
-			elif event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
+				return true
+			if event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
 				_erase_entity_at_mouse()
-				get_viewport().set_input_as_handled()
-		elif event.pressed:
+				return true
+			return false
+		if event.pressed:
 			if event.button_index == MOUSE_BUTTON_LEFT:
 				_paint_tile_at_mouse(false)
-				get_viewport().set_input_as_handled()
-			elif event.button_index == MOUSE_BUTTON_RIGHT:
+				return true
+			if event.button_index == MOUSE_BUTTON_RIGHT:
 				_paint_tile_at_mouse(true)
-				get_viewport().set_input_as_handled()
+				return true
 		elif not event.pressed and _active_tab_kind == TabKind.TILE_LAYER:
 			_last_paint_map_coords = Vector2i(-99999, -99999)
-	elif event is InputEventMouseMotion:
+		return false
+
+	if event is InputEventMouseMotion:
 		_update_brush_hover()
 		if _active_tab_kind == TabKind.ENTITIES and _dragging_entity and _selected_entity:
 			_move_selected_entity_to_mouse()
-			get_viewport().set_input_as_handled()
-		elif _active_tab_kind == TabKind.TILE_LAYER:
+			return true
+		if _active_tab_kind == TabKind.TILE_LAYER:
 			var mask := (event as InputEventMouseMotion).button_mask
 			if mask & MOUSE_BUTTON_MASK_LEFT:
 				_paint_tile_at_mouse(false)
-			elif mask & MOUSE_BUTTON_MASK_RIGHT:
+				return true
+			if mask & MOUSE_BUTTON_MASK_RIGHT:
 				_paint_tile_at_mouse(true)
+				return true
+	return false
 
 
 func _is_camera_modifier_held() -> bool:
@@ -695,21 +710,23 @@ func _paint_tile_at_mouse(erase: bool) -> void:
 
 func _stamp_paint_at(layer: TileMapLayer, origin: Vector2i) -> void:
 	var painted := false
-	if _paint_pattern != null:
-		for rel in _paint_pattern.get_used_cells():
-			layer.set_cell(
-				origin + rel,
-				_paint_pattern.get_cell_source_id(rel),
-				_paint_pattern.get_cell_atlas_coords(rel),
-				_paint_pattern.get_cell_alternative_tile(rel)
-			)
-			painted = true
-	elif _has_tile_selection and _paint_source_id >= 0:
+	for stamp in _paint_stamps:
+		var rel: Vector2i = stamp["rel"]
+		layer.set_cell(
+			origin + rel,
+			int(stamp["source_id"]),
+			stamp["atlas_coords"],
+			int(stamp["alternative"])
+		)
+		painted = true
+	if not painted and _has_tile_selection and _paint_source_id >= 0:
 		layer.set_cell(origin, _paint_source_id, _paint_coords)
 		painted = true
-	if painted:
-		layer.update_internals()
-		layer.queue_redraw()
+	if not painted:
+		push_warning("BuildPanel: paint skipped — no stamp cells for source %d." % _paint_source_id)
+		return
+	layer.update_internals()
+	layer.queue_redraw()
 
 
 func _find_target_layer(layer_name: String) -> TileMapLayer:
@@ -751,6 +768,10 @@ func _snap_world_to_grid(world: Vector2) -> Vector2:
 	var local := layer.to_local(world)
 	var map_coords := layer.local_to_map(local)
 	return layer.to_global(layer.map_to_local(map_coords))
+
+
+func suppress_brush() -> void:
+	_set_brush_visible(false)
 
 
 func _update_brush_hover() -> void:
