@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c56puxf8iptvm"
-path="res://.godot/imported/tileset-stones.png-bf14762c9839b345cd0dcba88861b61e.ctex"
+path="res://.godot/imported/tileset-stones.png-0f67c49d1f94560218f976dc6cf2581a.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://Assets/Tilesets/tileset-stones.png"
-dest_files=["res://.godot/imported/tileset-stones.png-bf14762c9839b345cd0dcba88861b61e.ctex"]
+dest_files=["res://.godot/imported/tileset-stones.png-0f67c49d1f94560218f976dc6cf2581a.ctex"]
 
 [params]
 

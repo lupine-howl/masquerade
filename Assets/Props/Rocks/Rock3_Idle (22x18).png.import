@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://crgxsvhiisqdp"
-path="res://.godot/imported/Rock3_Idle (22x18).png-02040532ef51d4e1df7dc7d8de4a7a4b.ctex"
+path="res://.godot/imported/Rock3_Idle (22x18).png-e5fbbfc96fb3dd97d9afa7b0ed6e185b.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://Assets/Props/Rocks/Rock3_Idle (22x18).png"
-dest_files=["res://.godot/imported/Rock3_Idle (22x18).png-02040532ef51d4e1df7dc7d8de4a7a4b.ctex"]
+dest_files=["res://.godot/imported/Rock3_Idle (22x18).png-e5fbbfc96fb3dd97d9afa7b0ed6e185b.ctex"]
 
 [params]
 

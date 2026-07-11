@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://nbmj3yylyso5"
-path="res://.godot/imported/tileset-shipwreck.png-17892c8eb709a84e84d50dae3d5729d2.ctex"
+path="res://.godot/imported/tileset-shipwreck.png-8b1b192d730fc34d67f8fe42f941b3fd.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://Assets/Tilesets/tileset-shipwreck.png"
-dest_files=["res://.godot/imported/tileset-shipwreck.png-17892c8eb709a84e84d50dae3d5729d2.ctex"]
+dest_files=["res://.godot/imported/tileset-shipwreck.png-8b1b192d730fc34d67f8fe42f941b3fd.ctex"]
 
 [params]
 

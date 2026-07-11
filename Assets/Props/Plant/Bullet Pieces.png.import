@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ca2kqlji6qfut"
-path="res://.godot/imported/Bullet Pieces.png-a8a74c3372d5148f5b74d51070d85491.ctex"
+path="res://.godot/imported/Bullet Pieces.png-08e62c4f068f18fd542956e6dd114411.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://Assets/Props/Plant/Bullet Pieces.png"
-dest_files=["res://.godot/imported/Bullet Pieces.png-a8a74c3372d5148f5b74d51070d85491.ctex"]
+dest_files=["res://.godot/imported/Bullet Pieces.png-08e62c4f068f18fd542956e6dd114411.ctex"]
 
 [params]
 
