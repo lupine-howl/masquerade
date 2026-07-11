@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://doxpsx2cc4t4m"
-path="res://.godot/imported/village-objects-sheet.png-3c51c375b42a6b2f8e3a10cf0a1efd86.ctex"
+path="res://.godot/imported/village-objects-sheet.png-d62ae73e0a5747554d4c16a9e3790bcc.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/objects/village-objects-sheet.png"
-dest_files=["res://.godot/imported/village-objects-sheet.png-3c51c375b42a6b2f8e3a10cf0a1efd86.ctex"]
+dest_files=["res://.godot/imported/village-objects-sheet.png-d62ae73e0a5747554d4c16a9e3790bcc.ctex"]
 
 [params]
 

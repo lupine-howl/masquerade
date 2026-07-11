@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://coru02vghktkl"
-path="res://.godot/imported/Idle (32x32).png-410bdc490df6c79dc0f01766680a137e.ctex"
+path="res://.godot/imported/Idle (32x32).png-d2fde47798a0e55b713c1811dc25fd8d.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/characters/Mask Dude/Idle (32x32).png"
-dest_files=["res://.godot/imported/Idle (32x32).png-410bdc490df6c79dc0f01766680a137e.ctex"]
+dest_files=["res://.godot/imported/Idle (32x32).png-d2fde47798a0e55b713c1811dc25fd8d.ctex"]
 
 [params]
 

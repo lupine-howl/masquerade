@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bpwamvxxnbcb8"
-path="res://.godot/imported/Appearing (96x96).png-189fc4b541deb130af9b434c8022aab6.ctex"
+path="res://.godot/imported/Appearing (96x96).png-f71c8cdcf8b56a2ef1cfa79d26a7c117.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/characters/Appearing (96x96).png"
-dest_files=["res://.godot/imported/Appearing (96x96).png-189fc4b541deb130af9b434c8022aab6.ctex"]
+dest_files=["res://.godot/imported/Appearing (96x96).png-f71c8cdcf8b56a2ef1cfa79d26a7c117.ctex"]
 
 [params]
 

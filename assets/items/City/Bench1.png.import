@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bmb5pj7hjsjd3"
-path="res://.godot/imported/Bench1.png-ca751b88c711bc01c6b14092bfdcdc0b.ctex"
+path="res://.godot/imported/Bench1.png-9bea53c4c47bb7d90a8e8b5c8cb520a9.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/items/City/Bench1.png"
-dest_files=["res://.godot/imported/Bench1.png-ca751b88c711bc01c6b14092bfdcdc0b.ctex"]
+dest_files=["res://.godot/imported/Bench1.png-9bea53c4c47bb7d90a8e8b5c8cb520a9.ctex"]
 
 [params]
 

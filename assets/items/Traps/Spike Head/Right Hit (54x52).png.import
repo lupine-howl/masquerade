@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b3xkc8abbjnjb"
-path="res://.godot/imported/Right Hit (54x52).png-825fb4e0f9f3fea26b716e16ad7b84cc.ctex"
+path="res://.godot/imported/Right Hit (54x52).png-4f738527f3aac05f05c7b3310ec4b0ca.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/items/Traps/Spike Head/Right Hit (54x52).png"
-dest_files=["res://.godot/imported/Right Hit (54x52).png-825fb4e0f9f3fea26b716e16ad7b84cc.ctex"]
+dest_files=["res://.godot/imported/Right Hit (54x52).png-4f738527f3aac05f05c7b3310ec4b0ca.ctex"]
 
 [params]
 

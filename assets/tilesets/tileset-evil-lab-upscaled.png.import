@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cjarfxksv7exo"
-path="res://.godot/imported/tileset-evil-lab-upscaled.png-cc22c106eaff3d78ed6460d7c71a1b23.ctex"
+path="res://.godot/imported/tileset-evil-lab-upscaled.png-c9fc669419e6a5ec701d29ab6a69e0ec.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/tilesets/tileset-evil-lab-upscaled.png"
-dest_files=["res://.godot/imported/tileset-evil-lab-upscaled.png-cc22c106eaff3d78ed6460d7c71a1b23.ctex"]
+dest_files=["res://.godot/imported/tileset-evil-lab-upscaled.png-c9fc669419e6a5ec701d29ab6a69e0ec.ctex"]
 
 [params]
 

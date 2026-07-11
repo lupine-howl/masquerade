@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dfrgnc1baaq8e"
-path="res://.godot/imported/Chair4.png-749f076a3a461a2a4a1399e927ded950.ctex"
+path="res://.godot/imported/Chair4.png-8735289ae5ef519074f7a4161c4bf476.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/items/Lab/Chair4.png"
-dest_files=["res://.godot/imported/Chair4.png-749f076a3a461a2a4a1399e927ded950.ctex"]
+dest_files=["res://.godot/imported/Chair4.png-8735289ae5ef519074f7a4161c4bf476.ctex"]
 
 [params]
 

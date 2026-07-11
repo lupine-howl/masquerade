@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cnpa2vohclf34"
-path="res://.godot/imported/Fuel_station.png-1756ae2e9a22bcadd0d7c0c766e69eba.ctex"
+path="res://.godot/imported/Fuel_station.png-380cae8fc8d3c29f3f9f56ce882d3f40.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/items/City/Fuel_station.png"
-dest_files=["res://.godot/imported/Fuel_station.png-1756ae2e9a22bcadd0d7c0c766e69eba.ctex"]
+dest_files=["res://.godot/imported/Fuel_station.png-380cae8fc8d3c29f3f9f56ce882d3f40.ctex"]
 
 [params]
 

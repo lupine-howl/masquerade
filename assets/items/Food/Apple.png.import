@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b611mi3u6trh4"
-path="res://.godot/imported/Apple.png-0a588c81cfc9fa13b9a7818e20b0bf5c.ctex"
+path="res://.godot/imported/Apple.png-9be646c2164d510dce547fd1a60facec.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/items/Food/Apple.png"
-dest_files=["res://.godot/imported/Apple.png-0a588c81cfc9fa13b9a7818e20b0bf5c.ctex"]
+dest_files=["res://.godot/imported/Apple.png-9be646c2164d510dce547fd1a60facec.ctex"]
 
 [params]
 

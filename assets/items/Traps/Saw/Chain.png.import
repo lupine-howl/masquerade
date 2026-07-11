@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cnpqtdneiyu7s"
-path="res://.godot/imported/Chain.png-abe8082412b0900cbb96daf11eb798c1.ctex"
+path="res://.godot/imported/Chain.png-c79086623d975dd220d5537a44a5b06b.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/items/Traps/Saw/Chain.png"
-dest_files=["res://.godot/imported/Chain.png-abe8082412b0900cbb96daf11eb798c1.ctex"]
+dest_files=["res://.godot/imported/Chain.png-c79086623d975dd220d5537a44a5b06b.ctex"]
 
 [params]
 

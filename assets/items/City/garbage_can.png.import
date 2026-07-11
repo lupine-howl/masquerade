@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cbrd7eocoi22i"
-path="res://.godot/imported/garbage_can.png-ea54aa166bccf19f1d4319eab969388b.ctex"
+path="res://.godot/imported/garbage_can.png-4a0e7de2c9b472dd501cb8a109c84434.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/items/City/garbage_can.png"
-dest_files=["res://.godot/imported/garbage_can.png-ea54aa166bccf19f1d4319eab969388b.ctex"]
+dest_files=["res://.godot/imported/garbage_can.png-4a0e7de2c9b472dd501cb8a109c84434.ctex"]
 
 [params]
 

@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ci3ikp6u8fgy1"
-path="res://.godot/imported/Walk (38x24).png-aef2d54582a8ad488a5f8edf68261248.ctex"
+path="res://.godot/imported/Walk (38x24).png-5abd8b779034b56da033feb103ddf04a.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/enemies/Snail/Walk (38x24).png"
-dest_files=["res://.godot/imported/Walk (38x24).png-aef2d54582a8ad488a5f8edf68261248.ctex"]
+dest_files=["res://.godot/imported/Walk (38x24).png-5abd8b779034b56da033feb103ddf04a.ctex"]
 
 [params]
 

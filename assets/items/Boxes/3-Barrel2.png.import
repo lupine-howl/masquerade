@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c2dtke8v8uhtd"
-path="res://.godot/imported/3-Barrel2.png-6287ff98e95fb66778673a242b4dea36.ctex"
+path="res://.godot/imported/3-Barrel2.png-a66529534312520afc0fe0681700bc03.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/items/Boxes/3-Barrel2.png"
-dest_files=["res://.godot/imported/3-Barrel2.png-6287ff98e95fb66778673a242b4dea36.ctex"]
+dest_files=["res://.godot/imported/3-Barrel2.png-a66529534312520afc0fe0681700bc03.ctex"]
 
 [params]
 

@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://su8vfadl85mm"
-path="res://.godot/imported/old-tileset-desert.png-34dd2136cb53c7ec02bb04523dae5e8d.ctex"
+path="res://.godot/imported/old-tileset-desert.png-b1b6d2725653ca5e6419e0b67360d5b3.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/tilesets/old-tileset-desert.png"
-dest_files=["res://.godot/imported/old-tileset-desert.png-34dd2136cb53c7ec02bb04523dae5e8d.ctex"]
+dest_files=["res://.godot/imported/old-tileset-desert.png-b1b6d2725653ca5e6419e0b67360d5b3.ctex"]
 
 [params]
 

@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dy2igx4mxs48c"
-path="res://.godot/imported/Hit (16x32).png-53a4742cc5cae66939fd5a64d9def787.ctex"
+path="res://.godot/imported/Hit (16x32).png-5d1eeda9fd5d1ecb158728785a11cfe1.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/items/Traps/Fire/Hit (16x32).png"
-dest_files=["res://.godot/imported/Hit (16x32).png-53a4742cc5cae66939fd5a64d9def787.ctex"]
+dest_files=["res://.godot/imported/Hit (16x32).png-5d1eeda9fd5d1ecb158728785a11cfe1.ctex"]
 
 [params]
 

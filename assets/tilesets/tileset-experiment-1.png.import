@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cq2vwoi721x5m"
-path="res://.godot/imported/tileset-experiment-1.png-6f3f5f76436a5d17fa8ea5c1a29fa524.ctex"
+path="res://.godot/imported/tileset-experiment-1.png-b59f2d0ccb15889452530f4af1229083.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/tilesets/tileset-experiment-1.png"
-dest_files=["res://.godot/imported/tileset-experiment-1.png-6f3f5f76436a5d17fa8ea5c1a29fa524.ctex"]
+dest_files=["res://.godot/imported/tileset-experiment-1.png-b59f2d0ccb15889452530f4af1229083.ctex"]
 
 [params]
 

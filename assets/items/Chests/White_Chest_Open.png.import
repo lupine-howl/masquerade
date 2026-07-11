@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://lik2mrth16t7"
-path="res://.godot/imported/White_Chest_Open.png-4c84199a67564f6950145c2d754766c1.ctex"
+path="res://.godot/imported/White_Chest_Open.png-75588aa02eeb2608d1d76cfb616fb109.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/items/Chests/White_Chest_Open.png"
-dest_files=["res://.godot/imported/White_Chest_Open.png-4c84199a67564f6950145c2d754766c1.ctex"]
+dest_files=["res://.godot/imported/White_Chest_Open.png-75588aa02eeb2608d1d76cfb616fb109.ctex"]
 
 [params]
 

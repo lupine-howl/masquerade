@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://h66gv43daw6y"
-path="res://.godot/imported/fish.png-ae6227df289ae853bb4725b36e96018f.ctex"
+path="res://.godot/imported/fish.png-1f37501e38973fe67e9c10a329cfd982.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/enemies/Fishes/fish.png"
-dest_files=["res://.godot/imported/fish.png-ae6227df289ae853bb4725b36e96018f.ctex"]
+dest_files=["res://.godot/imported/fish.png-1f37501e38973fe67e9c10a329cfd982.ctex"]
 
 [params]
 

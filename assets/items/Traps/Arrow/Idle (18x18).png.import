@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dskcwk7bq6ixu"
-path="res://.godot/imported/Idle (18x18).png-52382e5f4781b108b04295a5a859c03b.ctex"
+path="res://.godot/imported/Idle (18x18).png-819097ef5381e45d6076417a0879cb52.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/items/Traps/Arrow/Idle (18x18).png"
-dest_files=["res://.godot/imported/Idle (18x18).png-52382e5f4781b108b04295a5a859c03b.ctex"]
+dest_files=["res://.godot/imported/Idle (18x18).png-819097ef5381e45d6076417a0879cb52.ctex"]
 
 [params]
 

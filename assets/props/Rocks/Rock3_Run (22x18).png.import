@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c8yenep48x88r"
-path="res://.godot/imported/Rock3_Run (22x18).png-dc27115b2fdac2c71b59cfcbd1bf4bbe.ctex"
+path="res://.godot/imported/Rock3_Run (22x18).png-b4eb3683f86b740856999f5058ef7c9f.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/props/Rocks/Rock3_Run (22x18).png"
-dest_files=["res://.godot/imported/Rock3_Run (22x18).png-dc27115b2fdac2c71b59cfcbd1bf4bbe.ctex"]
+dest_files=["res://.godot/imported/Rock3_Run (22x18).png-b4eb3683f86b740856999f5058ef7c9f.ctex"]
 
 [params]
 

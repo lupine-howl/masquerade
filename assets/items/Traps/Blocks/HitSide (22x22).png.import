@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ctjaflpuwasd4"
-path="res://.godot/imported/HitSide (22x22).png-d7869206517673bd6cba1582ae36639c.ctex"
+path="res://.godot/imported/HitSide (22x22).png-de31e548dee4daa556acfe04bd0d1f97.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/items/Traps/Blocks/HitSide (22x22).png"
-dest_files=["res://.godot/imported/HitSide (22x22).png-d7869206517673bd6cba1582ae36639c.ctex"]
+dest_files=["res://.godot/imported/HitSide (22x22).png-de31e548dee4daa556acfe04bd0d1f97.ctex"]
 
 [params]
 

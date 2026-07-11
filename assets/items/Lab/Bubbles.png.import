@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cgbfx7c0hl2da"
-path="res://.godot/imported/Bubbles.png-c00c49a35066f94b2e88e97cec4624ef.ctex"
+path="res://.godot/imported/Bubbles.png-2ad1807266fe9f6bbe5a110ed50a50ff.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/items/Lab/Bubbles.png"
-dest_files=["res://.godot/imported/Bubbles.png-c00c49a35066f94b2e88e97cec4624ef.ctex"]
+dest_files=["res://.godot/imported/Bubbles.png-2ad1807266fe9f6bbe5a110ed50a50ff.ctex"]
 
 [params]
 

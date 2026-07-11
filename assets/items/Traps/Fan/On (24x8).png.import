@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://doxsuerwvfjyc"
-path="res://.godot/imported/On (24x8).png-9d2b7fdfdd17b80c076bc745750ce584.ctex"
+path="res://.godot/imported/On (24x8).png-151c6be3afffeb0abaaf791dffe9132e.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/items/Traps/Fan/On (24x8).png"
-dest_files=["res://.godot/imported/On (24x8).png-9d2b7fdfdd17b80c076bc745750ce584.ctex"]
+dest_files=["res://.godot/imported/On (24x8).png-151c6be3afffeb0abaaf791dffe9132e.ctex"]
 
 [params]
 

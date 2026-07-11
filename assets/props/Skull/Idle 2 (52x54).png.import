@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dq65ii11woduv"
-path="res://.godot/imported/Idle 2 (52x54).png-caa3fef426411150a1c0ecddd11e389b.ctex"
+path="res://.godot/imported/Idle 2 (52x54).png-c09ca81b829ca63c0872d3ae4c7bb584.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/props/Skull/Idle 2 (52x54).png"
-dest_files=["res://.godot/imported/Idle 2 (52x54).png-caa3fef426411150a1c0ecddd11e389b.ctex"]
+dest_files=["res://.godot/imported/Idle 2 (52x54).png-c09ca81b829ca63c0872d3ae4c7bb584.ctex"]
 
 [params]
 

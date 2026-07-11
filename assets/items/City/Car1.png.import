@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://boahnq8smppcf"
-path="res://.godot/imported/Car1.png-a6be870b26f5c71cb9ff368d555d20ec.ctex"
+path="res://.godot/imported/Car1.png-6f30710348e9a81d2670df6300f2d10f.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/items/City/Car1.png"
-dest_files=["res://.godot/imported/Car1.png-a6be870b26f5c71cb9ff368d555d20ec.ctex"]
+dest_files=["res://.godot/imported/Car1.png-6f30710348e9a81d2670df6300f2d10f.ctex"]
 
 [params]
 

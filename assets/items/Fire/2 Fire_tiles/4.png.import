@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c3o27qd4n2224"
-path="res://.godot/imported/4.png-7b963f6bf707e26523f63650f9fa3d41.ctex"
+path="res://.godot/imported/4.png-5a073fd71fa2d2468f420a84f35e6eed.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/items/Fire/2 Fire_tiles/4.png"
-dest_files=["res://.godot/imported/4.png-7b963f6bf707e26523f63650f9fa3d41.ctex"]
+dest_files=["res://.godot/imported/4.png-5a073fd71fa2d2468f420a84f35e6eed.ctex"]
 
 [params]
 

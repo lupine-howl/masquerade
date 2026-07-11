@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bs4ffmm5byb8n"
-path="res://.godot/imported/Off.png-a67393422810fec60b27d6828e3c9237.ctex"
+path="res://.godot/imported/Off.png-7f40a514c45410045dbbdcfe6b182d5c.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/items/Traps/Saw/Off.png"
-dest_files=["res://.godot/imported/Off.png-a67393422810fec60b27d6828e3c9237.ctex"]
+dest_files=["res://.godot/imported/Off.png-7f40a514c45410045dbbdcfe6b182d5c.ctex"]
 
 [params]
 

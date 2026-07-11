@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://citi0jpj7hs80"
-path="res://.godot/imported/Solar_panel2.png-349c044f4a5b0b7ec9bbeea197a8a152.ctex"
+path="res://.godot/imported/Solar_panel2.png-96b64f606498aae02282444449116487.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/items/City/Solar_panel2.png"
-dest_files=["res://.godot/imported/Solar_panel2.png-349c044f4a5b0b7ec9bbeea197a8a152.ctex"]
+dest_files=["res://.godot/imported/Solar_panel2.png-96b64f606498aae02282444449116487.ctex"]
 
 [params]
 

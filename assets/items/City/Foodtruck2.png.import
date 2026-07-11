@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://f66rb2fnx25t"
-path="res://.godot/imported/Foodtruck2.png-3cdaa429eca286e609edbc77e46435ba.ctex"
+path="res://.godot/imported/Foodtruck2.png-2334e094218b0e3e0e3e2854b9baeb7c.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/items/City/Foodtruck2.png"
-dest_files=["res://.godot/imported/Foodtruck2.png-3cdaa429eca286e609edbc77e46435ba.ctex"]
+dest_files=["res://.godot/imported/Foodtruck2.png-2334e094218b0e3e0e3e2854b9baeb7c.ctex"]
 
 [params]
 

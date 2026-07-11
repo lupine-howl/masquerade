@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dvk62v3u137gu"
-path="res://.godot/imported/3.png-c6b60954630e363c7c52e239b9afded5.ctex"
+path="res://.godot/imported/3.png-d82f2bcc7e54b28f56d89e58820af112.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/items/Food/3.png"
-dest_files=["res://.godot/imported/3.png-c6b60954630e363c7c52e239b9afded5.ctex"]
+dest_files=["res://.godot/imported/3.png-d82f2bcc7e54b28f56d89e58820af112.ctex"]
 
 [params]
 

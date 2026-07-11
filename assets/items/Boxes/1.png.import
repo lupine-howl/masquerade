@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c71jsa7vcxyrk"
-path="res://.godot/imported/1.png-c6f0df74e66c257292aac87aaca9cb1b.ctex"
+path="res://.godot/imported/1.png-68e6a0844078655140b344ddd299d867.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/items/Boxes/1.png"
-dest_files=["res://.godot/imported/1.png-c6f0df74e66c257292aac87aaca9cb1b.ctex"]
+dest_files=["res://.godot/imported/1.png-68e6a0844078655140b344ddd299d867.ctex"]
 
 [params]
 

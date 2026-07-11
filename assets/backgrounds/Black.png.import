@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ccpwf7w25bhht"
-path="res://.godot/imported/Black.png-8af3850bce3ae5dedca8e3fcc75370a5.ctex"
+path="res://.godot/imported/Black.png-2dd1359a01b1293fc65cbbd285c6fc00.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/backgrounds/Black.png"
-dest_files=["res://.godot/imported/Black.png-8af3850bce3ae5dedca8e3fcc75370a5.ctex"]
+dest_files=["res://.godot/imported/Black.png-2dd1359a01b1293fc65cbbd285c6fc00.ctex"]
 
 [params]
 

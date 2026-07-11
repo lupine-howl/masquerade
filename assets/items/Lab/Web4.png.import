@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://11krdd3fuybq"
-path="res://.godot/imported/Web4.png-ab6958a957bd293316b2d783e5634a2f.ctex"
+path="res://.godot/imported/Web4.png-10b615d91395fbd08170d656d26d231f.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/items/Lab/Web4.png"
-dest_files=["res://.godot/imported/Web4.png-ab6958a957bd293316b2d783e5634a2f.ctex"]
+dest_files=["res://.godot/imported/Web4.png-10b615d91395fbd08170d656d26d231f.ctex"]
 
 [params]
 

@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dceduqg1lcslv"
-path="res://.godot/imported/Acid2.png-2b387512155becc8924c8e4b1b27f1ad.ctex"
+path="res://.godot/imported/Acid2.png-80251e96fbbee449dda5b7030c7c8ee0.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/items/Lab/Acid2.png"
-dest_files=["res://.godot/imported/Acid2.png-2b387512155becc8924c8e4b1b27f1ad.ctex"]
+dest_files=["res://.godot/imported/Acid2.png-80251e96fbbee449dda5b7030c7c8ee0.ctex"]
 
 [params]
 

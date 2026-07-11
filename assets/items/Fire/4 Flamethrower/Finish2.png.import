@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dsmiogje7fgvs"
-path="res://.godot/imported/Finish2.png-d38dc6e407cfae480cc260ad0dcb0795.ctex"
+path="res://.godot/imported/Finish2.png-870aa1fd13b4a9cfaff7c1f647f66a7f.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/items/Fire/4 Flamethrower/Finish2.png"
-dest_files=["res://.godot/imported/Finish2.png-d38dc6e407cfae480cc260ad0dcb0795.ctex"]
+dest_files=["res://.godot/imported/Finish2.png-870aa1fd13b4a9cfaff7c1f647f66a7f.ctex"]
 
 [params]
 

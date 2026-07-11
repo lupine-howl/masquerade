@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://xfj82qrkb2rd"
-path="res://.godot/imported/tileset-inferno.png-66a934270c99159d79cb7c4b38176c6b.ctex"
+path="res://.godot/imported/tileset-inferno.png-a2d58b681b856ed346d797f3bd3564c9.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/tilesets/tileset-inferno.png"
-dest_files=["res://.godot/imported/tileset-inferno.png-66a934270c99159d79cb7c4b38176c6b.ctex"]
+dest_files=["res://.godot/imported/tileset-inferno.png-a2d58b681b856ed346d797f3bd3564c9.ctex"]
 
 [params]
 

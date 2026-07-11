@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://owm7buf8eu6n"
-path="res://.godot/imported/Fall.png-bd415c11c5557a7cfc9a05cd0f65170e.ctex"
+path="res://.godot/imported/Fall.png-fbcbbf7468c5ec55a7988afcc4e977eb.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/enemies/Bunny/Fall.png"
-dest_files=["res://.godot/imported/Fall.png-bd415c11c5557a7cfc9a05cd0f65170e.ctex"]
+dest_files=["res://.godot/imported/Fall.png-fbcbbf7468c5ec55a7988afcc4e977eb.ctex"]
 
 [params]
 

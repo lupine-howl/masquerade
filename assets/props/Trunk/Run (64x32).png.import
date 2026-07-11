@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://rdw6b6j38mfp"
-path="res://.godot/imported/Run (64x32).png-e19f29745494a0bc8c7ef7ea3679f8ad.ctex"
+path="res://.godot/imported/Run (64x32).png-d2c879d75bddb1c0b61f3317f4ac474c.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/props/Trunk/Run (64x32).png"
-dest_files=["res://.godot/imported/Run (64x32).png-e19f29745494a0bc8c7ef7ea3679f8ad.ctex"]
+dest_files=["res://.godot/imported/Run (64x32).png-d2c879d75bddb1c0b61f3317f4ac474c.ctex"]
 
 [params]
 

@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cc7yew20rdldn"
-path="res://.godot/imported/Jump (36x36).png-c94dbcc2427a77c23939eb9aef01064a.ctex"
+path="res://.godot/imported/Jump (36x36).png-ff3a508cf56c48d438a19796f159a764.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/enemies/Duck/Jump (36x36).png"
-dest_files=["res://.godot/imported/Jump (36x36).png-c94dbcc2427a77c23939eb9aef01064a.ctex"]
+dest_files=["res://.godot/imported/Jump (36x36).png-ff3a508cf56c48d438a19796f159a764.ctex"]
 
 [params]
 
