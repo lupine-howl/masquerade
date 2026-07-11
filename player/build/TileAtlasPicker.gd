@@ -40,12 +40,18 @@ func build_pattern() -> TileMapPattern:
 	var pattern := TileMapPattern.new()
 	pattern.set_size(_selection.size)
 	var placed := 0
+	var used_origins: Dictionary = {}
 	for y in _selection.size.y:
 		for x in _selection.size.x:
-			var atlas_coord := _selection.position + Vector2i(x, y)
-			if _atlas.has_tile(atlas_coord):
-				pattern.set_cell(Vector2i(x, y), _source_id, atlas_coord)
-				placed += 1
+			var grid_coord := _selection.position + Vector2i(x, y)
+			var origin := _atlas.get_tile_at_coords(grid_coord)
+			if origin == Vector2i(-1, -1) or not _atlas.has_tile(origin):
+				continue
+			if used_origins.has(origin):
+				continue
+			used_origins[origin] = true
+			pattern.set_cell(Vector2i(x, y), _source_id, origin)
+			placed += 1
 	return pattern if placed > 0 else null
 
 
@@ -157,5 +163,9 @@ func _normalize_single_tile_selection() -> void:
 	if _atlas == null or _selection.size != Vector2i.ONE:
 		return
 	var origin := _atlas.get_tile_at_coords(_selection.position)
-	if origin != Vector2i(-1, -1):
-		_selection = Rect2i(origin, Vector2i.ONE)
+	if origin == Vector2i(-1, -1):
+		return
+	var size_in_atlas := _atlas.get_tile_size_in_atlas(origin)
+	if size_in_atlas.x <= 0 or size_in_atlas.y <= 0:
+		size_in_atlas = Vector2i.ONE
+	_selection = Rect2i(origin, size_in_atlas)
