@@ -114,7 +114,7 @@ Do not expect the hidden `AnimSection` assistant — use the timeline instead.
 **Primary surface:** the bottom-centre **build dock** — visible on the **Build** tab.
 
 ```
-[ Layer tabs… | Entities ] | [ tilesets or category ] | [ grid ] | * Save
+[ Layer tabs… | Entities ] | [ tilesets or category ] | [ atlas / scene grid ] | * Save
 ```
 
 Layer tabs are discovered automatically from every `TileMapLayer` in the current level (e.g. `Terrain`, `TerrainBackground`, `Water`, `TerrainForeground`).
@@ -123,7 +123,7 @@ Layer tabs are discovered automatically from every `TileMapLayer` in the current
 
 | Tab | What it does |
 |-----|----------------|
-| **Tile layers** | One tab per `TileMapLayer` in the level; paints using that layer's tileset |
+| **Tile layers** | One tab per `TileMapLayer` in the level; paints using that layer's tileset. The atlas picker shows the full tileset texture (contiguous, like the Godot editor). Drag on the atlas to select a single tile or a rectangular block; LMB paints the selection (multi-tile selections stamp as a `TileMapPattern`). |
 | **Entities** | Place scene instances into `Enemies`, snapped to the 64×64 grid |
 
 Entity thumbnails come from `spawn_scene` metadata in tilesets (catalog only via `EntityPalette.gd`).
@@ -135,6 +135,7 @@ Entity thumbnails come from `spawn_scene` metadata in tilesets (catalog only via
 | **Ctrl + drag** | Pan camera | Pan camera | Pan camera |
 | **Ctrl + scroll** | Zoom camera | Zoom camera | Zoom camera |
 | **Space** | Jump | — (posing) | Jump |
+| **LMB drag (atlas)** | Select tile(s) on the atlas picker | — | — |
 | **LMB** | Paint tile / place or drag entity | Select markers | Gameplay |
 | **RMB** | Erase tile / entity | — | — |
 | **Delete** | Remove selected entity | — | — |
@@ -148,7 +149,7 @@ Unsaved level edits (`*` indicator) prompt to **Save**, **Discard**, or **Cancel
 
 1. Run `levels/test.tscn`.
 2. Open the **Build** tab.
-3. Pick a **tile layer** tab, then source and tile; LMB paint, RMB erase.
+3. Pick a **tile layer** tab and tileset source; drag on the **atlas** to select one tile or a block; LMB paint, RMB erase.
 4. **Entities:** pick category and scene; LMB place; click instance to select; drag to reposition; RMB erase; Delete removes selection.
 5. Click **Save** when the `*` dirty indicator appears (or save when prompted on tab switch).
 
@@ -157,6 +158,7 @@ Unsaved level edits (`*` indicator) prompt to **Save**, **Discard**, or **Cancel
 | File | Role |
 |------|------|
 | `player/build/BuildPanel.gd` | Build dock UI and input |
+| `player/build/TileAtlasPicker.gd` | Contiguous atlas picker with drag selection |
 | `player/build/TileLayerCatalog.gd` | Discovers `TileMapLayer` nodes in the level |
 | `player/build/EntityPalette.gd` | Scene catalog |
 | `player/build/LevelSave.gd` | Persist level to disk; unsaved prompt |
