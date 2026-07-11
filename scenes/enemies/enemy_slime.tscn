@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://cp03w0hiyypim"]
 
-[ext_resource type="Script" uid="uid://cr28irpvcophc" path="res://scenes/enemies/enemy.gd" id="1_664bg"]
+[ext_resource type="Script" uid="uid://cr28irpvcophc" path="res://scenes/enemies/BaseEnemy.gd" id="1_664bg"]
 [ext_resource type="Texture2D" uid="uid://w10qdau1il5j" path="res://assets/enemies/Bee/Idle (36x34).png" id="2_8n5ka"]
 [ext_resource type="PackedScene" uid="uid://bjiloil24uy5x" path="res://scenes/projectiles/projectile_launcher.tscn" id="3_8n5ka"]
 [ext_resource type="Texture2D" uid="uid://cgfe2pjjd46n1" path="res://assets/enemies/Slime/Idle-Run (44x30).png" id="3_djrae"]

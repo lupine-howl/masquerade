@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://db72uph7kp8q8"]
 
-[ext_resource type="Script" uid="uid://ca50r6xk6mbbp" path="res://scripts/shared/steerable_animatable_body_2d.gd" id="1_kumrc"]
+[ext_resource type="Script" uid="uid://ca50r6xk6mbbp" path="res://scripts/shared/SteerableAnimatableBody2D.gd" id="1_kumrc"]
 [ext_resource type="TileSet" uid="uid://ctaya6hy7kn72" path="res://resources/tilesets/tileset_enemies.tres" id="2_7wk56"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_o5obx"]

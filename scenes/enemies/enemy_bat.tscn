@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://c08h7yr4561l4"]
 
-[ext_resource type="Script" uid="uid://cr28irpvcophc" path="res://scenes/enemies/enemy.gd" id="1_cs24m"]
+[ext_resource type="Script" uid="uid://cr28irpvcophc" path="res://scenes/enemies/BaseEnemy.gd" id="1_cs24m"]
 [ext_resource type="SpriteFrames" uid="uid://4xg3p0h0w1o7" path="res://resources/sprite_frames/sprite_frames_bluebird.tres" id="2_stjrt"]
 [ext_resource type="PackedScene" uid="uid://bjiloil24uy5x" path="res://scenes/projectiles/projectile_launcher.tscn" id="3_lfxn6"]
 [ext_resource type="Texture2D" uid="uid://o63fhy5lnrgu" path="res://assets/enemies/Bat/Flying (46x30).png" id="3_stjrt"]

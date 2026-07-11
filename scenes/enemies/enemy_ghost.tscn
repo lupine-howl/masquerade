@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://cnfvj3fnc4lwr"]
 
-[ext_resource type="Script" uid="uid://cr28irpvcophc" path="res://scenes/enemies/enemy.gd" id="1_loaan"]
+[ext_resource type="Script" uid="uid://cr28irpvcophc" path="res://scenes/enemies/BaseEnemy.gd" id="1_loaan"]
 [ext_resource type="SpriteFrames" uid="uid://dvttd1mdicwuh" path="res://resources/sprite_frames/sprite_frames_angrypig.tres" id="2_xmjcj"]
 [ext_resource type="Texture2D" uid="uid://hxfnwl7q8hgi" path="res://assets/enemies/Ghost/Idle (44x30).png" id="3_mrki1"]
 [ext_resource type="PackedScene" uid="uid://bjiloil24uy5x" path="res://scenes/projectiles/projectile_launcher.tscn" id="5_nb35g"]
@@ -171,7 +171,7 @@ radius = 16.0
 [sub_resource type="CircleShape2D" id="CircleShape2D_6do27"]
 radius = 128.0
 
-[node name="EnemyAngryShooterPig" type="CharacterBody2D" unique_id=2119525411]
+[node name="EnemyGhost" type="CharacterBody2D" unique_id=2119525411]
 collision_layer = 2
 collision_mask = 2
 script = ExtResource("1_loaan")

@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://r0sxmvy02aif"]
 
-[ext_resource type="Script" uid="uid://cr28irpvcophc" path="res://scenes/enemies/enemy.gd" id="1_b2usy"]
+[ext_resource type="Script" uid="uid://cr28irpvcophc" path="res://scenes/enemies/BaseEnemy.gd" id="1_b2usy"]
 [ext_resource type="Texture2D" uid="uid://b1govaot86lmk" path="res://assets/objects/light-mask.png" id="2_irdtb"]
 [ext_resource type="Texture2D" uid="uid://h66gv43daw6y" path="res://assets/enemies/Fishes/fish.png" id="3_5eb4d"]
 [ext_resource type="PackedScene" uid="uid://bjiloil24uy5x" path="res://scenes/projectiles/projectile_launcher.tscn" id="3_yxiv7"]

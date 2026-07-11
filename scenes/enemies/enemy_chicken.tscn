@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://bvs10a6q88xe6"]
 
-[ext_resource type="Script" uid="uid://cr28irpvcophc" path="res://scenes/enemies/enemy.gd" id="1_er3uk"]
+[ext_resource type="Script" uid="uid://cr28irpvcophc" path="res://scenes/enemies/BaseEnemy.gd" id="1_er3uk"]
 [ext_resource type="Texture2D" uid="uid://cd1xinrd8igd0" path="res://assets/enemies/Chicken/Run (32x34).png" id="3_1i1sf"]
 [ext_resource type="PackedScene" uid="uid://bjiloil24uy5x" path="res://scenes/projectiles/projectile_launcher.tscn" id="3_gcvo0"]
 [ext_resource type="PackedScene" uid="uid://drnpe03i7el81" path="res://scenes/projectiles/projectile.tscn" id="4_apwvr"]

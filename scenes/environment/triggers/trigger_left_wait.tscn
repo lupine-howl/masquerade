@@ -6,7 +6,7 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_pb8bj"]
 size = Vector2(32, 32)
 
-[node name="TriggerUpWait" type="Area2D" unique_id=774531030]
+[node name="TriggerLeftWait" type="Area2D" unique_id=774531030]
 script = ExtResource("1_5acho")
 wait_for_player = true
 override_speed = 200.0
