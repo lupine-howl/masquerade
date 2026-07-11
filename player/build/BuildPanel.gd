@@ -19,7 +19,9 @@ var _tile_layers: Array[Dictionary] = []
 var _tab_strip: VBoxContainer
 var _header_row: HBoxContainer
 var _source_row: HFlowContainer
-var _tile_grid: GridContainer
+var _entity_grid: GridContainer
+var _tile_atlas_picker: TileAtlasPicker
+var _atlas_message: Label
 var _header_label: Label
 var _selected_label: Label
 var _dirty_label: Label
@@ -31,13 +33,12 @@ var _tile_scroll: ScrollContainer
 
 var _tab_buttons: Array[Button] = []
 var _source_buttons: Array[Button] = []
-var _tile_buttons: Array[Button] = []
+var _entity_buttons: Array[Button] = []
 var _category_buttons: Array[Button] = []
 
 var _active_tab_kind: TabKind = TabKind.TILE_LAYER
 var _current_tilemap_index: int = -1
 var _current_source_id: int = -1
-var _selected_tile_button: Button = null
 var _selected_entity_button: Button = null
 var _selected_entity_scene: PackedScene = null
 var _selected_entity: Node2D = null
@@ -60,6 +61,8 @@ var paint_enabled: bool:
 var _has_tile_selection: bool = false
 var _paint_source_id: int = -1
 var _paint_coords: Vector2i = Vector2i.ZERO
+var _paint_pattern: TileMapPattern = null
+var _last_paint_map_coords: Vector2i = Vector2i(-99999, -99999)
 
 var _brush: Node2D = null
 var _brush_layer: TileMapLayer = null
@@ -185,23 +188,35 @@ func _build_ui() -> void:
 	_tiles_caption = Label.new()
 	_tiles_caption.add_theme_font_size_override("font_size", PoseTabStyles.CAPTION_FONT_SIZE)
 	_tiles_caption.add_theme_color_override("font_color", Color(0.7, 0.7, 0.75))
-	_tiles_caption.text = "Tiles"
+	_tiles_caption.text = "Atlas"
 	main_col.add_child(_tiles_caption)
 
 	_tile_scroll = ScrollContainer.new()
 	_tile_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
-	_tile_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	_tile_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
 	_tile_scroll.custom_minimum_size = Vector2(0, TILE_VISIBLE_ROWS * (TILE_BUTTON_SIZE + 4))
 	_tile_scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_tile_scroll.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
 	main_col.add_child(_tile_scroll)
 
-	_tile_grid = GridContainer.new()
-	_tile_grid.add_theme_constant_override("h_separation", 4)
-	_tile_grid.add_theme_constant_override("v_separation", 4)
-	_tile_grid.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
-	_tile_grid.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
-	_tile_scroll.add_child(_tile_grid)
+	_tile_atlas_picker = TileAtlasPicker.new()
+	_tile_atlas_picker.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+	_tile_atlas_picker.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
+	_tile_atlas_picker.selection_changed.connect(_on_atlas_selection_changed)
+	_tile_scroll.add_child(_tile_atlas_picker)
+
+	_entity_grid = GridContainer.new()
+	_entity_grid.add_theme_constant_override("h_separation", 4)
+	_entity_grid.add_theme_constant_override("v_separation", 4)
+	_entity_grid.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+	_entity_grid.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
+	_entity_grid.visible = false
+	_tile_scroll.add_child(_entity_grid)
+
+	_atlas_message = Label.new()
+	_atlas_message.add_theme_font_size_override("font_size", PoseTabStyles.CAPTION_FONT_SIZE)
+	_atlas_message.visible = false
+	_tile_scroll.add_child(_atlas_message)
 
 	_selected_label = Label.new()
 	_selected_label.add_theme_font_size_override("font_size", PoseTabStyles.CAPTION_FONT_SIZE)
@@ -247,14 +262,26 @@ func _select_tab(kind: TabKind, tile_index: int) -> void:
 		_header_label.text = "Build — Entities"
 		_source_caption.text = "Category"
 		_tiles_caption.text = "Scenes"
+		_show_tile_palette_mode(false)
 		_show_entities_palette()
 	else:
 		var entry: Dictionary = _tile_layers[tile_index]
 		_header_label.text = "Build — %s" % entry.name
 		_source_caption.text = "Tilesets"
-		_tiles_caption.text = "Tiles"
+		_tiles_caption.text = "Atlas"
+		_show_tile_palette_mode(true)
 		var layer := _get_current_tile_layer()
 		_populate_tile_sources(layer.tile_set if layer else null)
+
+
+func _show_tile_palette_mode(atlas_mode: bool) -> void:
+	_tile_atlas_picker.visible = atlas_mode
+	_atlas_message.visible = false
+	_entity_grid.visible = not atlas_mode
+	if atlas_mode:
+		_tile_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
+	else:
+		_tile_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 
 
 func _show_entities_palette() -> void:
@@ -283,8 +310,8 @@ func _select_entity_category(category: String) -> void:
 
 
 func _populate_entity_grid() -> void:
-	_clear_children(_tile_grid)
-	_tile_buttons.clear()
+	_clear_children(_entity_grid)
+	_entity_buttons.clear()
 	_selected_entity_button = null
 	_selected_entity_scene = null
 
@@ -296,17 +323,17 @@ func _populate_entity_grid() -> void:
 		var btn := _make_tile_button(tex)
 		btn.tooltip_text = String(entry.label)
 		btn.pressed.connect(_on_entity_pressed.bind(btn, entry))
-		_tile_grid.add_child(btn)
-		_tile_buttons.append(btn)
+		_entity_grid.add_child(btn)
+		_entity_buttons.append(btn)
 		shown += 1
 
-	_update_tile_grid_columns()
+	_update_entity_grid_columns()
 
 	if shown == 0:
 		var empty := Label.new()
 		empty.text = "(no scenes)"
 		empty.add_theme_font_size_override("font_size", PoseTabStyles.CAPTION_FONT_SIZE)
-		_tile_grid.add_child(empty)
+		_entity_grid.add_child(empty)
 		_selected_label.text = "No scene selected"
 	else:
 		_selected_label.text = "LMB place/select/drag · RMB erase · Del remove · Ctrl pans camera"
@@ -324,16 +351,16 @@ func _on_entity_pressed(btn: Button, entry: Dictionary) -> void:
 func _populate_tile_sources(tileset: TileSet) -> void:
 	_clear_children(_source_row)
 	_source_buttons.clear()
-	_clear_children(_tile_grid)
-	_tile_buttons.clear()
-	_selected_tile_button = null
-	_selected_label.text = "No tile selected"
+	_clear_tile_selection()
+	_atlas_message.visible = false
+	_tile_atlas_picker.visible = true
 
 	if tileset == null:
-		var missing := Label.new()
-		missing.text = "(tileset not found)"
-		missing.add_theme_font_size_override("font_size", PoseTabStyles.CAPTION_FONT_SIZE)
-		_source_row.add_child(missing)
+		_tile_atlas_picker.clear_selection()
+		_atlas_message.text = "(tileset not found)"
+		_atlas_message.visible = true
+		_tile_atlas_picker.visible = false
+		_selected_label.text = "No tile selected"
 		return
 
 	var first_source_id := -1
@@ -367,48 +394,35 @@ func _select_source(tileset: TileSet, source_id: int) -> void:
 
 
 func _populate_tiles(source: TileSetSource, source_id: int) -> void:
-	_clear_children(_tile_grid)
-	_tile_buttons.clear()
-	_selected_tile_button = null
+	_clear_tile_selection()
+	_atlas_message.visible = false
 
 	var atlas := source as TileSetAtlasSource
 	if atlas == null:
-		var note := Label.new()
-		note.text = "Scene-collection tileset (no atlas preview)"
-		note.add_theme_font_size_override("font_size", PoseTabStyles.CAPTION_FONT_SIZE)
-		_tile_grid.add_child(note)
+		_tile_atlas_picker.visible = false
+		_atlas_message.text = "Scene-collection tileset (no atlas preview)"
+		_atlas_message.visible = true
 		return
 
-	for i in atlas.get_tiles_count():
-		var coords := atlas.get_tile_id(i)
-		var region := atlas.get_tile_texture_region(coords, 0)
-		if region.size.x <= 0 or region.size.y <= 0:
-			continue
-		var tex := AtlasTexture.new()
-		tex.atlas = atlas.texture
-		tex.region = region
-		var btn := _make_tile_button(tex)
-		btn.pressed.connect(_on_tile_pressed.bind(btn, source_id, coords))
-		_tile_grid.add_child(btn)
-		_tile_buttons.append(btn)
-
-	_update_tile_grid_columns()
-
-	if _tile_buttons.is_empty():
-		var empty := Label.new()
-		empty.text = "(no tiles)"
-		empty.add_theme_font_size_override("font_size", PoseTabStyles.CAPTION_FONT_SIZE)
-		_tile_grid.add_child(empty)
-
-
-func _update_tile_grid_columns() -> void:
-	if _tile_grid == null:
+	if atlas.texture == null or atlas.get_tiles_count() == 0:
+		_tile_atlas_picker.visible = false
+		_atlas_message.text = "(no tiles)"
+		_atlas_message.visible = true
 		return
-	var count := _tile_buttons.size()
+
+	_tile_atlas_picker.visible = true
+	_tile_atlas_picker.set_source(atlas, source_id)
+	_selected_label.text = "Drag on atlas to select · LMB paint · RMB erase · Ctrl pans camera"
+
+
+func _update_entity_grid_columns() -> void:
+	if _entity_grid == null:
+		return
+	var count := _entity_buttons.size()
 	if count == 0:
-		_tile_grid.columns = 1
+		_entity_grid.columns = 1
 		return
-	_tile_grid.columns = maxi(1, ceili(float(count) / float(TILE_VISIBLE_ROWS)))
+	_entity_grid.columns = maxi(1, ceili(float(count) / float(TILE_VISIBLE_ROWS)))
 
 
 func _make_tile_button(tex: Texture2D) -> Button:
@@ -435,29 +449,43 @@ func _style_tile_button(btn: Button, selected: bool) -> void:
 	btn.add_theme_stylebox_override("pressed", style)
 
 
-func _on_tile_pressed(btn: Button, source_id: int, coords: Vector2i) -> void:
-	if _selected_tile_button and is_instance_valid(_selected_tile_button):
-		_style_tile_button(_selected_tile_button, false)
-	_selected_tile_button = btn
-	_style_tile_button(btn, true)
+func _on_atlas_selection_changed(pattern: TileMapPattern, source_id: int, selection_rect: Rect2i) -> void:
+	_paint_pattern = pattern
 	_paint_source_id = source_id
-	_paint_coords = coords
 	_has_tile_selection = true
+	_paint_coords = selection_rect.position
+	_last_paint_map_coords = Vector2i(-99999, -99999)
+
 	var tilemap_name := "?"
 	if _current_tilemap_index >= 0 and _current_tilemap_index < _tile_layers.size():
 		tilemap_name = String(_tile_layers[_current_tilemap_index].name)
-	_selected_label.text = "Selected: %s / src %d / (%d, %d)" % [
-		tilemap_name, source_id, coords.x, coords.y
-	]
-	tile_selected.emit(tilemap_name, source_id, coords)
+
+	if selection_rect.size == Vector2i.ONE:
+		_selected_label.text = "Selected: %s / src %d / (%d, %d)" % [
+			tilemap_name, source_id, selection_rect.position.x, selection_rect.position.y
+		]
+		tile_selected.emit(tilemap_name, source_id, selection_rect.position)
+	else:
+		_selected_label.text = "Selected: %s / src %d / %d×%d pattern at (%d, %d)" % [
+			tilemap_name,
+			source_id,
+			selection_rect.size.x,
+			selection_rect.size.y,
+			selection_rect.position.x,
+			selection_rect.position.y,
+		]
+		tile_selected.emit(tilemap_name, source_id, selection_rect.position)
 
 
 func _clear_tile_selection() -> void:
-	if _selected_tile_button and is_instance_valid(_selected_tile_button):
-		_style_tile_button(_selected_tile_button, false)
-	_selected_tile_button = null
+	if _tile_atlas_picker:
+		_tile_atlas_picker.clear_selection()
+	_selected_label.text = "No tile selected" if _active_tab_kind == TabKind.TILE_LAYER else _selected_label.text
 	_has_tile_selection = false
 	_paint_source_id = -1
+	_paint_pattern = null
+	_paint_coords = Vector2i.ZERO
+	_last_paint_map_coords = Vector2i(-99999, -99999)
 
 
 func _source_label(source: TileSetSource, source_id: int) -> String:
@@ -503,6 +531,8 @@ func _unhandled_input(event: InputEvent) -> void:
 			elif event.button_index == MOUSE_BUTTON_RIGHT:
 				_paint_tile_at_mouse(true)
 				get_viewport().set_input_as_handled()
+		elif not event.pressed and _active_tab_kind == TabKind.TILE_LAYER:
+			_last_paint_map_coords = Vector2i(-99999, -99999)
 	elif event is InputEventMouseMotion:
 		_update_brush_hover()
 		if _active_tab_kind == TabKind.ENTITIES and _dragging_entity and _selected_entity:
@@ -626,10 +656,16 @@ func _paint_tile_at_mouse(erase: bool) -> void:
 		LevelSave.mark_dirty()
 		_refresh_dirty_label()
 		return
+	if coords == _last_paint_map_coords:
+		return
+	_last_paint_map_coords = coords
 	if layer.tile_set == null or not layer.tile_set.has_source(_paint_source_id):
 		push_warning("BuildPanel: layer '%s' uses a different tileset (no source %d)." % [layer.name, _paint_source_id])
 		return
-	layer.set_cell(coords, _paint_source_id, _paint_coords)
+	if _paint_pattern != null:
+		layer.set_pattern(coords, _paint_pattern)
+	else:
+		layer.set_cell(coords, _paint_source_id, _paint_coords)
 	LevelSave.mark_dirty()
 	_refresh_dirty_label()
 
