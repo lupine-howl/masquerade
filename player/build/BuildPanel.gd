@@ -189,8 +189,8 @@ func _build_ui() -> void:
 	main_col.add_child(_tiles_caption)
 
 	_tile_scroll = ScrollContainer.new()
-	_tile_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	_tile_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
+	_tile_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
+	_tile_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	_tile_scroll.custom_minimum_size = Vector2(0, TILE_VISIBLE_ROWS * (TILE_BUTTON_SIZE + 4))
 	_tile_scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_tile_scroll.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
@@ -199,7 +199,8 @@ func _build_ui() -> void:
 	_tile_grid = GridContainer.new()
 	_tile_grid.add_theme_constant_override("h_separation", 4)
 	_tile_grid.add_theme_constant_override("v_separation", 4)
-	_tile_grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_tile_grid.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+	_tile_grid.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
 	_tile_scroll.add_child(_tile_grid)
 
 	_selected_label = Label.new()
