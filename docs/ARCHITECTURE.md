@@ -81,19 +81,19 @@ The player scene (`player/player.tscn`) composes several cooperating systems:
 4. **`TimelineManager`** — Drives `AnimationPlayer` for stepped pose animations; keys marker properties.
 5. **`PoseTimelinePanel`** — Primary animator workspace (bottom-centre dock): playback, step grid, ragdoll toggles, export.
 6. **`PosePartPanel`** — Advanced per-marker inspector (right dock); hideable.
-7. **`BuildPanel`** — `@tool` panel; loads tilesets and paints onto level layers. **Target:** bottom-centre dock in build mode (currently still in right dock).
+7. **`BuildPanel`** — `@tool` panel in the bottom-centre dock (build mode); loads tilesets and paints onto level layers.
 8. **`RagdollManager`** — Optional physics-aligned skeleton helpers for pose authoring.
 
 ### Studio UI layout
 
-| Zone | Nodes | Mode visibility (target) |
+| Zone | Nodes | Mode visibility |
 |------|-------|--------------------------|
 | Left toolbar | `PoseToolBar`, `PoseModeBar` | Play / Pose / Build switcher |
 | Bottom centre | `PoseTimelineDock` | Pose → timeline; Build → `BuildPanel`; Play → hidden |
 | Right side | `PoseDockRow`, `PosePartPanel` | Pose → advanced config; Build/Play → hidden |
 | Dormant | `AnimSection`, `PoseAssistantPanel` | Hidden; features live on timeline |
 
-Tri-mode orchestration is planned in `PoseHUD` ([ROADMAP.md](../ROADMAP.md) phase 2). Today only a “Posing” checkbox exists and modes overlap (`is_posing` defaults true; `BuildPanel.paint_enabled` defaults true).
+Tri-mode orchestration lives in `PoseHUD._apply_studio_mode` ([ROADMAP.md](../ROADMAP.md) phases 2–3).
 
 ## Level model
 
