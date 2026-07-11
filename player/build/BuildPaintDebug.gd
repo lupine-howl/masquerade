@@ -7,10 +7,10 @@ static var enabled: bool = true
 static var _lines: PackedStringArray = PackedStringArray()
 static const MAX_LINES := 10
 
-static var on_log: Callable
+static var on_log: Callable = Callable()
 
 
-static func log(message: String) -> void:
+static func trace(message: String) -> void:
 	if not enabled:
 		return
 	var line := "[BuildPaint] %s" % message

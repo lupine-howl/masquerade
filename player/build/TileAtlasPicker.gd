@@ -156,10 +156,10 @@ func _emit_selection() -> void:
 	var stamps := build_stamps()
 	if stamps.is_empty():
 		_has_selection = false
-		BuildPaintDebug.log("atlas selection empty after release rect=%s" % _selection)
+		BuildPaintDebug.trace("atlas selection empty after release rect=%s" % _selection)
 		queue_redraw()
 		return
-	BuildPaintDebug.log(
+	BuildPaintDebug.trace(
 		"atlas selected %dx%d at %s with %d stamp(s)" % [
 			_selection.size.x, _selection.size.y, _selection.position, stamps.size()
 		]

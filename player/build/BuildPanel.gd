@@ -478,7 +478,7 @@ func _on_atlas_selection_changed(stamps: Array[Dictionary], source_id: int, sele
 	_last_paint_map_coords = Vector2i(-99999, -99999)
 	if not _paint_stamps.is_empty():
 		_paint_coords = _paint_stamps[0]["atlas_coords"]
-	BuildPaintDebug.log(
+	BuildPaintDebug.trace(
 		"panel stamps=%d sel=%s brush=%s source=%d layer_idx=%d" % [
 			_paint_stamps.size(),
 			_paint_selection_size,
@@ -565,7 +565,7 @@ func process_build_input(event: InputEvent, channel: String = "hud") -> bool:
 	if event is InputEventMouseButton and event.pressed:
 		var btn := (event as InputEventMouseButton).button_index
 		if btn == MOUSE_BUTTON_LEFT or btn == MOUSE_BUTTON_RIGHT:
-			BuildPaintDebug.log(
+			BuildPaintDebug.trace(
 				"%s mouse btn=%d tab=%d stamps=%d enabled=%s editor=%s" % [
 					channel,
 					btn,
@@ -723,11 +723,11 @@ func _clear_entity_selection() -> void:
 
 func _paint_tile_at_mouse(erase: bool) -> void:
 	if not erase and not _has_tile_selection:
-		BuildPaintDebug.log("paint blocked: no selection (stamps=%d)" % _paint_stamps.size())
+		BuildPaintDebug.trace("paint blocked: no selection (stamps=%d)" % _paint_stamps.size())
 		return
 	var layer := _get_current_tile_layer()
 	if layer == null:
-		BuildPaintDebug.log("paint blocked: no tile layer (idx=%d)" % _current_tilemap_index)
+		BuildPaintDebug.trace("paint blocked: no tile layer (idx=%d)" % _current_tilemap_index)
 		push_warning("BuildPanel: no tile layer selected.")
 		return
 	var world := layer.get_global_mouse_position()
@@ -736,17 +736,17 @@ func _paint_tile_at_mouse(erase: bool) -> void:
 		layer.erase_cell(coords)
 		LevelSave.mark_dirty()
 		_refresh_dirty_label()
-		BuildPaintDebug.log("erased cell %s on %s" % [coords, layer.name])
+		BuildPaintDebug.trace("erased cell %s on %s" % [coords, layer.name])
 		return
 	if coords == _last_paint_map_coords:
-		BuildPaintDebug.log("paint skipped: same cell %s" % coords)
+		BuildPaintDebug.trace("paint skipped: same cell %s" % coords)
 		return
 	_last_paint_map_coords = coords
 	if layer.tile_set == null:
-		BuildPaintDebug.log("paint blocked: layer '%s' has no tileset" % layer.name)
+		BuildPaintDebug.trace("paint blocked: layer '%s' has no tileset" % layer.name)
 		return
 	if not layer.tile_set.has_source(_paint_source_id):
-		BuildPaintDebug.log(
+		BuildPaintDebug.trace(
 			"paint blocked: layer '%s' missing source %d (sources=%d)" % [
 				layer.name, _paint_source_id, layer.tile_set.get_source_count()
 			]
@@ -773,10 +773,10 @@ func _stamp_paint_at(layer: TileMapLayer, origin: Vector2i) -> void:
 		layer.set_cell(origin, _paint_source_id, _paint_coords)
 		painted = true
 	if not painted:
-		BuildPaintDebug.log("stamp failed: no cells at origin %s" % origin)
+		BuildPaintDebug.trace("stamp failed: no cells at origin %s" % origin)
 		push_warning("BuildPanel: paint skipped — no stamp cells for source %d." % _paint_source_id)
 		return
-	BuildPaintDebug.log("stamped %d cell(s) at %s on %s" % [_paint_stamps.size(), origin, layer.name])
+	BuildPaintDebug.trace("stamped %d cell(s) at %s on %s" % [_paint_stamps.size(), origin, layer.name])
 	layer.update_internals()
 	layer.queue_redraw()
 

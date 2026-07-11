@@ -362,7 +362,7 @@ func _apply_studio_tab(tab: StudioTabBar.Tab) -> void:
 	if build_panel:
 		build_panel.paint_enabled = building
 		if building:
-			BuildPaintDebug.log(
+			BuildPaintDebug.trace(
 				"BUILD tab active panel_id=%s in_tree=%s" % [
 					build_panel.get_instance_id(),
 					build_panel.is_inside_tree(),
@@ -422,7 +422,7 @@ func _route_build_input(event: InputEvent, channel: String) -> void:
 		return
 	if _is_pointer_over_build_dock():
 		if event is InputEventMouseButton and (event as InputEventMouseButton).pressed:
-			BuildPaintDebug.log("%s skipped: pointer over dock (y=%.0f)" % [
+			BuildPaintDebug.trace("%s skipped: pointer over dock (y=%.0f)" % [
 				channel, get_viewport().get_mouse_position().y
 			])
 		if event is InputEventMouseMotion:
