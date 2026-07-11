@@ -21,14 +21,14 @@ Short rules for automated coding agents (Cursor Cloud, CI bots, etc.) working on
 - Use `git mv` and move `.uid` sidecars together when renaming scripts
 - Update all `res://` paths in `.gd`, `.tscn`, `.tres`, `.import` after moves
 - Commit `.import` files
-- Extend `player/pose/` and `player/build/BuildPanel.gd` for studio features
+- Extend `player/pose/` and `player/build/BuildPanel.gd`, `EntityPalette.gd`, `LevelSave.gd` for studio features
 - Place new reusable entities under `scenes/<domain>/`
 - Keep top-level folders lowercase (`assets/`, `levels/`, `scenes/`)
 
 ## Do not
 
-- Add new `spawn_scene` tile bindings in `tileset_enemies.tres` ([LEGACY.md](../LEGACY.md))
-- Extend `hazards.gd` tile-to-scene conversion for new features
+- Paint `tileset_enemies.tres` / `tileset_controls.tres` tiles onto level layers for entity placement (use Entities tab)
+- Reintroduce runtime tile-to-scene conversion (`hazards.gd`)
 - Rename third-party asset pack internals (`assets/enemies/AngryPig/`, paths with spaces)
 - Bulk-rename `class_name` files to snake_case
 - Remove or rewrite `player/states/` without an explicit controller-refactor task
@@ -40,12 +40,11 @@ Short rules for automated coding agents (Cursor Cloud, CI bots, etc.) working on
 |------|------|
 | Player | `player/Player.gd`, `player/player.tscn`, `player/states/` |
 | Character studio | `player/pose/`, `player/PoseMarker.tscn`, `player/components/TimelineManager.gd`, `player/pose/PoseTimelinePanel.gd` |
-| Level build UI | `player/build/BuildPanel.gd` (target: bottom-centre `PoseTimelineDock`) |
+| Level build UI | `player/build/BuildPanel.gd`, `EntityPalette.gd`, `LevelSave.gd` |
 | Tilesets | `resources/tilesets/` |
-| Legacy tile spawn | `scenes/environment/hazards/hazards.gd` |
 | Enemy base | `scenes/enemies/BaseEnemy.gd` |
 | Autoload | `scripts/autoload/game_manager.gd` (UID in `project.godot`) |
-| Levels | `levels/*.tscn` — layers named `Terrain`, `Hazards`, `Controls`, `Water` |
+| Levels | `levels/test.tscn` — layers `Terrain`, `Water`, node `Enemies` |
 
 ## Common tasks
 

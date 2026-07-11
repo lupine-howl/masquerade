@@ -2,34 +2,50 @@
 class_name BuildPanel
 extends PanelContainer
 
-## Level-build panel: layer tabs, tileset sources, full-width tile strip.
-## Painting targets TileMapLayer nodes in the active level by name.
+## Level-build panel: terrain/water tile painting, entity scene placement, level save.
 
 signal tile_selected(tilemap: String, source_id: int, atlas_coords: Vector2i)
+signal level_saved(path: String)
 
-const TILEMAPS: Array[Dictionary] = [
+const TILE_LAYERS: Array[Dictionary] = [
 	{"name": "Terrain", "tileset": "res://resources/tilesets/tileset_terrain.tres"},
-	{"name": "Hazards", "tileset": "res://resources/tilesets/tileset_enemies.tres"},
-	{"name": "Controls", "tileset": "res://resources/tilesets/tileset_controls.tres"},
 	{"name": "Water", "tileset": "res://resources/tilesets/tileset_water.tres"},
 ]
 
+const ENTITIES_TAB_NAME := "Entities"
 const TILE_BUTTON_SIZE := 40
 const TILE_VISIBLE_ROWS := 3
+const ENTITY_PICK_RADIUS := 40.0
+
+enum TabKind { TILE_LAYER, ENTITIES }
 
 var _tab_strip: VBoxContainer
+var _header_row: HBoxContainer
 var _source_row: HFlowContainer
 var _tile_grid: GridContainer
 var _header_label: Label
 var _selected_label: Label
+var _dirty_label: Label
+var _save_button: Button
+var _source_caption: Label
+var _tiles_caption: Label
+var _source_scroll: ScrollContainer
+var _tile_scroll: ScrollContainer
 
 var _tab_buttons: Array[Button] = []
 var _source_buttons: Array[Button] = []
 var _tile_buttons: Array[Button] = []
+var _category_buttons: Array[Button] = []
 
+var _active_tab_kind: TabKind = TabKind.TILE_LAYER
 var _current_tilemap_index: int = -1
 var _current_source_id: int = -1
 var _selected_tile_button: Button = null
+var _selected_entity_button: Button = null
+var _selected_entity_scene: PackedScene = null
+var _selected_entity: Node2D = null
+var _entity_category: String = "All"
+var _entity_entries: Array[Dictionary] = []
 
 var _paint_enabled: bool = false
 var paint_enabled: bool:
@@ -39,7 +55,9 @@ var paint_enabled: bool:
 		_paint_enabled = value
 		if not value:
 			_set_brush_visible(false)
-var _has_selection: bool = false
+			_clear_entity_selection()
+
+var _has_tile_selection: bool = false
 var _paint_source_id: int = -1
 var _paint_coords: Vector2i = Vector2i.ZERO
 
@@ -51,10 +69,10 @@ var _brush_visible: bool = false
 
 func _ready() -> void:
 	custom_minimum_size = Vector2.ZERO
+	_entity_entries = EntityPalette.load_entries()
 	_build_ui()
-	_populate_tilemap_tabs()
-	if not TILEMAPS.is_empty():
-		_select_tilemap(0)
+	_populate_tabs()
+	_select_tab(TabKind.TILE_LAYER, 0)
 
 
 func _build_ui() -> void:
@@ -90,49 +108,67 @@ func _build_ui() -> void:
 	main_col.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	main_panel.add_child(main_col)
 
+	_header_row = HBoxContainer.new()
+	_header_row.add_theme_constant_override("separation", 8)
+	main_col.add_child(_header_row)
+
 	_header_label = Label.new()
+	_header_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_header_label.add_theme_font_size_override("font_size", PoseTabStyles.PANEL_FONT_SIZE)
 	_header_label.text = "Build"
-	main_col.add_child(_header_label)
+	_header_row.add_child(_header_label)
 
-	var source_caption := Label.new()
-	source_caption.add_theme_font_size_override("font_size", PoseTabStyles.CAPTION_FONT_SIZE)
-	source_caption.add_theme_color_override("font_color", Color(0.7, 0.7, 0.75))
-	source_caption.text = "Tilesets"
-	main_col.add_child(source_caption)
+	_dirty_label = Label.new()
+	_dirty_label.add_theme_font_size_override("font_size", PoseTabStyles.CAPTION_FONT_SIZE)
+	_dirty_label.add_theme_color_override("font_color", Color(0.95, 0.75, 0.45))
+	_dirty_label.text = ""
+	_header_row.add_child(_dirty_label)
 
-	var source_scroll := ScrollContainer.new()
-	source_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
-	source_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	source_scroll.custom_minimum_size = Vector2(0, 28)
-	source_scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	main_col.add_child(source_scroll)
+	_save_button = Button.new()
+	_save_button.text = "Save"
+	_save_button.focus_mode = Control.FOCUS_NONE
+	_save_button.add_theme_font_size_override("font_size", PoseTabStyles.CAPTION_FONT_SIZE)
+	_save_button.pressed.connect(_on_save_pressed)
+	_header_row.add_child(_save_button)
+
+	_source_caption = Label.new()
+	_source_caption.add_theme_font_size_override("font_size", PoseTabStyles.CAPTION_FONT_SIZE)
+	_source_caption.add_theme_color_override("font_color", Color(0.7, 0.7, 0.75))
+	_source_caption.text = "Tilesets"
+	main_col.add_child(_source_caption)
+
+	_source_scroll = ScrollContainer.new()
+	_source_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
+	_source_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	_source_scroll.custom_minimum_size = Vector2(0, 28)
+	_source_scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	main_col.add_child(_source_scroll)
 
 	_source_row = HFlowContainer.new()
 	_source_row.add_theme_constant_override("h_separation", 3)
 	_source_row.add_theme_constant_override("v_separation", 3)
 	_source_row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	source_scroll.add_child(_source_row)
+	_source_scroll.add_child(_source_row)
 
-	var tiles_caption := Label.new()
-	tiles_caption.add_theme_font_size_override("font_size", PoseTabStyles.CAPTION_FONT_SIZE)
-	tiles_caption.add_theme_color_override("font_color", Color(0.7, 0.7, 0.75))
-	tiles_caption.text = "Tiles"
-	main_col.add_child(tiles_caption)
+	_tiles_caption = Label.new()
+	_tiles_caption.add_theme_font_size_override("font_size", PoseTabStyles.CAPTION_FONT_SIZE)
+	_tiles_caption.add_theme_color_override("font_color", Color(0.7, 0.7, 0.75))
+	_tiles_caption.text = "Tiles"
+	main_col.add_child(_tiles_caption)
 
-	var tile_scroll := ScrollContainer.new()
-	tile_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	tile_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
-	tile_scroll.custom_minimum_size = Vector2(0, TILE_VISIBLE_ROWS * (TILE_BUTTON_SIZE + 4))
-	tile_scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	tile_scroll.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
-	main_col.add_child(tile_scroll)
+	_tile_scroll = ScrollContainer.new()
+	_tile_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	_tile_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
+	_tile_scroll.custom_minimum_size = Vector2(0, TILE_VISIBLE_ROWS * (TILE_BUTTON_SIZE + 4))
+	_tile_scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_tile_scroll.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
+	main_col.add_child(_tile_scroll)
 
 	_tile_grid = GridContainer.new()
 	_tile_grid.add_theme_constant_override("h_separation", 4)
 	_tile_grid.add_theme_constant_override("v_separation", 4)
 	_tile_grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	tile_scroll.add_child(_tile_grid)
+	_tile_scroll.add_child(_tile_grid)
 
 	_selected_label = Label.new()
 	_selected_label.add_theme_font_size_override("font_size", PoseTabStyles.CAPTION_FONT_SIZE)
@@ -141,32 +177,116 @@ func _build_ui() -> void:
 	main_col.add_child(_selected_label)
 
 
-func _populate_tilemap_tabs() -> void:
+func _populate_tabs() -> void:
 	_clear_children(_tab_strip)
 	_tab_buttons.clear()
-	for i in TILEMAPS.size():
-		var entry: Dictionary = TILEMAPS[i]
-		var btn := PoseTabStyles.make_tab_button(String(entry.name), "Tilemap: %s" % entry.name)
+	for i in TILE_LAYERS.size():
+		var entry: Dictionary = TILE_LAYERS[i]
+		var btn := PoseTabStyles.make_tab_button(String(entry.name), "Tile layer: %s" % entry.name)
 		PoseTabStyles.apply_tab_button(btn, false, false)
-		btn.pressed.connect(_select_tilemap.bind(i))
+		btn.pressed.connect(_select_tab.bind(TabKind.TILE_LAYER, i))
 		_tab_strip.add_child(btn)
 		_tab_buttons.append(btn)
 
+	var entities_btn := PoseTabStyles.make_tab_button(ENTITIES_TAB_NAME, "Place scene instances")
+	PoseTabStyles.apply_tab_button(entities_btn, false, false)
+	entities_btn.pressed.connect(_select_tab.bind(TabKind.ENTITIES, -1))
+	_tab_strip.add_child(entities_btn)
+	_tab_buttons.append(entities_btn)
 
-func _select_tilemap(index: int) -> void:
-	if index < 0 or index >= TILEMAPS.size():
-		return
-	_current_tilemap_index = index
+
+func _select_tab(kind: TabKind, tile_index: int) -> void:
+	_active_tab_kind = kind
+	_current_tilemap_index = tile_index if kind == TabKind.TILE_LAYER else -1
+	_clear_entity_selection()
+	_clear_tile_selection()
+
 	for i in _tab_buttons.size():
-		PoseTabStyles.apply_tab_button(_tab_buttons[i], i == index, false)
+		var active := false
+		if kind == TabKind.ENTITIES:
+			active = i == _tab_buttons.size() - 1
+		else:
+			active = i == tile_index
+		PoseTabStyles.apply_tab_button(_tab_buttons[i], active, false)
 
-	var entry: Dictionary = TILEMAPS[index]
-	_header_label.text = "Build — %s" % entry.name
-	var tileset := _load_tileset(String(entry.tileset))
-	_populate_sources(tileset)
+	if kind == TabKind.ENTITIES:
+		_header_label.text = "Build — Entities"
+		_source_caption.text = "Category"
+		_tiles_caption.text = "Scenes"
+		_show_entities_palette()
+	else:
+		var entry: Dictionary = TILE_LAYERS[tile_index]
+		_header_label.text = "Build — %s" % entry.name
+		_source_caption.text = "Tilesets"
+		_tiles_caption.text = "Tiles"
+		_populate_tile_sources(_load_tileset(String(entry.tileset)))
 
 
-func _populate_sources(tileset: TileSet) -> void:
+func _show_entities_palette() -> void:
+	_clear_children(_source_row)
+	_source_buttons.clear()
+	_category_buttons.clear()
+
+	for category in EntityPalette.CATEGORIES:
+		var btn := Button.new()
+		btn.text = category
+		btn.focus_mode = Control.FOCUS_NONE
+		btn.toggle_mode = true
+		btn.add_theme_font_size_override("font_size", PoseTabStyles.CAPTION_FONT_SIZE)
+		btn.pressed.connect(_select_entity_category.bind(category))
+		_source_row.add_child(btn)
+		_category_buttons.append(btn)
+
+	_select_entity_category(_entity_category)
+
+
+func _select_entity_category(category: String) -> void:
+	_entity_category = category
+	for btn in _category_buttons:
+		btn.set_pressed_no_signal(btn.text == category)
+	_populate_entity_grid()
+
+
+func _populate_entity_grid() -> void:
+	_clear_children(_tile_grid)
+	_tile_buttons.clear()
+	_selected_entity_button = null
+	_selected_entity_scene = null
+
+	var shown := 0
+	for entry in _entity_entries:
+		if _entity_category != "All" and String(entry.category) != _entity_category:
+			continue
+		var tex: Texture2D = entry.texture
+		var btn := _make_tile_button(tex)
+		btn.tooltip_text = String(entry.label)
+		btn.pressed.connect(_on_entity_pressed.bind(btn, entry))
+		_tile_grid.add_child(btn)
+		_tile_buttons.append(btn)
+		shown += 1
+
+	_update_tile_grid_columns()
+
+	if shown == 0:
+		var empty := Label.new()
+		empty.text = "(no scenes)"
+		empty.add_theme_font_size_override("font_size", PoseTabStyles.CAPTION_FONT_SIZE)
+		_tile_grid.add_child(empty)
+		_selected_label.text = "No scene selected"
+	else:
+		_selected_label.text = "No scene selected — LMB place, RMB erase, click placed to select"
+
+
+func _on_entity_pressed(btn: Button, entry: Dictionary) -> void:
+	if _selected_entity_button and is_instance_valid(_selected_entity_button):
+		_style_tile_button(_selected_entity_button, false)
+	_selected_entity_button = btn
+	_style_tile_button(btn, true)
+	_selected_entity_scene = entry.scene as PackedScene
+	_selected_label.text = "Selected: %s" % entry.label
+
+
+func _populate_tile_sources(tileset: TileSet) -> void:
 	_clear_children(_source_row)
 	_source_buttons.clear()
 	_clear_children(_tile_grid)
@@ -262,7 +382,6 @@ func _make_tile_button(tex: Texture2D) -> Button:
 	btn.focus_mode = Control.FOCUS_NONE
 	btn.icon = tex
 	btn.expand_icon = true
-	btn.tooltip_text = "Click to select tile"
 	_style_tile_button(btn, false)
 	return btn
 
@@ -288,14 +407,22 @@ func _on_tile_pressed(btn: Button, source_id: int, coords: Vector2i) -> void:
 	_style_tile_button(btn, true)
 	_paint_source_id = source_id
 	_paint_coords = coords
-	_has_selection = true
+	_has_tile_selection = true
 	var tilemap_name := "?"
 	if _current_tilemap_index >= 0:
-		tilemap_name = String(TILEMAPS[_current_tilemap_index].name)
+		tilemap_name = String(TILE_LAYERS[_current_tilemap_index].name)
 	_selected_label.text = "Selected: %s / src %d / (%d, %d)" % [
 		tilemap_name, source_id, coords.x, coords.y
 	]
 	tile_selected.emit(tilemap_name, source_id, coords)
+
+
+func _clear_tile_selection() -> void:
+	if _selected_tile_button and is_instance_valid(_selected_tile_button):
+		_style_tile_button(_selected_tile_button, false)
+	_selected_tile_button = null
+	_has_tile_selection = false
+	_paint_source_id = -1
 
 
 func _source_label(source: TileSetSource, source_id: int) -> String:
@@ -310,40 +437,140 @@ func _source_label(source: TileSetSource, source_id: int) -> String:
 func _unhandled_input(event: InputEvent) -> void:
 	if Engine.is_editor_hint() or not paint_enabled:
 		return
+
+	if event is InputEventKey and event.pressed and not event.echo:
+		if event.keycode == KEY_DELETE or event.keycode == KEY_BACKSPACE:
+			if _selected_entity and is_instance_valid(_selected_entity):
+				_selected_entity.queue_free()
+				_clear_entity_selection()
+				LevelSave.mark_dirty()
+				_refresh_dirty_label()
+				get_viewport().set_input_as_handled()
+			return
+
 	if event is InputEventMouseButton and event.pressed:
-		if event.button_index == MOUSE_BUTTON_LEFT:
-			_paint_at_mouse(false)
+		if _active_tab_kind == TabKind.ENTITIES:
+			if event.button_index == MOUSE_BUTTON_LEFT:
+				_handle_entity_left_click()
+				get_viewport().set_input_as_handled()
+			elif event.button_index == MOUSE_BUTTON_RIGHT:
+				_erase_entity_at_mouse()
+				get_viewport().set_input_as_handled()
+		elif event.button_index == MOUSE_BUTTON_LEFT:
+			_paint_tile_at_mouse(false)
 			get_viewport().set_input_as_handled()
 		elif event.button_index == MOUSE_BUTTON_RIGHT:
-			_paint_at_mouse(true)
+			_paint_tile_at_mouse(true)
 			get_viewport().set_input_as_handled()
 	elif event is InputEventMouseMotion:
 		_update_brush_hover()
-		var mask := (event as InputEventMouseMotion).button_mask
-		if mask & MOUSE_BUTTON_MASK_LEFT:
-			_paint_at_mouse(false)
-		elif mask & MOUSE_BUTTON_MASK_RIGHT:
-			_paint_at_mouse(true)
+		if _active_tab_kind == TabKind.TILE_LAYER:
+			var mask := (event as InputEventMouseMotion).button_mask
+			if mask & MOUSE_BUTTON_MASK_LEFT:
+				_paint_tile_at_mouse(false)
+			elif mask & MOUSE_BUTTON_MASK_RIGHT:
+				_paint_tile_at_mouse(true)
 
 
-func _paint_at_mouse(erase: bool) -> void:
-	if not erase and not _has_selection:
+func _handle_entity_left_click() -> void:
+	if _selected_entity_scene != null:
+		_place_entity_at_mouse()
+		return
+	var picked := _pick_entity_at_mouse()
+	if picked:
+		_set_selected_entity(picked)
+	else:
+		_clear_entity_selection()
+
+
+func _place_entity_at_mouse() -> void:
+	if _selected_entity_scene == null:
+		return
+	var container := _find_entities_container()
+	if container == null:
+		push_warning("BuildPanel: no Enemies container in the current level.")
+		return
+	var instance := _selected_entity_scene.instantiate()
+	if not instance is Node2D:
+		instance.queue_free()
+		push_warning("BuildPanel: entity root must be Node2D.")
+		return
+	var node := instance as Node2D
+	node.global_position = _snap_world_to_grid(_get_world_mouse_position())
+	container.add_child(node)
+	_set_selected_entity(node)
+	LevelSave.mark_dirty()
+	_refresh_dirty_label()
+
+
+func _erase_entity_at_mouse() -> void:
+	var entity := _pick_entity_at_mouse()
+	if entity == null:
+		return
+	if _selected_entity == entity:
+		_clear_entity_selection()
+	entity.queue_free()
+	LevelSave.mark_dirty()
+	_refresh_dirty_label()
+
+
+func _pick_entity_at_mouse() -> Node2D:
+	return _pick_entity_near(_get_world_mouse_position())
+
+
+func _pick_entity_near(world: Vector2) -> Node2D:
+	var container := _find_entities_container()
+	if container == null:
+		return null
+	var snap := _snap_world_to_grid(world)
+	var best: Node2D = null
+	var best_dist := ENTITY_PICK_RADIUS
+	for child in container.get_children():
+		if child is Node2D and is_instance_valid(child):
+			var dist := child.global_position.distance_to(snap)
+			if dist <= best_dist:
+				best = child
+				best_dist = dist
+	return best
+
+
+func _set_selected_entity(entity: Node2D) -> void:
+	if _selected_entity and is_instance_valid(_selected_entity):
+		_selected_entity.modulate = Color.WHITE
+	_selected_entity = entity
+	if _selected_entity:
+		_selected_entity.modulate = Color(1.1, 1.1, 0.85)
+		_selected_label.text = "Selected instance: %s" % _selected_entity.name
+
+
+func _clear_entity_selection() -> void:
+	if _selected_entity and is_instance_valid(_selected_entity):
+		_selected_entity.modulate = Color.WHITE
+	_selected_entity = null
+
+
+func _paint_tile_at_mouse(erase: bool) -> void:
+	if not erase and not _has_tile_selection:
 		return
 	if _current_tilemap_index < 0:
 		return
-	var layer := _find_target_layer(String(TILEMAPS[_current_tilemap_index].name))
+	var layer := _find_target_layer(String(TILE_LAYERS[_current_tilemap_index].name))
 	if layer == null:
-		push_warning("BuildPanel: no TileMapLayer named '%s' in the current level." % TILEMAPS[_current_tilemap_index].name)
+		push_warning("BuildPanel: no TileMapLayer named '%s' in the current level." % TILE_LAYERS[_current_tilemap_index].name)
 		return
 	var world := layer.get_global_mouse_position()
 	var coords := layer.local_to_map(layer.to_local(world))
 	if erase:
 		layer.erase_cell(coords)
+		LevelSave.mark_dirty()
+		_refresh_dirty_label()
 		return
 	if layer.tile_set == null or not layer.tile_set.has_source(_paint_source_id):
 		push_warning("BuildPanel: layer '%s' uses a different tileset (no source %d)." % [layer.name, _paint_source_id])
 		return
 	layer.set_cell(coords, _paint_source_id, _paint_coords)
+	LevelSave.mark_dirty()
+	_refresh_dirty_label()
 
 
 func _find_target_layer(layer_name: String) -> TileMapLayer:
@@ -354,19 +581,56 @@ func _find_target_layer(layer_name: String) -> TileMapLayer:
 	return node as TileMapLayer
 
 
+func _find_entities_container() -> Node:
+	var scene := get_tree().current_scene
+	if scene == null:
+		return null
+	return scene.get_node_or_null("Enemies")
+
+
+func _get_snap_layer() -> TileMapLayer:
+	return _find_target_layer("Terrain")
+
+
+func _get_world_mouse_position() -> Vector2:
+	var layer := _get_snap_layer()
+	if layer:
+		return layer.get_global_mouse_position()
+	return Vector2.ZERO
+
+
+func _snap_world_to_grid(world: Vector2) -> Vector2:
+	var layer := _get_snap_layer()
+	if layer == null:
+		return world
+	var local := layer.to_local(world)
+	var map_coords := layer.local_to_map(local)
+	return layer.to_global(layer.map_to_local(map_coords))
+
+
 func _update_brush_hover() -> void:
-	if Engine.is_editor_hint() or not paint_enabled or _current_tilemap_index < 0:
+	if Engine.is_editor_hint() or not paint_enabled:
 		_set_brush_visible(false)
 		return
-	var layer := _find_target_layer(String(TILEMAPS[_current_tilemap_index].name))
+
+	var layer := _get_brush_layer()
 	if layer == null:
 		_set_brush_visible(false)
 		return
+
 	_ensure_brush(layer)
 	var world := layer.get_global_mouse_position()
 	_hover_coords = layer.local_to_map(layer.to_local(world))
 	_set_brush_visible(true)
 	_brush.queue_redraw()
+
+
+func _get_brush_layer() -> TileMapLayer:
+	if _active_tab_kind == TabKind.ENTITIES:
+		return _get_snap_layer()
+	if _current_tilemap_index < 0:
+		return null
+	return _find_target_layer(String(TILE_LAYERS[_current_tilemap_index].name))
 
 
 func _ensure_brush(layer: TileMapLayer) -> void:
@@ -391,11 +655,28 @@ func _on_brush_draw() -> void:
 	if not _brush_visible or _brush_layer == null or not is_instance_valid(_brush_layer):
 		return
 	var ts := _brush_layer.tile_set
-	var cell := Vector2(ts.tile_size) if ts else Vector2(16, 16)
+	var cell := Vector2(ts.tile_size) if ts else Vector2(64, 64)
 	var center := _brush_layer.map_to_local(_hover_coords)
 	var rect := Rect2(center - cell * 0.5, cell)
 	_brush.draw_rect(rect, Color(0.35, 0.75, 1.0, 0.18), true)
 	_brush.draw_rect(rect, Color(0.4, 0.8, 1.0, 0.9), false, 2.0)
+
+
+func _on_save_pressed() -> void:
+	var result := LevelSave.save_level(get_tree())
+	if result.ok:
+		_refresh_dirty_label()
+		level_saved.emit(String(result.path))
+		_selected_label.text = "Saved %s" % result.path.get_file()
+	else:
+		_selected_label.text = String(result.error)
+		push_warning("BuildPanel: %s" % result.error)
+
+
+func _refresh_dirty_label() -> void:
+	if _dirty_label == null:
+		return
+	_dirty_label.text = "*" if LevelSave.dirty else ""
 
 
 func _load_tileset(path: String) -> TileSet:

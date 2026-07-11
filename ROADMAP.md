@@ -59,8 +59,8 @@ flowchart TB
 | 1 | Character animation studio (pose, timeline, ragdoll) | **Mostly complete** — timeline is the product surface |
 | 2 | Studio mode UX (Play / Pose / Build) | **Done** |
 | 3 | Build panel in bottom-centre dock | **Done** |
-| 4 | Build depth (save, layers, scene palette) | Planned |
-| 5 | Deprecate tile → scene spawn pipeline | Planned (after scene palette) |
+| 4 | Build depth (save, scene palette) | **Mostly complete** |
+| 5 | Deprecate spawn pipeline | **Done** |
 | 6 | Enemy and hazard art scale-up (16px legacy → 64px world) | Planned |
 | 7 | General-purpose character controller | Future |
 | 8 | Polished studio UX, project/session model, publishing | Future |
@@ -159,38 +159,38 @@ flowchart TB
 
 ---
 
-### Phase 5 — Build depth (save, layers, scene palette)
+### Phase 5 — Build depth (save, layers, scene palette) — **Mostly complete**
 
 **Goal:** Make level authoring dependable beyond the prototype paint loop.
 
-| Task | Priority | Detail |
+| Task | Priority | Status |
 |------|----------|--------|
-| **Level save** | High | `ResourceSaver.save` on `get_tree().current_scene`; dirty flag; confirm dialog |
-| **Layer picker** | High | Dropdown of `TileMapLayer` nodes in current level — levels use `Terrain2`, `DeepBackTerrain`, etc., not only canonical names |
-| **Scene placement palette** | Medium | Curated list from `scenes/`; click-to-place into `Enemies` container; lives in bottom dock (tiles \| scenes tabs) |
-| **Erase / select placed instances** | Medium | Complement tile erase |
-| **Hotkey audit** | Medium | Document and resolve play+build binding conflicts if they appear |
+| **Level save** | High | **Done** — Save button in build dock; `LevelSave.gd` |
+| **Scene placement palette** | High | **Done** — Entities tab; grid-snapped instances in `Enemies` |
+| **Erase / select placed instances** | Medium | **Done** — RMB erase, click to select, Delete key |
+| **Layer picker** | High | Planned — dropdown for non-canonical `TileMapLayer` names |
+| **Hotkey audit** | Medium | Planned |
 
-**Acceptance:** Paint on `test.tscn`, save, reload — tiles persist. Place `enemy_bat.tscn` without `spawn_scene` tiles. Author can target non-canonical terrain layers on complex levels.
+**Acceptance:** Paint on `test.tscn`, save, reload — tiles and placed entities persist. ✅ Met for `test.tscn`.
 
-**Key paths:** `player/build/BuildPanel.gd`, `player/build/` (new scene palette), `levels/*.tscn`
+**Key paths:** `player/build/BuildPanel.gd`, `player/build/EntityPalette.gd`, `player/build/LevelSave.gd`, `levels/test.tscn`
 
 ---
 
-### Phase 6 — Deprecate tile → scene spawn pipeline
+### Phase 6 — Deprecate tile → scene spawn pipeline — **Done**
 
-**Goal:** Freeze and migrate the legacy Hazards-tile spawn path.
+**Goal:** Remove the legacy Hazards-tile spawn path.
 
-| Task | Detail |
+| Task | Status |
 |------|--------|
-| `@export var convert_spawn_tiles := true` on `hazards.gd` | Opt-out per level during migration |
-| Pilot migration | One level (`test.tscn`) to direct instances + scene palette |
-| Freeze new bindings | No new `spawn_scene` entries in `tileset_enemies.tres` |
-| Remove converter | After all levels migrated |
+| Scene palette replaces tile painting for entities | **Done** |
+| Remove `hazards.gd` converter | **Done** |
+| Delete deprecated sample levels (`01`–`05`) | **Done** |
+| `test.tscn` uses direct instances only | **Done** |
 
-**Prerequisite:** Phase 5 scene palette. Do not extend `hazards.gd` for new features.
+`tileset_enemies.tres` / `tileset_controls.tres` `spawn_scene` bindings remain as **palette catalog metadata** only (read by `EntityPalette.gd`). Do not paint spawn tiles onto layers.
 
-**Key paths:** `scenes/environment/hazards/hazards.gd`, `resources/tilesets/tileset_enemies.tres`, [LEGACY.md](docs/LEGACY.md)
+**Key paths:** `player/build/EntityPalette.gd`, [LEGACY.md](docs/LEGACY.md)
 
 ---
 
@@ -232,17 +232,17 @@ Ordered list of build proposals — each builds on the previous where noted:
 | 1 | **Tri-mode** (Play / Pose / Build) + mode gating | 2 | — | Small | **Done** |
 | 2 | **Build panel → bottom-centre dock** (swap with timeline) | 3 | 1 | Medium | **Done** |
 | 3 | **Hideable side panels** (collapse `PoseDockRow`) | 4 | 1 | Small | Next |
-| 4 | **Level save** from build mode | 5 | 2 | Medium |
-| 5 | **Layer picker** for non-canonical `TileMapLayer` names | 5 | 2 | Medium |
-| 6 | **Scene placement palette** in bottom dock | 5 | 2, 4 | Medium |
+| 4 | **Level save** from build mode | 5 | 2 | Medium | **Done** |
+| 5 | **Layer picker** for non-canonical `TileMapLayer` names | 5 | 2 | Medium | Next |
+| 6 | **Scene placement palette** in bottom dock | 5 | 2, 4 | Medium | **Done** |
 | 7 | **Hotkey audit** (play + build coexistence) | 5 | 1, 2 | Small–medium |
-| 8 | **Spawn migration pilot** (`test.tscn`, `convert_spawn_tiles` flag) | 6 | 6 | Medium |
+| 8 | **Spawn migration** (remove `hazards.gd`, delete old levels) | 6 | 6 | Medium | **Done** |
 | 9 | **Enemy scale harmonization** | 7 | — | Large |
 | 10 | **Shared character controller** | 8 | — | Large |
 
 **Recommended first PR:** #1 + #2 — **merged in studio tri-mode PR**.
 
-**Recommended next PR:** #3 + #4 (side panel collapse + level save).
+**Recommended next PR:** #3 + #5 (side panel collapse + layer picker).
 
 ---
 
@@ -250,7 +250,9 @@ Ordered list of build proposals — each builds on the previous where noted:
 
 | Item | Status | Replacement |
 |------|--------|-------------|
-| `spawn_scene` tile custom data on Hazards layer | Deprecated | Scene placement palette in build dock |
+| `spawn_scene` tile painting on Hazards layer | **Removed** | Entities tab in `BuildPanel` |
+| `hazards.gd` runtime converter | **Removed** | Direct scene instances in `Enemies` |
+| Sample levels `01`–`05` | **Removed** | `levels/test.tscn` only |
 | 16×16 enemy art as source of truth | Legacy | Rescaled art + updated `BaseEnemy` collision |
 | Monolithic `Player`-only movement | Legacy | Shared character controller module |
 | `AnimSection` / `PoseAssistantPanel` as primary UI | Dormant | `PoseTimelinePanel` (kept in tree, hidden) |
