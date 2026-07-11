@@ -168,8 +168,8 @@ flowchart TB
 | **Level save** | High | **Done** — Save button in build dock; `LevelSave.gd` |
 | **Scene placement palette** | High | **Done** — Entities tab; grid-snapped instances in `Enemies` |
 | **Erase / select placed instances** | Medium | **Done** — RMB erase, click to select, Delete key |
-| **Layer picker** | High | Planned — dropdown for non-canonical `TileMapLayer` names |
-| **Hotkey audit** | Medium | Planned |
+| **Layer picker** | High | **Done** — dynamic tabs per `TileMapLayer` in the level |
+| **Hotkey audit** | Medium | **Done** — see [STUDIO.md](docs/STUDIO.md) bindings; Ctrl defers to camera in build |
 
 **Acceptance:** Paint on `test.tscn`, save, reload — tiles and placed entities persist. ✅ Met for `test.tscn`.
 
@@ -233,9 +233,9 @@ Ordered list of build proposals — each builds on the previous where noted:
 | 2 | **Build panel → bottom-centre dock** (swap with timeline) | 3 | 1 | Medium | **Done** |
 | 3 | **Hideable side panels** (collapse `PoseDockRow`) | 4 | 1 | Small | Next |
 | 4 | **Level save** from build mode | 5 | 2 | Medium | **Done** |
-| 5 | **Layer picker** for non-canonical `TileMapLayer` names | 5 | 2 | Medium | Next |
+| 5 | **Layer picker** for non-canonical `TileMapLayer` names | 5 | 2 | Medium | **Done** |
 | 6 | **Scene placement palette** in bottom dock | 5 | 2, 4 | Medium | **Done** |
-| 7 | **Hotkey audit** (play + build coexistence) | 5 | 1, 2 | Small–medium |
+| 7 | **Hotkey audit** (play + build coexistence) | 5 | 1, 2 | Small–medium | **Done** |
 | 8 | **Spawn migration** (remove `hazards.gd`, delete old levels) | 6 | 6 | Medium | **Done** |
 | 9 | **Enemy scale harmonization** | 7 | — | Large |
 | 10 | **Shared character controller** | 8 | — | Large |

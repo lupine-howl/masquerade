@@ -114,34 +114,52 @@ Do not expect the hidden `AnimSection` assistant — use the timeline instead.
 **Primary surface:** the bottom-centre **build dock** — visible on the **Build** tab.
 
 ```
-[ Terrain | Water | Entities ] | [ tilesets or category ] | [ grid ] | Save *
+[ Layer tabs… | Entities ] | [ tilesets or category ] | [ grid ] | * Save
 ```
+
+Layer tabs are discovered automatically from every `TileMapLayer` in the current level (e.g. `Terrain`, `TerrainBackground`, `Water`, `TerrainForeground`).
 
 ### Concepts
 
 | Tab | What it does |
 |-----|----------------|
-| **Terrain** | Paint `Terrain` layer from `tileset_terrain.tres` |
-| **Water** | Paint `Water` layer from `tileset_water.tres` |
+| **Tile layers** | One tab per `TileMapLayer` in the level; paints using that layer's tileset |
 | **Entities** | Place scene instances into `Enemies`, snapped to the 64×64 grid |
 
 Entity thumbnails come from `spawn_scene` metadata in tilesets (catalog only via `EntityPalette.gd`).
+
+### Keyboard and mouse (studio)
+
+| Input | Build tab | Skin tab | Play tab |
+|-------|-----------|----------|----------|
+| **Ctrl + drag** | Pan camera | Pan camera | Pan camera |
+| **Ctrl + scroll** | Zoom camera | Zoom camera | Zoom camera |
+| **Space** | Jump | — (posing) | Jump |
+| **LMB** | Paint tile / place or drag entity | Select markers | Gameplay |
+| **RMB** | Erase tile / entity | — | — |
+| **Delete** | Remove selected entity | — | — |
+| **Ctrl + click** | — (camera pan) | Add/remove marker from selection | — |
+
+Build tools are disabled while **Ctrl** is held so camera pan does not paint or move entities.
+
+Unsaved level edits (`*` indicator) prompt to **Save**, **Discard**, or **Cancel** when switching studio tabs.
 
 ### Typical workflow (build mode)
 
 1. Run `levels/test.tscn`.
 2. Open the **Build** tab.
-3. **Terrain / Water:** pick source and tile; LMB paint, RMB erase.
-4. **Entities:** pick category and scene; LMB place; RMB erase; click to select; Delete removes selection.
-5. Click **Save** when the `*` dirty indicator appears.
+3. Pick a **tile layer** tab, then source and tile; LMB paint, RMB erase.
+4. **Entities:** pick category and scene; LMB place; click instance to select; drag to reposition; RMB erase; Delete removes selection.
+5. Click **Save** when the `*` dirty indicator appears (or save when prompted on tab switch).
 
 ### Key files
 
 | File | Role |
 |------|------|
 | `player/build/BuildPanel.gd` | Build dock UI and input |
+| `player/build/TileLayerCatalog.gd` | Discovers `TileMapLayer` nodes in the level |
 | `player/build/EntityPalette.gd` | Scene catalog |
-| `player/build/LevelSave.gd` | Persist level to disk |
+| `player/build/LevelSave.gd` | Persist level to disk; unsaved prompt |
 
 ---
 
@@ -179,7 +197,7 @@ Water rendering uses `levels/shaders/water.gdshader`.
 
 | Problem | Things to check |
 |---------|-----------------|
-| Build panel paints nothing | Level has `Terrain` / `Water` layers with matching names |
+| Build panel paints nothing | Select a tile layer tab; layer must be a `TileMapLayer` in the level |
 | Entity place fails | Level has an `Enemies` node; scene root is `Node2D` |
 | Save fails | Run from a saved level scene (`test.tscn`); `scene_file_path` must be set |
 | Pose markers missing | Skin/Animate tab; `is_posing` enabled |

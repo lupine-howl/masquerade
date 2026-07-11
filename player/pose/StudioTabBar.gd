@@ -4,6 +4,7 @@ extends HBoxContainer
 enum Tab { SKIN, ANIMATE, BUILD, PLAY }
 
 signal tab_changed(tab: Tab)
+signal tab_change_requested(tab: Tab)
 
 const TAB_LABELS: PackedStringArray = ["Skin", "Animate", "Build", "Play"]
 
@@ -24,13 +25,13 @@ func _ready() -> void:
 			btn.button_group = _button_group
 			btn.toggle_mode = true
 	if skin_btn:
-		skin_btn.pressed.connect(func(): _set_tab(Tab.SKIN))
+		skin_btn.pressed.connect(func(): request_tab(Tab.SKIN))
 	if animate_btn:
-		animate_btn.pressed.connect(func(): _set_tab(Tab.ANIMATE))
+		animate_btn.pressed.connect(func(): request_tab(Tab.ANIMATE))
 	if build_btn:
-		build_btn.pressed.connect(func(): _set_tab(Tab.BUILD))
+		build_btn.pressed.connect(func(): request_tab(Tab.BUILD))
 	if play_btn:
-		play_btn.pressed.connect(func(): _set_tab(Tab.PLAY))
+		play_btn.pressed.connect(func(): request_tab(Tab.PLAY))
 	_style_tabs()
 	_set_tab(Tab.PLAY, false)
 
@@ -41,6 +42,20 @@ func get_tab() -> Tab:
 
 func is_authoring_tab() -> bool:
 	return _tab == Tab.SKIN or _tab == Tab.ANIMATE
+
+
+func request_tab(tab: Tab) -> void:
+	if tab == _tab:
+		return
+	tab_change_requested.emit(tab)
+
+
+func apply_tab(tab: Tab) -> void:
+	_set_tab(tab, true)
+
+
+func sync_tab_buttons(tab: Tab) -> void:
+	_set_tab(tab, false)
 
 
 func _style_tabs() -> void:
