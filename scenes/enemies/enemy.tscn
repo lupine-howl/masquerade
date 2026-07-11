@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://bmn2n6uxcbgad"]
 
-[ext_resource type="Script" uid="uid://cr28irpvcophc" path="res://scenes/enemies/enemy.gd" id="1_s7bn3"]
+[ext_resource type="Script" uid="uid://cr28irpvcophc" path="res://scenes/enemies/BaseEnemy.gd" id="1_s7bn3"]
 [ext_resource type="PackedScene" uid="uid://bjiloil24uy5x" path="res://scenes/projectiles/projectile_launcher.tscn" id="3_e6d4v"]
 [ext_resource type="Texture2D" uid="uid://csig3m4aar2hl" path="res://assets/enemies/BlueBird/Flying (32x32).png" id="3_qp131"]
 [ext_resource type="PackedScene" uid="uid://drnpe03i7el81" path="res://scenes/projectiles/projectile.tscn" id="4_qp131"]

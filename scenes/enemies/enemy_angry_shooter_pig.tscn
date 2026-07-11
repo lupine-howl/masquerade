@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://dkxrooqsrhpsw"]
 
-[ext_resource type="Script" uid="uid://cr28irpvcophc" path="res://scenes/enemies/enemy.gd" id="1_smavn"]
+[ext_resource type="Script" uid="uid://cr28irpvcophc" path="res://scenes/enemies/BaseEnemy.gd" id="1_smavn"]
 [ext_resource type="PackedScene" uid="uid://bjiloil24uy5x" path="res://scenes/projectiles/projectile_launcher.tscn" id="3_dqfq1"]
 [ext_resource type="Texture2D" uid="uid://cq8q83qy66555" path="res://assets/enemies/AngryPig/Idle (36x30).png" id="3_my6st"]
 [ext_resource type="Texture2D" uid="uid://k8j7t2q4cl4a" path="res://assets/enemies/AngryPig/Run (36x30).png" id="4_mon12"]

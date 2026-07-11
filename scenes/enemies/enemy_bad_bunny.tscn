@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://ckokasb2disne"]
 
-[ext_resource type="Script" uid="uid://cr28irpvcophc" path="res://scenes/enemies/enemy.gd" id="1_18ut2"]
+[ext_resource type="Script" uid="uid://cr28irpvcophc" path="res://scenes/enemies/BaseEnemy.gd" id="1_18ut2"]
 [ext_resource type="PackedScene" uid="uid://bjiloil24uy5x" path="res://scenes/projectiles/projectile_launcher.tscn" id="3_35sp6"]
 [ext_resource type="SpriteFrames" uid="uid://cg7u0vi5pc8dd" path="res://resources/sprite_frames/sprite_frames_badbunny.tres" id="3_dk636"]
 [ext_resource type="PackedScene" uid="uid://drnpe03i7el81" path="res://scenes/projectiles/projectile.tscn" id="4_bdu8r"]

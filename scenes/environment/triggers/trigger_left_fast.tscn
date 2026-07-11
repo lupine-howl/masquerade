@@ -6,7 +6,7 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_pb8bj"]
 size = Vector2(32, 32)
 
-[node name="TriggerRightFast" type="Area2D" unique_id=152385359]
+[node name="TriggerLeftFast" type="Area2D" unique_id=152385359]
 script = ExtResource("1_nukq5")
 override_speed = 200.0
 arrow_direction = "Left"

@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://csnd8jaickqr"]
 
-[ext_resource type="Script" uid="uid://ca50r6xk6mbbp" path="res://scripts/shared/steerable_animatable_body_2d.gd" id="1_81sm8"]
+[ext_resource type="Script" uid="uid://ca50r6xk6mbbp" path="res://scripts/shared/SteerableAnimatableBody2D.gd" id="1_81sm8"]
 [ext_resource type="Texture2D" uid="uid://cghjb07womfds" path="res://assets/objects/Terrain (16x16).png" id="2_e2bi8"]
 [ext_resource type="Texture2D" uid="uid://85l0kmyjfdbl" path="res://assets/tilesets/tileset-clouds.png" id="3_ukxem"]
 

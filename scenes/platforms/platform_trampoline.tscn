@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://ngwvw64y05vv"]
 
-[ext_resource type="Script" uid="uid://ca50r6xk6mbbp" path="res://scripts/shared/steerable_animatable_body_2d.gd" id="1_45ikx"]
+[ext_resource type="Script" uid="uid://ca50r6xk6mbbp" path="res://scripts/shared/SteerableAnimatableBody2D.gd" id="1_45ikx"]
 [ext_resource type="Texture2D" uid="uid://be40e40eb2xyg" path="res://assets/items/Traps/Trampoline/Jump (28x28).png" id="2_4346d"]
 [ext_resource type="Texture2D" uid="uid://hf3ox8f8tws0" path="res://assets/items/Traps/Trampoline/Idle.png" id="4_6y5c2"]
 

@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://di63xb5g0t3sm"]
 
-[ext_resource type="Script" uid="uid://cr28irpvcophc" path="res://scenes/enemies/enemy.gd" id="1_a33on"]
+[ext_resource type="Script" uid="uid://cr28irpvcophc" path="res://scenes/enemies/BaseEnemy.gd" id="1_a33on"]
 [ext_resource type="SpriteFrames" uid="uid://dvttd1mdicwuh" path="res://resources/sprite_frames/sprite_frames_angrypig.tres" id="2_roewl"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_6d7gu"]
