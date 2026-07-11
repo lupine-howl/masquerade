@@ -24,13 +24,13 @@ func _ready() -> void:
 
 		var heading := Label.new()
 		heading.text = title
-		heading.add_theme_font_size_override("font_size", 10)
+		heading.add_theme_font_size_override("font_size", PoseTabStyles.PANEL_FONT_SIZE)
 		heading.add_theme_color_override("font_color", Color(0.75, 0.8, 0.9))
 		col.add_child(heading)
 
 		var body := Label.new()
 		body.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		body.add_theme_font_size_override("font_size", 10)
+		body.add_theme_font_size_override("font_size", PoseTabStyles.PANEL_FONT_SIZE)
 		body.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		col.add_child(body)
 		_section_labels.append(body)

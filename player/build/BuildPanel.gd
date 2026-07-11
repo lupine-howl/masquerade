@@ -15,10 +15,11 @@ const TILEMAPS: Array[Dictionary] = [
 ]
 
 const TILE_BUTTON_SIZE := 40
+const TILE_VISIBLE_ROWS := 4
 
 var _tab_strip: VBoxContainer
 var _source_row: HFlowContainer
-var _tile_flow: HFlowContainer
+var _tile_grid: GridContainer
 var _header_label: Label
 var _selected_label: Label
 
@@ -42,7 +43,7 @@ var _brush_visible: bool = false
 
 
 func _ready() -> void:
-	custom_minimum_size = Vector2(0, 108)
+	custom_minimum_size = Vector2.ZERO
 	_build_ui()
 	_populate_tilemap_tabs()
 	if not TILEMAPS.is_empty():
@@ -83,12 +84,12 @@ func _build_ui() -> void:
 	main_panel.add_child(main_col)
 
 	_header_label = Label.new()
-	_header_label.add_theme_font_size_override("font_size", 10)
+	_header_label.add_theme_font_size_override("font_size", PoseTabStyles.PANEL_FONT_SIZE)
 	_header_label.text = "Build"
 	main_col.add_child(_header_label)
 
 	var source_caption := Label.new()
-	source_caption.add_theme_font_size_override("font_size", 9)
+	source_caption.add_theme_font_size_override("font_size", PoseTabStyles.CAPTION_FONT_SIZE)
 	source_caption.add_theme_color_override("font_color", Color(0.7, 0.7, 0.75))
 	source_caption.text = "Tilesets"
 	main_col.add_child(source_caption)
@@ -107,7 +108,7 @@ func _build_ui() -> void:
 	source_scroll.add_child(_source_row)
 
 	var tiles_caption := Label.new()
-	tiles_caption.add_theme_font_size_override("font_size", 9)
+	tiles_caption.add_theme_font_size_override("font_size", PoseTabStyles.CAPTION_FONT_SIZE)
 	tiles_caption.add_theme_color_override("font_color", Color(0.7, 0.7, 0.75))
 	tiles_caption.text = "Tiles"
 	main_col.add_child(tiles_caption)
@@ -115,19 +116,19 @@ func _build_ui() -> void:
 	var tile_scroll := ScrollContainer.new()
 	tile_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	tile_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
-	tile_scroll.custom_minimum_size = Vector2(0, 56)
+	tile_scroll.custom_minimum_size = Vector2(0, TILE_VISIBLE_ROWS * (TILE_BUTTON_SIZE + 4))
 	tile_scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	tile_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	tile_scroll.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
 	main_col.add_child(tile_scroll)
 
-	_tile_flow = HFlowContainer.new()
-	_tile_flow.add_theme_constant_override("h_separation", 4)
-	_tile_flow.add_theme_constant_override("v_separation", 4)
-	_tile_flow.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	tile_scroll.add_child(_tile_flow)
+	_tile_grid = GridContainer.new()
+	_tile_grid.add_theme_constant_override("h_separation", 4)
+	_tile_grid.add_theme_constant_override("v_separation", 4)
+	_tile_grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	tile_scroll.add_child(_tile_grid)
 
 	_selected_label = Label.new()
-	_selected_label.add_theme_font_size_override("font_size", 9)
+	_selected_label.add_theme_font_size_override("font_size", PoseTabStyles.CAPTION_FONT_SIZE)
 	_selected_label.add_theme_color_override("font_color", Color(0.75, 0.85, 0.95))
 	_selected_label.text = "No tile selected"
 	main_col.add_child(_selected_label)
@@ -161,7 +162,7 @@ func _select_tilemap(index: int) -> void:
 func _populate_sources(tileset: TileSet) -> void:
 	_clear_children(_source_row)
 	_source_buttons.clear()
-	_clear_children(_tile_flow)
+	_clear_children(_tile_grid)
 	_tile_buttons.clear()
 	_selected_tile_button = null
 	_selected_label.text = "No tile selected"
@@ -169,7 +170,7 @@ func _populate_sources(tileset: TileSet) -> void:
 	if tileset == null:
 		var missing := Label.new()
 		missing.text = "(tileset not found)"
-		missing.add_theme_font_size_override("font_size", 9)
+		missing.add_theme_font_size_override("font_size", PoseTabStyles.CAPTION_FONT_SIZE)
 		_source_row.add_child(missing)
 		return
 
@@ -182,7 +183,7 @@ func _populate_sources(tileset: TileSet) -> void:
 		btn.text = full_label.trim_prefix("tileset-")
 		btn.tooltip_text = full_label
 		btn.focus_mode = Control.FOCUS_NONE
-		btn.add_theme_font_size_override("font_size", 9)
+		btn.add_theme_font_size_override("font_size", PoseTabStyles.CAPTION_FONT_SIZE)
 		btn.toggle_mode = true
 		btn.set_meta("source_id", source_id)
 		btn.pressed.connect(_select_source.bind(tileset, source_id))
@@ -204,7 +205,7 @@ func _select_source(tileset: TileSet, source_id: int) -> void:
 
 
 func _populate_tiles(source: TileSetSource, source_id: int) -> void:
-	_clear_children(_tile_flow)
+	_clear_children(_tile_grid)
 	_tile_buttons.clear()
 	_selected_tile_button = null
 
@@ -212,8 +213,8 @@ func _populate_tiles(source: TileSetSource, source_id: int) -> void:
 	if atlas == null:
 		var note := Label.new()
 		note.text = "Scene-collection tileset (no atlas preview)"
-		note.add_theme_font_size_override("font_size", 9)
-		_tile_flow.add_child(note)
+		note.add_theme_font_size_override("font_size", PoseTabStyles.CAPTION_FONT_SIZE)
+		_tile_grid.add_child(note)
 		return
 
 	for i in atlas.get_tiles_count():
@@ -226,14 +227,26 @@ func _populate_tiles(source: TileSetSource, source_id: int) -> void:
 		tex.region = region
 		var btn := _make_tile_button(tex)
 		btn.pressed.connect(_on_tile_pressed.bind(btn, source_id, coords))
-		_tile_flow.add_child(btn)
+		_tile_grid.add_child(btn)
 		_tile_buttons.append(btn)
+
+	_update_tile_grid_columns()
 
 	if _tile_buttons.is_empty():
 		var empty := Label.new()
 		empty.text = "(no tiles)"
-		empty.add_theme_font_size_override("font_size", 9)
-		_tile_flow.add_child(empty)
+		empty.add_theme_font_size_override("font_size", PoseTabStyles.CAPTION_FONT_SIZE)
+		_tile_grid.add_child(empty)
+
+
+func _update_tile_grid_columns() -> void:
+	if _tile_grid == null:
+		return
+	var count := _tile_buttons.size()
+	if count == 0:
+		_tile_grid.columns = 1
+		return
+	_tile_grid.columns = maxi(1, ceili(float(count) / float(TILE_VISIBLE_ROWS)))
 
 
 func _make_tile_button(tex: Texture2D) -> Button:

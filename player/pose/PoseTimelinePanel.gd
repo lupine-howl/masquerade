@@ -85,6 +85,7 @@ func _ready() -> void:
 	btn_reset.pressed.connect(_on_reset_pressed)
 	steps_spin.value_changed.connect(_on_steps_changed)
 	speed_spin.value_changed.connect(_on_speed_changed)
+	PoseTabStyles.bump_fonts_recursive(self, 1)
 
 func is_recording() -> bool:
 	return record_check.button_pressed

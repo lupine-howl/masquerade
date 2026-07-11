@@ -46,8 +46,9 @@ func is_authoring_tab() -> bool:
 func _style_tabs() -> void:
 	for btn in [skin_btn, animate_btn, build_btn, play_btn]:
 		if btn:
-			btn.custom_minimum_size = Vector2(64, 22)
+			btn.custom_minimum_size = Vector2(64, 24)
 			btn.focus_mode = Control.FOCUS_NONE
+			btn.add_theme_font_size_override("font_size", PoseTabStyles.PANEL_FONT_SIZE)
 
 
 func _set_tab(tab: Tab, emit_signal: bool = true) -> void:
