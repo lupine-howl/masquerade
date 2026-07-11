@@ -21,8 +21,8 @@ flowchart TB
   end
 
   subgraph levels [Levels]
-    Layers[Terrain / Hazards / Controls / Water TileMapLayers]
-    HazScript[hazards.gd layer]
+    Layers[Terrain / Water TileMapLayers]
+    Entities[Enemies container]
   end
 
   subgraph resources [Resources]
@@ -102,21 +102,18 @@ Levels are Godot 4 scenes using **TileMapLayer** nodes. The build panel expects 
 | Layer name | Tileset resource | Typical content |
 |------------|------------------|-----------------|
 | `Terrain` | `tileset_terrain.tres` | Ground, walls, scenery tiles (64×64 grid) |
-| `Hazards` | `tileset_enemies.tres` | Enemy/collectible/platform **palette tiles** (legacy spawn) |
-| `Controls` | `tileset_controls.tres` | Directional triggers, trampolines |
 | `Water` | `tileset_water.tres` | Water surface tiles |
+| `Enemies` | — | Placed entity scenes (enemies, platforms, collectibles, triggers) |
 
-`BuildPanel` resolves the active level’s layers at runtime via the scene tree; layer names must stay consistent for painting to work.
+`BuildPanel` paints `Terrain` and `Water` tile layers. The **Entities** tab places scene instances into `Enemies` with grid snapping against `Terrain`.
 
-## Tile pipeline (legacy spawn path)
+## Entity placement (current)
 
-**Status: deprecated** — see [LEGACY.md](LEGACY.md).
+1. `EntityPalette.gd` reads `spawn_scene` custom data from `tileset_enemies.tres` and `tileset_controls.tres` to build the palette UI.
+2. Authors pick a scene in the Entities tab; `BuildPanel` instantiates it under `Enemies` at a grid-snapped position.
+3. `LevelSave.gd` persists the level scene (tiles and instances) via **Save** in the build dock.
 
-1. `tileset_enemies.tres` defines a custom data layer `spawn_scene` (type `PackedScene`).
-2. Individual atlas tiles reference enemy, platform, collectible, or hazard scenes.
-3. On level load, `scenes/environment/hazards/hazards.gd` (attached to the Hazards `TileMapLayer`) reads each cell’s `spawn_scene`, instantiates the scene, erases the tile, and parents the instance under an `Enemies` container (or level root).
-
-This kept the Godot filesystem uncluttered for authors who only painted tiles. The in-game build editor is intended to replace this flow with **direct scene placement**.
+The old runtime converter (`hazards.gd`) has been **removed**.
 
 ## Enemy model
 

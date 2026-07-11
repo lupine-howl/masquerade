@@ -109,49 +109,39 @@ Do not expect the hidden `AnimSection` assistant — use the timeline instead.
 
 ## Level editor (BuildPanel)
 
-### Where builders work (target)
+### Where builders work
 
-**Primary surface:** the bottom-centre **build dock** — same shell as the timeline, swapped in build mode.
-
-Layout (horizontal):
+**Primary surface:** the bottom-centre **build dock** — visible on the **Build** tab.
 
 ```
-[ Terrain | Hazards | Controls | Water ] | [ atlas sources… ] | [ tile grid ] | selection info
+[ Terrain | Water | Entities ] | [ tilesets or category ] | [ grid ] | Save *
 ```
-
-**Current implementation:** `BuildPanel` lives in the bottom-centre `PoseTimelineDock`, visible in Build mode only.
 
 ### Concepts
 
-`BuildPanel` reads real project tilesets and paints into the **current level**’s tilemap layers. Four tabs map to four canonical layer names:
+| Tab | What it does |
+|-----|----------------|
+| **Terrain** | Paint `Terrain` layer from `tileset_terrain.tres` |
+| **Water** | Paint `Water` layer from `tileset_water.tres` |
+| **Entities** | Place scene instances into `Enemies`, snapped to the 64×64 grid |
 
-| Tab | Tileset | Layer node name |
-|-----|---------|-----------------|
-| Terrain | `resources/tilesets/tileset_terrain.tres` | `Terrain` |
-| Hazards | `resources/tilesets/tileset_enemies.tres` | `Hazards` |
-| Controls | `resources/tilesets/tileset_controls.tres` | `Controls` |
-| Water | `resources/tilesets/tileset_water.tres` | `Water` |
-
-`BuildPanel` resolves layers via `find_child(layer_name)` on the current scene. Many levels also have non-canonical layers (`Terrain2`, `DeepBackTerrain`, `Scenery`, etc.) — a layer picker is planned for those.
+Entity thumbnails come from `spawn_scene` metadata in tilesets (catalog only via `EntityPalette.gd`).
 
 ### Typical workflow (build mode)
 
-1. Load a level (`levels/01_green_village.tscn`, etc.).
-2. Switch to **Build** mode.
-3. Select a layer tab (e.g. Terrain).
-4. Pick a tileset source, then a tile from the grid.
-5. Left-click in the world to paint; right-click to erase. Movement remains enabled initially.
-6. Save the level — today requires Godot editor save; in-game save is planned.
+1. Run `levels/test.tscn`.
+2. Open the **Build** tab.
+3. **Terrain / Water:** pick source and tile; LMB paint, RMB erase.
+4. **Entities:** pick category and scene; LMB place; RMB erase; click to select; Delete removes selection.
+5. Click **Save** when the `*` dirty indicator appears.
 
-### Hazards tab and legacy spawning
+### Key files
 
-The Hazards tileset still includes **palette tiles** bound to `spawn_scene` (see [LEGACY.md](LEGACY.md)). Painting those tiles places a stand-in that becomes a real enemy/platform at runtime via `hazards.gd`.
-
-**Preferred direction:** place scenes from a future scene palette in the build dock instead of adding new spawn tiles.
-
-### Controls tab
-
-Tiles reference trigger scenes (`trigger_left_slow.tscn`, etc.) used for currents, trampolines, and wait/speed variants. Triggers use `direction_arrow.gd` logic with exported direction and speed.
+| File | Role |
+|------|------|
+| `player/build/BuildPanel.gd` | Build dock UI and input |
+| `player/build/EntityPalette.gd` | Scene catalog |
+| `player/build/LevelSave.gd` | Persist level to disk |
 
 ---
 
@@ -163,16 +153,11 @@ Tiles reference trigger scenes (`trigger_left_slow.tscn`, etc.) used for current
 2. Record clips via the **timeline** (bottom dock).
 3. Store animations under `player/animations/`.
 
-### New enemy (current)
+### New enemy or entity
 
-**Legacy path:** bind scene to tile in `tileset_enemies.tres` custom data — **discouraged**.
-
-**Preferred path:**
-
-1. Create or duplicate a scene under `scenes/enemies/` (extend `BaseEnemy.gd`).
-2. Assign `SpriteFrames` from `resources/sprite_frames/` or new art.
-3. Instance the scene in the level under an `Enemies` (or equivalent) container.
-4. Register in build scene palette when that UI exists.
+1. Create or duplicate a scene under `scenes/enemies/`, `scenes/platforms/`, etc.
+2. To appear in the build palette, add a `spawn_scene` binding on an atlas tile in `tileset_enemies.tres` or `tileset_controls.tres` (catalog metadata for `EntityPalette.gd` — do not paint these tiles onto layers).
+3. Or place instances manually under `Enemies` in the level scene.
 
 ### New terrain / props
 
@@ -184,12 +169,7 @@ Add atlas sources to `tileset_terrain.tres` or place decorative scenes under `sc
 
 | Level | File | Notes |
 |-------|------|-------|
-| Test hub | `levels/test.tscn` | Main scene; links to other levels |
-| Green Village | `levels/01_green_village.tscn` | Overworld-style |
-| Desert | `levels/02_desert_wilderness.tscn` | |
-| Ocean | `levels/03_ocean.tscn` | Water shader, currents; many terrain layers |
-| Evil Lab | `levels/04_evil_lab.tscn` | |
-| Sky | `levels/05_sky.tscn` | |
+| Test | `levels/test.tscn` | Main scene; studio authoring pilot |
 
 Water rendering uses `levels/shaders/water.gdshader`.
 
@@ -199,13 +179,12 @@ Water rendering uses `levels/shaders/water.gdshader`.
 
 | Problem | Things to check |
 |---------|-----------------|
-| Build panel paints nothing | Active level has a layer named exactly `Terrain` / `Hazards` / `Controls` / `Water` (layer picker coming for other names) |
-| Hazards tiles spawn nothing | `hazards.gd` on Hazards/Controls layer; `Enemies` node present; tile has `spawn_scene` set |
-| Pose markers missing | Pose mode enabled (`is_posing`); `PoseController` children instanced |
-| Timeline tools missing | Use bottom dock — not the hidden `AnimSection` |
-| Tileset shows broken scene slot | Open `tileset_*.tres` in Godot; reassign scene after path refactor |
+| Build panel paints nothing | Level has `Terrain` / `Water` layers with matching names |
+| Entity place fails | Level has an `Enemies` node; scene root is `Node2D` |
+| Save fails | Run from a saved level scene (`test.tscn`); `scene_file_path` must be set |
+| Pose markers missing | Skin/Animate tab; `is_posing` enabled |
+| Entity not in palette | Add `spawn_scene` binding in tileset for catalog entry |
 | Enemy scale looks wrong | Known 16px art vs 64px tiles — see [LEGACY.md](LEGACY.md) |
-| Movement frozen on load | Old default — use Play button in toolbar (tri-mode defaults to Play) |
 
 ---
 

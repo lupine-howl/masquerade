@@ -11,37 +11,25 @@ Use this document to decide whether to patch, migrate, or replace code paths.
 | **Deprecated** | Still works; do not add new usages; removal planned |
 | **Legacy** | Active in shipped levels; needs migration before removal |
 | **Transitional** | Being replaced; avoid large new features on top |
+| **Removed** | No longer in the project |
 
 ---
 
-## Tile-painted scene spawning (Deprecated)
+## Tile-painted scene spawning (Removed)
 
-### What it is
+### What it was
 
-Hazard layer tiles can carry a `PackedScene` in custom data (`spawn_scene`). At runtime, `hazards.gd` converts those tiles into live scene instances and erases the tile.
+Hazard layer tiles carried a `PackedScene` in custom data (`spawn_scene`). At runtime, `hazards.gd` converted those tiles into scene instances and erased the tile.
 
-### Where it lives
+### Replacement (current)
 
-| Piece | Path |
-|-------|------|
-| Runtime converter | `scenes/environment/hazards/hazards.gd` |
-| Tileset + bindings | `resources/tilesets/tileset_enemies.tres` |
-| Custom data layer | `spawn_scene` (type 24 / `PackedScene`) |
-
-### Why it existed
-
-Authors could add enemies, platforms, and collectibles by **painting tiles** on the Hazards layer instead of managing dozens of scene files in the filesystem. The palette tile is a stand-in; the real scene spawns at load time.
-
-### Replacement direction
-
-Use the **in-game build editor** (`BuildPanel`) to place scenes directly (or a dedicated scene palette). New entities should appear in the build UI, not as new `spawn_scene` tile bindings.
+Use the **Entities** tab in `BuildPanel` to place scene instances directly into the level's `Enemies` node. Thumbnails are still sourced from `spawn_scene` bindings in tilesets via `EntityPalette.gd` — that metadata is **palette catalog only**, not painted onto tile layers.
 
 ### Agent / contributor rules
 
-- **Do not** add new `custom_data_0` scene bindings to `tileset_enemies.tres` for new content.
-- **Do not** extend `hazards.gd` with new spawn types unless fixing a blocking bug.
-- **OK** to fix broken scene paths on existing tiles during migration work.
-- When removing: migrate levels to instanced scenes or build-mode placement, then delete `_convert_tiles_to_scenes()`.
+- **Do not** reintroduce runtime tile-to-scene conversion.
+- **OK** to add new `spawn_scene` bindings on atlas tiles **for palette thumbnails** (Entities tab catalog).
+- **Do not** paint `tileset_enemies.tres` or `tileset_controls.tres` tiles onto level `TileMapLayer` nodes for entity placement.
 
 ---
 
@@ -57,7 +45,7 @@ Environment tiles are predominantly **64×64**. The player rig exceeds **256×25
 
 ### Replacement direction
 
-Rescale art (or source new art), update `CollisionShape2D` / `SpriteFrames`, and retune `BaseEnemy` exports. See [ROADMAP.md](../ROADMAP.md) phase 3.
+Rescale art (or source new art), update `CollisionShape2D` / `SpriteFrames`, and retune `BaseEnemy` exports. See [ROADMAP.md](../ROADMAP.md) phase 7.
 
 ### Agent / contributor rules
 
@@ -80,7 +68,7 @@ Extract a shared **character controller** module (movement, jumps, damage, optio
 - Script-driven NPCs
 - Selected enemies
 
-See [ROADMAP.md](../ROADMAP.md) phase 4.
+See [ROADMAP.md](../ROADMAP.md) phase 8.
 
 ### Agent / contributor rules
 
@@ -124,21 +112,8 @@ Phases 0–6 moved `Assets/` → `assets/`, `Levels/` → `levels/`, organized `
 
 ---
 
-## Migration checklist (spawn pipeline removal)
-
-When executing deprecation:
-
-- [ ] Inventory all `spawn_scene` tiles in `tileset_enemies.tres`
-- [ ] For each level, list Hazards-layer cells that still depend on conversion
-- [ ] Place equivalent instances under level containers (`Enemies`, etc.)
-- [ ] Remove converter script from Hazards layer or gate behind feature flag
-- [ ] Strip unused custom data layer from tileset
-- [ ] Update [STUDIO.md](STUDIO.md) authoring instructions
-
----
-
 ## Related documents
 
-- [ARCHITECTURE.md](ARCHITECTURE.md) — How spawn pipeline fits the level model
+- [ARCHITECTURE.md](ARCHITECTURE.md) — How entity placement fits the level model
 - [ROADMAP.md](../ROADMAP.md) — When deprecations are scheduled
 - [agents/AGENTS.md](agents/AGENTS.md) — Hard constraints for automation

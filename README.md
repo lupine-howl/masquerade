@@ -14,7 +14,7 @@ Much of the codebase is **transitional**. Older platform-game patterns (tile-pai
 1. Open the project in Godot 4.6.
 2. Main scene: `levels/test.tscn` (configured in `project.godot`).
 3. Press Play to enter the test level with the full player and studio UI.
-4. Sample levels live under `levels/` (`01_green_village.tscn` through `05_sky.tscn`).
+4. The sole sample level is `levels/test.tscn`.
 
 On first open, allow Godot to import assets and regenerate the `.godot/` cache.
 

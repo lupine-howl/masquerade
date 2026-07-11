@@ -1,0 +1,28 @@
+class_name LevelSave
+extends RefCounted
+
+## Tracks unsaved level edits and persists the current scene to disk.
+
+static var dirty: bool = false
+
+
+static func mark_dirty() -> void:
+	dirty = true
+
+
+static func clear_dirty() -> void:
+	dirty = false
+
+
+static func save_level(tree: SceneTree) -> Dictionary:
+	var scene := tree.current_scene
+	if scene == null:
+		return {"ok": false, "error": "No active level"}
+	var path := scene.scene_file_path
+	if path.is_empty():
+		return {"ok": false, "error": "Level has no save path (scene_file_path is empty)"}
+	var err := ResourceSaver.save(scene, path)
+	if err != OK:
+		return {"ok": false, "error": "Save failed: %s" % error_string(err)}
+	dirty = false
+	return {"ok": true, "path": path}
