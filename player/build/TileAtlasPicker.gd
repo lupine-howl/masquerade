@@ -3,7 +3,7 @@ extends Control
 
 ## Contiguous atlas tile picker with rectangular drag selection (Godot editor style).
 
-signal selection_changed(pattern: TileMapPattern, source_id: int, selection_rect: Rect2i)
+signal selection_changed(stamps: Array[Dictionary], source_id: int, selection_rect: Rect2i)
 
 const VISIBLE_ATLAS_ROWS := 3
 const ROW_VIEW_HEIGHT := 44
@@ -34,12 +34,10 @@ func get_selection_rect() -> Rect2i:
 	return _selection
 
 
-func build_pattern() -> TileMapPattern:
+func build_stamps() -> Array[Dictionary]:
+	var stamps: Array[Dictionary] = []
 	if _atlas == null or not _has_selection:
-		return null
-	var pattern := TileMapPattern.new()
-	pattern.set_size(_selection.size)
-	var placed := 0
+		return stamps
 	var used_origins: Dictionary = {}
 	for y in _selection.size.y:
 		for x in _selection.size.x:
@@ -50,9 +48,13 @@ func build_pattern() -> TileMapPattern:
 			if used_origins.has(origin):
 				continue
 			used_origins[origin] = true
-			pattern.set_cell(Vector2i(x, y), _source_id, origin)
-			placed += 1
-	return pattern if placed > 0 else null
+			stamps.append({
+				"rel": Vector2i(x, y),
+				"source_id": _source_id,
+				"atlas_coords": origin,
+				"alternative": 0,
+			})
+	return stamps
 
 
 func _ready() -> void:
@@ -151,12 +153,18 @@ func _set_selection_rect(from: Vector2i, to: Vector2i) -> void:
 
 func _emit_selection() -> void:
 	_normalize_single_tile_selection()
-	var pattern := build_pattern()
-	if pattern == null:
+	var stamps := build_stamps()
+	if stamps.is_empty():
 		_has_selection = false
+		BuildPaintDebug.log("atlas selection empty after release rect=%s" % _selection)
 		queue_redraw()
 		return
-	selection_changed.emit(pattern, _source_id, _selection)
+	BuildPaintDebug.log(
+		"atlas selected %dx%d at %s with %d stamp(s)" % [
+			_selection.size.x, _selection.size.y, _selection.position, stamps.size()
+		]
+	)
+	selection_changed.emit(stamps, _source_id, _selection)
 
 
 func _normalize_single_tile_selection() -> void:
