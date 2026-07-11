@@ -21,6 +21,8 @@
 [ext_resource type="Script" uid="uid://k0kq4vlcd64f" path="res://player/pose/PosePartPanel.gd" id="11_part"]
 [ext_resource type="Script" uid="uid://caq1o7vjefuky" path="res://player/pose/PoseTimelineDock.gd" id="11_timedock"]
 [ext_resource type="Script" uid="uid://ptpbj4ebn1b0" path="res://player/pose/PoseTimelinePanel.gd" id="11_timeline"]
+[ext_resource type="Script" path="res://player/pose/PlayStatsPanel.gd" id="11_playstats"]
+[ext_resource type="Script" path="res://player/pose/StudioTabBar.gd" id="11_stab"]
 [ext_resource type="Script" uid="uid://c23x0uci37vw3" path="res://player/pose/PoseToolBar.gd" id="11_toolbar"]
 [ext_resource type="Animation" uid="uid://dwo2hvuwd4r57" path="res://player/animations/RESET.res" id="17_2uvqg"]
 [ext_resource type="Animation" uid="uid://didsa17bf61ia" path="res://player/animations/idle.res" id="17_r7pn3"]
@@ -923,6 +925,7 @@ script = ExtResource("2_rptt4")
 anim_player = NodePath("../../PlayerBody/PlayerAnimator")
 
 [node name="PoseToolBar" type="PanelContainer" parent="PoseHUD" unique_id=2012058644]
+visible = false
 offset_right = 40.0
 offset_bottom = 116.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_mmwog")
@@ -1374,19 +1377,6 @@ ok_button_text = "Open"
 file_mode = 0
 filters = PackedStringArray("*.png, *.jpg, *.jpeg, *.webp")
 
-[node name="SectionSep" type="HSeparator" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox" unique_id=519141311]
-layout_mode = 2
-mouse_filter = 2
-
-[node name="BuildPanel" type="PanelContainer" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox" unique_id=519141400]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(280, 260)
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_p5tca")
-script = ExtResource("11_build")
-
 [node name="AnimSection" type="HBoxContainer" parent="PoseHUD/PoseDockRow/PoseDock/DockVBox" unique_id=519141307]
 visible = false
 layout_mode = 2
@@ -1569,15 +1559,12 @@ theme_override_font_sizes/font_size = 11
 text = "⇆ All"
 
 [node name="PoseTimelineDock" type="PanelContainer" parent="PoseHUD" unique_id=339532122]
-visible = false
-anchors_preset = 7
-anchor_left = 0.5
+anchors_preset = 12
 anchor_top = 1.0
-anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -322.5
-offset_top = -84.0
-offset_right = 322.5
+offset_left = 12.0
+offset_top = -108.0
+offset_right = -12.0
 grow_horizontal = 2
 grow_vertical = 0
 theme_override_styles/panel = SubResource("StyleBoxFlat_8pxes")
@@ -1595,8 +1582,48 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
+[node name="StudioTabBar" type="HBoxContainer" parent="PoseHUD/PoseTimelineDock/MarginContainer/StudioBottomVBox" unique_id=29801083]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 2
+script = ExtResource("11_stab")
+
+[node name="SkinTabBtn" type="Button" parent="PoseHUD/PoseTimelineDock/MarginContainer/StudioBottomVBox/StudioTabBar" unique_id=29801084]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 0
+theme_override_font_sizes/font_size = 10
+toggle_mode = true
+text = "Skin"
+
+[node name="AnimateTabBtn" type="Button" parent="PoseHUD/PoseTimelineDock/MarginContainer/StudioBottomVBox/StudioTabBar" unique_id=29801085]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 0
+theme_override_font_sizes/font_size = 10
+toggle_mode = true
+text = "Animate"
+
+[node name="BuildTabBtn" type="Button" parent="PoseHUD/PoseTimelineDock/MarginContainer/StudioBottomVBox/StudioTabBar" unique_id=29801086]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 0
+theme_override_font_sizes/font_size = 10
+toggle_mode = true
+text = "Build"
+
+[node name="PlayTabBtn" type="Button" parent="PoseHUD/PoseTimelineDock/MarginContainer/StudioBottomVBox/StudioTabBar" unique_id=29801087]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 0
+theme_override_font_sizes/font_size = 10
+toggle_mode = true
+button_pressed = true
+text = "Play"
+
 [node name="PoseTimelinePanel" type="VBoxContainer" parent="PoseHUD/PoseTimelineDock/MarginContainer/StudioBottomVBox" unique_id=339532123]
 unique_name_in_owner = true
+visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 6
@@ -1609,6 +1636,13 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource("11_build")
+
+[node name="PlayStatsPanel" type="PanelContainer" parent="PoseHUD/PoseTimelineDock/MarginContainer/StudioBottomVBox" unique_id=29801088]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("11_playstats")
 
 [node name="ControlsCenter" type="CenterContainer" parent="PoseHUD/PoseTimelineDock/MarginContainer/StudioBottomVBox/PoseTimelinePanel" unique_id=1337660024]
 layout_mode = 2
@@ -1850,6 +1884,7 @@ theme_override_font_sizes/font_size = 10
 text = "⇆ All"
 
 [node name="DebugHUD" type="CanvasLayer" parent="." unique_id=730528789]
+visible = false
 offset = Vector2(1130, 0)
 transform = Transform2D(1, 0, 0, 1, 1130, 0)
 script = ExtResource("28_rptt4")

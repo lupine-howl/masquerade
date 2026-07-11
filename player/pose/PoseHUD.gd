@@ -3,28 +3,33 @@ extends CanvasLayer
 
 signal playback_started
 
-const DOCK_POSE_HEIGHT := 84.0
-const DOCK_BUILD_HEIGHT := 196.0
-const DOCK_POSE_HALF_WIDTH := 322.5
-const DOCK_BUILD_HALF_WIDTH := 460.0
+const DOCK_MARGIN_H := 12.0
+const DOCK_HEIGHT_PLAY := 108.0
+const DOCK_HEIGHT_SKIN := 200.0
+const DOCK_HEIGHT_ANIMATE := 84.0
+const DOCK_HEIGHT_BUILD := 128.0
 
 @export var pose_controller: PoseController
 @export var timeline: TimelineManager
 
+@onready var studio_vbox: VBoxContainer = $PoseTimelineDock/MarginContainer/StudioBottomVBox
+@onready var studio_tab_bar: StudioTabBar = $PoseTimelineDock/MarginContainer/StudioBottomVBox/StudioTabBar
 @onready var part_panel: PosePartPanel = $PoseDockRow/PoseDock/DockVBox/PosePartPanel
 @onready var anim_browser: PoseAnimBrowser = $PoseDockRow/PoseDock/DockVBox/AnimSection/PoseAnimBrowser
 @onready var timeline_panel: PoseTimelinePanel = $PoseTimelineDock/MarginContainer/StudioBottomVBox/PoseTimelinePanel
 @onready var build_panel: BuildPanel = $PoseTimelineDock/MarginContainer/StudioBottomVBox/BuildPanel
+@onready var play_stats_panel: PlayStatsPanel = $PoseTimelineDock/MarginContainer/StudioBottomVBox/PlayStatsPanel
 @onready var timeline_dock: PanelContainer = $PoseTimelineDock
 @onready var pose_dock_row: Control = $PoseDockRow
 @onready var assistant_panel: PoseAssistantPanel = $PoseDockRow/PoseDock/DockVBox/AnimSection/AnimMainColumn/MarginContainer2/PoseAssistantPanel
-@onready var toolbar: PoseToolBar = $PoseToolBar
-@onready var mode_bar: PoseModeBar = $PoseToolBar/ToolVBox/PoseModeBar
 
 var _last_sync_anim: String = ""
 var _last_sync_grid_len: float = -1.0
 
+
 func _ready() -> void:
+	_hide_legacy_panels()
+	_reparent_part_panel()
 	_setup_panels()
 	_wire_signals()
 
@@ -38,7 +43,29 @@ func _ready() -> void:
 		_on_animation_changed(anim_browser.get_current_animation())
 		timeline.stop()
 
-	call_deferred("_apply_studio_mode", mode_bar.get_mode() if mode_bar else PoseModeBar.Mode.PLAY)
+	call_deferred("_apply_studio_tab", studio_tab_bar.get_tab() if studio_tab_bar else StudioTabBar.Tab.PLAY)
+
+
+func _hide_legacy_panels() -> void:
+	if pose_dock_row:
+		pose_dock_row.visible = false
+	var toolbar := get_node_or_null("PoseToolBar")
+	if toolbar:
+		toolbar.visible = false
+	var debug_hud := get_parent().get_node_or_null("DebugHUD")
+	if debug_hud:
+		debug_hud.visible = false
+
+
+func _reparent_part_panel() -> void:
+	if not part_panel or not studio_vbox or not studio_tab_bar:
+		return
+	part_panel.reparent(studio_vbox)
+	studio_vbox.move_child(part_panel, studio_tab_bar.get_index() + 1)
+	part_panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	part_panel.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	part_panel.visible = false
+
 
 func _setup_panels() -> void:
 	if not part_panel:
@@ -94,6 +121,7 @@ func _setup_panels() -> void:
 			timeline_panel.tl_btn_swap_all
 		)
 
+
 func _wire_signals() -> void:
 	anim_browser.animation_changed.connect(_on_animation_changed)
 	anim_browser.duration_changed.connect(_on_duration_changed)
@@ -106,20 +134,22 @@ func _wire_signals() -> void:
 	timeline_panel.animation_selected.connect(_on_timeline_anim_selected)
 	timeline_panel.key_all_pressed.connect(func(): key_all_markers())
 
-	mode_bar.mode_changed.connect(_on_studio_mode_changed)
+	if studio_tab_bar:
+		studio_tab_bar.tab_changed.connect(_on_studio_tab_changed)
 
 	if assistant_panel:
 		assistant_panel.animation_created.connect(_on_animation_changed)
 		assistant_panel.player_drive_toggled.connect(_on_player_drive_toggled)
 
+
 func get_current_animation() -> String:
 	return anim_browser.get_current_animation() if anim_browser else ""
 
-func get_studio_mode() -> PoseModeBar.Mode:
-	return mode_bar.get_mode() if mode_bar else PoseModeBar.Mode.PLAY
+func get_studio_tab() -> StudioTabBar.Tab:
+	return studio_tab_bar.get_tab() if studio_tab_bar else StudioTabBar.Tab.PLAY
 
 func is_posing() -> bool:
-	return mode_bar.is_posing() if mode_bar else false
+	return studio_tab_bar.is_authoring_tab() if studio_tab_bar else false
 
 func is_auto_recording() -> bool:
 	return timeline_panel.is_recording() if timeline_panel else false
@@ -189,10 +219,13 @@ func reapply_current_step() -> void:
 	on_step_navigated()
 
 func _process(_delta: float) -> void:
-	if not timeline or not timeline.anim_player:
-		return
+	var tab := get_studio_tab()
+	var player := pose_controller.player if pose_controller else null
 
-	if not is_posing():
+	if tab == StudioTabBar.Tab.PLAY and play_stats_panel and player:
+		play_stats_panel.update_from_player(player)
+
+	if not is_posing() or not timeline or not timeline.anim_player:
 		return
 
 	var primary := pose_controller.get_primary_marker() if pose_controller else null
@@ -215,7 +248,7 @@ func _process(_delta: float) -> void:
 
 		timeline_panel.sync_playback_step(true)
 
-	if part_panel:
+	if part_panel and tab == StudioTabBar.Tab.SKIN:
 		part_panel.update_live_readouts(primary)
 
 func _on_active_marker_changed(_primary_marker: PoseMarker) -> void:
@@ -277,8 +310,8 @@ func _on_duration_changed(duration: float) -> void:
 func _on_step_interacted(_step: int) -> void:
 	on_step_navigated()
 
-func _on_studio_mode_changed(mode: PoseModeBar.Mode) -> void:
-	_apply_studio_mode(mode)
+func _on_studio_tab_changed(tab: StudioTabBar.Tab) -> void:
+	_apply_studio_tab(tab)
 
 func _on_timeline_anim_selected(anim_name: String) -> void:
 	if anim_browser:
@@ -290,9 +323,9 @@ func _refresh_anim_selector(select_name: String = "") -> void:
 	var current := select_name if select_name != "" else anim_browser.get_current_animation()
 	timeline_panel.populate_anim_selector(anim_browser.get_animation_names(), current)
 
-func _apply_studio_mode(mode: PoseModeBar.Mode) -> void:
-	var posing := mode == PoseModeBar.Mode.POSE
-	var building := mode == PoseModeBar.Mode.BUILD
+func _apply_studio_tab(tab: StudioTabBar.Tab) -> void:
+	var posing := tab == StudioTabBar.Tab.SKIN or tab == StudioTabBar.Tab.ANIMATE
+	var building := tab == StudioTabBar.Tab.BUILD
 
 	if pose_controller and pose_controller.player:
 		pose_controller.player.is_posing = posing
@@ -306,20 +339,20 @@ func _apply_studio_mode(mode: PoseModeBar.Mode) -> void:
 		build_panel.paint_enabled = building
 
 	if timeline_dock:
-		timeline_dock.visible = posing or building
-	if timeline_panel:
-		timeline_panel.visible = posing
-	if build_panel:
-		build_panel.visible = building
+		timeline_dock.visible = true
 
-	_apply_bottom_dock_size(mode)
-
-	if pose_dock_row:
-		pose_dock_row.visible = posing
 	if part_panel:
-		part_panel.visible = posing
+		part_panel.visible = tab == StudioTabBar.Tab.SKIN
+	if timeline_panel:
+		timeline_panel.visible = tab == StudioTabBar.Tab.ANIMATE
+	if build_panel:
+		build_panel.visible = tab == StudioTabBar.Tab.BUILD
+	if play_stats_panel:
+		play_stats_panel.visible = tab == StudioTabBar.Tab.PLAY
 
-	if posing and timeline and timeline.anim_player:
+	_apply_bottom_dock_size(tab)
+
+	if tab == StudioTabBar.Tab.ANIMATE and timeline and timeline.anim_player:
 		var playing_anim := String(timeline.anim_player.current_animation)
 		if playing_anim != "":
 			anim_browser.sync_display_to_animation(playing_anim)
@@ -331,11 +364,21 @@ func _apply_studio_mode(mode: PoseModeBar.Mode) -> void:
 
 	_sync_path_guide_authoring()
 
-func _apply_bottom_dock_size(mode: PoseModeBar.Mode) -> void:
+func _apply_bottom_dock_size(tab: StudioTabBar.Tab) -> void:
 	if not timeline_dock:
 		return
-	var half_width := DOCK_BUILD_HALF_WIDTH if mode == PoseModeBar.Mode.BUILD else DOCK_POSE_HALF_WIDTH
-	var height := DOCK_BUILD_HEIGHT if mode == PoseModeBar.Mode.BUILD else DOCK_POSE_HEIGHT
-	timeline_dock.offset_left = -half_width
-	timeline_dock.offset_right = half_width
+	var height := DOCK_HEIGHT_PLAY
+	match tab:
+		StudioTabBar.Tab.SKIN:
+			height = DOCK_HEIGHT_SKIN
+		StudioTabBar.Tab.ANIMATE:
+			height = DOCK_HEIGHT_ANIMATE
+		StudioTabBar.Tab.BUILD:
+			height = DOCK_HEIGHT_BUILD
+		StudioTabBar.Tab.PLAY:
+			height = DOCK_HEIGHT_PLAY
+	timeline_dock.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
+	timeline_dock.offset_left = DOCK_MARGIN_H
+	timeline_dock.offset_right = -DOCK_MARGIN_H
 	timeline_dock.offset_top = -height
+	timeline_dock.offset_bottom = 0.0
