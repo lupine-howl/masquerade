@@ -45,7 +45,7 @@ Environment tiles are predominantly **64×64**. The player rig exceeds **256×25
 
 ### Replacement direction
 
-Rescale art (or source new art), update `CollisionShape2D` / `SpriteFrames`, and retune `BaseEnemy` exports. See [ROADMAP.md](../ROADMAP.md) phase 7.
+Rescale art (or source new art), update `CollisionShape2D` / `SpriteFrames`, and retune exports during **M3 (controllers)** and **M6 (combat)**. See [ROADMAP.md](../ROADMAP.md).
 
 ### Agent / contributor rules
 
@@ -62,13 +62,13 @@ Rescale art (or source new art), update `CollisionShape2D` / `SpriteFrames`, and
 
 ### Replacement direction
 
-Extract a shared **character controller** module (movement, jumps, damage, optional AI driver) consumed by:
+Extract a shared **character controller** module (movement, jumps, damage, optional AI driver) as part of **M3 — Controllers & character assembly**:
 
-- Local multiplayer players
-- Script-driven NPCs
-- Selected enemies
+- Player characters via `PlayerController`
+- Enemies via `EnemyController`
+- Script-driven NPCs (later)
 
-See [ROADMAP.md](../ROADMAP.md) phase 8.
+See [ROADMAP.md](../ROADMAP.md) milestone M3.
 
 ### Agent / contributor rules
 
@@ -85,12 +85,31 @@ See [ROADMAP.md](../ROADMAP.md) phase 8.
 
 ### Replacement direction
 
-A studio-oriented **session / project** model (save authorship data, level edits, character definitions) will likely supersede or wrap this. Gameplay state may split from editor state.
+A **project model** (M0) will hold authorship data: levels, characters, skins, audio, game rules. Runtime gameplay state (money, keys, HP in a play session) will live in a session layer, not mixed with editor state.
+
+See [ROADMAP.md](../ROADMAP.md) milestones M0 and M5.
 
 ### Agent / contributor rules
 
 - OK to fix respawn/checkpoint bugs.
 - Avoid coupling build-panel or pose-studio data into `GameManager` without a design pass.
+
+---
+
+## PoseModeBar / left toolbar (Deprecated)
+
+### What it is
+
+`PoseModeBar` (Play / Pose / Build) in the hidden left `PoseToolBar` was the original tri-mode switcher.
+
+### Replacement (current)
+
+**`StudioTabBar`** — Skin / Animate / Build / Play — in the bottom dock. Orchestration in `PoseHUD._apply_studio_tab`.
+
+### Agent / contributor rules
+
+- **Do not** extend `PoseModeBar` or `PoseToolBar` for new features.
+- Hook tab and mode changes through `StudioTabBar` and `PoseHUD`.
 
 ---
 
@@ -108,12 +127,12 @@ When editing triggers, align:
 
 ## Folder refactor history
 
-Phases 0–6 moved `Assets/` → `assets/`, `Levels/` → `levels/`, organized `scenes/`, and normalized naming. If you find `res://Assets/` or PascalCase scene paths in old branches, they are stale — see [CONVENTIONS.md](CONVENTIONS.md).
+Phases 0–6 of the original refactor moved `Assets/` → `assets/`, `Levels/` → `levels/`, organized `scenes/`, and normalized naming. If you find `res://Assets/` or PascalCase scene paths in old branches, they are stale — see [CONVENTIONS.md](CONVENTIONS.md).
 
 ---
 
 ## Related documents
 
 - [ARCHITECTURE.md](ARCHITECTURE.md) — How entity placement fits the level model
-- [ROADMAP.md](../ROADMAP.md) — When deprecations are scheduled
+- [ROADMAP.md](../ROADMAP.md) — Milestones and migration timing
 - [agents/AGENTS.md](agents/AGENTS.md) — Hard constraints for automation

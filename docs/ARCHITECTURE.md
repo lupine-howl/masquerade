@@ -1,8 +1,55 @@
 # Architecture
 
-High-level map of Masquerade as it exists today. The project is mid-transition from a single platform game to an in-game creation studio; legacy paths are called out explicitly.
+High-level map of Masquerade: what exists today and where the product is going. See [ROADMAP.md](../ROADMAP.md) for milestones M0–M10.
 
-## System overview
+---
+
+## Target architecture
+
+```mermaid
+flowchart TB
+  subgraph project [Project - planned M0]
+    Home[Home / library browser]
+    Rules[Game rules]
+    Levels[Levels]
+    Chars[Characters]
+    Skins[Skins]
+    Audio[Audio refs]
+  end
+
+  subgraph studio [Studio UI]
+    Tabs[StudioTabBar]
+    SkinUI[Skin / parts]
+    AnimUI[Animate / timeline]
+    BuildUI[Build panel]
+    AudioUI[Audio panel - M8]
+    AsmUI[Character assembler - M3]
+  end
+
+  subgraph runtime [Runtime]
+    GM[Session / GameManager]
+    Controllers[Player + Enemy controllers]
+    Combat[Combat system - M6]
+    Loop[Collect / shop / keys - M5]
+    Boss[Boss framework - M9]
+  end
+
+  Home --> Tabs
+  Tabs --> SkinUI --> Skins
+  Tabs --> AnimUI --> Chars
+  Tabs --> BuildUI --> Levels
+  Tabs --> AudioUI --> Audio
+  AsmUI --> Chars
+  Chars --> Controllers
+  Levels --> Loop
+  Controllers --> Combat
+  Combat --> Boss
+  Loop --> GM
+```
+
+---
+
+## Current system overview
 
 ```mermaid
 flowchart TB
@@ -10,172 +57,200 @@ flowchart TB
     GM[GameManager]
   end
 
-  subgraph player_stack [Player]
+  subgraph player_stack [Player scene]
     Player[Player.gd]
     SM[PlayerStateMachine]
-    States[Movement States]
-    Pose[PoseController / PoseHUD]
+    States[Movement states]
+    HUD[PoseHUD / StudioTabBar]
+    Pose[PoseController]
     Timeline[TimelineManager]
     Build[BuildPanel]
     Ragdoll[RagdollManager]
   end
 
   subgraph levels [Levels]
-    Layers[Terrain / Water TileMapLayers]
+    Layers[TileMapLayers]
     Entities[Enemies container]
   end
 
   subgraph resources [Resources]
-    TS_T[tileset_terrain.tres]
-    TS_E[tileset_enemies.tres]
-    TS_C[tileset_controls.tres]
-    TS_W[tileset_water.tres]
+    TS_T[tileset_terrain]
+    TS_E[tileset_enemies - catalog]
+    TS_C[tileset_controls - catalog]
+    TS_W[tileset_water]
   end
 
   subgraph scenes_lib [Scene library]
-    Enemies[scenes/enemies/*]
-    Platforms[scenes/platforms/*]
-    Collectibles[scenes/collectibles/*]
+    Enemies[scenes/enemies]
+    Platforms[scenes/platforms]
+    Collectibles[scenes/collectibles]
+    Hazards[scenes/hazards]
   end
 
   GM --> Player
   Player --> SM --> States
-  Player --> Pose --> Timeline
-  Player --> Build
+  HUD --> Pose --> Timeline
+  HUD --> Build
   Player --> Ragdoll
-  Build --> TS_T
-  Build --> TS_E
-  Build --> TS_C
-  Build --> TS_W
-  HazScript -->|"spawn_scene custom data"| scenes_lib
-  TS_E --> Enemies
-  TS_E --> Platforms
-  TS_E --> Collectibles
-  Layers --> HazScript
+  Build --> Layers
+  Build --> Entities
+  EntityPalette --> TS_E
+  EntityPalette --> TS_C
+  EntityPalette --> scenes_lib
 ```
+
+---
 
 ## Domain map
 
 | Domain | Location | Responsibility |
 |--------|----------|----------------|
-| Player body & input | `player/Player.gd` | Movement, combat hooks, water physics, mode flags (`is_posing`, debug) |
-| Movement FSM | `player/states/` | `PlayerStateMachine` + states (ground, air, dash, ladder, wall, hang, dead, …) |
-| Character studio | `player/pose/`, `player/PoseMarker.tscn` | Pose markers, timeline UI, animation authoring |
-| Timeline | `player/components/TimelineManager.gd` | Step-based animation recording and playback |
-| Ragdoll assist | `player/ragdoll/` | `RagdollManager`, `SyncedBone2D`, body slots for pose alignment |
-| Level build UI | `player/build/BuildPanel.gd` | In-game tile painting against project tilesets |
-| Levels | `levels/*.tscn` | Playable worlds; embed tilemap layers and scene instances |
-| Entity library | `scenes/` | Enemies, hazards, collectibles, platforms, interactables, UI |
-| Shared tilesets | `resources/tilesets/` | Terrain, enemies palette, environmental triggers, water |
-| Sprite libraries | `resources/sprite_frames/` | Enemy animation frames (e.g. AngryPig, BadBunny) |
-| Art | `assets/` | Textures, tile sheets, third-party character packs |
-| Global game state | `scripts/autoload/game_manager.gd` | Score, keys, HP, checkpoints, respawn |
+| Player body & input | `player/Player.gd` | Movement, basic combat, `is_posing`, water physics |
+| Movement FSM | `player/states/` | `PlayerStateMachine` + states |
+| Studio shell | `player/pose/PoseHUD.gd` | Tab orchestration, input routing |
+| Studio tabs | `player/pose/StudioTabBar.gd` | Skin / Animate / Build / Play |
+| Character studio | `player/pose/`, `PoseMarker.tscn` | Markers, skin editing, animation |
+| Timeline | `player/components/TimelineManager.gd` | Step-based animation |
+| Level build | `player/build/BuildPanel.gd` | Tile paint, entity place, save |
+| Level authoring gates | `player/build/LevelAuthoring.gd` | Entity sim on/off by tab |
+| Levels | `levels/*.tscn` | Tile layers + placed instances |
+| Entity library | `scenes/` | Enemies, hazards, collectibles, platforms |
+| Tilesets | `resources/tilesets/` | Terrain, water, palette catalog metadata |
+| Global gameplay state | `scripts/autoload/GameManager.gd` | HP, keys, points, checkpoints |
+| Project model | — | **Planned M0** |
+| Character library | — | **Planned M1** |
+| Skin documents | — | **Planned M2** |
+| Controllers / assembler | — | **Planned M3** |
+| Collision layer | — | **Planned M4** |
+| Shop / money | — | **Planned M5** |
+| Combat v2 | — | **Planned M6** |
+| Audio panel | — | **Planned M8** |
+| Boss framework | — | **Planned M9** |
 
-## Player stack
+---
 
-The player scene (`player/player.tscn`) composes several cooperating systems:
+## Player stack (current)
 
-1. **`Player` (`class_name Player`)** — `CharacterBody2D` root; reads input, delegates to state machine; `is_posing` freezes movement in pose mode.
-2. **`PlayerStateMachine`** — Holds current `PlayerState`; states extend `PlayerState` and receive the `Player` reference.
-3. **`PoseHUD` / `PoseController`** — Studio UI shell and marker manipulation logic.
-4. **`TimelineManager`** — Drives `AnimationPlayer` for stepped pose animations; keys marker properties.
-5. **`PoseTimelinePanel`** — Primary animator workspace (bottom-centre dock): playback, step grid, ragdoll toggles, export.
-6. **`PosePartPanel`** — Advanced per-marker inspector (right dock); hideable.
-7. **`BuildPanel`** — `@tool` panel in the bottom-centre dock (build mode); loads tilesets and paints onto level layers.
-8. **`RagdollManager`** — Optional physics-aligned skeleton helpers for pose authoring.
+`player/player.tscn` composes:
 
-### Studio UI layout
+1. **`Player`** — `CharacterBody2D`; input, state machine, `is_posing`, basic `attack_area`
+2. **`PlayerStateMachine`** — Ground, air, dash, ladder, wall, hang, dead, …
+3. **`PoseHUD` / `PoseController`** — Studio UI and marker manipulation
+4. **`StudioTabBar`** — Four tabs; drives dock visibility and `paint_enabled`
+5. **`TimelineManager` / `PoseTimelinePanel`** — Animate tab workspace
+6. **`PosePartPanel`** — Skin tab workspace (reparented into bottom dock area)
+7. **`BuildPanel`** — Build tab; tile + entity authoring
+8. **`PlayStatsPanel`** — Play tab minimal UI
+9. **`RagdollManager`** — Optional pose-alignment helpers
 
-| Zone | Nodes | Mode visibility |
-|------|-------|--------------------------|
-| Left toolbar | `PoseToolBar`, `PoseModeBar` | Play / Pose / Build switcher |
-| Bottom centre | `PoseTimelineDock` | Pose → timeline; Build → `BuildPanel`; Play → hidden |
-| Right side | `PoseDockRow`, `PosePartPanel` | Pose → advanced config; Build/Play → hidden |
-| Dormant | `AnimSection`, `PoseAssistantPanel` | Hidden; features live on timeline |
+Tab orchestration: `PoseHUD._apply_studio_tab` (replaces legacy `_apply_studio_mode` / `PoseModeBar`).
 
-Tri-mode orchestration lives in `PoseHUD._apply_studio_mode` ([ROADMAP.md](../ROADMAP.md) phases 2–3).
+### Studio UI layout (current)
 
-## Level model
+| Zone | Nodes | Visibility |
+|------|-------|------------|
+| Bottom tabs | `StudioTabBar` | Always (in dock) |
+| Bottom dock | `PoseTimelinePanel`, `BuildPanel`, `PlayStatsPanel`, `PosePartPanel` | Per tab |
+| Legacy toolbar | `PoseToolBar`, `PoseModeBar` | Hidden |
+| Dormant | `AnimSection`, `PoseAssistantPanel` | Hidden |
 
-Levels are Godot 4 scenes using **TileMapLayer** nodes. The build panel expects layers whose **node names** match this contract:
+---
 
-| Layer name | Tileset resource | Typical content |
-|------------|------------------|-----------------|
-| `Terrain` | `tileset_terrain.tres` | Ground, walls, scenery tiles (64×64 grid) |
-| `Water` | `tileset_water.tres` | Water surface tiles |
-| `Enemies` | — | Placed entity scenes (enemies, platforms, collectibles, triggers) |
+## Level model (current)
 
-`BuildPanel` paints `Terrain` and `Water` tile layers. The **Entities** tab places scene instances into `Enemies` with grid snapping against `Terrain`.
+Levels are Godot 4 scenes with **TileMapLayer** nodes and an **Enemies** container.
+
+| Layer / node | Typical content |
+|--------------|-----------------|
+| `Terrain` | Ground, scenery (64×64) |
+| `Water` | Water tiles |
+| `TerrainBackground` / `TerrainForeground` | Parallax-style layers |
+| `Enemies` | Placed entity scenes (not a tile layer) |
+
+`BuildPanel` discovers layers via `TileLayerCatalog.gd`. Entities tab places into `Enemies` with grid snap.
+
+### Level model (planned M4)
+
+| Layer | Role |
+|-------|------|
+| `Collision` | Shape tiles for physics only; **hidden on Play** |
+| Art layers | Visual tiles only; no gameplay collision requirement |
+
+---
 
 ## Entity placement (current)
 
-1. `EntityPalette.gd` reads `spawn_scene` custom data from `tileset_enemies.tres` and `tileset_controls.tres` to build the palette UI.
-2. Authors pick a scene in the Entities tab; `BuildPanel` instantiates it under `Enemies` at a grid-snapped position.
-3. `LevelSave.gd` persists the level scene (tiles and instances) via **Save** in the build dock.
+1. `EntityPalette.gd` reads `spawn_scene` from tilesets → palette thumbnails only
+2. `BuildPanel` instantiates scenes under `Enemies`
+3. `LevelSave.gd` persists level via Save button
 
-The old runtime converter (`hazards.gd`) has been **removed**.
+Runtime tile-to-scene conversion (`hazards.gd`) is **removed**.
 
-## Enemy model
+**Planned M3:** Place **character** assets (skin + controller) instead of raw enemy scenes.
 
-- **`BaseEnemy` (`scenes/enemies/BaseEnemy.gd`)** — `class_name` base for `CharacterBody2D` enemies; flight modes, HP, projectiles via `ProjectileLauncher`.
-- **Variant scenes** — `enemy_bat.tscn`, `enemy_slime.tscn`, etc. extend or configure `BaseEnemy` with different `SpriteFrames` and exports.
-- **Art** — Mostly 16×16–44×30 pixel pack sprites under `assets/enemies/`; collision and speeds assume a smaller scale than current terrain (see scale note below).
+---
 
-Enemies do **not** yet share the player’s state machine; convergence is planned ([ROADMAP.md](../ROADMAP.md) phase 4).
+## Gameplay (current vs planned)
 
-## Collectibles, hazards, platforms
+| System | Current | Planned |
+|--------|---------|---------|
+| HP / respawn | `GameManager` | Per-project rules (M5) |
+| Keys | Collect → `GameManager.keys` | Gate exits / next level (M5) |
+| Points | `GameManager.points` | **Money** currency + shop (M5) |
+| Combat | Basic melee `attack_area` | Hitboxes, i-frames, telegraphs (M6) |
+| Collectables | coin, key, heart, checkpoint | Expanded library (M5, M7) |
+| Bosses | — | Phased boss controllers (M9) |
+| Audio | Scene-local players | Studio audio panel (M8) |
 
-Organized under `scenes/` by category:
+---
 
-- `collectibles/` — coin, key, heart, checkpoint
-- `hazards/` — spikes, ladders
-- `platforms/` — moving clouds, trampolines, propeller platforms
-- `interactables/` — doors, exits
-- `environment/` — atmosphere, wind, force arrows, direction triggers
-- `projectiles/` — `Projectile`, `ProjectileLauncher`
+## Enemy model (current)
+
+- **`BaseEnemy`** — `CharacterBody2D` base; flight modes, HP, projectiles
+- **Variants** — bat, slime, pig, etc. with `SpriteFrames`
+- **Scale debt** — 16px-era art vs 64px terrain (harmonize in M3/M6)
+
+Enemies do **not** share the player FSM. **M3** introduces controller abstraction to converge behaviour.
+
+---
 
 ## Autoloads and groups
 
-| Name | Type | Role |
-|------|------|------|
-| `GameManager` | autoload (`scripts/autoload/game_manager.gd`) | Points, keys, HP, checkpoint position, respawn signal |
-| `player` | global group | Identifies the controllable character |
-| `ladders` | global group | Ladder climb detection |
+| Name | Role |
+|------|------|
+| `GameManager` | HP, keys, points, checkpoint, respawn |
+| `player` (group) | Controllable character |
+| `ladders` (group) | Ladder climb detection |
 
-`GameManager` is registered by UID in `project.godot`; path changes are safe if the `.uid` sidecar moves with the script.
+**M0/M5:** Split editor/project state from runtime session state.
+
+---
 
 ## Physics and rendering
 
 - **2D engine:** Rapier2D (`addons/godot-rapier2d`)
-- **Gravity:** 4096 (project setting)
+- **Gravity:** 4096
 - **Viewport:** 1600×900 default
 
-## Known scale mismatch (technical debt)
-
-| Asset class | Typical size | Notes |
-|-------------|--------------|-------|
-| Environment tiles | 64×64 | `tileset_terrain.tres`, modern level art |
-| Player character | 256×256+ | Rigged sprite body in `player/player.tscn` |
-| Legacy enemies | 16×16–48×48 | `BaseEnemy` collision and speeds tuned for old grid |
-
-Harmonizing these is a dedicated roadmap phase; new work should not assume 16px tiles for world scale.
+---
 
 ## Extension points
 
-Where new features should land:
-
 | Feature | Prefer |
 |---------|--------|
-| New build tool UI | Extend `BuildPanel` or sibling under `player/build/`; place in bottom-centre dock |
-| New frequent animator tool | Add to `PoseTimelinePanel` (not dormant `AnimSection`) |
-| New advanced marker option | Extend `PosePartPanel` (right dock) |
-| New pose tool | Extend `player/pose/` components |
-| New enemy behavior | `BaseEnemy` subclass or exported config on variant scenes |
-| New global game rule | `GameManager` or future session singleton (TBD) |
-| New placed entity | `scenes/<category>/` + build palette entry (not new tile spawn bindings) |
+| New build tool | `player/build/`; bottom dock |
+| New animator tool | `PoseTimelinePanel` (not `AnimSection`) |
+| New skin/part option | `PosePartPanel`; later parts library (M2) |
+| New placed entity | `scenes/<category>/` + palette entry |
+| New character behaviour | Controller module (M3) |
+| New game rule | Project rules resource (M5), not raw `GameManager` hacks |
+| New audio assignment | Audio panel (M8) |
+
+---
 
 ## Related documents
 
 - [STUDIO.md](STUDIO.md) — Author-facing workflows
-- [LEGACY.md](LEGACY.md) — What not to extend
-- [CONVENTIONS.md](CONVENTIONS.md) — File naming and refactor rules
+- [ROADMAP.md](../ROADMAP.md) — Milestones
+- [LEGACY.md](LEGACY.md) — Deprecated patterns
+- [CONVENTIONS.md](CONVENTIONS.md) — Naming and refactors
