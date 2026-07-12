@@ -1,8 +1,8 @@
 # Masquerade
 
-Masquerade is a Godot 4.6 2D project evolving from a platform game into a **general-purpose game creation studio**. The current focus is on building characters and levels inside the running game: a pose and animation workflow for varied character rigs, plus a prototype in-game tileset editor for world building.
+Masquerade is a Godot 4.6 **2D game creation tool** for building credible platform games and **teaching game design**. Users browse character libraries, skin and animate rigs, assemble characters from behaviour controllers, build levels, and play full gameplay loops — inside the running app.
 
-Much of the codebase is **transitional**. Older platform-game patterns (tile-painted enemy spawning, 16×16 enemy art, a monolithic player controller) coexist with newer studio systems. See [docs/LEGACY.md](docs/LEGACY.md) before changing hazards, tilesets, or the player stack.
+The codebase is **transitional**: a platform-game prototype coexists with studio systems (pose editor, build panel). See [docs/LEGACY.md](docs/LEGACY.md) before changing hazards, tilesets, or the player stack.
 
 ## Requirements
 
@@ -13,8 +13,8 @@ Much of the codebase is **transitional**. Older platform-game patterns (tile-pai
 
 1. Open the project in Godot 4.6.
 2. Main scene: `levels/test.tscn` (configured in `project.godot`).
-3. Press Play to enter the test level with the full player and studio UI.
-4. The sole sample level is `levels/test.tscn`.
+3. Press Play to enter the test level with the studio UI.
+4. Use bottom tabs: **Skin**, **Animate**, **Build**, **Play**.
 
 On first open, allow Godot to import assets and regenerate the `.godot/` cache.
 
@@ -22,11 +22,11 @@ On first open, allow Godot to import assets and regenerate the `.godot/` cache.
 
 | Path | Purpose |
 |------|---------|
-| `player/` | Playable character, movement states, pose/animation studio, ragdoll, build panel |
-| `scenes/` | Reusable gameplay scenes (enemies, collectibles, hazards, platforms, UI, etc.) |
+| `player/` | Character, movement states, pose/animation studio, build panel |
+| `scenes/` | Enemies, collectibles, hazards, platforms, interactables, UI |
 | `levels/` | Level `.tscn` files and shaders |
-| `resources/` | Shared `TileSet` and `SpriteFrames` resources |
-| `assets/` | Art and audio (tilesets, characters, enemies, props, items) |
+| `resources/` | TileSets, SpriteFrames |
+| `assets/` | Art and audio |
 | `scripts/` | Autoloads and shared scripts |
 | `addons/` | Third-party plugins (Rapier2D) |
 
@@ -34,11 +34,11 @@ On first open, allow Godot to import assets and regenerate the `.godot/` cache.
 
 | Document | Audience | Contents |
 |----------|----------|----------|
-| [ROADMAP.md](ROADMAP.md) | Everyone | Vision, phased roadmap, implementation order |
-| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Developers | System map, studio UI zones, data flow |
-| [docs/STUDIO.md](docs/STUDIO.md) | Tool users | Play/Pose/Build modes, timeline vs build dock |
+| [ROADMAP.md](ROADMAP.md) | Everyone | Vision, milestones M0–M10, teaching MVP |
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Developers | Current + target system map |
+| [docs/STUDIO.md](docs/STUDIO.md) | Tool users | Studio tabs, workflows today and planned |
 | [docs/CONVENTIONS.md](docs/CONVENTIONS.md) | Developers & agents | Naming, folders, refactors |
-| [docs/LEGACY.md](docs/LEGACY.md) | Developers & agents | Deprecated patterns and migrations |
+| [docs/LEGACY.md](docs/LEGACY.md) | Developers & agents | Deprecated patterns |
 | [docs/agents/AGENTS.md](docs/agents/AGENTS.md) | Coding agents | Constraints and key paths |
 
 ## License
