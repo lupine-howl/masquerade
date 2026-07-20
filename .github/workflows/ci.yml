@@ -16,10 +16,10 @@ env:
   GODOT_BINARY: Godot_v4.6.3-stable_linux.x86_64
 
 jobs:
-  smoke:
-    name: Godot smoke
+  godot:
+    name: Godot import, smoke & tests
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
 
     steps:
       - name: Checkout
@@ -43,6 +43,11 @@ jobs:
       - name: Add Godot to PATH
         run: echo "$HOME/.local/share/godot" >> "$GITHUB_PATH"
 
+      - name: Install xvfb
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq xvfb
+
       - name: Verify Godot version
         run: ${GODOT_BINARY} --version
 
@@ -60,17 +65,14 @@ jobs:
         run: |
           set -o pipefail
           chmod +x ./addons/gdUnit4/runtest.sh
-          # GdUnit4 needs a display server for some engine ops; xvfb provides one on CI.
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq xvfb
           export GODOT_BIN="$HOME/.local/share/godot/${GODOT_BINARY}"
           xvfb-run --auto-servernum ./addons/gdUnit4/runtest.sh -a res://test 2>&1 | tee gdunit.log
 
-      - name: Upload Godot logs on failure
+      - name: Upload logs on failure
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: godot-logs
+          name: godot-ci-logs
           path: |
             import.log
             smoke.log

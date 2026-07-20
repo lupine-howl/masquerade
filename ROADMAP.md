@@ -58,6 +58,7 @@ Foundation already shipped; new milestones extend and connect these pieces.
 | Studio tabs (Skin / Animate / Build / Play) | **Done** | `StudioTabBar`, `PoseHUD._apply_studio_tab` |
 | Skin & animation studio | **Done** | `PoseMarker`, `PoseTimelinePanel`, `TimelineManager` |
 | Level build (tiles, entities, save) | **Done** | `BuildPanel`, `LevelSave`, `EntityPalette` |
+| CI & automated tests | **Done** | `.github/workflows/ci.yml`, `test/` (GdUnit4) |
 | Gameplay skeleton | **Partial** | `GameManager` (HP, keys, points), basic melee attack |
 | Collectables | **Partial** | coin, key, heart, checkpoint under `scenes/collectibles/` |
 | Enemies & hazards | **Partial** | `BaseEnemy`, hazard/platform scenes; 16px-scale art |

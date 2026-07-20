@@ -94,4 +94,4 @@ When moving or renaming assets:
 - [ARCHITECTURE.md](ARCHITECTURE.md) — System structure
 - [LEGACY.md](LEGACY.md) — Deprecated patterns
 - [DEVELOPMENT.md](DEVELOPMENT.md) — Local setup and PR workflow
-- [TESTING.md](TESTING.md) — Automated testing (planned)
+- [TESTING.md](TESTING.md) — Automated testing and CI

@@ -2,7 +2,7 @@
 
 How to set up Masquerade locally, validate changes, and open a pull request.
 
-For architecture and conventions, see [ARCHITECTURE.md](ARCHITECTURE.md) and [CONVENTIONS.md](CONVENTIONS.md). For automated testing (planned), see [TESTING.md](TESTING.md).
+For architecture and conventions, see [ARCHITECTURE.md](ARCHITECTURE.md) and [CONVENTIONS.md](CONVENTIONS.md). For automated testing and CI, see [TESTING.md](TESTING.md).
 
 ---
 
@@ -91,14 +91,19 @@ Before opening a PR, run through the areas your change touches:
 3. **Match conventions** — PascalCase `class_name` files, lowercase top-level folders — see [CONVENTIONS.md](CONVENTIONS.md).
 4. **Run manual validation** for affected areas (above).
 5. **Include test steps** in the PR description when behaviour is user-visible.
-6. **Run automated tests** when you have Godot locally:
+6. **Run automated tests** before push when you have Godot locally:
 
 ```bash
 export GODOT_BIN=/path/to/Godot_v4.6.3-stable_linux.x86_64
 ./addons/gdUnit4/runtest.sh -a res://test
 ```
 
-See [TESTING.md](TESTING.md) for details. CI also runs import, smoke, and GdUnit4 on every PR.
+7. **Add or update tests** when changing testable logic in:
+   - `player/build/` (save, palette, layer catalog, build panel state)
+   - `scripts/autoload/` (`GameManager`)
+   - Studio tab orchestration (`PoseHUD`, `LevelAuthoring`, `StudioTabBar`)
+
+CI runs import, smoke, and GdUnit4 on every PR (job: **Godot import, smoke & tests**). Do not merge on a red build. Full policy: [TESTING.md](TESTING.md).
 
 ---
 
@@ -132,5 +137,5 @@ Do **not** extend hidden `PoseModeBar` / `PoseToolBar`.
 ## Related documents
 
 - [STUDIO.md](STUDIO.md) — Author-facing tool workflows
-- [TESTING.md](TESTING.md) — Automated testing (planned)
+- [TESTING.md](TESTING.md) — Automated testing and CI
 - [agents/AGENTS.md](agents/AGENTS.md) — Rules for coding agents

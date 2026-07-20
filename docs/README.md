@@ -21,7 +21,7 @@ Masquerade documentation by audience and topic.
 | [ARCHITECTURE.md](ARCHITECTURE.md) | Current and target system map |
 | [CONVENTIONS.md](CONVENTIONS.md) | Naming, folders, refactor rules |
 | [LEGACY.md](LEGACY.md) | Deprecated patterns — read before tile/player work |
-| [TESTING.md](TESTING.md) | Automated testing and CI (planned) |
+| [TESTING.md](TESTING.md) | Automated testing and CI |
 
 ---
 
@@ -50,5 +50,5 @@ Masquerade documentation by audience and topic.
 |------|--------|
 | Product vision & roadmap | Current (July 2026 rewrite) |
 | Architecture & studio workflows | Current |
-| Development & testing guides | Development current; **GdUnit4 harness + CI smoke/tests active** |
+| Development & testing guides | **Current** — DEVELOPMENT + TESTING; GdUnit4 + CI active |
 | M0 project model / home screen | Documented as planned, not built |
