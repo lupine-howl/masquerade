@@ -100,19 +100,38 @@ Tab orchestration: `PoseHUD._apply_studio_tab` via `StudioTabBar`.
 
 | Sub-tab | What it does |
 |---------|----------------|
-| **Tile layers** | One tab per `TileMapLayer` in the level. Atlas picker (Godot-style drag selection). LMB paint, RMB erase. |
-| **Entities** | Place scene instances into `Enemies`, snapped to 64×64 grid |
+| **Tile layers** | One tab per `TileMapLayer` in the level. Atlas picker (Godot-style drag selection). LMB paint, RMB erase. Drag on atlas to select a block; brush size matches selection. |
+| **Entities** | Place scene instances into `Enemies`, snapped to 64×64 grid. Category filters: All, Enemies, Platforms, Collectibles, Hazards, Triggers. |
 
 Layer tabs are discovered automatically (e.g. `Terrain`, `Water`, `TerrainForeground`).
+
+**Entity workflow:**
+
+1. Open **Entities** sub-tab and pick a category (optional).
+2. Click a scene thumbnail to select it.
+3. **LMB** in the viewport to place; click an existing entity to select it.
+4. **Drag** a selected entity to reposition (grid-snapped).
+5. **Delete** or **Backspace** removes the selected entity.
+6. **RMB** erases the entity under the cursor.
+
+**Tab behaviour (Build vs Play):**
+
+- On **Build**, **Skin**, and **Animate**: placed entities are **frozen** (no AI/movement); navigation markers are **visible** for authoring.
+- On **Play**: entities run normally; navigation markers are hidden.
+- Switching **Build** ↔ **Play** does **not** prompt to save — use **Save** when the `*` dirty indicator appears.
+
+Orchestration: `LevelAuthoring.apply_studio_tab` (called from `PoseHUD._apply_studio_tab`).
 
 **Typical workflow:**
 
 1. Open **Build** tab
 2. Paint tiles on a layer; place entities from palette
-3. Switch to **Play** to test (no save prompt between tabs)
+3. Switch to **Play** to test
 4. Click **Save** when the `*` dirty indicator appears
 
-**Key files:** `BuildPanel.gd`, `TileAtlasPicker.gd`, `TileLayerCatalog.gd`, `EntityPalette.gd`, `LevelSave.gd`
+**Key files:** `BuildPanel.gd`, `TileAtlasPicker.gd`, `TileLayerCatalog.gd`, `EntityPalette.gd`, `LevelSave.gd`, `LevelAuthoring.gd`
+
+**Dev diagnostics:** `BuildPaintDebug.gd` traces paint/input routing when enabled (off by default).
 
 **Planned (M4):** Dedicated **Collision** layer (shape tiles, hidden on Play). Art and map fully separated.
 
@@ -141,10 +160,11 @@ Layer tabs are discovered automatically (e.g. `Terrain`, `Water`, `TerrainForegr
 | **Ctrl + drag** | Pan camera | Pan camera | Pan camera | Pan camera |
 | **Ctrl + scroll** | Zoom | Zoom | Zoom | Zoom |
 | **Space** | Jump | — | — | Jump |
-| **LMB drag (atlas)** | Select tiles | — | — | — |
-| **LMB** | Paint / place entity | Select markers | — | Gameplay |
+| **LMB drag (atlas)** | Select tile block | — | — | — |
+| **LMB** | Paint tile / place or select entity | Select markers | — | Gameplay |
+| **LMB drag (viewport)** | Drag selected entity | — | — | — |
 | **RMB** | Erase tile / entity | — | — | — |
-| **Delete** | Remove selected entity | — | — | — |
+| **Delete / Backspace** | Remove selected entity | — | — | — |
 | **Ctrl + click** | — (camera pan) | Add/remove marker from selection | — | — |
 
 Build tools are disabled while **Ctrl** is held (camera pan).
@@ -221,7 +241,8 @@ Add atlas sources to `tileset_terrain.tres`. Keep 64×64 grid alignment where po
 | Pose markers missing | **Skin** or **Animate** tab; `is_posing` enabled |
 | Entity not in palette | Add `spawn_scene` catalog binding in tileset |
 | Enemy scale looks wrong | Legacy 16px art vs 64px tiles — see [LEGACY.md](LEGACY.md) |
-| Tab switch stuck on Build | Ensure latest `PoseHUD` tab commit is merged |
+| Entities move on Build tab | Expected: frozen until **Play** — see `LevelAuthoring.gd` |
+| Atlas selection paints through panel | Input over bottom dock is suppressed; paint only in viewport |
 
 ---
 
@@ -230,3 +251,4 @@ Add atlas sources to `tileset_terrain.tres`. Keep 64×64 grid alignment where po
 - [ROADMAP.md](../ROADMAP.md) — Milestones M0–M10
 - [ARCHITECTURE.md](ARCHITECTURE.md) — Technical structure
 - [LEGACY.md](LEGACY.md) — Deprecated authoring paths
+- [DEVELOPMENT.md](DEVELOPMENT.md) — Local setup and validation checklist

@@ -81,7 +81,7 @@ See [ROADMAP.md](../ROADMAP.md) milestone M3.
 
 ### What it is
 
-`scripts/autoload/game_manager.gd` holds score, keys, HP, and checkpoint position for the platform game loop.
+`scripts/autoload/GameManager.gd` holds score, keys, HP, and checkpoint position for the platform game loop.
 
 ### Replacement direction
 

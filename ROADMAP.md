@@ -70,6 +70,7 @@ Foundation already shipped; new milestones extend and connect these pieces.
 | Audio panel | **Not started** | — |
 | Boss system | **Not started** | — |
 | Project / home screen | **Not started** | — |
+| M0 doc reset | **Done** | Roadmap, ARCHITECTURE, STUDIO, LEGACY, DEVELOPMENT |
 
 ---
 
@@ -79,14 +80,16 @@ Foundation already shipped; new milestones extend and connect these pieces.
 
 **Goal:** One coherent product direction and a place to open work.
 
-| Deliverable | Detail |
-|-------------|--------|
-| Roadmap & docs | This document; updated `STUDIO.md`, `ARCHITECTURE.md` |
-| **Project model** (planned) | A project holds levels, characters, skins, audio refs, game rules |
-| **Home screen** (planned) | Open recent project or start from template |
-| **Data layout** (planned) | e.g. `projects/<name>/characters/`, `levels/`, `audio/` |
+| Deliverable | Status | Detail |
+|-------------|--------|--------|
+| Roadmap & docs | **Done** | This document; `STUDIO.md`, `ARCHITECTURE.md`, `LEGACY.md`, `DEVELOPMENT.md` |
+| **Project model** | Planned | A project holds levels, characters, skins, audio refs, game rules |
+| **Home screen** | Planned | Open recent project or start from template |
+| **Data layout** | Planned | e.g. `projects/<name>/characters/`, `levels/`, `audio/` |
 
-**Acceptance:** Docs reflect new direction; engineering tasks reference milestones (M0–M10).
+**Acceptance (docs):** Docs reflect new direction; engineering tasks reference milestones (M0–M10).
+
+**Acceptance (full M0):** Above plus project open/save and home screen.
 
 **Builds on:** `levels/test.tscn`, `LevelSave.gd`
 

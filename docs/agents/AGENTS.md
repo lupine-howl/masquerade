@@ -49,7 +49,7 @@ Short rules for automated coding agents (Cursor Cloud, CI bots, etc.) working on
 | Level build | `player/build/BuildPanel.gd`, `EntityPalette.gd`, `LevelSave.gd` |
 | Tilesets | `resources/tilesets/` |
 | Enemy base | `scenes/enemies/BaseEnemy.gd` |
-| Autoload | `scripts/autoload/game_manager.gd` (UID in `project.godot`) |
+| Autoload | `scripts/autoload/GameManager.gd` (UID in `project.godot`) |
 | Levels | `levels/test.tscn` — `TileMapLayer` nodes + `Enemies` container |
 
 ## Common tasks
@@ -92,9 +92,11 @@ Prefer new scene under `scenes/enemies/` extending `BaseEnemy`. Long-term: wire 
 
 ## Branch naming
 
-Feature branches: `cursor/<descriptive-name>-9a6c`
+Feature branches: `cursor/<descriptive-name>-7112`
 
 ## Related
 
 - [ROADMAP.md](../../ROADMAP.md) — priorities
 - [STUDIO.md](../STUDIO.md) — user-facing tool behavior
+- [DEVELOPMENT.md](../DEVELOPMENT.md) — local setup and PR checklist
+- [TESTING.md](../TESTING.md) — automated testing (planned)

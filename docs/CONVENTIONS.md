@@ -31,12 +31,18 @@ tools/      # Optional dev utilities
 |------|------------|---------|
 | Script with `class_name` | **PascalCase** filename matching the class | `BuildPanel.gd`, `BaseEnemy.gd`, `SyncedBone2D.gd` |
 | Scene hosting a `class_name` script | **PascalCase** when it is the class’s primary scene | `PoseMarker.tscn` |
-| Scripts without `class_name` | **snake_case** | `direction_arrow.gd`, `game_manager.gd` |
+| Scripts without `class_name` | **snake_case** | `direction_arrow.gd`, `coin.gd` |
 | Generic scenes | **snake_case** | `enemy_bat.tscn`, `moving_cloud_platform.tscn` |
 | Resources | **snake_case** | `tileset_terrain.tres`, `sprite_frames_angrypig.tres` |
-| Level scenes | **snake_case** with numeric prefix | `01_green_village.tscn` |
+| Level scenes | **snake_case** | `test.tscn` (current); numbered prefix (e.g. `01_green_village.tscn`) planned for M0 project levels |
 
 `class_name` identifiers remain **PascalCase** in source. Godot global class filenames should match the class name exactly (including `2D` suffix: `SteerableAnimatableBody2D.gd`).
+
+### Exceptions
+
+| File | Convention | Notes |
+|------|------------|-------|
+| `scripts/autoload/GameManager.gd` | PascalCase, no `class_name` | Autoload singleton; filename matches autoload name in `project.godot` |
 
 ### Third-party asset packs
 
@@ -87,3 +93,5 @@ When moving or renaming assets:
 
 - [ARCHITECTURE.md](ARCHITECTURE.md) — System structure
 - [LEGACY.md](LEGACY.md) — Deprecated patterns
+- [DEVELOPMENT.md](DEVELOPMENT.md) — Local setup and PR workflow
+- [TESTING.md](TESTING.md) — Automated testing (planned)

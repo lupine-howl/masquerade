@@ -254,3 +254,5 @@ Enemies do **not** share the player FSM. **M3** introduces controller abstractio
 - [ROADMAP.md](../ROADMAP.md) — Milestones
 - [LEGACY.md](LEGACY.md) — Deprecated patterns
 - [CONVENTIONS.md](CONVENTIONS.md) — Naming and refactors
+- [DEVELOPMENT.md](DEVELOPMENT.md) — Local setup and PR workflow
+- [TESTING.md](TESTING.md) — Automated testing (planned)
