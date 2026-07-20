@@ -8,6 +8,7 @@ Short rules for automated coding agents (Cursor Cloud, CI bots, etc.) working on
 2. [../LEGACY.md](../LEGACY.md) — deprecated systems (mandatory before tile/player work)
 3. [../ARCHITECTURE.md](../ARCHITECTURE.md) — where code belongs
 4. [../../ROADMAP.md](../../ROADMAP.md) — milestones M0–M10 (source of truth for priorities)
+5. [../TESTING.md](../TESTING.md) — when to add tests; local + CI commands
 
 ## Project summary
 
@@ -15,6 +16,7 @@ Short rules for automated coding agents (Cursor Cloud, CI bots, etc.) working on
 - **Product:** In-game 2D game creation tool for **credible games and teaching** — character libraries, skin/animate, controller assembly, level build, combat/collect loop, audio, bosses
 - **Main scene:** `levels/test.tscn`
 - **State:** Transitional — platform-game legacy coexists with studio features; roadmap defines target (M0–M10)
+- **Quality:** GitHub Actions CI (import + smoke + GdUnit4). Tests live under `test/`.
 
 ## Do
 
@@ -28,6 +30,7 @@ Short rules for automated coding agents (Cursor Cloud, CI bots, etc.) working on
 - Tag PRs/tasks with roadmap **milestone** (M0–M10)
 - Keep top-level folders lowercase (`assets/`, `levels/`, `scenes/`)
 - Run `./addons/gdUnit4/runtest.sh -a res://test` when changing testable logic (requires `GODOT_BIN`)
+- Add or update focused tests for changes in `player/build/`, `scripts/autoload/`, or studio tab orchestration
 
 ## Do not
 
@@ -40,6 +43,7 @@ Short rules for automated coding agents (Cursor Cloud, CI bots, etc.) working on
 - Couple new features to `GameManager` without a design pass (see M0/M5 project model)
 - Gitignore `*.import` files
 - Commit `reports/` (GdUnit4 output — already gitignored)
+- Merge with a failing CI job
 
 ## Key paths
 
@@ -101,4 +105,4 @@ Feature branches: `cursor/<descriptive-name>-7112`
 - [ROADMAP.md](../../ROADMAP.md) — priorities
 - [STUDIO.md](../STUDIO.md) — user-facing tool behavior
 - [DEVELOPMENT.md](../DEVELOPMENT.md) — local setup and PR checklist
-- [TESTING.md](../TESTING.md) — automated testing (planned)
+- [TESTING.md](../TESTING.md) — automated testing and CI

@@ -40,7 +40,7 @@ On first open, allow Godot to import assets and regenerate the `.godot/` cache.
 | [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md) | Developers | Local setup, validation checklist, PR workflow |
 | [docs/CONVENTIONS.md](docs/CONVENTIONS.md) | Developers & agents | Naming, folders, refactors |
 | [docs/LEGACY.md](docs/LEGACY.md) | Developers & agents | Deprecated patterns |
-| [docs/TESTING.md](docs/TESTING.md) | Developers | Automated testing and CI (planned) |
+| [docs/TESTING.md](docs/TESTING.md) | Developers | Automated testing and CI |
 | [docs/agents/AGENTS.md](docs/agents/AGENTS.md) | Coding agents | Constraints and key paths |
 
 ## License
