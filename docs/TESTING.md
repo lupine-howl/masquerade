@@ -30,7 +30,7 @@ test/
   unit/
     smoke_test.gd       # Harness smoke
     build/              # LevelSave, EntityPalette, TileLayerCatalog
-    autoload/           # GameManager (Slice 4)
+    autoload/           # GameManager
   integration/
     studio/             # PoseHUD / LevelAuthoring (Slice 5)
     build/              # BuildPanel mode state (Slice 5)
@@ -95,7 +95,7 @@ Place new suites under `test/unit/` or `test/integration/` matching the domain. 
 | `LevelSave.gd` | Unit | **Done** (Slice 3) |
 | `EntityPalette.gd` | Unit | **Done** (Slice 3) |
 | `TileLayerCatalog.gd` | Unit | **Done** (Slice 3) |
-| `GameManager.gd` | Unit | 4 |
+| `GameManager.gd` | Unit | **Done** (Slice 4) |
 | `PoseHUD._apply_studio_tab` | Integration | 5 |
 | `LevelAuthoring.apply_studio_tab` | Integration | 5 |
 | `BuildPanel` mode state | Integration | 5 |
