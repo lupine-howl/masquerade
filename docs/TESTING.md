@@ -28,8 +28,8 @@ Compatible with Godot **4.6.x** (CI pins **4.6.3-stable**).
 ```text
 test/
   unit/
-    smoke_test.gd       # Harness smoke (always run)
-    build/              # LevelSave, EntityPalette, TileLayerCatalog (Slice 3)
+    smoke_test.gd       # Harness smoke
+    build/              # LevelSave, EntityPalette, TileLayerCatalog
     autoload/           # GameManager (Slice 4)
   integration/
     studio/             # PoseHUD / LevelAuthoring (Slice 5)
@@ -92,9 +92,9 @@ Place new suites under `test/unit/` or `test/integration/` matching the domain. 
 
 | Target | Type | Slice |
 |--------|------|-------|
-| `LevelSave.gd` | Unit | 3 |
-| `EntityPalette.gd` | Unit | 3 |
-| `TileLayerCatalog.gd` | Unit | 3 |
+| `LevelSave.gd` | Unit | **Done** (Slice 3) |
+| `EntityPalette.gd` | Unit | **Done** (Slice 3) |
+| `TileLayerCatalog.gd` | Unit | **Done** (Slice 3) |
 | `GameManager.gd` | Unit | 4 |
 | `PoseHUD._apply_studio_tab` | Integration | 5 |
 | `LevelAuthoring.apply_studio_tab` | Integration | 5 |
