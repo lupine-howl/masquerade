@@ -5,7 +5,7 @@ extends RefCounted
 
 static var enabled: bool = true
 static var _lines: PackedStringArray = PackedStringArray()
-static const MAX_LINES := 10
+const MAX_LINES := 10
 
 static var on_log: Callable = Callable()
 

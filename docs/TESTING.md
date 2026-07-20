@@ -1,6 +1,6 @@
 # Testing guide
 
-Automated testing and CI for Masquerade are **planned** as the next engineering epic after documentation hardening. This document describes the intended setup so contributors and agents know what is coming.
+Automated CI smoke checks run on pull requests to `main` (Godot headless import + main scene load). Unit/integration tests are still planned.
 
 ---
 
@@ -9,7 +9,7 @@ Automated testing and CI for Masquerade are **planned** as the next engineering 
 | Capability | Status |
 |------------|--------|
 | Unit / integration tests | Not set up |
-| CI (GitHub Actions) | Not set up |
+| CI (GitHub Actions) | **Smoke only** — import + main scene load (see `.github/workflows/ci.yml`) |
 | Local test runner | Not set up |
 | Manual smoke validation | Required — see [DEVELOPMENT.md](DEVELOPMENT.md) |
 
