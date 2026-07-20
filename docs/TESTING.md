@@ -32,8 +32,8 @@ test/
     build/              # LevelSave, EntityPalette, TileLayerCatalog
     autoload/           # GameManager
   integration/
-    studio/             # PoseHUD / LevelAuthoring (Slice 5)
-    build/              # BuildPanel mode state (Slice 5)
+    studio/             # PoseHUD tabs + LevelAuthoring
+    build/              # BuildPanel mode state
 ```
 
 Reports are written to `reports/` (gitignored).
@@ -96,9 +96,9 @@ Place new suites under `test/unit/` or `test/integration/` matching the domain. 
 | `EntityPalette.gd` | Unit | **Done** (Slice 3) |
 | `TileLayerCatalog.gd` | Unit | **Done** (Slice 3) |
 | `GameManager.gd` | Unit | **Done** (Slice 4) |
-| `PoseHUD._apply_studio_tab` | Integration | 5 |
-| `LevelAuthoring.apply_studio_tab` | Integration | 5 |
-| `BuildPanel` mode state | Integration | 5 |
+| `PoseHUD._apply_studio_tab` | Integration | **Done** (Slice 5) |
+| `LevelAuthoring.apply_studio_tab` | Integration | **Done** (Slice 5) |
+| `BuildPanel` mode state | Integration | **Done** (Slice 5) |
 
 ---
 
