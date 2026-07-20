@@ -1,6 +1,6 @@
 # Testing guide
 
-Automated CI smoke checks run on pull requests to `main` (Godot headless import + main scene load). Unit/integration tests are still planned.
+CI runs on every pull request to `main`: headless Godot import, main-scene smoke load, and the GdUnit4 test suite.
 
 ---
 
@@ -8,76 +8,110 @@ Automated CI smoke checks run on pull requests to `main` (Godot headless import 
 
 | Capability | Status |
 |------------|--------|
-| Unit / integration tests | Not set up |
-| CI (GitHub Actions) | **Smoke only** — import + main scene load (see `.github/workflows/ci.yml`) |
-| Local test runner | Not set up |
-| Manual smoke validation | Required — see [DEVELOPMENT.md](DEVELOPMENT.md) |
-
-Until CI lands, use the manual validation checklist in [DEVELOPMENT.md](DEVELOPMENT.md) before opening PRs.
+| Unit / integration tests | **Harness ready** — GdUnit4 v6.1.3; first smoke suite in `test/unit/` |
+| CI (GitHub Actions) | **Smoke + tests** — see `.github/workflows/ci.yml` |
+| Local test runner | **Ready** — `./addons/gdUnit4/runtest.sh` |
+| Manual smoke validation | Still required for UX — see [DEVELOPMENT.md](DEVELOPMENT.md) |
 
 ---
 
-## Planned approach
+## Framework
 
-### Test framework
+**GdUnit4 v6.1.3** (vendored under `addons/gdUnit4/`, plugin enabled in `project.godot`).
 
-**GdUnit4** — Godot 4 test framework with headless CI support.
+Compatible with Godot **4.6.x** (CI pins **4.6.3-stable**).
 
-### CI platform
+---
 
-**GitHub Actions** on `ubuntu-latest`, Godot **4.6** stable.
-
-### Planned pipeline
-
-1. Headless project import
-2. Smoke load of `levels/test.tscn`
-3. Run GdUnit4 test suite
-
-### Planned folder layout
+## Folder layout
 
 ```text
 test/
   unit/
-    build/          # LevelSave, EntityPalette, TileLayerCatalog
-    autoload/       # GameManager
+    smoke_test.gd       # Harness smoke (always run)
+    build/              # LevelSave, EntityPalette, TileLayerCatalog (Slice 3)
+    autoload/           # GameManager (Slice 4)
   integration/
-    studio/         # PoseHUD tab orchestration, LevelAuthoring
-    build/          # BuildPanel mode state
+    studio/             # PoseHUD / LevelAuthoring (Slice 5)
+    build/              # BuildPanel mode state (Slice 5)
 ```
 
-### Planned local command
+Reports are written to `reports/` (gitignored).
+
+---
+
+## Run tests locally
+
+Requires Godot 4.6.x on your PATH, or set `GODOT_BIN`:
 
 ```bash
-# Exact command TBD when GdUnit4 is added; will look like:
-godot --headless --path . -s addons/gdUnit4/bin/GdUnitCmdTool.gd
+export GODOT_BIN=/path/to/Godot_v4.6.3-stable_linux.x86_64
+chmod +x ./addons/gdUnit4/runtest.sh
+
+# Run all tests under res://test
+./addons/gdUnit4/runtest.sh -a res://test
+
+# Run a single suite
+./addons/gdUnit4/runtest.sh -a res://test/unit/smoke_test.gd
+```
+
+Approximate CI smoke (without GdUnit4):
+
+```bash
+godot --headless --path . --import --quit-after 1
+godot --headless --path . --script res://tools/ci/smoke.gd
 ```
 
 ---
 
-## First tests (planned priority)
+## CI pipeline
 
-| Target | Type | Why |
-|--------|------|-----|
-| `LevelSave.gd` | Unit | Save/dirty flag logic; recent tab-switch work |
-| `EntityPalette.gd` | Unit | Palette dedup and categorization |
-| `TileLayerCatalog.gd` | Unit | Layer discovery for Build panel |
-| `GameManager.gd` | Unit | HP, keys, points, signals |
-| `PoseHUD._apply_studio_tab` | Integration | Tab visibility and mode flags |
-| `LevelAuthoring.apply_studio_tab` | Integration | Entity sim and marker visibility by tab |
-| `BuildPanel` mode state | Integration | Tab/mode transitions (not full paint simulation) |
+1. Install Godot 4.6.3-stable
+2. Headless project import
+3. Smoke load `levels/test.tscn` via `tools/ci/smoke.gd`
+4. Run GdUnit4: `./addons/gdUnit4/runtest.sh -a res://test` (under `xvfb-run` on Linux CI)
 
 ---
 
-## Policy (planned)
+## Writing tests
 
-- PRs that add testable logic in build/studio/autoload areas should include focused tests.
-- Scene/resource refactors must pass CI smoke checks.
-- Visual snapshot testing and full gameplay automation are out of scope for the first epic.
+```gdscript
+extends GdUnitTestSuite
+
+
+func test_example() -> void:
+	assert_bool(true).is_true()
+	assert_str("Masquerade").is_equal("Masquerade")
+```
+
+Place new suites under `test/unit/` or `test/integration/` matching the domain. Prefer unit tests for pure logic (`LevelSave`, `EntityPalette`, `GameManager`); use integration suites for studio tab / scene orchestration.
+
+---
+
+## Planned coverage (next slices)
+
+| Target | Type | Slice |
+|--------|------|-------|
+| `LevelSave.gd` | Unit | 3 |
+| `EntityPalette.gd` | Unit | 3 |
+| `TileLayerCatalog.gd` | Unit | 3 |
+| `GameManager.gd` | Unit | 4 |
+| `PoseHUD._apply_studio_tab` | Integration | 5 |
+| `LevelAuthoring.apply_studio_tab` | Integration | 5 |
+| `BuildPanel` mode state | Integration | 5 |
+
+---
+
+## Policy
+
+- PRs that add testable logic in build/studio/autoload areas should include focused tests once those suites exist.
+- Scene/resource refactors must pass CI smoke + existing tests.
+- Visual snapshot testing and full gameplay automation are out of scope for this epic.
 
 ---
 
 ## Related documents
 
-- [DEVELOPMENT.md](DEVELOPMENT.md) — Manual validation until CI exists
+- [DEVELOPMENT.md](DEVELOPMENT.md) — Local setup and PR checklist
 - [ROADMAP.md](../ROADMAP.md) — Feature milestones
 - [agents/AGENTS.md](agents/AGENTS.md) — Agent constraints

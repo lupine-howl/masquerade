@@ -57,6 +57,10 @@ ui_dash={
 2d/default_gravity=4096.0
 2d/solver/solver_iterations=24
 
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/gdUnit4/plugin.cfg")
+
 [rendering]
 
 rendering_device/driver.windows="d3d12"

@@ -56,6 +56,16 @@ jobs:
           set -o pipefail
           ${GODOT_BINARY} --headless --path . --script res://tools/ci/smoke.gd 2>&1 | tee smoke.log
 
+      - name: Run GdUnit4 tests
+        run: |
+          set -o pipefail
+          chmod +x ./addons/gdUnit4/runtest.sh
+          # GdUnit4 needs a display server for some engine ops; xvfb provides one on CI.
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq xvfb
+          export GODOT_BIN="$HOME/.local/share/godot/${GODOT_BINARY}"
+          xvfb-run --auto-servernum ./addons/gdUnit4/runtest.sh -a res://test 2>&1 | tee gdunit.log
+
       - name: Upload Godot logs on failure
         if: failure()
         uses: actions/upload-artifact@v4
@@ -64,3 +74,6 @@ jobs:
           path: |
             import.log
             smoke.log
+            gdunit.log
+            reports/
+          if-no-files-found: ignore

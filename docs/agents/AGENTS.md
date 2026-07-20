@@ -27,6 +27,7 @@ Short rules for automated coding agents (Cursor Cloud, CI bots, etc.) working on
 - Place new reusable entities under `scenes/<domain>/`
 - Tag PRs/tasks with roadmap **milestone** (M0–M10)
 - Keep top-level folders lowercase (`assets/`, `levels/`, `scenes/`)
+- Run `./addons/gdUnit4/runtest.sh -a res://test` when changing testable logic (requires `GODOT_BIN`)
 
 ## Do not
 
@@ -38,6 +39,7 @@ Short rules for automated coding agents (Cursor Cloud, CI bots, etc.) working on
 - Remove or rewrite `player/states/` without an explicit M3 controller task
 - Couple new features to `GameManager` without a design pass (see M0/M5 project model)
 - Gitignore `*.import` files
+- Commit `reports/` (GdUnit4 output — already gitignored)
 
 ## Key paths
 

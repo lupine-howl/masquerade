@@ -91,8 +91,14 @@ Before opening a PR, run through the areas your change touches:
 3. **Match conventions** — PascalCase `class_name` files, lowercase top-level folders — see [CONVENTIONS.md](CONVENTIONS.md).
 4. **Run manual validation** for affected areas (above).
 5. **Include test steps** in the PR description when behaviour is user-visible.
+6. **Run automated tests** when you have Godot locally:
 
-Automated CI and tests are planned; until then, manual smoke validation is required.
+```bash
+export GODOT_BIN=/path/to/Godot_v4.6.3-stable_linux.x86_64
+./addons/gdUnit4/runtest.sh -a res://test
+```
+
+See [TESTING.md](TESTING.md) for details. CI also runs import, smoke, and GdUnit4 on every PR.
 
 ---
 
