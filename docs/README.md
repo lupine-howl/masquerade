@@ -50,5 +50,5 @@ Masquerade documentation by audience and topic.
 |------|--------|
 | Product vision & roadmap | Current (July 2026 rewrite) |
 | Architecture & studio workflows | Current |
-| Development & testing guides | Development current; testing scaffold (CI epic next) |
+| Development & testing guides | Development current; **GdUnit4 harness + CI smoke/tests active** |
 | M0 project model / home screen | Documented as planned, not built |
