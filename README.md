@@ -37,8 +37,10 @@ On first open, allow Godot to import assets and regenerate the `.godot/` cache.
 | [ROADMAP.md](ROADMAP.md) | Everyone | Vision, milestones M0–M10, teaching MVP |
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Developers | Current + target system map |
 | [docs/STUDIO.md](docs/STUDIO.md) | Tool users | Studio tabs, workflows today and planned |
+| [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md) | Developers | Local setup, validation checklist, PR workflow |
 | [docs/CONVENTIONS.md](docs/CONVENTIONS.md) | Developers & agents | Naming, folders, refactors |
 | [docs/LEGACY.md](docs/LEGACY.md) | Developers & agents | Deprecated patterns |
+| [docs/TESTING.md](docs/TESTING.md) | Developers | Automated testing and CI (planned) |
 | [docs/agents/AGENTS.md](docs/agents/AGENTS.md) | Coding agents | Constraints and key paths |
 
 ## License
