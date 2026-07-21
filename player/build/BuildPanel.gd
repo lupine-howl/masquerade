@@ -148,6 +148,7 @@ func _switch_to_level(index: int) -> void:
 		_selected_label.text = String(result.error)
 		_refresh_level_picker()
 		return
+	GameManager.start_level()
 	get_tree().change_scene_to_file(store.get_level_path(index))
 
 

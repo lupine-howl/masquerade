@@ -138,6 +138,7 @@ func test_example() -> void:
 | `ProjectStore.gd` (M0 project model) | Unit | Done |
 | `HomeScreen` (M0 boot flow) | Integration | Done |
 | Project level flow (add/switch/advance) | Unit + Integration | Done |
+| Game rules / session split (`start_session`, `start_level`) | Unit | Done |
 | `PoseHUD` tab orchestration | Integration | Done |
 | `LevelAuthoring` tab gating | Integration | Done |
 | `BuildPanel` mode state | Integration | Done |
