@@ -12,9 +12,11 @@ The codebase is **transitional**: a platform-game prototype coexists with studio
 ## Quick start
 
 1. Open the project in Godot 4.6.
-2. Main scene: `levels/test.tscn` (configured in `project.godot`).
-3. Press Play to enter the test level with the studio UI.
+2. Press Play — the **home screen** opens (`scenes/home/HomeScreen.tscn`).
+3. Create a project from the **Platformer** template (or open a recent one) to enter its level with the studio UI.
 4. Use bottom tabs: **Skin**, **Animate**, **Build**, **Play**.
+
+Projects are saved under `user://projects/<name>/`. The studio test level remains at `levels/test.tscn` for development.
 
 On first open, allow Godot to import assets and regenerate the `.godot/` cache.
 

@@ -45,6 +45,8 @@ test/
       test_pose_hud_tabs.gd
     build/
       test_build_panel_mode.gd
+    home/
+      test_home_screen.gd
 ```
 
 Reports write to `reports/` (gitignored). Do not commit them.
