@@ -119,6 +119,7 @@ func create_project(display_name: String, template_id: String = "platformer") ->
 		"schema_version": SCHEMA_VERSION,
 		"name": name,
 		"slug": slug,
+		"template": template_id,
 		"created_unix": now,
 		"modified_unix": now,
 		"levels": order,
@@ -130,6 +131,71 @@ func create_project(display_name: String, template_id: String = "platformer") ->
 		_remove_recursive(dir_path)
 		return write_result
 	return {"ok": true, "slug": slug, "project": project}
+
+
+## Appends a new level to the current project, copied from the template's
+## blank-level scene (or its first level when no blank scene is declared).
+func add_level() -> Dictionary:
+	if not has_project():
+		return {"ok": false, "error": "No project is open"}
+	var template_result := _read_template(String(current.get("template", "platformer")))
+	if not template_result.ok:
+		return template_result
+	var template: Dictionary = template_result.template
+	var source_path := String(template.get("blank_scene", ""))
+	if source_path.is_empty():
+		source_path = String((template.levels as PackedStringArray)[0])
+	if not FileAccess.file_exists(source_path):
+		return {"ok": false, "error": "Level source missing: %s" % source_path}
+
+	var levels_path := project_dir(current.slug).path_join(LEVELS_DIR)
+	var levels: PackedStringArray = current.levels
+	var number := levels.size() + 1
+	while FileAccess.file_exists(levels_path.path_join("level_%d.tscn" % number)):
+		number += 1
+	var level_file := "level_%d.tscn" % number
+	var copy_err := DirAccess.copy_absolute(source_path, levels_path.path_join(level_file))
+	if copy_err != OK:
+		return {"ok": false, "error": "Copy failed: %s" % error_string(copy_err)}
+
+	levels.append(level_file)
+	current.levels = levels
+	var save_result := save_project()
+	if not save_result.ok:
+		return save_result
+	var new_index := levels.size() - 1
+	return {"ok": true, "index": new_index, "path": get_level_path(new_index)}
+
+
+## Marks a level as current and persists the choice. Does not change scenes.
+func set_current_level(index: int) -> Dictionary:
+	if not has_project():
+		return {"ok": false, "error": "No project is open"}
+	if get_level_path(index).is_empty():
+		return {"ok": false, "error": "No level at index %d" % index}
+	current.current_level = index
+	return save_project()
+
+
+## Advances past the current level. Returns an action for the caller:
+## "next_level" (with path), "completed" (project finished, progress reset),
+## or "no_project". Does not change scenes.
+func advance_level() -> Dictionary:
+	if not has_project():
+		return {"ok": false, "action": "no_project"}
+	var next_index := int(current.current_level) + 1
+	var levels: PackedStringArray = current.levels
+	if next_index < levels.size():
+		current.current_level = next_index
+		var save_result := save_project()
+		if not save_result.ok:
+			return save_result
+		return {"ok": true, "action": "next_level", "index": next_index, "path": get_level_path(next_index)}
+	current.current_level = 0
+	var reset_result := save_project()
+	if not reset_result.ok:
+		return reset_result
+	return {"ok": true, "action": "completed"}
 
 
 ## Loads a project manifest and makes it the current project.
@@ -216,6 +282,7 @@ func _read_manifest(dir_path: String) -> Dictionary:
 		"schema_version": int(cfg.get_value("project", "schema_version", SCHEMA_VERSION)),
 		"name": name,
 		"slug": slug,
+		"template": String(cfg.get_value("project", "template", "platformer")),
 		"created_unix": int(cfg.get_value("project", "created_unix", 0)),
 		"modified_unix": int(cfg.get_value("project", "modified_unix", 0)),
 		"levels": PackedStringArray(cfg.get_value("levels", "order", PackedStringArray())),
@@ -234,6 +301,7 @@ func _write_manifest(dir_path: String, project: Dictionary) -> Dictionary:
 	cfg.set_value("project", "schema_version", project.schema_version)
 	cfg.set_value("project", "name", project.name)
 	cfg.set_value("project", "slug", project.slug)
+	cfg.set_value("project", "template", project.get("template", "platformer"))
 	cfg.set_value("project", "created_unix", project.created_unix)
 	cfg.set_value("project", "modified_unix", project.modified_unix)
 	cfg.set_value("levels", "order", project.levels)
@@ -263,6 +331,7 @@ func _read_template(template_id: String) -> Dictionary:
 		"name": String(cfg.get_value("template", "name", template_id)),
 		"description": String(cfg.get_value("template", "description", "")),
 		"levels": scenes,
+		"blank_scene": String(cfg.get_value("levels", "blank_scene", "")),
 		"rules": {
 			"max_hp": float(cfg.get_value("rules", "max_hp", DEFAULT_RULES.max_hp)),
 			"starting_hp": float(cfg.get_value("rules", "starting_hp", DEFAULT_RULES.starting_hp)),

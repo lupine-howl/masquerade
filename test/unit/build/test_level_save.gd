@@ -55,6 +55,39 @@ func test_save_level_fails_when_scene_path_empty() -> void:
 	assert_bool(LevelSave.dirty).is_true()
 
 
+func test_save_level_inside_project_bumps_modified_timestamp() -> void:
+	var saved_root: String = ProjectStore.root_dir
+	ProjectStore.root_dir = "user://tmp/level_save_project_test"
+	var created: Dictionary = ProjectStore.create_project("Stamp")
+	ProjectStore.load_project(created.slug)
+
+	# Backdate the manifest so a bump is observable at second granularity.
+	ProjectStore.current.modified_unix = 1000
+	ProjectStore._write_manifest(ProjectStore.project_dir(created.slug), ProjectStore.current)
+
+	var tree := get_tree()
+	var previous: Node = tree.current_scene
+	var level := Node2D.new()
+	level.name = "ProjectLevel"
+	level.scene_file_path = ProjectStore.get_level_path(0)
+	tree.root.add_child(level)
+	tree.current_scene = level
+
+	var result: Dictionary = LevelSave.save_level(tree)
+
+	tree.current_scene = previous
+	level.free()
+	assert_bool(result.ok).is_true()
+
+	ProjectStore.close_project()
+	ProjectStore.load_project(created.slug)
+	assert_int(ProjectStore.current.modified_unix).is_greater(1000)
+
+	ProjectStore._remove_recursive("user://tmp/level_save_project_test")
+	ProjectStore.root_dir = saved_root
+	ProjectStore.close_project()
+
+
 func test_save_level_succeeds_and_clears_dirty() -> void:
 	var tree := get_tree()
 	var previous: Node = tree.current_scene
