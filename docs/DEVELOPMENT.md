@@ -62,7 +62,7 @@ Before opening a PR, run through the areas your change touches:
 ### Always (smoke)
 
 - [ ] Project opens in Godot 4.6 without errors in the Output panel
-- [ ] Press Play on `levels/test.tscn` — level loads, no startup errors
+- [ ] Press Play — home screen loads; create/open a project → level loads without startup errors
 
 ### Studio / build changes
 

@@ -45,6 +45,7 @@ test/
       test_pose_hud_tabs.gd
     build/
       test_build_panel_mode.gd
+      test_build_panel_levels.gd
     home/
       test_home_screen.gd
 ```
@@ -92,7 +93,7 @@ Job **Godot import, smoke & tests** (`.github/workflows/ci.yml`):
 
 1. Install / cache Godot 4.6.3-stable
 2. Headless project import
-3. Smoke load `levels/test.tscn` via `tools/ci/smoke.gd`
+3. Smoke load `HomeScreen.tscn` + `levels/test.tscn` via `tools/ci/smoke.gd`
 4. GdUnit4: `xvfb-run ./addons/gdUnit4/runtest.sh -a res://test`
 5. On failure: upload `import.log`, `smoke.log`, `gdunit.log`, and `reports/`
 
@@ -135,6 +136,8 @@ func test_example() -> void:
 | `TileLayerCatalog.gd` | Unit | Done |
 | `GameManager.gd` | Unit | Done |
 | `ProjectStore.gd` (M0 project model) | Unit | Done |
+| `HomeScreen` (M0 boot flow) | Integration | Done |
+| Project level flow (add/switch/advance) | Unit + Integration | Done |
 | `PoseHUD` tab orchestration | Integration | Done |
 | `LevelAuthoring` tab gating | Integration | Done |
 | `BuildPanel` mode state | Integration | Done |

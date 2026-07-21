@@ -1,0 +1,26 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="TileSet" uid="uid://b0etgrb5l3mkt" path="res://resources/tilesets/tileset_terrain.tres" id="1_terrain"]
+[ext_resource type="PackedScene" uid="uid://dan4h02iujee1" path="res://player/player.tscn" id="2_player"]
+[ext_resource type="PackedScene" uid="uid://bly6jwe7hmnto" path="res://scenes/ui/ui.tscn" id="3_ui"]
+
+[sub_resource type="RectangleShape2D" id="floor_shape"]
+size = Vector2(40000, 128)
+
+[node name="Level" type="Node2D"]
+
+[node name="Terrain" type="TileMapLayer" parent="."]
+tile_set = ExtResource("1_terrain")
+
+[node name="Enemies" type="Node2D" parent="."]
+
+[node name="SafetyFloor" type="StaticBody2D" parent="."]
+position = Vector2(0, 704)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="SafetyFloor"]
+shape = SubResource("floor_shape")
+
+[node name="Player" parent="." instance=ExtResource("2_player")]
+position = Vector2(0, 400)
+
+[node name="UI" parent="." instance=ExtResource("3_ui")]

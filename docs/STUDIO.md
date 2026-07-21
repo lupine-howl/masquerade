@@ -129,6 +129,8 @@ Orchestration: `LevelAuthoring.apply_studio_tab` (called from `PoseHUD._apply_st
 3. Switch to **Play** to test
 4. Click **Save** when the `*` dirty indicator appears
 
+**Project levels (M0):** when a project is open, the Build header shows a **level picker** and **+ Level** button. Switching levels auto-saves pending edits, then loads the chosen level. **+ Level** appends a blank starter level (player, empty terrain layer, safety floor) and opens it. Reaching an open **exit** advances to the next project level; finishing the last level returns to the home screen.
+
 **Key files:** `BuildPanel.gd`, `TileAtlasPicker.gd`, `TileLayerCatalog.gd`, `EntityPalette.gd`, `LevelSave.gd`, `LevelAuthoring.gd`
 
 **Dev diagnostics:** `BuildPaintDebug.gd` traces paint/input routing when enabled (off by default).

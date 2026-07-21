@@ -179,6 +179,85 @@ func test_get_rule_defaults_without_project() -> void:
 	assert_str(String(ProjectStore.get_rule("max_hp", "fallback"))).is_equal("fallback")
 
 
+func test_template_recorded_in_manifest() -> void:
+	var created: Dictionary = ProjectStore.create_project("Templated")
+	ProjectStore.load_project(created.slug)
+	assert_str(ProjectStore.current.template).is_equal("platformer")
+
+
+func test_add_level_appends_and_persists() -> void:
+	var created: Dictionary = ProjectStore.create_project("Grower")
+	ProjectStore.load_project(created.slug)
+
+	var result: Dictionary = ProjectStore.add_level()
+
+	assert_bool(result.ok).is_true()
+	assert_int(result.index).is_equal(1)
+	assert_bool(FileAccess.file_exists(String(result.path))).is_true()
+
+	ProjectStore.close_project()
+	ProjectStore.load_project(created.slug)
+	assert_array(Array(ProjectStore.current.levels)).contains_exactly(
+		["level_1.tscn", "level_2.tscn"]
+	)
+
+
+func test_add_level_fails_without_project() -> void:
+	var result: Dictionary = ProjectStore.add_level()
+	assert_bool(result.ok).is_false()
+
+
+func test_added_level_uses_blank_scene_and_loads() -> void:
+	var created: Dictionary = ProjectStore.create_project("Blank Check")
+	ProjectStore.load_project(created.slug)
+	var result: Dictionary = ProjectStore.add_level()
+
+	var packed := ResourceLoader.load(String(result.path)) as PackedScene
+	assert_object(packed).is_not_null()
+	var level := packed.instantiate()
+	assert_object(level.get_node_or_null("Terrain")).is_not_null()
+	assert_object(level.get_node_or_null("Enemies")).is_not_null()
+	assert_object(level.get_node_or_null("Player")).is_not_null()
+	level.free()
+
+
+func test_set_current_level_persists_and_bounds_checks() -> void:
+	var created: Dictionary = ProjectStore.create_project("Switcher")
+	ProjectStore.load_project(created.slug)
+	ProjectStore.add_level()
+
+	assert_bool(ProjectStore.set_current_level(1).ok).is_true()
+	assert_bool(ProjectStore.set_current_level(5).ok).is_false()
+	assert_bool(ProjectStore.set_current_level(-1).ok).is_false()
+
+	ProjectStore.close_project()
+	ProjectStore.load_project(created.slug)
+	assert_int(ProjectStore.current.current_level).is_equal(1)
+
+
+func test_advance_level_progresses_then_completes() -> void:
+	var created: Dictionary = ProjectStore.create_project("Journey")
+	ProjectStore.load_project(created.slug)
+	ProjectStore.add_level()
+
+	var first: Dictionary = ProjectStore.advance_level()
+	assert_str(first.action).is_equal("next_level")
+	assert_int(first.index).is_equal(1)
+	assert_bool(FileAccess.file_exists(String(first.path))).is_true()
+
+	var second: Dictionary = ProjectStore.advance_level()
+	assert_str(second.action).is_equal("completed")
+
+	ProjectStore.close_project()
+	ProjectStore.load_project(created.slug)
+	assert_int(ProjectStore.current.current_level).is_equal(0)
+
+
+func test_advance_level_without_project() -> void:
+	var result: Dictionary = ProjectStore.advance_level()
+	assert_str(result.action).is_equal("no_project")
+
+
 func test_list_templates_includes_platformer() -> void:
 	var templates: Array[Dictionary] = ProjectStore.list_templates()
 

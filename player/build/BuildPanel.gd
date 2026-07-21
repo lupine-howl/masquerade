@@ -18,6 +18,8 @@ var _tile_layers: Array[Dictionary] = []
 
 var _tab_strip: VBoxContainer
 var _header_row: HBoxContainer
+var _level_picker: OptionButton
+var _add_level_button: Button
 var _source_row: HFlowContainer
 var _entity_grid: GridContainer
 var _tile_atlas_picker: TileAtlasPicker
@@ -80,11 +82,73 @@ func _ready() -> void:
 	BuildPaintDebug.on_log = _on_debug_log
 	_entity_entries = EntityPalette.load_entries()
 	_build_ui()
+	_refresh_level_picker()
 	refresh_tile_layers()
 	if not _tile_layers.is_empty():
 		_select_tab(TabKind.TILE_LAYER, 0)
 	else:
 		_select_tab(TabKind.ENTITIES, -1)
+
+
+## The ProjectStore autoload, or null in the editor (@tool context).
+func _project_store() -> Node:
+	if not is_inside_tree():
+		return null
+	return get_tree().root.get_node_or_null("ProjectStore")
+
+
+func _refresh_level_picker() -> void:
+	var store := _project_store()
+	var has_project: bool = store != null and store.has_project()
+	_level_picker.visible = has_project
+	_add_level_button.visible = has_project
+	if not has_project:
+		return
+	_level_picker.clear()
+	var levels: PackedStringArray = store.current.levels
+	for i in levels.size():
+		_level_picker.add_item("Level %d" % (i + 1))
+	var current_index := int(store.current.current_level)
+	if current_index >= 0 and current_index < _level_picker.item_count:
+		_level_picker.select(current_index)
+
+
+func _on_level_selected(index: int) -> void:
+	var store := _project_store()
+	if store == null or not store.has_project():
+		return
+	if index == int(store.current.current_level):
+		return
+	_switch_to_level(index)
+
+
+func _on_add_level_pressed() -> void:
+	var store := _project_store()
+	if store == null or not store.has_project():
+		return
+	var result: Dictionary = store.add_level()
+	if not result.ok:
+		_selected_label.text = String(result.error)
+		return
+	_refresh_level_picker()
+	_switch_to_level(int(result.index))
+
+
+## Saves pending edits, marks the level current, and changes scene to it.
+func _switch_to_level(index: int) -> void:
+	var store := _project_store()
+	if LevelSave.dirty:
+		var saved: Dictionary = LevelSave.save_level(get_tree())
+		if not saved.ok:
+			_selected_label.text = String(saved.error)
+			_refresh_level_picker()
+			return
+	var result: Dictionary = store.set_current_level(index)
+	if not result.ok:
+		_selected_label.text = String(result.error)
+		_refresh_level_picker()
+		return
+	get_tree().change_scene_to_file(store.get_level_path(index))
 
 
 func refresh_tile_layers() -> void:
@@ -157,6 +221,23 @@ func _build_ui() -> void:
 	_header_label.add_theme_font_size_override("font_size", PoseTabStyles.PANEL_FONT_SIZE)
 	_header_label.text = "Build"
 	_header_row.add_child(_header_label)
+
+	_level_picker = OptionButton.new()
+	_level_picker.focus_mode = Control.FOCUS_NONE
+	_level_picker.add_theme_font_size_override("font_size", PoseTabStyles.CAPTION_FONT_SIZE)
+	_level_picker.tooltip_text = "Switch project level"
+	_level_picker.item_selected.connect(_on_level_selected)
+	_level_picker.visible = false
+	_header_row.add_child(_level_picker)
+
+	_add_level_button = Button.new()
+	_add_level_button.text = "+ Level"
+	_add_level_button.focus_mode = Control.FOCUS_NONE
+	_add_level_button.add_theme_font_size_override("font_size", PoseTabStyles.CAPTION_FONT_SIZE)
+	_add_level_button.tooltip_text = "Add a new level to the project"
+	_add_level_button.pressed.connect(_on_add_level_pressed)
+	_add_level_button.visible = false
+	_header_row.add_child(_add_level_button)
 
 	_dirty_label = Label.new()
 	_dirty_label.add_theme_font_size_override("font_size", PoseTabStyles.CAPTION_FONT_SIZE)

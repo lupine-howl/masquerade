@@ -29,4 +29,15 @@ static func save_level(tree: SceneTree) -> Dictionary:
 	if err != OK:
 		return {"ok": false, "error": "Save failed: %s" % error_string(err)}
 	dirty = false
+	_touch_project(tree, path)
 	return {"ok": true, "path": path}
+
+
+## Bumps the open project's modified timestamp when the saved level is one
+## of its level files. Resolved via the tree so static context stays testable.
+static func _touch_project(tree: SceneTree, saved_path: String) -> void:
+	var store: Node = tree.root.get_node_or_null("ProjectStore")
+	if store == null or not store.has_project():
+		return
+	if saved_path.begins_with(store.project_dir(String(store.current.slug))):
+		store.save_project()
