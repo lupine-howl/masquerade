@@ -44,6 +44,8 @@ Short rules for automated coding agents (Cursor Cloud, CI bots, etc.) working on
 - Gitignore `*.import` files
 - Commit `reports/` (GdUnit4 output — already gitignored)
 - Merge with a failing CI job
+- Write to `res://templates/` at runtime (templates are read-only; projects live in `user://projects/`)
+- Break non-project fallbacks (dev scenes like `levels/test.tscn` must keep working without an open project)
 
 ## Key paths
 
@@ -55,8 +57,10 @@ Short rules for automated coding agents (Cursor Cloud, CI bots, etc.) working on
 | Level build | `player/build/BuildPanel.gd`, `EntityPalette.gd`, `LevelSave.gd` |
 | Tilesets | `resources/tilesets/` |
 | Enemy base | `scenes/enemies/BaseEnemy.gd` |
-| Autoload | `scripts/autoload/GameManager.gd` (UID in `project.godot`) |
-| Levels | `levels/test.tscn` — `TileMapLayer` nodes + `Enemies` container |
+| Autoloads | `scripts/autoload/GameManager.gd` (session), `scripts/autoload/ProjectStore.gd` (projects) |
+| Home screen | `scenes/home/HomeScreen.tscn` — main scene; boot flow |
+| Templates | `templates/<id>/template.cfg` + blank level scene |
+| Levels | `levels/test.tscn` (template source / dev); project copies in `user://projects/<slug>/levels/` |
 
 ## Common tasks
 
@@ -84,7 +88,7 @@ Prefer new scene under `scenes/enemies/` extending `BaseEnemy`. Long-term: wire 
 
 | Milestone | Focus |
 |-----------|-------|
-| M0 | Project model, home screen |
+| M0 | Project model, home screen — **done** |
 | M1 | Character library |
 | M2 | Skin composer, saved skins |
 | M3 | Controllers, character assembly |

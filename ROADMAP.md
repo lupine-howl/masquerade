@@ -70,29 +70,30 @@ Foundation already shipped; new milestones extend and connect these pieces.
 | Combat system v2 | **Not started** | — |
 | Audio panel | **Not started** | — |
 | Boss system | **Not started** | — |
-| Project / home screen | **Not started** | — |
+| Project / home screen | **Done** | `ProjectStore`, `HomeScreen`, `templates/platformer/` |
+| Per-project game rules | **Done** | `project.cfg` rules → `GameManager.start_session` |
 | M0 doc reset | **Done** | Roadmap, ARCHITECTURE, STUDIO, LEGACY, DEVELOPMENT |
 
 ---
 
 ## Milestones
 
-### M0 — Project model & doc reset
+### M0 — Project model & doc reset ✅
 
 **Goal:** One coherent product direction and a place to open work.
 
 | Deliverable | Status | Detail |
 |-------------|--------|--------|
 | Roadmap & docs | **Done** | This document; `STUDIO.md`, `ARCHITECTURE.md`, `LEGACY.md`, `DEVELOPMENT.md` |
-| **Project model** | Planned | A project holds levels, characters, skins, audio refs, game rules |
-| **Home screen** | Planned | Open recent project or start from template |
-| **Data layout** | Planned | e.g. `projects/<name>/characters/`, `levels/`, `audio/` |
+| **Project model** | **Done** | `ProjectStore` autoload; `project.cfg` schema v1 (levels, rules); characters/skins/audio sections arrive with M1/M2/M8 |
+| **Home screen** | **Done** | `scenes/home/HomeScreen.tscn` — open recent project or create from template |
+| **Data layout** | **Done** | `user://projects/<slug>/` (`project.cfg` + `levels/`); read-only starters in `res://templates/` |
+| **Game rules** | **Done** | Per-project `max_hp`, `starting_hp`, `keys_to_exit` → `GameManager.start_session` |
+| **Level flow** | **Done** | Add/switch levels in Build tab; exits advance project level order |
 
-**Acceptance (docs):** Docs reflect new direction; engineering tasks reference milestones (M0–M10).
+**Acceptance:** ✅ Boot to home screen → create/open project → build and save levels → traverse levels via exits — all covered by automated tests.
 
-**Acceptance (full M0):** Above plus project open/save and home screen.
-
-**Builds on:** `levels/test.tscn`, `LevelSave.gd`
+**Delivered by:** PRs #38–#41 (schema v1 leaves room for M1 characters, M2 skins, M5 economy, M8 audio refs).
 
 ---
 
@@ -316,7 +317,7 @@ Browse character → tweak skin → build room with collision layer → collect 
 | Sample levels `01`–`05` | **Removed** | Project levels + templates |
 | 16×16 enemy art as source of truth | **Legacy** | Rescale during M3/M6 |
 | Monolithic `Player`-only movement | **Transitional** | Shared controller in M3 |
-| `GameManager` as all state | **Transitional** | Project model in M0/M5 |
+| `GameManager` as all state | **Transitional** — rules split done (M0) | Session-only; economy joins project model in M5 |
 | `PoseModeBar` / left toolbar tri-mode | **Deprecated** | `StudioTabBar` four tabs |
 | `BuildPanel` in right dock | **Removed** | Bottom-centre dock |
 

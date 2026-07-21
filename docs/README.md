@@ -51,4 +51,4 @@ Masquerade documentation by audience and topic.
 | Product vision & roadmap | Current (July 2026 rewrite) |
 | Architecture & studio workflows | Current |
 | Development & testing guides | **Current** — DEVELOPMENT + TESTING; GdUnit4 + CI active |
-| M0 project model / home screen | Documented as planned, not built |
+| M0 project model / home screen | **Shipped** — `ProjectStore`, `HomeScreen`, templates, per-project rules |

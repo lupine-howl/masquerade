@@ -25,12 +25,14 @@ On first open, allow Godot to import assets and regenerate the `.godot/` cache.
 | Path | Purpose |
 |------|---------|
 | `player/` | Character, movement states, pose/animation studio, build panel |
-| `scenes/` | Enemies, collectibles, hazards, platforms, interactables, UI |
-| `levels/` | Level `.tscn` files and shaders |
+| `scenes/` | Home screen, enemies, collectibles, hazards, platforms, interactables, UI |
+| `levels/` | Template-source and dev level `.tscn` files |
+| `templates/` | Project starter templates (read-only at runtime) |
 | `resources/` | TileSets, SpriteFrames |
 | `assets/` | Art and audio |
-| `scripts/` | Autoloads and shared scripts |
-| `addons/` | Third-party plugins (Rapier2D) |
+| `scripts/` | Autoloads (`GameManager`, `ProjectStore`) and shared scripts |
+| `test/` | GdUnit4 test suites |
+| `addons/` | Third-party plugins (Rapier2D, GdUnit4) |
 
 ## Documentation
 

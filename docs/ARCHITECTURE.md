@@ -8,7 +8,7 @@ High-level map of Masquerade: what exists today and where the product is going. 
 
 ```mermaid
 flowchart TB
-  subgraph project [Project - planned M0]
+  subgraph project [Project - M0 done]
     Home[Home / library browser]
     Rules[Game rules]
     Levels[Levels]
@@ -116,8 +116,10 @@ flowchart TB
 | Levels | `levels/*.tscn` | Tile layers + placed instances |
 | Entity library | `scenes/` | Enemies, hazards, collectibles, platforms |
 | Tilesets | `resources/tilesets/` | Terrain, water, palette catalog metadata |
-| Global gameplay state | `scripts/autoload/GameManager.gd` | HP, keys, points, checkpoints |
-| Project model | — | **Planned M0** |
+| Session state | `scripts/autoload/GameManager.gd` | HP, keys, points, checkpoints; reset via `start_session` / `start_level` |
+| Project model | `scripts/autoload/ProjectStore.gd` | Projects, levels, game rules, templates (**M0 — done**) |
+| Home screen | `scenes/home/HomeScreen.tscn` | Boot flow: open/create/delete projects (**M0 — done**) |
+| Templates | `res://templates/<id>/` | Read-only starters: `template.cfg`, blank level |
 | Character library | — | **Planned M1** |
 | Skin documents | — | **Planned M2** |
 | Controllers / assembler | — | **Planned M3** |
@@ -218,11 +220,30 @@ Enemies do **not** share the player FSM. **M3** introduces controller abstractio
 
 | Name | Role |
 |------|------|
-| `GameManager` | HP, keys, points, checkpoint, respawn |
+| `GameManager` | Session state: HP, keys, points, checkpoint, respawn; rules applied via `start_session(rules)` |
+| `ProjectStore` | Project persistence: manifests, level files, templates, progression (`advance_level`) |
 | `player` (group) | Controllable character |
 | `ladders` (group) | Ladder climb detection |
 
-**M0/M5:** Split editor/project state from runtime session state.
+**M0 (done):** Authored rules live in the project manifest; `GameManager` holds only runtime session state. **M5** extends this with money/shop rules.
+
+---
+
+## Project data layout (M0)
+
+```text
+user://projects/<slug>/
+  project.cfg            # schema v1: name, template, timestamps, level order, rules
+  levels/
+    level_1.tscn         # copies owned by the project (never res:// references)
+    level_2.tscn
+
+res://templates/<id>/    # read-only; never written at runtime
+  template.cfg           # name, description, level scenes, blank_scene, default rules
+  blank_level.tscn       # "+ Level" source: player, empty terrain, safety floor
+```
+
+Flow: `HomeScreen` → `ProjectStore.load_project()` → `GameManager.start_session(rules)` → `change_scene_to_file(level)`. Exits call `ProjectStore.advance_level()`; the Build tab saves via `LevelSave` into the project's level file. Schema v1 gains `characters/` (M1), `skins/` (M2), and `audio/` (M8) sections as those milestones land.
 
 ---
 
