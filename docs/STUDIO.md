@@ -21,6 +21,19 @@ Much of this is **planned** (milestones M1–M10). The sections below describe *
 
 ---
 
+## Home screen (M0)
+
+The app boots into the **home screen** (`scenes/home/HomeScreen.tscn`):
+
+1. **Open** a recent project from the list (newest first), or
+2. **Create** one — type a name, pick a template (e.g. **Platformer**), press Create.
+
+Opening a project applies its game rules (HP, keys to exit) and loads its current level with the studio UI. Projects live in `user://projects/<name>/`; deleting one asks for confirmation.
+
+**Dev shortcut:** run `levels/test.tscn` directly from the Godot editor to skip projects entirely.
+
+---
+
 ## Studio layout (current)
 
 The player scene (`player/player.tscn`) bundles gameplay and authoring UI under `PoseHUD`. The **bottom-centre dock** is the primary workspace, switched by studio tabs:
@@ -225,11 +238,11 @@ Add atlas sources to `tileset_terrain.tres`. Keep 64×64 grid alignment where po
 
 ## Levels reference
 
-| Level | File | Notes |
-|-------|------|-------|
-| Test | `levels/test.tscn` | Main scene; authoring pilot |
-
-**Planned (M0):** Projects with multiple levels and templates.
+| Level | Location | Notes |
+|-------|----------|-------|
+| Project levels | `user://projects/<name>/levels/` | Owned copies; edit and save via Build tab |
+| Test | `levels/test.tscn` | Template source; dev scene (run directly from editor) |
+| Blank starter | `templates/platformer/blank_level.tscn` | Source for **+ Level**; do not edit at runtime |
 
 ---
 
@@ -245,6 +258,9 @@ Add atlas sources to `tileset_terrain.tres`. Keep 64×64 grid alignment where po
 | Enemy scale looks wrong | Legacy 16px art vs 64px tiles — see [LEGACY.md](LEGACY.md) |
 | Entities move on Build tab | Expected: frozen until **Play** — see `LevelAuthoring.gd` |
 | Atlas selection paints through panel | Input over bottom dock is suppressed; paint only in viewport |
+| No level picker in Build header | Only visible with a project open; dev scenes have no project levels |
+| Exit does nothing | Needs enough keys (`keys_to_exit` rule); outside a project it needs a `target_level` |
+| Project missing from home screen | Check `user://projects/<slug>/project.cfg` exists and parses |
 
 ---
 

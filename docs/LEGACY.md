@@ -77,21 +77,24 @@ See [ROADMAP.md](../ROADMAP.md) milestone M3.
 
 ---
 
-## GameManager as global game state (Transitional)
+## GameManager as global game state (Transitional — first split done)
 
 ### What it is
 
 `scripts/autoload/GameManager.gd` holds score, keys, HP, and checkpoint position for the platform game loop.
 
-### Replacement direction
+### Progress (M0 — done)
 
-A **project model** (M0) will hold authorship data: levels, characters, skins, audio, game rules. Runtime gameplay state (money, keys, HP in a play session) will live in a session layer, not mixed with editor state.
+The **project model** now holds authored data: `ProjectStore` owns levels and game rules in `user://projects/<slug>/project.cfg`. `GameManager` is session-only — rules are applied via `start_session(rules)` on project open, and `start_level()` resets level-local state (keys, checkpoint) on level changes.
 
-See [ROADMAP.md](../ROADMAP.md) milestones M0 and M5.
+### Remaining direction (M5)
+
+Money/shop/economy rules join the project manifest; the session layer may become its own object rather than autoload fields.
 
 ### Agent / contributor rules
 
 - OK to fix respawn/checkpoint bugs.
+- New authored settings belong in the **project manifest** (`ProjectStore`), not as `GameManager` fields.
 - Avoid coupling build-panel or pose-studio data into `GameManager` without a design pass.
 
 ---

@@ -9,17 +9,19 @@ Top-level folders use **lowercase**:
 ```
 addons/     # Third-party plugins — do not rename internals
 assets/     # Art and data files (lowercase subfolders: backgrounds/, enemies/, tilesets/, …)
-levels/     # Level scenes and level-specific shaders
+levels/     # Level scenes and level-specific shaders (template sources / dev scenes)
 player/     # Player character and in-game studio tools
 resources/  # Shared .tres (tilesets, sprite_frames)
 scenes/     # Reusable gameplay scenes, grouped by domain
 scripts/    # Autoloads and cross-cutting scripts
-tools/      # Optional dev utilities
+templates/  # Project starter templates (read-only at runtime)
+test/       # GdUnit4 suites (unit/, integration/)
+tools/      # Optional dev utilities and CI scripts
 ```
 
 ### `scenes/` domains
 
-`collectibles/`, `enemies/`, `environment/`, `hazards/`, `interactables/`, `platforms/`, `projectiles/`, `ui/`, `dev/`
+`collectibles/`, `enemies/`, `environment/`, `hazards/`, `home/`, `interactables/`, `platforms/`, `projectiles/`, `ui/`, `dev/`
 
 ### `player/` subfolders
 
@@ -43,6 +45,7 @@ tools/      # Optional dev utilities
 | File | Convention | Notes |
 |------|------------|-------|
 | `scripts/autoload/GameManager.gd` | PascalCase, no `class_name` | Autoload singleton; filename matches autoload name in `project.godot` |
+| `scripts/autoload/ProjectStore.gd` | PascalCase, no `class_name` | Autoload singleton; same rule |
 
 ### Third-party asset packs
 
