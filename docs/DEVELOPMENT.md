@@ -21,8 +21,9 @@ No separate build step. Open the project folder in Godot.
 1. Clone the repository.
 2. Open the project root in Godot 4.6.
 3. Allow Godot to import assets on first open (regenerates `.godot/` cache locally; do not commit `.godot/`).
-4. Main scene: `levels/test.tscn` (configured in `project.godot`).
-5. Press **Play** to enter the test level with the studio UI.
+4. Main scene: `scenes/home/HomeScreen.tscn` (configured in `project.godot`).
+5. Press **Play** → home screen → create/open a project to enter its level with the studio UI.
+6. For direct level iteration, run `levels/test.tscn` from the editor (template source + dev scene).
 
 ---
 
