@@ -38,6 +38,7 @@ test/
       test_tile_layer_catalog.gd
     autoload/
       test_game_manager.gd
+      test_project_store.gd
   integration/
     studio/
       test_level_authoring.gd
@@ -131,6 +132,7 @@ func test_example() -> void:
 | `EntityPalette.gd` | Unit | Done |
 | `TileLayerCatalog.gd` | Unit | Done |
 | `GameManager.gd` | Unit | Done |
+| `ProjectStore.gd` (M0 project model) | Unit | Done |
 | `PoseHUD` tab orchestration | Integration | Done |
 | `LevelAuthoring` tab gating | Integration | Done |
 | `BuildPanel` mode state | Integration | Done |
