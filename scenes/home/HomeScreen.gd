@@ -53,6 +53,7 @@ func open_project(slug: String) -> Dictionary:
 		var error := "Project '%s' has no playable level" % slug
 		_set_status(error)
 		return {"ok": false, "error": error}
+	GameManager.start_session(ProjectStore.current.rules)
 	var err: Error = get_tree().change_scene_to_file(level_path)
 	if err != OK:
 		var error := "Could not open level: %s" % error_string(err)

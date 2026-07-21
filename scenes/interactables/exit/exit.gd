@@ -12,8 +12,9 @@ var is_open = false
 
 
 func _ready():
+	keys_needed = int(ProjectStore.get_rule("keys_to_exit", keys_needed))
 	GameManager.keys_changed.connect(on_keys_changed)
-	on_keys_changed(0)
+	on_keys_changed(GameManager.keys)
 	sprite.play("default")
 
 
@@ -32,9 +33,11 @@ func _advance() -> void:
 	var result: Dictionary = ProjectStore.advance_level()
 	match String(result.get("action", "")):
 		"next_level":
+			GameManager.start_level()
 			get_tree().change_scene_to_file(String(result.path))
 		"completed":
 			get_tree().change_scene_to_file(HOME_SCENE)
 		_:
 			if target_level:
+				GameManager.start_level()
 				get_tree().change_scene_to_packed(target_level)
